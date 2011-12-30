@@ -560,21 +560,25 @@ Zotero.ZotFile = {
 	  var priority_date = patentnr.substr(2,4);
 
 	  // get creator and create authors string
-	  var creatorType=1;
-	  if (zitem.getType()==19) var creatorType=14;
+	  // creator types: author/editor(1,3) for book(2), inventor(14) for patent(19),programmer(24) for computer prog.(27),presenter(21) for presentation(32)
+	  var creatorType=[1];
+	  if (zitem.getType()==2)  var creatorType=[1,3];
+	  if (zitem.getType()==19) var creatorType=[14];
+	  if (zitem.getType()==32) var creatorType=[21];
+	  if (zitem.getType()==27) var creatorType=[24];
 	  var add_etal=this.prefs.getBoolPref("add_etal");
 	  var author = "";
 	  var creators = zitem.getCreators();
 	  var numauthors = creators.length;
 	  for (var i=0; i < creators.length; i++) {
-	    if(creators[i].creatorTypeID!=creatorType) var numauthors=numauthors-1;
+	    if(creatorType.indexOf(creators[i].creatorTypeID)==-1) var numauthors=numauthors-1;
 	  }
 	  var max_authors=(this.prefs.getBoolPref("truncate_authors")) ? this.prefs.getIntPref("max_authors") : 500;
 	  if (numauthors<=max_authors) var add_etal=0;
 	  if (numauthors>max_authors) var numauthors = 1;
 	  var j=0;
 	  for (var i=0; i < creators.length; i++) {
-	    if (j<numauthors & creators[i].creatorTypeID==creatorType) {
+	    if (j<numauthors & creatorType.indexOf(creators[i].creatorTypeID)!=-1) {
 	      if (author!="") var author = author + "_" + creators[i].ref.lastName;  
 	      if (author=="") var author = creators[i].ref.lastName;
 	      var j=j+1;
