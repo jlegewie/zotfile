@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>zotfile@columbia.edu</em:id>
+    <em:version>2.0b4</em:version>
+    <em:type>2</em:type>
+   
+    <!-- Target Application this extension can install into, 
+         with minimum and maximum supported versions. --> 
+    <em:targetApplication>
+      <Description>
+        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+        <em:minVersion>3.6.*</em:minVersion>
+        <em:maxVersion>8.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+	<em:targetApplication>
+		<Description>
+			<em:id>zotero@chnm.gmu.edu</em:id>
+			<em:minVersion>3.0b1</em:minVersion>
+			<em:maxVersion>3.0.*</em:maxVersion>
+		</Description>
+	</em:targetApplication> 
+	<em:requires>
+	   <Description>
+	     <em:id>zotero@chnm.gmu.edu</em:id>
+	     <em:minVersion>1.*</em:minVersion>
+	     <em:maxVersion>3.*</em:maxVersion>
+	   </Description>
+	 </em:requires>	
+    <!-- Front End MetaData -->
+    <em:name>ZotFile</em:name>
+    <em:description>Zotero Plugin to automatically rename, move, and attach pdf (or other) files to Zotero items by pressing a button. Supports user specified directories and renaming rules using metadata from Zotero items, and batch processing of existing attachments.</em:description>
+    <em:creator>Joscha Legewie</em:creator>
+    <em:homepageURL>http://www.columbia.edu/~jpl2136/zotfile.html</em:homepageURL>
+    <em:optionsURL>chrome://zotfile/content/options.xul</em:optionsURL>
+  </Description>      
+</RDF>
+                              
+

@@ -1,0 +1,4 @@
+content	zotfile					chrome/content/zotfile/
+skin	zotfile	default				chrome/skin/default/zotfile/
+
+overlay	chrome://zotero/content/zoteroPane.xul chrome://zotfile/content/overlay.xul
