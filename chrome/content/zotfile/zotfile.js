@@ -733,6 +733,9 @@ Zotero.ZotFile = {
 		  // (code line adopted from Zotero)
 		  var filename = filename.replace(/[\/\\\?\*:|"<>\.]/g, '');
 
+		  // replace multiple blanks in filename with single blank
+		  var filename = filename.replace(/ {2,}/g, ' ');
+
 		  // replace blanks with '_' if option selected 	
 		  if (this.prefs.getBoolPref("replace_blanks"))  var filename = filename.replace(/ /g, '_');
 		
