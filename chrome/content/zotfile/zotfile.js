@@ -1760,8 +1760,9 @@ Zotero.ZotFile = {
 					// extract annotations from pdf and create note with annotations 
 					if(Zotero.ZotFile.getFiletype(file.leafName)=="pdf") {
 						var outputFile=file.path.replace(".pdf",".txt"); 
-						this.callExtractor(file.path,outputFile);
-						this.getExtractedAnnotationsFromFile(outputFile);
+						this.extractAnnotationsFromFile(file.path);
+						//this.callExtractor(file.path,outputFile);
+						//this.getExtractedAnnotationsFromFile(outputFile);
 						if(this.annotations.length!=0) this.createNote(item.getID());
 
 						// delete output text file 
@@ -1776,6 +1777,29 @@ Zotero.ZotFile = {
 			}
 
 		},
+
+            extractAnnotationsFromFile: function(attachment) {
+
+                var url = 'chrome://zotfile/content/pdfextract/extract.html?url='
+                url += encodeURIComponent('file://' + attachment);
+                alert(url);
+                gBrowser.addTab(url);
+
+                //var newTabBrowser = gBrowser.getBrowserForTab(gBrowser.addTab(url));
+                //newTabBrowser.addEventListener("load", function () {
+                //    newTabBrowser.contentDocument.body.innerHTML = "<div>hello world</div>";
+                //}, true);
+                
+                // a = {
+		//     filename:line_split[0],
+		//     page:parseInt(line_split[1]),
+		//     ID:parseInt(line_split[2]),
+		//     type:line_split[3],
+		//     text:strText,
+		//     textMarkUp:strMarkUp
+		// };
+		// this.annotations.push(a);
+            },
 
 		getExtractedAnnotationsFromFile: function(outputFile) {
 			var file=Zotero.ZotFile.createFile(outputFile); 
