@@ -1638,6 +1638,8 @@ Zotero.ZotFile = {
 	// class to extract pdf annotations
 	pdfAnnotations : {
 	    annotations: [],
+            pdfAttachmentsForExtraction: [],
+            pdfTab: null,
 		extractorFileName: 'ExtractPDFAnnotations',
 	    extractorPath:null,
 		extractorVersion:1.0,
@@ -1759,16 +1761,25 @@ Zotero.ZotFile = {
 
 					// extract annotations from pdf and create note with annotations 
 					if(Zotero.ZotFile.getFiletype(file.leafName)=="pdf") {
-						var outputFile=file.path.replace(".pdf",".txt"); 
-						this.extractAnnotationsFromFile(file.path);
+						//var outputFile=file.path.replace(".pdf",".txt"); 
+						this.pdfAttachmentsForExtraction.push(file.path);
 						//this.callExtractor(file.path,outputFile);
 						//this.getExtractedAnnotationsFromFile(outputFile);
-						if(this.annotations.length!=0) this.createNote(item.getID());
+						//if(this.annotations.length!=0) this.createNote(item.getID());
 
 						// delete output text file 
-						Zotero.ZotFile.removeFile(Zotero.ZotFile.createFile(outputFile));
+						//Zotero.ZotFile.removeFile(Zotero.ZotFile.createFile(outputFile));
 					}
 			    }
+			    if (this.pdfAttachmentsForExtraction.length != 0) {
+                                this.pdfTab = gBrowser.addTab('chrome://zotfile/content/pdfextract/extract.html');
+                                var tb = gBrowser.getBrowserForTab(this.pdfTab);
+                                var f = function () {
+                                    tb.removeEventListener("load", f);
+                                    Zotero.ZotFile.pdfAnnotations.extractAnnotationsFromFile();
+                                }
+                                tb.addEventListener("load", f, true);
+                            }
 //				Zotero.debug("ZotFile - pdfAnnotations - getAnnotations() - end - done");
 			 
 			} else {
@@ -1778,27 +1789,31 @@ Zotero.ZotFile = {
 
 		},
 
-            extractAnnotationsFromFile: function(attachment) {
-
-                var url = 'chrome://zotfile/content/pdfextract/extract.html?url='
-                url += encodeURIComponent('file://' + attachment);
-                alert(url);
-                gBrowser.addTab(url);
-
-                //var newTabBrowser = gBrowser.getBrowserForTab(gBrowser.addTab(url));
-                //newTabBrowser.addEventListener("load", function () {
-                //    newTabBrowser.contentDocument.body.innerHTML = "<div>hello world</div>";
+            /* open extract.html which runs the annotation extraction code */
+            extractAnnotationsFromFile: function() {
+                var attachment = this.pdfAttachmentsForExtraction.shift();
+                //var url = 'chrome://zotfile/content/pdfextract/extract.html';
+                //var url = 'chrome://zotfile/content/pdfextract/extract.html?index='+index+'&url='
+                //url += encodeURIComponent('file://' + attachment);
+                //var tb = gBrowser.getBrowserForTab(this.pdfTab);
+                //tb.loadURI(url);
+                //tb.addEventListener("load", function () {
+                Zotero.ZotFile.PdfExtractor.extractAnnotations('file://'+attachment);
                 //}, true);
-                
-                // a = {
-		//     filename:line_split[0],
-		//     page:parseInt(line_split[1]),
-		//     ID:parseInt(line_split[2]),
-		//     type:line_split[3],
-		//     text:strText,
-		//     textMarkUp:strMarkUp
-		// };
-		// this.annotations.push(a);
+            },
+
+            /* called from extract.html when all annotations have been extracted. */
+            extractionComplete: function(annotations) {
+                // put annotations into a note
+
+                // move on to the next pdf, if there is one
+                if (this.pdfAttachmentsForExtraction.length != 0) {
+                    this.extractAnnotationsFromFile();
+                } else { // we're done
+                    gBrowser.removeTab(this.pdfTab);
+                    this.pdfTab = null;
+                }
+                alert("jld called!");
             },
 
 		getExtractedAnnotationsFromFile: function(outputFile) {
