@@ -1792,19 +1792,14 @@ Zotero.ZotFile = {
             /* open extract.html which runs the annotation extraction code */
             extractAnnotationsFromFile: function() {
                 var attachment = this.pdfAttachmentsForExtraction.shift();
-                //var url = 'chrome://zotfile/content/pdfextract/extract.html';
-                //var url = 'chrome://zotfile/content/pdfextract/extract.html?index='+index+'&url='
-                //url += encodeURIComponent('file://' + attachment);
-                //var tb = gBrowser.getBrowserForTab(this.pdfTab);
-                //tb.loadURI(url);
-                //tb.addEventListener("load", function () {
-                Zotero.ZotFile.PdfExtractor.extractAnnotations('file://'+attachment);
-                //}, true);
+                Zotero.ZotFile.PdfExtractor.extractAnnotations('file://'+attachment, 
+                                                               Zotero.ZotFile.pdfAnnotations, 
+                                                               this.extractionComplete);
             },
 
             /* called from extract.html when all annotations have been extracted. */
             extractionComplete: function(annotations) {
-                // put annotations into a note
+                // TODO: put annotations into a note
 
                 // move on to the next pdf, if there is one
                 if (this.pdfAttachmentsForExtraction.length != 0) {

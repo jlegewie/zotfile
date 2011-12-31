@@ -7,22 +7,9 @@
 
 'use strict';
 
-
-// var params = document.location.search.substring(1).split('&');
-// for (var i = 0; i < params.length; i++) {
-//   var p = params[i].split('=');
-//   params[unescape(p[0])] = unescape(p[1]);
-// }
-
-// var url = params.url;
-// var index = parseInt(params.index);
-//url = 'http://localhost:8000/examples/helloworld/simple-annot-2.pdf';
-//var url = 'file:///Users/devietti/Library/Application Support/Firefox/Profiles/26l0l6oq.zotdev/zotero/storage/MPMJ2TTZ/semicolon-haskell-scripting.pdf';
-
 Zotero.ZotFile.PdfExtractor = {
 
-  extractAnnotations: function(url) {
-
+  extractAnnotations: function(url, callbackObj, callback) {
     PDFJS.getPdf(
       {
         url: url,
@@ -69,7 +56,8 @@ Zotero.ZotFile.PdfExtractor = {
                                     if (annot.content) alert("highlight: " + annot.content);
                                   }
                                 }
-                              Zotero.ZotFile.pdfAnnotations.extractionComplete([]);
+
+                              callback.call(callbackObj, []);
                               // a = {
                               //     filename:line_split[0],
                               //     page:parseInt(line_split[1]),
