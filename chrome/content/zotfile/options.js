@@ -309,7 +309,7 @@ function editSubfolderSetting (index) {
 		updateSubfolderPreferences();   
 	}
 	else {
-		Zotero.ZotFile.infoWindow("ZotFile Reader Error","ZotFile Reader only supports up to " + Zotero.ZotFile.projectMax + " subfolders.",8000);
+		Zotero.ZotFile.infoWindow("ZotFile Error","ZotFile only supports up to " + Zotero.ZotFile.projectMax + " subfolders.",8000);
 	}
 } 
   
@@ -413,7 +413,7 @@ function deleteSubfolder (subfolder) {
 		// iterate through attachments in folder
 		if (attInFolder.length>0) {		
 			// ask user 
-			var userInput=Zotero.ZotFile.promptUser("There are " + attInFolder.length + " attachments in the subfolder you want to delete. What do you want to do?","Remove from Reader","Move to Base Folder","Cancel");
+			var userInput=Zotero.ZotFile.promptUser("There are " + attInFolder.length + " attachments in the subfolder you want to delete. What do you want to do?","Get from Tablet","Send to Base Folder","Cancel");
 	
 			// Pull attachment
 			if(userInput==0) {
