@@ -1206,7 +1206,10 @@ Zotero.ZotFile = {
 			   		if(projectFolder==null) this.moveAttachmentToTablet(parent,item,this.getInfo(item,"projectFolder"));
 			   }
 	   		}
-		}			   
+		}
+		// report 
+		var mess_loc=(projectFolder!="") ? ("'..." + projectFolder + "'.") : "the base folder."		
+		Zotero.ZotFile.infoWindow("ZotFile Report","ZotFile has moved " + items.length + " attachments to " + mess_loc,8000);			   
 	},
 		
 	scanTabletFiles: function() {

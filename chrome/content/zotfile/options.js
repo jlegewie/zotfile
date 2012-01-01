@@ -425,16 +425,7 @@ function deleteSubfolder (subfolder) {
 			}
 
 			// move attachments to base folder  					
-<<<<<<< HEAD
-			if(userInput==1) {
-				Zotero.ZotFile.setTabletFolder(attInFolder,"");
-				// report
-				Zotero.ZotFile.infoWindow("ZotFile Report","ZotFile has moved " + attInFolder.length + " attachments to the base folder.",8000);
-			}
-
-=======
-			if(userInput==1) Zotero.ZotFile.setTabletFolder(attInFolder,"");  			       				 											
->>>>>>> parent of ce77c82... added message for moving attachments after deleting or changing subfolder
+			if(userInput==1) Zotero.ZotFile.setTabletFolder(attInFolder,"");
 			
 			// return false if user canceled
 			if(userInput==2) return(false);
@@ -463,8 +454,6 @@ function changedSubfolder (projectFolderOld,projectFolderNew) {
 		// remove folder if empty
 		var file=Zotero.ZotFile.getTabletLocationFile(projectFolderOld);
 		Zotero.ZotFile.removeFile(file);
-		// report
-		Zotero.ZotFile.infoWindow("ZotFile Report","ZotFile has moved " + attInFolder.length + " attachments to the new location and deleted the old folder if it was empty.",8000);	
 	}	
 }
 
