@@ -425,12 +425,16 @@ function deleteSubfolder (subfolder) {
 			}
 
 			// move attachments to base folder  					
+<<<<<<< HEAD
 			if(userInput==1) {
 				Zotero.ZotFile.setTabletFolder(attInFolder,"");
 				// report
 				Zotero.ZotFile.infoWindow("ZotFile Report","ZotFile has moved " + attInFolder.length + " attachments to the base folder.",8000);
 			}
 
+=======
+			if(userInput==1) Zotero.ZotFile.setTabletFolder(attInFolder,"");  			       				 											
+>>>>>>> parent of ce77c82... added message for moving attachments after deleting or changing subfolder
 			
 			// return false if user canceled
 			if(userInput==2) return(false);
