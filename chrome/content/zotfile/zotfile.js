@@ -85,15 +85,18 @@ Zotero.ZotFile = {
 		
 		// if first run, check for zotfile reader and transfer preferences
 		if (oldVersion=="") this.firstRun();
-		
+
 		// update current version
 		if(!Zotero.isFx36) if(!Zotero.isFx36) AddonManager.getAddonByID("zotfile@columbia.edu",function(aAddon) {  
 			var currentVersion=aAddon.version;
 			
-			// if different versio then previously
+			// if different version then previously
 			if(currentVersion!=oldVersion) {
 				// open webpage
-				if(currentVersion=="2.0") if(!Zotero.isStandalone) Zotero.ZotFile.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.zotfileURL); });
+				if(currentVersion=="2.0") {
+					if(!Zotero.isStandalone) Zotero.ZotFile.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.zotfileURL); });
+					if( Zotero.isStandalone) Zotero.ZotFile.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.zotfileURL); });
+				}
 				
 				// set current version
 				Zotero.ZotFile.prefs.setCharPref("version",currentVersion);
