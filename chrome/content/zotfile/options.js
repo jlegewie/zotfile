@@ -425,7 +425,10 @@ function deleteSubfolder (subfolder) {
 			}
 
 			// move attachments to base folder  					
-			if(userInput==1) Zotero.ZotFile.setTabletFolder(attInFolder,"");  			       				 											
+				Zotero.ZotFile.setTabletFolder(attInFolder,"");
+				Zotero.ZotFile.infoWindow("ZotFile Report","ZotFile has moved " + attInFolder.length + " attachments to the base folder.",8000);
+			}
+
 			
 			// return false if user canceled
 			if(userInput==2) return(false);
