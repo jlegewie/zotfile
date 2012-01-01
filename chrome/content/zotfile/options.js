@@ -425,7 +425,9 @@ function deleteSubfolder (subfolder) {
 			}
 
 			// move attachments to base folder  					
+			if(userInput==1) {
 				Zotero.ZotFile.setTabletFolder(attInFolder,"");
+				// report
 				Zotero.ZotFile.infoWindow("ZotFile Report","ZotFile has moved " + attInFolder.length + " attachments to the base folder.",8000);
 			}
 
@@ -457,6 +459,8 @@ function changedSubfolder (projectFolderOld,projectFolderNew) {
 		// remove folder if empty
 		var file=Zotero.ZotFile.getTabletLocationFile(projectFolderOld);
 		Zotero.ZotFile.removeFile(file);
+		// report
+		Zotero.ZotFile.infoWindow("ZotFile Report","ZotFile has moved " + attInFolder.length + " attachments to the new location and deleted the old folder if it was empty.",8000);	
 	}	
 }
 
