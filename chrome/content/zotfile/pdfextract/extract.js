@@ -18,6 +18,7 @@ Zotero.ZotFile.PdfExtractor = {
         },
         error: function getPdfError(e) {
           Components.utils.reportError("pdf error: " + args.url + " " + e.target + " " + e.target.status);
+          args.callback.call(args.callbackObj, [], args.item);
         }
       },
       function getPdfLoad(data) {
@@ -43,7 +44,6 @@ Zotero.ZotFile.PdfExtractor = {
           
           if (err || !currentPage.extractedAnnotations) {
             Components.utils.reportError('An error occurred while rendering page ' + pageNum + " of " + args.url + " " + err);
-            return;
           }
           for each (var annot in currentPage.extractedAnnotations) {
             var a = {};
