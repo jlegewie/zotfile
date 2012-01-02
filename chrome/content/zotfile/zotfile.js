@@ -861,7 +861,7 @@ Zotero.ZotFile = {
 				file.remove(false);
 			} 
 			catch(err){
-			
+				if(file.isDirectory()) this.infoWindow("ZotFile Report","ZotFile was unable delete the old folder probably because other files are in the folder.",8000);			
 			}
 		}
 	},

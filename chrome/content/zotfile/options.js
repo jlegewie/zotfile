@@ -413,7 +413,7 @@ function deleteSubfolder (subfolder) {
 		// iterate through attachments in folder
 		if (attInFolder.length>0) {		
 			// ask user 
-			var userInput=Zotero.ZotFile.promptUser("There are " + attInFolder.length + " attachments in the subfolder you want to delete. What do you want to do?","Get from Tablet","Send to Base Folder","Cancel");
+			var userInput=Zotero.ZotFile.promptUser("There are " + attInFolder.length + " attachments in the subfolder you want to delete. What do you want to do?","Get from Tablet","Move to Base Folder","Cancel");
 	
 			// Pull attachment
 			if(userInput==0) {
