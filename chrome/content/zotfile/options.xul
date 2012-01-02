@@ -146,7 +146,7 @@
 					<tabpanel orient="vertical">
 
 						<label value="ZotFile can streamline the process of reading and annotating your Zotero attachments" />
-						<label value="on a iPad or Android tablet using a pdf annotation app. It moves and removes pdfs to and" />
+						<label value="on a iPad or Android tablet using a pdf annotation app. It sends pdfs to and gets them back" />
 						<label value="from the tablet, renames and sorts them into subfolders so that you can find them, and" />
 						<label value="extracts the annotations and highlighted text to a Zotero note." />
 						<separator class="thin"/>						
@@ -196,20 +196,20 @@
 						
 						-->  
 												 					 
-					   <checkbox id="id-zotfile-tablet-rename" label="Rename files when they are moved to the tablet" preference="pref-zotfile-tablet-rename"/>				    						
+					   <checkbox id="id-zotfile-tablet-rename" label="Rename files when they are send to the tablet" preference="pref-zotfile-tablet-rename"/>				    						
 					   <hbox style="margin: 0"  align="center">					  		   
 						   <checkbox id="id-zotfile-tablet-storeCopyOfFile" label="Save copy of annotated file with suffix" preference="pref-zotfile-tablet-storeCopyOfFile"  oncommand="updatePreferenceWindow('storeCopyOfFile')"/>
 						   <textbox id="id-zotfile-tablet-storeCopyOfFile_suffix" preference="pref-zotfile-tablet-storeCopyOfFile_suffix" width="130"/>
-						   <image src="chrome://zotfile/skin/information.png" tooltiptext="By default, removing an attachment from the reader replaces the file saved in Zotero. When this option is enabled, zotfile instead creates a copy of the file with a specified suffix and adds this file as an additional attachment to Zotero."/>
+						   <image src="chrome://zotfile/skin/information.png" tooltiptext="By default, getting an attachment back from the tablet replaces the file saved in Zotero. When this option is enabled, zotfile instead creates a copy of the file with a specified suffix and adds this file as an additional attachment to Zotero."/>
 					   </hbox>		
-					   <checkbox id="id-zotfile-pdfExtraction-Pull" label="Automatically extract annotations when attachment is removed from tablet" preference="pref-zotfile-pdfExtraction-Pull"/>				    						
+					   <checkbox id="id-zotfile-pdfExtraction-Pull" label="Automatically extract annotations when getting pdfs back from tablet" preference="pref-zotfile-pdfExtraction-Pull"/>				    						
 					<!--										
 		   		        <hbox style="margin: 0">					
-						    <checkbox id="id-zotfile-tablet-tagParentPush" label="Tag parent item when attachment is moved to the tablet using" preference="pref-zotfile-tablet-tagParentPush"/>	
+						    <checkbox id="id-zotfile-tablet-tagParentPush" label="Tag parent item when attachment is send to the tablet using" preference="pref-zotfile-tablet-tagParentPush"/>	
 							<textbox id="id-zotfile-tablet-tagParentPush_tag" preference="pref-zotfile-tablet-tagParentPush_tag" width="100"/>				
 						</hbox>     					  			                        		
 						<hbox style="margin: 0">					
-						    <checkbox id="id-zotfile-tablet-tagParentPull" label="Tag parent item when attachment is removed from the tablet using" preference="pref-zotfile-tablet-tagParentPull"/>	
+						    <checkbox id="id-zotfile-tablet-tagParentPull" label="Tag parent item when getting attachment from the tablet using" preference="pref-zotfile-tablet-tagParentPull"/>	
 							<textbox id="id-zotfile-tablet-tagParentPull_tag" preference="pref-zotfile-tablet-tagParentPull_tag" width="100"/>				
 						</hbox>     					  			                        																	
 				    	-->											 			                        	   
