@@ -736,11 +736,15 @@ Zotero.ZotFile = {
 		  // (code line adopted from Zotero)
 		  var filename = filename.replace(/[\/\\\?\*:|"<>\.]/g, '');
 
-		  // replace multiple blanks in filename with single blank
-		  var filename = filename.replace(/ {2,}/g, ' ');
+		  // replace multiple blanks in filename with single blank & remove whitespace
+		  //var filename = filename.replace(/ {2,}/g, ' ');
+		  var filename = Zotero.Utilities.trimInternal(filename);
 
 		  // replace blanks with '_' if option selected 	
 		  if (this.prefs.getBoolPref("replace_blanks"))  var filename = filename.replace(/ /g, '_');
+
+		  // remove all the accents and other strange characters from filename
+		  var filename = Zotero.Utilities.removeDiacritics(filename);
 		
 		}
 		if (this.prefs.getBoolPref("useZoteroToRename")) filename=Zotero.Attachments.getFileBaseNameFromItem(item.itemID);
