@@ -1,4 +1,3 @@
-Zotero plugin to manage your attachments
 ZotFile: Zotero plugin to manage your attachments
 by Joscha Legewie
 
@@ -9,6 +8,7 @@ Installation
 The currently released version (1.6.x) is available at
 https://addons.mozilla.org/en-US/firefox/addon/zotfile/
 The version on github is the development version for 2.0. Beta releases for this version are posted at http://forums.zotero.org/discussion/18737/3/zotfile-reader-zotero-plugin-to-work-with-tablet-ipad-android-tablets-etc/ (see end of thread for most recent version).
+
 To install the development version on github:
 - download .zip file from github
 - rename file to .xpi
