@@ -17,7 +17,6 @@ function disablePreference(setting, pref, revert) {
 function updatePreferenceWindow(which) {
 		
 	if(which=="all") {
-		updatePDFToolsStatus();	           	
 		updateFolderIcon("all",false);  
 		Zotero.ZotFile.temp=Zotero.ZotFile.prefs.getCharPref("tablet.dest_dir");		
 		/*if(document.getElementById('pref-zotfile-tablet-mode').value==2) {
@@ -542,23 +541,3 @@ function showSelectedSubfolder() {
 	Zotero.ZotFile.showFolder(folderFile);
 
 }
-
-
-// ==================== //
-// FUNCTIONS: PDF TOOL //
-// =================== //
-
-function updatePDFToolsStatus() {
-}
-
-function checkForUpdates(button,installedVersion) {
-}
-
-function getInstalledVersion () {
-    return 1;
-}
-
-function downloadPDFTool() {
-}
-      
-   

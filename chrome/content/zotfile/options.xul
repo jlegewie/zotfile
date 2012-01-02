@@ -128,21 +128,7 @@
 			                 	  			                        		
 							</groupbox>
 							<separator/> 
-							
-							<groupbox>
-							   <caption label="Extract Annotations and Highlighted Text from PDF Files"/>    
-								<label value="ZotFile can extract annotations and highlighted text from your pdf attachments."/>					
-								<label value="This feature is currently only available for Mac OS and requires a separate installation."/>					
-								<separator/>
-							   
-							   <hbox style="margin: 0" align="center">
-							   	   <button id="pdf-annotations-extractor-update-button" oncommand="downloadPDFTool()" flex="1"/>
-							   </hbox>
-							   <label style="font-size: 9px" id="pdf-annotations-extractor-version" value="" hidden="true"/>					
-
-							</groupbox>     					   			
-							
-										
+					
 						    <hbox style="margin: 0">					
 							   <label style="margin-right:0px" value="For a detailed description of each preference see the "/>
 							   <label style="margin-left:0px; margin-right:0px" class="text-link" href="http://www.columbia.edu/~jpl2136/zotfile.html" value="zotfile website"/>
