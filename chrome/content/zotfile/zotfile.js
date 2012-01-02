@@ -1768,7 +1768,7 @@ Zotero.ZotFile = {
                         cite = Zotero.ZotFile.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ");
                     
 		    // add to note text pdfExtractionNoteRemoveHtmlNote
-                    var content = anno.content ? anno.content.trim() : "";
+                    var content = anno.content ? anno.content : "";
 		    if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteRemoveHyphens")) {
                         content = this.removeHyphens(content);
                     }
