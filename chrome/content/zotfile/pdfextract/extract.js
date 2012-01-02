@@ -38,7 +38,6 @@ Zotero.ZotFile.PdfExtractor = {
         var pageNum = 1;
         var currentPage = pageOne;
 
-        // TODO: this recursive function runs numPages+1 times; not sure why!
         var renderingDone = function(err) {
           //alert("renderingDone() page " + pageNum + " of " + pdf.numPages); // jld
           
@@ -48,7 +47,7 @@ Zotero.ZotFile.PdfExtractor = {
           }
           for each (var annot in currentPage.extractedAnnotations) {
             var a = {};
-            a.filename = args.url; // TODO: basename
+            a.filename = args.url; // TODO: basename instead?
             a.page = pageNum;
             a.type = annot.type;
             a.content = annot.content;
