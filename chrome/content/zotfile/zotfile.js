@@ -1744,6 +1744,8 @@ Zotero.ZotFile = {
 		var htmlTagNoteEnd = Zotero.ZotFile.prefs.getCharPref("pdfExtraction.NoteHtmlTagEnd");
 		var htmlTagHighlightStart = Zotero.ZotFile.prefs.getCharPref("pdfExtraction.HighlightHtmlTagStart");
 		var htmlTagHighlightEnd = Zotero.ZotFile.prefs.getCharPref("pdfExtraction.HighlightHtmlTagEnd");
+		var htmlTagUnderlineStart = Zotero.ZotFile.prefs.getCharPref("pdfExtraction.UnderlineHtmlTagStart");
+		var htmlTagUnderlineEnd = Zotero.ZotFile.prefs.getCharPref("pdfExtraction.UnderlineHtmlTagEnd");
                 
 		// iterate over annotations
                 var note = "";
@@ -1774,6 +1776,8 @@ Zotero.ZotFile = {
 			note += "<p>"+htmlTagNoteStart+content+htmlTagNoteEnd+"</p><br/>";
                     } else if (anno.type == "Highlight") {
 			note += "<p>"+htmlTagHighlightStart+"\""+content+"\" (" + cite + page + ")" +htmlTagHighlightEnd+"</p><br/>";
+                    } else if (anno.type == "Underline") {
+			note += "<p>"+htmlTagUnderlineStart+"\""+content+"\" (" + cite + page + ")" +htmlTagUnderlineEnd+"</p><br/>";
                     }
 		}
 		return note;

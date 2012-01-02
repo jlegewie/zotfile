@@ -97,3 +97,5 @@ pref("extensions.zotfile.pdfExtraction.NoteHtmlTagStart", "<i>");
 pref("extensions.zotfile.pdfExtraction.NoteHtmlTagEnd", "</i>");
 pref("extensions.zotfile.pdfExtraction.HighlightHtmlTagStart", "");
 pref("extensions.zotfile.pdfExtraction.HighlightHtmlTagEnd", "");
+pref("extensions.zotfile.pdfExtraction.UnderlineHtmlTagStart", "<u>");
+pref("extensions.zotfile.pdfExtraction.UnderlineHtmlTagEnd", "</u>");
