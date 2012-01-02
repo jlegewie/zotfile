@@ -1,10 +1,6 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set shiftwidth=2 tabstop=2 autoindent cindent expandtab: */
 
-//
-// See README for overview
-//
-
 'use strict';
 
 Zotero.ZotFile.PdfExtractor = {
@@ -24,12 +20,6 @@ Zotero.ZotFile.PdfExtractor = {
       function getPdfLoad(data) {
         var pdf = new PDFJS.PDFDoc(data);
         var pageOne = pdf.getPage(1);
-        var metadata = pdf.pdf.xref.fetch( {num:1, gen:0}, false );
-        if ('map' in metadata) {
-          var Author = metadata.map.Author ? pdf.pdf.xref.fetch( metadata.map.Author, false ) : "";
-          var Title = metadata.map.Title ? pdf.pdf.xref.fetch( metadata.map.Title, false ) : "";
-          var Keywords = metadata.map.Keywords ? pdf.pdf.xref.fetch( metadata.map.Keywords, false ) : "";
-        }
         
         // Prepare canvas using PDF page dimensions
         var canvas = document.createElement('canvas');
@@ -80,4 +70,4 @@ Zotero.ZotFile.PdfExtractor = {
 
       });
   } // extractAnnotations()
-};
+}; // Zotero.ZotFile.PdfExtractor
