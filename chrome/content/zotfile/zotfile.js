@@ -1202,8 +1202,8 @@ Zotero.ZotFile = {
 				}
 				// now push
 			   if(parent.isRegularItem()) {
-			   		if(projectFolder!=null) this.moveAttachmentToTablet(parent,item,projectFolder);
-			   		if(projectFolder==null) this.moveAttachmentToTablet(parent,item,this.getInfo(item,"projectFolder"));
+			   		if(projectFolder!=null) this.moveAttachmentToTablet(parent,item,projectFolder,false);
+			   		if(projectFolder==null) this.moveAttachmentToTablet(parent,item,this.getInfo(item,"projectFolder"),false);
 			   }
 	   		}
 		}
@@ -1279,10 +1279,11 @@ Zotero.ZotFile = {
 		if(count==0) this.infoWindow("ZotFile Report","Scan Tablet did not find any updated items in the destination folder.",8000);	  	    		
 	},	
 				
-	moveAttachmentToTablet: function(item, att, projectFolder) {
+	moveAttachmentToTablet: function(item, att, projectFolder, verbose) {
 
-	   var newAttID=null; 
-	   var file = att.getFile();     
+		var verbose = (typeof verbose == 'undefined') ? true : verbose;
+		var newAttID=null; 
+		var file = att.getFile();     
 
 	   if(this.fileExists(att) & this.checkFileType(att.getFile())) {
 			
@@ -1326,7 +1327,7 @@ Zotero.ZotFile = {
 			this.addInfo(att,"projectFolder",projectFolder);		
 			
 			// notification
-			this.infoWindow("ZotFile Report","The attachment \'" + newFile.leafName + "\' was sent to the tablet.",8000); // at \'" + projectFolder + "\'.
+			if(verbose) this.infoWindow("ZotFile Report","The attachment \'" + newFile.leafName + "\' was sent to the tablet.",8000); // at \'" + projectFolder + "\'.
 		} 
 		return(newAttID);
 	},    
