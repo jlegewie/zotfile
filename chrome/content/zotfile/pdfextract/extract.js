@@ -77,4 +77,7 @@ Zotero.ZotFile.PdfExtractor = {
 
       });
   } // extractAnnotations()
+
 }; // Zotero.ZotFile.PdfExtractor
+
+Zotero.ZotFile.pdfAnnotations.extractAnnotationsFromFiles.call(Zotero.ZotFile.pdfAnnotations);

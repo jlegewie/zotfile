@@ -1643,8 +1643,9 @@ Zotero.ZotFile = {
 		*/
 		pdfAttachmentsForExtraction: [],
 		numTotalPdfAttachments: 0,
-		/** The browser tab where PDFs get rendered by pdf.js */
+		/** The browser tab where PDFs get rendered by pdf.js. Not use by Zotero Standalone. */
 		pdfTab: null,
+		PDF_EXTRACT_URL: 'chrome://zotfile/content/pdfextract/extract.html',
 
 		getAnnotations: function(attIDs) {
 //			Zotero.debug("ZotFile - pdfAnnotations - getAnnotations() - called");
@@ -1704,16 +1705,13 @@ Zotero.ZotFile = {
 				if (this.pdfAttachmentsForExtraction.length > 0) {
 					this.numTotalPdfAttachments = this.pdfAttachmentsForExtraction.length;
 					Zotero.showZoteroPaneProgressMeter("Extract PDF annotations",true);
-					this.pdfTab = gBrowser.addTab('chrome://zotfile/content/pdfextract/extract.html');
-					var tb = gBrowser.getBrowserForTab(this.pdfTab);
-					var hasRun = false;
-					var f = function () {
-						tb.removeEventListener("load", f); // doesn't seem to work
-						if (hasRun) return; 
-						hasRun = true;
-						Zotero.ZotFile.pdfAnnotations.extractAnnotationsFromFiles();
+					if (Zotero.isStandalone) {
+						ZoteroPane_Local.loadURI(this.PDF_EXTRACT_URL);
+						// TODO: Can't figure out how to hide the ZoteroPane_Local during extraction...
+						//ZoteroPane_Local.makeHidden();
+					} else {
+						this.pdfTab = gBrowser.addTab(this.PDF_EXTRACT_URL);
 					}
-					tb.addEventListener("load", f, true);
 				}
 //				Zotero.debug("ZotFile - pdfAnnotations - getAnnotations() - end - done");
 
@@ -1746,7 +1744,6 @@ Zotero.ZotFile = {
                 var percentDone = ((this.numTotalPdfAttachments - this.pdfAttachmentsForExtraction.length) / this.numTotalPdfAttachments) * 100.0;
                 Zotero.updateZoteroPaneProgressMeter(percentDone);
                 
-                //alert("extractionComplete() " + annotations.length); // jld
                 // put annotations into a Zotero note
                 if (annotations.length > 0) this.createNote(annotations, item);
                 
@@ -1754,10 +1751,14 @@ Zotero.ZotFile = {
                 if (this.pdfAttachmentsForExtraction.length > 0) {
                     this.extractAnnotationsFromFiles();
                 } else { // we're done
-                    gBrowser.removeTab(this.pdfTab);
+                    if (Zotero.isStandalone) {
+                        ZoteroPane_Local.makeHidden();
+                    } else {
+                        gBrowser.removeTab(this.pdfTab);
+                    }
                     this.pdfTab = null;
                     this.numTotalPdfAttachments = 0;
-                    Zotero.hideZoteroPaneOverlay();
+                    Zotero.hideZoteroPaneOverlay(); // hide progress bar
                 }
             },
 
