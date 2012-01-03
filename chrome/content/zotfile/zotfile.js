@@ -1642,6 +1642,7 @@ Zotero.ZotFile = {
 		item: the Zotero item containing the attachment
 		*/
 		pdfAttachmentsForExtraction: [],
+		numTotalPdfAttachments: 0,
 		/** The browser tab where PDFs get rendered by pdf.js */
 		pdfTab: null,
 
@@ -1701,6 +1702,8 @@ Zotero.ZotFile = {
 					}
 				}
 				if (this.pdfAttachmentsForExtraction.length > 0) {
+					this.numTotalPdfAttachments = this.pdfAttachmentsForExtraction.length;
+					Zotero.showZoteroPaneProgressMeter("Extract PDF annotations",true);
 					this.pdfTab = gBrowser.addTab('chrome://zotfile/content/pdfextract/extract.html');
 					var tb = gBrowser.getBrowserForTab(this.pdfTab);
 					var hasRun = false;
@@ -1739,6 +1742,10 @@ Zotero.ZotFile = {
              * highlighted/underlined).
              * @param item The Zotero item these annotations came from */
             extractionComplete: function(annotations, item) {
+                // update progress bar
+                var percentDone = ((this.numTotalPdfAttachments - this.pdfAttachmentsForExtraction.length) / this.numTotalPdfAttachments) * 100.0;
+                Zotero.updateZoteroPaneProgressMeter(percentDone);
+                
                 //alert("extractionComplete() " + annotations.length); // jld
                 // put annotations into a Zotero note
                 if (annotations.length > 0) this.createNote(annotations, item);
@@ -1749,6 +1756,8 @@ Zotero.ZotFile = {
                 } else { // we're done
                     gBrowser.removeTab(this.pdfTab);
                     this.pdfTab = null;
+                    this.numTotalPdfAttachments = 0;
+                    Zotero.hideZoteroPaneOverlay();
                 }
             },
 
