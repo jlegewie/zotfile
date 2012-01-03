@@ -1708,7 +1708,7 @@ Zotero.ZotFile = {
 					if (Zotero.isStandalone) {
 						ZoteroPane_Local.loadURI(this.PDF_EXTRACT_URL);
 						// TODO: Can't figure out how to hide the ZoteroPane_Local during extraction...
-						//ZoteroPane_Local.makeHidden();
+						ZoteroPane_Local.makeHidden();
 					} else {
 						this.pdfTab = gBrowser.addTab(this.PDF_EXTRACT_URL);
 					}
@@ -1752,6 +1752,7 @@ Zotero.ZotFile = {
                     this.extractAnnotationsFromFiles();
                 } else { // we're done
                     if (Zotero.isStandalone) {
+                        // TODO: Can't figure out how to hide ZoteroPane_Local when extraction is complete
                         ZoteroPane_Local.makeHidden();
                     } else {
                         gBrowser.removeTab(this.pdfTab);
