@@ -1,7 +1,7 @@
 Zotero.ZotFile = {
 	
 	prefs: null,
-    wm: null,
+	wm: null,
 	fileMap: {}, //maps collections to their file objects
 	folderSep:null,
 	projectNr: new Array("01","02","03","04","05","06","07","08","09","10","11","12","13","14","15"),     
@@ -1635,7 +1635,14 @@ Zotero.ZotFile = {
 	
 	// class to extract pdf annotations
 	pdfAnnotations : {
+		/** The list of PDFs we should extract annotations from.  Each
+		element is an object with the following fields:
+		attachment: the Zotero object representing the attachment
+		path: an absolute path to the attachment file
+		item: the Zotero item containing the attachment
+		*/
 		pdfAttachmentsForExtraction: [],
+		/** The browser tab where PDFs get rendered by pdf.js */
 		pdfTab: null,
 
 		getAnnotations: function(attIDs) {
@@ -1709,7 +1716,8 @@ Zotero.ZotFile = {
 
 		},
 
-            /* open extract.html which runs the annotation extraction code */
+            /* Runs the annotation extraction code in extract.html/extract.js,
+             * to extract annotations from a single PDF. */
             extractAnnotationsFromFiles: function() {
                 var attachment = this.pdfAttachmentsForExtraction.shift();
                 var args = {};
@@ -1720,10 +1728,19 @@ Zotero.ZotFile = {
                 Zotero.ZotFile.PdfExtractor.extractAnnotations(args);
             },
 
-            /* called from extract.html when all annotations have been extracted. */
+            /* Called from extract.js when all annotations for a single PDF have
+             * been extracted.  
+             * @param annotations An array of annotation objects. Each element
+             * contains the following fields: url (a url pointing to the file
+             * this annotation came from), page (the page number within the
+             * document of this annotation), type (the type of annotation,
+             * e.g. "Highlight", or "Text"), and content (the contents of the
+             * annotation, e.g. the text of the note or the words that were
+             * highlighted/underlined).
+             * @param item The Zotero item these annotations came from */
             extractionComplete: function(annotations, item) {
                 //alert("extractionComplete() " + annotations.length); // jld
-                // put annotations into a note
+                // put annotations into a Zotero note
                 if (annotations.length > 0) this.createNote(annotations, item);
                 
                 // move on to the next pdf, if there is one

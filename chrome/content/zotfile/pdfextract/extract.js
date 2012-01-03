@@ -5,6 +5,10 @@
 
 Zotero.ZotFile.PdfExtractor = {
 
+  /** Extract annotations from a single PDF.
+   * @see Zotero.ZotFile.pdfAnnotations.pdfAttachmentsForExtraction (zotfile.js)
+   * for documentation on args object.
+   */
   extractAnnotations: function(args) {
     PDFJS.getPdf(
       {
@@ -25,6 +29,8 @@ Zotero.ZotFile.PdfExtractor = {
         var canvas = document.createElement('canvas');
         var context = canvas.getContext('2d');
 
+        /** @see Zotero.ZotFile.pdfAnnotations.extractionComplete()
+         * (zotfile.js) for documentation on annotations array. */
         var annotations = [];
         var pageNum = 1;
         var currentPage = pageOne;
@@ -35,6 +41,7 @@ Zotero.ZotFile.PdfExtractor = {
           if (err || !currentPage.extractedAnnotations) {
             Components.utils.reportError('An error occurred while rendering page ' + pageNum + " of " + args.url + " " + err);
           }
+
           for each (var annot in currentPage.extractedAnnotations) {
             var a = {};
             a.filename = args.url; // TODO: basename instead?
