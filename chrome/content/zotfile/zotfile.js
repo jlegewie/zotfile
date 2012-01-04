@@ -1954,6 +1954,15 @@ Zotero.ZotFile = {
                 Zotero.ZotFile.PdfExtractor.extractAnnotations(args);
             },
 
+            /** Called from extract.js whenever a page is processed. */
+            pageExtractionComplete: function(pagesProcessed, totalPages) {
+                // update progress bar
+                var fractionDone = (this.numTotalPdfAttachments - this.pdfAttachmentsForExtraction.length - 1) / 
+                    this.numTotalPdfAttachments;
+                fractionDone += ((pagesProcessed / totalPages) * (1.0 / this.numTotalPdfAttachments));
+                Zotero.updateZoteroPaneProgressMeter(fractionDone * 100.0);
+            },
+
             /* Called from extract.js when all annotations for a single PDF have
              * been extracted.
              * @param annotations An array of annotation objects. Each element
@@ -1964,11 +1973,7 @@ Zotero.ZotFile = {
              * any pop-up note in this annotation), and markup (the words from
              * the document, if any, that were highlighted/underlined).
              * @param item The Zotero item these annotations came from */
-            extractionComplete: function(annotations, item) {
-                // update progress bar
-                var percentDone = ((this.numTotalPdfAttachments - this.pdfAttachmentsForExtraction.length) / this.numTotalPdfAttachments) * 100.0;
-                Zotero.updateZoteroPaneProgressMeter(percentDone);
-                
+            extractionComplete: function(annotations, item) {                
                 // put annotations into a Zotero note
                 if (annotations.length > 0) this.createNote(annotations, item);
                 

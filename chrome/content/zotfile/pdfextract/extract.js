@@ -54,6 +54,8 @@ Zotero.ZotFile.PdfExtractor = {
         }
 
         var renderingDone = function(err) {
+          Zotero.ZotFile.pdfAnnotations.pageExtractionComplete(pageNum, pdf.numPages);
+
           if (err || !currentPage.extractedAnnotations) {
             Components.utils.reportError('An error occurred while rendering page '+pageNum+' of '+args.url+' '+err);
           }
