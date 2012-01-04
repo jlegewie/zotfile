@@ -78,4 +78,4 @@ Zotero.ZotFile.PdfExtractor = {
 
 }; // Zotero.ZotFile.PdfExtractor
 
-Zotero.ZotFile.pdfAnnotations.extractAnnotationsFromFiles.call(Zotero.ZotFile.pdfAnnotations);
+Zotero.ZotFile.pdfAnnotations.extractAnnotationsFromFiles();

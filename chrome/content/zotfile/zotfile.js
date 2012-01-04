@@ -1754,7 +1754,7 @@ Zotero.ZotFile = {
             },
 
 	    createNote: function(annotations, item) {
-		var note = new (Zotero.Item)("note"); 
+		var note = new Zotero.Item("note");
 //			note.setNote(Zotero.Utilities.text2html(note_content)); 
 		var title = "<b>Extracted Annotations (" + (new Date()).toUTCString() + ")</b><br><br>";
 
