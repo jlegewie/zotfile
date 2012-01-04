@@ -680,7 +680,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         annot.markupGeom[quad] = {brx:charBlx+charWidth};
         annot.markup[quad] = character;
       } else {
-        if (!isSpace && charBlx >= annot.markupGeom[quad].brx + 2.0) {
+        if (!isSpace && charBlx >= annot.markupGeom[quad].brx + 1.0) {
           annot.markup[quad] += ' ';
         }
         annot.markupGeom[quad].brx = charBlx+charWidth;
