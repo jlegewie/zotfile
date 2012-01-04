@@ -650,6 +650,43 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       div.dataset.textLength = text.length;
       this.textDivs.push(div);
     },
+    /** Determines if character, with bottom left corner at (charX,charY) and
+     * width charWidth, falls within the bounds of annotation annot. If so,
+     * returns the 0-based index of the quad region within which the character
+     * falls. If the character is outside the annotation, returns -1. */
+    characterWithinAnnotation: function canvasGraphicsCharacterWithinAnnotation(annot, charX, charY, charWidth) {
+      if (annot.type && (annot.type == "Highlight" || annot.type == "Underline")) {
+        for (var i = 0; i < annot.quadPoints.length; i++) {
+          var quad = annot.quadPoints[i];
+          // only grab characters where 50% of the character's width lies within the annotation
+          if (charX+(.5*charWidth) >= quad.x/*tlx*/ && charX+(.5*charWidth) <= quad.x + quad.width/*brx*/ &&
+              charY >= quad.y/*tly*/ && charY <= quad.y + quad.height/*bry*/) {
+            return i;
+          }
+        }
+      }
+      return -1;
+    },
+    /** Update the markup array for annot, placing the given character into the
+     * string associated with the given quad. */
+    updateMarkup: function canvasGraphicsUpdateMarkup(annot, quad, character, charBlx, charWidth, isSpace) {
+      if (quad < 0) return;
+
+      if (!annot.markup) {
+        annot.markup = [];
+        annot.markupGeom = [];
+      }
+      if (!annot.markup[quad]) {
+        annot.markupGeom[quad] = {brx:charBlx+charWidth};
+        annot.markup[quad] = character;
+      } else {
+        if (!isSpace && charBlx >= annot.markupGeom[quad].brx + 2.0) {
+          annot.markup[quad] += ' ';
+        }
+        annot.markupGeom[quad].brx = charBlx+charWidth;
+        annot.markup[quad] += character;
+      }
+    },
     showText: function canvasGraphicsShowText(str, skipTextSelection) {
       var ctx = this.ctx;
       var current = this.current;
@@ -666,35 +703,6 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       var text = {str: '', length: 0, canvasWidth: 0, geom: {}};
       var textSelection = textLayer && !skipTextSelection ? true : false;
       var textRenderingMode = current.textRenderingMode;
-
-      /** Determines if character, whose bottom left corner is at (charX,charY)
-       * and who has width charWidth, falls within the bounds of annotation
-       * annot. If so, returns the 0-based index of the quad region within which
-       * the character falls. If the character is outside the annotation,
-       * returns -1. */
-      function characterWithinAnnotation(annot, charX, charY, charWidth) {
-        if (annot.type && (annot.type == "Highlight" || annot.type == "Underline")) {
-          for (var i = 0; i < annot.quadPoints.length; i++) {
-            var quad = annot.quadPoints[i];
-            // only grab characters where 50% of the character's width lies within the annotation
-            if (charX+(.5*charWidth) >= quad.x/*tlx*/ && charX+(.5*charWidth) <= quad.x + quad.width/*brx*/ &&
-                charY >= quad.y/*tly*/ && charY <= quad.y + quad.height/*bry*/) {
-              return i;
-            }
-          }
-        }
-        return -1;
-      }
-      function updateMarkup(annot, quad, character) {
-        if (quad != -1) {
-          if (!annot.markup) annot.markup = [];
-          if (!annot.markup[quad]) {
-            annot.markup[quad] = character;
-          } else {
-            annot.markup[quad] += character;
-          }
-        }
-      }
 
       // Type3 fonts - each glyph is a "mini-PDF"
       if (font.coded) {
@@ -733,10 +741,11 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
           current.x += width * textHScale;
 
           var charX = text.geom.x + (width * text.geom.hScale);
+          var scaledCharWidth = width * text.geom.hScale;
           for (var j = 0; j < this.annotations.length; j++) {
             var annot = this.annotations[j];
-            var quad = characterWithinAnnotation(annot, charX, text.geom.y, charWidth);
-            updateMarkup(annot, quad, glyph.unicode);
+            var quad = this.characterWithinAnnotation(annot, charX, text.geom.y, scaledCharWidth);
+            this.updateMarkup(annot, quad, glyph.unicode, charX, scaledCharWidth, false);
           }
 
           text.str += glyph.unicode;
@@ -784,10 +793,11 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
           }
 
           var charX = text.geom.x + (width * text.geom.hScale);
+          var scaledCharWidth = charWidth * text.geom.hScale;
           for (var j = 0; j < this.annotations.length; j++) {
             var annot = this.annotations[j];
-            var quad = characterWithinAnnotation(annot, charX, text.geom.y, charWidth);
-            updateMarkup(annot, quad, glyph.unicode);
+            var quad = this.characterWithinAnnotation(annot, charX, text.geom.y, scaledCharWidth);
+            this.updateMarkup(annot, quad, glyph.unicode, charX, scaledCharWidth, false);
           }
 
           width += charWidth;
@@ -818,7 +828,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       var text = {str: '', length: 0, canvasWidth: 0, geom: {}};
       var textSelection = textLayer ? true : false;
 
-      if (textSelection) {
+      if (textSelection || this.annotations) {
         ctx.save();
         // Type3 fonts - each glyph is a "mini-PDF" (see also showText)
         if (font.coded) {
@@ -838,7 +848,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
           var spacingLength = -e * 0.001 * fontSize * textHScale;
           current.x += spacingLength;
 
-          if (textSelection) {
+          if (textSelection || this.annotations) {
             // Emulate precise spacing via HTML spaces
             text.canvasWidth += spacingLength;
             if (e < 0 && text.geom.spaceWidth > 0) { // avoid div by zero
@@ -846,13 +856,22 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
               if (numFakeSpaces > 0) {
                 text.str += '&nbsp;';
                 text.length++;
+
+                var charX = text.geom.x + (text.canvasWidth * text.geom.hScale);
+                var scaledSpacingLength = spacingLength * text.geom.hScale;
+                for (var j = 0; j < this.annotations.length; j++) {
+                  var annot = this.annotations[j];
+                  var quad = this.characterWithinAnnotation(annot, charX, text.geom.y, scaledSpacingLength);
+                  this.updateMarkup(annot, quad, ' ', charX, scaledSpacingLength, true);
+                }
               }
             }
           }
+
         } else if (isString(e)) {
           var shownText = this.showText(e, true);
 
-          if (textSelection) {
+          if (textSelection || this.annotations) {
             if (shownText.str === ' ') {
               text.str += '&nbsp;';
             } else {
