@@ -48,10 +48,8 @@ Zotero.ZotFile.PdfExtractor = {
             a.page = pageNum;
             a.type = annot.type;
             a.content = annot.content;
+            a.markup = annot.markup;
             annotations.push(a);
-            // if (annot.type && annot.type == "Highlight") { // jld
-            //   if ('content' in annot) alert("highlight: " + annot.content);
-            // }
           }
           
           pageNum++;

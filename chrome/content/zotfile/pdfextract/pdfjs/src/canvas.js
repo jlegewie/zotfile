@@ -717,8 +717,8 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
           var charX = text.geom.x + (width * text.geom.hScale);
           for each (var annot in this.annotations) {
             if (this.characterWithinAnnotation(annot, charX, text.geom.y, charWidth)) {
-              if (annot.content) annot.content += glyph.unicode;
-              else annot.content = glyph.unicode;
+              if (annot.markup) annot.markup += glyph.unicode;
+              else annot.markup = glyph.unicode;
             }
           }
 
@@ -769,8 +769,8 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
           var charX = text.geom.x + (width * text.geom.hScale);
           for each (var annot in this.annotations) {
             if (this.characterWithinAnnotation(annot, charX, text.geom.y, charWidth)) {
-              if (annot.content) annot.content += glyph.unicode;
-              else annot.content = glyph.unicode;
+              if (annot.markup) annot.markup += glyph.unicode;
+              else annot.markup = glyph.unicode;
             }
           }
 

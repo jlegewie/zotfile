@@ -389,6 +389,13 @@ var Page = (function PageClosure() {
             item.title = stringToPDFString(title || '');
             item.name = annotation.get('Name').name;
             break;
+          case 'Highlight':
+          case 'Underline':
+            var content = annotation.get('Contents');
+            var title = annotation.get('T');
+            item.content = stringToPDFString(content || '');
+            item.title = stringToPDFString(title || '');
+            break;
           default:
             TODO('unimplemented annotation type: ' + subtype.name);
             break;

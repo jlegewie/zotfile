@@ -1725,14 +1725,14 @@ Zotero.ZotFile = {
             },
 
             /* Called from extract.js when all annotations for a single PDF have
-             * been extracted.  
+             * been extracted.
              * @param annotations An array of annotation objects. Each element
              * contains the following fields: url (a url pointing to the file
              * this annotation came from), page (the page number within the
-             * document of this annotation), type (the type of annotation,
-             * e.g. "Highlight", or "Text"), and content (the contents of the
-             * annotation, e.g. the text of the note or the words that were
-             * highlighted/underlined).
+             * document where this annotation appears), type (the type of
+             * annotation, e.g. "Highlight", or "Text"), content (the text of
+             * any pop-up note in this annotation), and markup (the words from
+             * the document, if any, that were highlighted/underlined).
              * @param item The Zotero item these annotations came from */
             extractionComplete: function(annotations, item) {
                 // update progress bar
@@ -1795,16 +1795,18 @@ Zotero.ZotFile = {
                         cite = Zotero.ZotFile.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ");
                     
 		    // add to note text pdfExtractionNoteRemoveHtmlNote
-                    var content = anno.content ? anno.content : "";
-		    if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteRemoveHyphens")) {
-                        content = this.removeHyphens(content);
+                    if (anno.content) { // Text annotation, or note attached to Highlight or Underline
+			note += "<p>"+htmlTagNoteStart+anno.content+htmlTagNoteEnd+"</p><br/>";
                     }
-                    if (anno.type == "Text") {
-			note += "<p>"+htmlTagNoteStart+content+htmlTagNoteEnd+"</p><br/>";
-                    } else if (anno.type == "Highlight") {
-			note += "<p>"+htmlTagHighlightStart+"\""+content+"\" (" + cite + page + ")" +htmlTagHighlightEnd+"</p><br/>";
+
+                    var markup = anno.markup ? anno.markup : "";
+		    if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteRemoveHyphens")) {
+                        markup = this.removeHyphens(markup);
+                    }
+                    if (anno.type == "Highlight") {
+			note += "<p>"+htmlTagHighlightStart+"\""+markup+"\" (" + cite + page + ")" +htmlTagHighlightEnd+"</p><br/>";
                     } else if (anno.type == "Underline") {
-			note += "<p>"+htmlTagUnderlineStart+"\""+content+"\" (" + cite + page + ")" +htmlTagUnderlineEnd+"</p><br/>";
+			note += "<p>"+htmlTagUnderlineStart+"\""+markup+"\" (" + cite + page + ")" +htmlTagUnderlineEnd+"</p><br/>";
                     }
 		}
 		return note;
