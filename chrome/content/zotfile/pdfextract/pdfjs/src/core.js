@@ -420,6 +420,15 @@ var Page = (function PageClosure() {
         }
         items.push(item);
       }
+
+      // sort items in visual order: top->bottom, left->right
+      function sortAnnotations(a, b) {
+        if (a.y < b.y) return -1;
+        else if (a.y == b.y) return a.x - b.x;
+        else /* a.y > b.y */ return 1;
+      }
+      items.sort(sortAnnotations);
+
       return items;
     },
     startRendering: function pageStartRendering(ctx, callback, textLayer)  {
