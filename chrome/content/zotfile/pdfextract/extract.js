@@ -43,19 +43,33 @@ Zotero.ZotFile.PdfExtractor = {
         var pageNum = 1;
         var currentPage = pageOne;
 
+        function pageRequiresRendering(_page) {
+          for each (var annot in _page.getAnnotations()) {
+            if (annot.type && 
+                (annot.type == "Highlight" || annot.type == "Underline")) {
+              return true;
+            }
+          }
+          return false;
+        }
+
         var renderingDone = function(err) {
           if (err || !currentPage.extractedAnnotations) {
             Components.utils.reportError('An error occurred while rendering page '+pageNum+' of '+args.url+' '+err);
           }
 
+          const SUPPORTED_ANNOTS = ["Text", "Highlight", "Underline"];
           for each (var annot in currentPage.extractedAnnotations) {
-            var a = {};
-            a.filename = args.url; // TODO: basename instead?
-            a.page = pageNum;
-            a.type = annot.type;
-            a.content = annot.content;
-            a.markup = annot.markup ? annot.markup.join(' ') : null;
-            annotations.push(a);
+            var at = annot.type;
+            if (at && SUPPORTED_ANNOTS.indexOf(at) >= 0) {
+              var a = {};
+              a.filename = args.url; // TODO: basename instead?
+              a.page = pageNum;
+              a.type = annot.type;
+              a.content = annot.content;
+              a.markup = annot.markup ? annot.markup.join(' ') : null;
+              annotations.push(a);
+            }
           }
           
           pageNum++;
@@ -68,7 +82,12 @@ Zotero.ZotFile.PdfExtractor = {
             canvas.height = currentPage.height * scale;
             canvas.width = currentPage.width * scale;
 
-            currentPage.startRendering(context, renderingDone);
+            if (pageRequiresRendering(currentPage)) {
+              currentPage.startRendering(context, renderingDone);
+            } else {
+              currentPage.extractedAnnotations = currentPage.getAnnotations();
+              renderingDone(false);
+            }
           }
         };
 
@@ -78,7 +97,12 @@ Zotero.ZotFile.PdfExtractor = {
         canvas.width = pageOne.width * scale;
 
         try {
-          currentPage.startRendering(context, renderingDone);
+          if (pageRequiresRendering(currentPage)) {
+            currentPage.startRendering(context, renderingDone);
+          } else {
+            currentPage.extractedAnnotations = currentPage.getAnnotations();
+            renderingDone(false);
+          }
         } catch (err) {
           Components.utils.reportError('An error occurred while starting rendering of page '+pageNum+' of '+args.url+' '+err);
           args.callback.call(args.callbackObj, [], args.item);
