@@ -48,7 +48,7 @@ Zotero.ZotFile.PdfExtractor = {
             a.page = pageNum;
             a.type = annot.type;
             a.content = annot.content;
-            a.markup = annot.markup;
+            a.markup = annot.markup ? annot.markup.join(' ') : null;
             annotations.push(a);
           }
           

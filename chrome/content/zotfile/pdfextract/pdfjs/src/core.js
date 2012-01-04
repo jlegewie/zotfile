@@ -310,16 +310,33 @@ var Page = (function PageClosure() {
         var subtype = annotation.get('Subtype');
         if (!isName(subtype))
           continue;
-        var rect = annotation.get('Rect');
-        var topLeftCorner = this.rotatePoint(rect[0], rect[1]);
-        var bottomRightCorner = this.rotatePoint(rect[2], rect[3]);
 
         var item = {};
         item.type = subtype.name;
+
+        // list of quad regions
+        item.quadPoints = [];
+        var quadpts = annotation.get('QuadPoints') || [];
+        for (var j = 0; j < quadpts.length; j += 8) {
+          var topLeftCorner = this.rotatePoint(quadpts[j+4], quadpts[j+5]);
+          var bottomRightCorner = this.rotatePoint(quadpts[j+2], quadpts[j+3]);
+          var quad = {};
+          quad.x = Math.min(topLeftCorner.x, bottomRightCorner.x);
+          quad.y = Math.min(topLeftCorner.y, bottomRightCorner.y);
+          quad.width = Math.abs(topLeftCorner.x - bottomRightCorner.x);
+          quad.height = Math.abs(topLeftCorner.y - bottomRightCorner.y);
+          item.quadPoints.push(quad);
+        }
+
+        // bounding box coordinates
+        var rect = annotation.get('Rect');
+        var topLeftCorner = this.rotatePoint(rect[0], rect[1]);
+        var bottomRightCorner = this.rotatePoint(rect[2], rect[3]);
         item.x = Math.min(topLeftCorner.x, bottomRightCorner.x);
         item.y = Math.min(topLeftCorner.y, bottomRightCorner.y);
         item.width = Math.abs(topLeftCorner.x - bottomRightCorner.x);
         item.height = Math.abs(topLeftCorner.y - bottomRightCorner.y);
+
         switch (subtype.name) {
           case 'Link':
             var a = this.xref.fetchIfRef(annotation.get('A'));
@@ -393,7 +410,8 @@ var Page = (function PageClosure() {
           case 'Underline':
             var content = annotation.get('Contents');
             var title = annotation.get('T');
-            item.content = stringToPDFString(content || '');
+            // sometimes there's no content, only markup
+            if (content) item.content = stringToPDFString(content);
             item.title = stringToPDFString(title || '');
             break;
           default:

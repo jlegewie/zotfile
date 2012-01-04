@@ -632,7 +632,6 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       geometry.spaceWidth = font.spaceWidth;
       return geometry;
     },
-
     pushTextDivs: function canvasGraphicsPushTextDivs(text) {
       var div = document.createElement('div');
       var fontSize = this.current.fontSize;
@@ -651,16 +650,6 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       div.dataset.textLength = text.length;
       this.textDivs.push(div);
     },
-    characterWithinAnnotation: function(annot, charX, charY, charWidth) {
-      if (annot.type && (annot.type == "Highlight" || annot.type == "Underline")) {
-        // only grab characters where 50% of the character's width lies within the annotation
-        if (charX+(.5*charWidth) >= annot.x/*tlx*/ && charX+(.5*charWidth) <= annot.x + annot.width/*brx*/ &&
-            charY >= annot.y/*tly*/ && charY <= annot.y + annot.height/*bry*/) {
-          return true;
-        }
-      }
-      return false;
-    },
     showText: function canvasGraphicsShowText(str, skipTextSelection) {
       var ctx = this.ctx;
       var current = this.current;
@@ -677,6 +666,35 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       var text = {str: '', length: 0, canvasWidth: 0, geom: {}};
       var textSelection = textLayer && !skipTextSelection ? true : false;
       var textRenderingMode = current.textRenderingMode;
+
+      /** Determines if character, whose bottom left corner is at (charX,charY)
+       * and who has width charWidth, falls within the bounds of annotation
+       * annot. If so, returns the 0-based index of the quad region within which
+       * the character falls. If the character is outside the annotation,
+       * returns -1. */
+      function characterWithinAnnotation(annot, charX, charY, charWidth) {
+        if (annot.type && (annot.type == "Highlight" || annot.type == "Underline")) {
+          for (var i = 0; i < annot.quadPoints.length; i++) {
+            var quad = annot.quadPoints[i];
+            // only grab characters where 50% of the character's width lies within the annotation
+            if (charX+(.5*charWidth) >= quad.x/*tlx*/ && charX+(.5*charWidth) <= quad.x + quad.width/*brx*/ &&
+                charY >= quad.y/*tly*/ && charY <= quad.y + quad.height/*bry*/) {
+              return i;
+            }
+          }
+        }
+        return -1;
+      }
+      function updateMarkup(annot, quad, character) {
+        if (quad != -1) {
+          if (!annot.markup) annot.markup = [];
+          if (!annot.markup[quad]) {
+            annot.markup[quad] = character;
+          } else {
+            annot.markup[quad] += character;
+          }
+        }
+      }
 
       // Type3 fonts - each glyph is a "mini-PDF"
       if (font.coded) {
@@ -715,11 +733,10 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
           current.x += width * textHScale;
 
           var charX = text.geom.x + (width * text.geom.hScale);
-          for each (var annot in this.annotations) {
-            if (this.characterWithinAnnotation(annot, charX, text.geom.y, charWidth)) {
-              if (annot.markup) annot.markup += glyph.unicode;
-              else annot.markup = glyph.unicode;
-            }
+          for (var j = 0; j < this.annotations.length; j++) {
+            var annot = this.annotations[j];
+            var quad = characterWithinAnnotation(annot, charX, text.geom.y, charWidth);
+            updateMarkup(annot, quad, glyph.unicode);
           }
 
           text.str += glyph.unicode;
@@ -767,11 +784,10 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
           }
 
           var charX = text.geom.x + (width * text.geom.hScale);
-          for each (var annot in this.annotations) {
-            if (this.characterWithinAnnotation(annot, charX, text.geom.y, charWidth)) {
-              if (annot.markup) annot.markup += glyph.unicode;
-              else annot.markup = glyph.unicode;
-            }
+          for (var j = 0; j < this.annotations.length; j++) {
+            var annot = this.annotations[j];
+            var quad = characterWithinAnnotation(annot, charX, text.geom.y, charWidth);
+            updateMarkup(annot, quad, glyph.unicode);
           }
 
           width += charWidth;
