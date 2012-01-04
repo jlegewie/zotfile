@@ -88,6 +88,7 @@ pref("extensions.zotfile.tablet.subfolder", false);
 pref("extensions.zotfile.tablet.subfolderFormat", "/%w/%y");  
 pref("extensions.zotfile.tablet.mode", 1);         
 
+pref("extensions.zotfile.pdfExtraction.UsePDFJS", true);
 pref("extensions.zotfile.pdfExtraction.Pull", true);
 pref("extensions.zotfile.pdfExtraction.MenuItem", true);
 pref("extensions.zotfile.pdfExtraction.NoteTruePage", true);     
@@ -97,3 +98,5 @@ pref("extensions.zotfile.pdfExtraction.NoteHtmlTagStart", "<i>");
 pref("extensions.zotfile.pdfExtraction.NoteHtmlTagEnd", "</i>");
 pref("extensions.zotfile.pdfExtraction.HighlightHtmlTagStart", "");
 pref("extensions.zotfile.pdfExtraction.HighlightHtmlTagEnd", "");
+pref("extensions.zotfile.pdfExtraction.UnderlineHtmlTagStart", "<u>");
+pref("extensions.zotfile.pdfExtraction.UnderlineHtmlTagEnd", "</u>");
