@@ -1643,8 +1643,8 @@ Zotero.ZotFile = {
 		*/
 		pdfAttachmentsForExtraction: [],
 		numTotalPdfAttachments: 0,
-		/** The browser tab where PDFs get rendered by pdf.js. Not use by Zotero Standalone. */
-		pdfTab: null,
+		/** The hidden browser where PDFs get rendered by pdf.js. */
+		pdfHiddenBrowser: null,
 		PDF_EXTRACT_URL: 'chrome://zotfile/content/pdfextract/extract.html',
 
 		getAnnotations: function(attIDs) {
@@ -1705,13 +1705,8 @@ Zotero.ZotFile = {
 				if (this.pdfAttachmentsForExtraction.length > 0) {
 					this.numTotalPdfAttachments = this.pdfAttachmentsForExtraction.length;
 					Zotero.showZoteroPaneProgressMeter("Extract PDF annotations",true);
-					if (Zotero.isStandalone) {
-						ZoteroPane_Local.loadURI(this.PDF_EXTRACT_URL);
-						// TODO: Can't figure out how to hide the ZoteroPane_Local during extraction...
-						ZoteroPane_Local.makeHidden();
-					} else {
-						this.pdfTab = gBrowser.addTab(this.PDF_EXTRACT_URL);
-					}
+					this.pdfHiddenBrowser = Zotero.Browser.createHiddenBrowser();
+					this.pdfHiddenBrowser.loadURI(this.PDF_EXTRACT_URL);
 				}
 //				Zotero.debug("ZotFile - pdfAnnotations - getAnnotations() - end - done");
 
@@ -1751,13 +1746,8 @@ Zotero.ZotFile = {
                 if (this.pdfAttachmentsForExtraction.length > 0) {
                     this.extractAnnotationsFromFiles();
                 } else { // we're done
-                    if (Zotero.isStandalone) {
-                        // TODO: Can't figure out how to hide ZoteroPane_Local when extraction is complete
-                        ZoteroPane_Local.makeHidden();
-                    } else {
-                        gBrowser.removeTab(this.pdfTab);
-                    }
-                    this.pdfTab = null;
+                    Zotero.Browser.deleteHiddenBrowser(this.pdfHiddenBrowser);
+                    this.pdfHiddenBrowser = null;
                     this.numTotalPdfAttachments = 0;
                     Zotero.hideZoteroPaneOverlay(); // hide progress bar
                 }
