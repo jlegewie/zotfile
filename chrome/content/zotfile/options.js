@@ -26,7 +26,11 @@ function updatePreferenceWindow(which) {
 		}*/
 	}
 	
+	// disable ff download folder option for standalone
 	if(Zotero.isStandalone) document.getElementById('id-zotfile-source_dir_ff-true').disabled=true;
+
+	// dis- and enable poppler extractor option
+	document.getElementById('id-zotfile-pdfExtraction-UsePDFJS-false').disabled=!Zotero.ZotFile.pdfAnnotations.pdfPopplerTool;
 	
 	var revert=(which!="all") ? true : false;	
 		
@@ -549,12 +553,12 @@ function showSelectedSubfolder() {
 // =================== //
 
 function updatePDFToolsStatus() {
-	var toolIsRegistered = Zotero.ZotFile.pdfAnnotations.pdfExtraction;		
+	var toolIsRegistered = Zotero.ZotFile.pdfAnnotations.pdfPopplerTool;		
 	var updateButton = document.getElementById('pdf-annotations-extractor-update-button');
 			
 	// button
 	var installedVersion = getInstalledVersion();	
-	str = toolIsRegistered ? "Update ExtractPDFAnnotations Tool" : "Download & Install ExtractPDFAnnotations Tool";
+	str = toolIsRegistered ? "Update Poppler Tool" : "Download & Install Poppler Tool";
 	updateButton.setAttribute('label', str);	
 	if(toolIsRegistered) {
 		updateButton.setAttribute('disabled', true);				
@@ -565,15 +569,15 @@ function updatePDFToolsStatus() {
 	if(toolIsRegistered) {
 		var versionText = document.getElementById('pdf-annotations-extractor-version');
 		versionText.setAttribute('hidden', false);
-		versionText.setAttribute('value', "(installed version: "+installedVersion +")");		
+		versionText.setAttribute('value', "(installed v. "+installedVersion +")");		
 	}
 
 	// if tool is not campatible
 	if (!Zotero.ZotFile.pdfAnnotations.pdfExtractionCompatible) updateButton.setAttribute('disabled', true);				
 	
 	// extraction of pdfs 
-	var annotation_prefs=['MenuItem','Pull','NoteFullCite','NoteTruePage'];
-	for (var i=0;i<annotation_prefs.length;i++) document.getElementById('id-zotfile-pdfExtraction-' + annotation_prefs[i]).disabled = !Zotero.ZotFile.pdfAnnotations.pdfExtraction; 
+	// var annotation_prefs=['Pull','NoteFullCite','NoteTruePage'];
+	// for (var i=0;i<annotation_prefs.length;i++) document.getElementById('id-zotfile-pdfExtraction-' + annotation_prefs[i]).disabled = !Zotero.ZotFile.pdfAnnotations.pdfPopplerTool; 
 		
 }
 
@@ -662,6 +666,10 @@ function downloadPDFTool() {
 		
 		// set ZotFile variable
 		Zotero.ZotFile.pdfAnnotations.pdfExtraction=true;
+		Zotero.ZotFile.pdfAnnotations.pdfPopplerTool=true;
+
+		// enable poppler extractor option
+		document.getElementById('id-zotfile-pdfExtraction-UsePDFJS-false').disabled=false;
 		
 		// update settings
 		updatePDFToolsStatus();	
@@ -669,7 +677,7 @@ function downloadPDFTool() {
 	});
 	
 	document.getElementById('pdf-annotations-extractor-update-button').disabled = true;
-	document.getElementById('pdf-annotations-extractor-update-button').setAttribute('label', "Downloading ExtractPDFAnnotations...");
+	document.getElementById('pdf-annotations-extractor-update-button').setAttribute('label', "Downloading Poppler Tool...");
 	
 	wbp.progressListener = progressListener;
 //	Zotero.debug("Saving " + uri.spec + " to " + fileURL.spec);

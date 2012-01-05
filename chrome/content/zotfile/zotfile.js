@@ -122,7 +122,8 @@ Zotero.ZotFile = {
 				Zotero.ZotFile.pdfAnnotations.setExtractorPath();
 
 				// check whether tool is installed
-				Zotero.ZotFile.pdfAnnotations.pdfExtraction=Zotero.ZotFile.pdfAnnotations.checkInstalled();					
+				Zotero.ZotFile.pdfAnnotations.pdfPopplerTool=Zotero.ZotFile.pdfAnnotations.checkInstalled();		
+				Zotero.ZotFile.pdfAnnotations.pdfExtraction=Zotero.ZotFile.pdfAnnotations.pdfPopplerTool;			
 			}
 			if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS")) {
 				Zotero.ZotFile.pdfAnnotations.pdfExtraction = true;  
@@ -739,11 +740,15 @@ Zotero.ZotFile = {
 		  // (code line adopted from Zotero)
 		  var filename = filename.replace(/[\/\\\?\*:|"<>\.]/g, '');
 
-		  // replace multiple blanks in filename with single blank
-		  var filename = filename.replace(/ {2,}/g, ' ');
+		  // replace multiple blanks in filename with single blank & remove whitespace
+		  //var filename = filename.replace(/ {2,}/g, ' ');
+		  var filename = Zotero.Utilities.trimInternal(filename);
 
 		  // replace blanks with '_' if option selected 	
 		  if (this.prefs.getBoolPref("replace_blanks"))  var filename = filename.replace(/ /g, '_');
+
+		  // remove all the accents and other strange characters from filename
+		  var filename = Zotero.Utilities.removeDiacritics(filename);
 		
 		}
 		if (this.prefs.getBoolPref("useZoteroToRename")) filename=Zotero.Attachments.getFileBaseNameFromItem(item.itemID);
@@ -1655,6 +1660,7 @@ Zotero.ZotFile = {
 		extractorVersion:1.0,
 		supportedPlatforms:['MacIntel'], 
 		pdfExtraction:false,
+		pdfPopplerTool:false,
 		pdfExtractionCompatible:false,		
 		extractorBaseURL:'http://www.columbia.edu/~jpl2136/PDFTools/',	
 

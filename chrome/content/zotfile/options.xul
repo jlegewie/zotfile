@@ -58,8 +58,10 @@
 				<preference id="pref-zotfile-tablet-confirmation_batch" name="extensions.zotfile.tablet.confirmation_batch" type="int"/>-->
 				<preference id="pref-zotfile-tablet-mode" name="extensions.zotfile.tablet.mode" type="int"/>					
 				<preference id="pref-zotfile-tablet-confirmRepush" name="extensions.zotfile.tablet.confirmRepush" type="bool"/> 
+				
+				<preference id="pref-zotfile-pdfExtraction-UsePDFJS" name="extensions.zotfile.pdfExtraction.UsePDFJS" type="bool"/>
 				<preference id="pref-zotfile-pdfExtraction-Pull" name="extensions.zotfile.pdfExtraction.Pull" type="bool"/> 
-				<preference id="pref-zotfile-pdfExtraction-MenuItem" name="extensions.zotfile.pdfExtraction.MenuItem" type="bool"/> 
+				<!--<preference id="pref-zotfile-pdfExtraction-MenuItem" name="extensions.zotfile.pdfExtraction.MenuItem" type="bool"/> -->
 				<preference id="pref-zotfile-pdfExtraction-NoteTruePage" name="extensions.zotfile.pdfExtraction.NoteTruePage" type="bool"/> 
 				<preference id="pref-zotfile-pdfExtraction-NoteFullCite" name="extensions.zotfile.pdfExtraction.NoteFullCite" type="bool"/> 
 				
@@ -127,22 +129,7 @@
 							
 			                 	  			                        		
 							</groupbox>
-							<separator/> 
-							
-							<groupbox>
-							   <caption label="Extract Annotations and Highlighted Text from PDF Files"/>    
-								<label value="ZotFile can extract annotations and highlighted text from your pdf attachments."/>					
-								<label value="This feature is currently only available for Mac OS and requires a separate installation."/>					
-								<separator/>
-							   
-							   <hbox style="margin: 0" align="center">
-							   	   <button id="pdf-annotations-extractor-update-button" oncommand="downloadPDFTool()" flex="1"/>
-							   </hbox>
-							   <label style="font-size: 9px" id="pdf-annotations-extractor-version" value="" hidden="true"/>					
-
-							</groupbox>     					   			
-							
-										
+    					   																			
 						    <hbox style="margin: 0">					
 							   <label style="margin-right:0px" value="For a detailed description of each preference see the "/>
 							   <label style="margin-left:0px; margin-right:0px" class="text-link" href="http://www.columbia.edu/~jpl2136/zotfile.html" value="zotfile website"/>
@@ -301,33 +288,43 @@
 			
 			
 					<tabpanel orient="vertical">
-						
+																									
 						<groupbox>
-						   <caption label="Confirmations"/>    
-		
-						   <checkbox id="id-zotfile-confirmation" label="Ask user to attach new files" preference="pref-zotfile-confirmation"/>
+						   <caption label="Extract Annotations and Highlighted Text from PDF Files"/>    
+							<label value="ZotFile can extract annotations and highlighted text from your pdf attachments."/>				
+
+							<separator/>
+							<radiogroup id="id-zotfile-pdfExtraction-UsePDFJS" preference="pref-zotfile-pdfExtraction-UsePDFJS">
+								<hbox style="margin: 0"  align="center">
+									<radio id="id-zotfile-pdfExtraction-UsePDFJS-true" label="Use pdf.js to extract annotations" value="true"/>
+									<image src="chrome://zotfile/skin/information.png" tooltiptext="Zofile supports two ways to extract annotations from pdf files. The pdf.js-based tool works across all platforms and runs directly from zotero. The poppler-based extraction tool only works for Mac OS and requires a separate download. Currently, the poppler-based tool is more thoroughly tested and might work with a broader range of pdfs. It might also run faster with larger pdfs."/>
+								</hbox> 
+								<hbox  style="margin: 0"  align="center">									
+								 	<radio id="id-zotfile-pdfExtraction-UsePDFJS-false" label="Use poppler to extract annotations" value="false"/>	
+								 	<button id="pdf-annotations-extractor-update-button" oncommand="downloadPDFTool()" flex="1"/>
+									<label style="font-size: 9px" id="pdf-annotations-extractor-version" value="" hidden="true"/>
+								</hbox>								
+							</radiogroup>						   						   						  
+						   
+						   <separator/>
+						   <label value="Additional Options"/>
+						   <!--<checkbox id="id-zotfile-pdfExtraction-MenuItem" label="Add menu item to manually extract annotations from pdf attachments" preference="pref-zotfile-pdfExtraction-MenuItem"/>-->	
+						   <checkbox id="id-zotfile-pdfExtraction-NoteFullCite" label="Add full in-text citation to highlighted text snippets in note" preference="pref-zotfile-pdfExtraction-NoteFullCite"/>	
+						   <hbox style="margin: 0"  align="center">														   
+							   <checkbox id="id-zotfile-pdfExtraction-NoteTruePage" label="Use actual article/book chapter page for highlighted text snippets" preference="pref-zotfile-pdfExtraction-NoteTruePage"/>				    
+							   <image src="chrome://zotfile/skin/information.png" tooltiptext="The article page number is determined by adding the page in the pdf document and the starting page from the 'pages' field in the zotero metadata. This approach fails if the first page in the pdf document is not the first page in the article/book chapter."/>
+						   </hbox>  					
+
+						</groupbox> 
+						<separator/>
+						<groupbox>
+						   <caption label="Other Advanced Settings"/> 
+						   <checkbox id="id-zotfile-confirmation" label="Ask user when attaching new files" preference="pref-zotfile-confirmation"/>
 						   <hbox style="margin: 0"  align="center">					
 							    <checkbox id="id-zotfile-confirmation_batch_ask" label="Ask user to (batch) rename or move" preference="pref-zotfile-confirmation_batch_ask" oncommand="updatePreferenceWindow('confirm')"/>	
 								<textbox id="id-zotfile-confirmation_batch" preference="pref-zotfile-confirmation_batch" width="25"/> 
 								<label id="id-zotfile-confirmation_batch-end"  value="or more attachments."/>																				
 							</hbox>     					  			                        		
-			  	
-						</groupbox> 
-												 
-						<groupbox>
-						   <caption label="Annotation Extraction"/>  
-						
-						   <separator class="thin"/>
-						   <checkbox id="id-zotfile-pdfExtraction-MenuItem" label="Add menu item to manually extract annotations from pdf attachments" preference="pref-zotfile-pdfExtraction-MenuItem"/>	
-						   <checkbox id="id-zotfile-pdfExtraction-NoteFullCite" label="Add full in-text citation to highlighted text snippets in note" preference="pref-zotfile-pdfExtraction-NoteFullCite"/>	
-						   <hbox style="margin: 0"  align="center">														   
-							   <checkbox id="id-zotfile-pdfExtraction-NoteTruePage" label="Use actual article/book chapter page for highlighted text snippets" preference="pref-zotfile-pdfExtraction-NoteTruePage"/>				    
-							   <image src="chrome://zotfile/skin/information.png" tooltiptext="The article page number is determined by adding the page in the pdf document and the starting page from the 'pages' field in the zotero metadata. This approach fails if the first page in the pdf document is not the first page in the article/book chapter."/>
-						   </hbox>               			    
-						</groupbox> 
-						
-						<groupbox>
-						   <caption label="Additional Options"/> 
 						   <hbox style="margin: 0">											
 							   <checkbox id="id-zotfile-useFileTypes" label="Only work with the following filetypes" preference="pref-zotfile-useFileTypes" oncommand="updatePreferenceWindow('filetypes')"/>							
 							   <textbox id="id-zotfile-filetypes" preference="pref-zotfile-filetypes" flex="1"/>						
