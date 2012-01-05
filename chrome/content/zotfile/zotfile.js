@@ -304,20 +304,19 @@ Zotero.ZotFile = {
 	   var menu = win.ZoteroPane.document.getElementById('id-zotfile-menu'); 
 	   var m = {
 			warning1:0,
-			newatt: 1,
-			rename: 2,
-			extractanno: 3,			
-			sep1: 4,			
-			warning2: 5,
-			push2reader: 6,
-			pullreader: 7,
-			sep2: 8,						
-			subfolders: 9,
-			warning3: 10,
-			push2readerFolder:new Array(11,12,13,14,15,16,17,18,19,20,21,22,23,24,25),
-			sep3: 26,
-			menuConfigure: 27,
-			length:28,
+			rename: 1,
+			extractanno: 2,
+			sep1: 3,	
+			warning2: 4,
+			push2reader: 5,
+			pullreader: 6,
+			sep2: 7,					
+			subfolders: 8,
+			warning3: 9,
+			push2readerFolder:new Array(10,11,12,13,14,15,16,17,18,19,20,21,22,23,24),
+			sep3: 25,
+			menuConfigure: 26,
+			length:27,
 		}; 
 
 		// list of disabled and show menu-items
@@ -370,7 +369,6 @@ Zotero.ZotFile = {
 		if(oneItem) {
 			// add 'new att' and 'rename'
 			show = [
-				m.newatt,
 				m.rename,
 			];
 			

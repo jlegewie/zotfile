@@ -18,10 +18,10 @@
 		<menuseparator/>		
 		<!-- Make sure the menu separator for utilities is visible -->
        	<!--insertafter="id-zotfile-menu" -->
+       	<menuitem label="Attach New File" tooltiptext="Move and attach last file in user defined folder to selected Zotero item" oncommand="Zotero.ZotFile.attachNewFile();"/>
  		<menu label="Manage Attachments" > 
 			<menupopup id="id-zotfile-menu" onpopupshowing="Zotero.ZotFile.buildZotFileMenu();">
-				<menuitem label="Warning" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>				
-				<menuitem label="Attach New File(s)" tooltiptext="Move and attach last file in user defined folder to selected Zotero item" oncommand="Zotero.ZotFile.attachNewFile();"/>
+				<menuitem label="Warning" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>							
 				<menuitem label="Rename Attachments" tooltiptext="Move and rename existing Attachments from selected Zotero item" oncommand="Zotero.ZotFile.renameSelectedAttachments();"/>
 				<menuitem label="Extract Annotations" tooltiptext="Extract Annotations and Highlighted Text from pdf file." oncommand="Zotero.ZotFile.pdfAnnotations.getAnnotations();"/>				
 				<menuseparator/>												
