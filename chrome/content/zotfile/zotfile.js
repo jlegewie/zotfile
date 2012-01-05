@@ -1916,7 +1916,8 @@ Zotero.ZotFile = {
 				if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteFullCite")) cite=Zotero.ZotFile.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ");								
 
 				// add to note text pdfExtractionNoteRemoveHtmlNote
-				if(anno.content && anno.content != "") {
+				if(anno.content && anno.content != "" && 
+				   (!anno.markup || anno.content.trim() != anno.markup.trim())) {
 					note += "<p>"+htmlTagNoteStart+anno.content+htmlTagNoteEnd+"</p><br>";
 				}
 
