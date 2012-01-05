@@ -10,6 +10,11 @@ Zotero.ZotFile.PdfExtractor = {
    * for documentation on args object.
    */
   extractAnnotations: function(args) {
+    function logError(msg) {
+      Components.utils.reportError(msg);
+      Zotero.ZotFile.pdfAnnotations.errorExtractingAnnotations = true;
+    }
+
     PDFJS.getPdf(
       {
         url: args.url,
@@ -17,7 +22,7 @@ Zotero.ZotFile.PdfExtractor = {
           //if (evt.lengthComputable) alert('progress: ' + (evt.loaded / evt.total));
         },
         error: function getPdfError(e) {
-          Components.utils.reportError('error opening PDF: ' + args.url + ' ' + e.target + ' ' + e.target.status);
+          logError('error opening PDF: ' + args.url + ' ' + e.target + ' ' + e.target.status);
           args.callback.call(args.callbackObj, [], args.item);
         }
       },
@@ -28,7 +33,7 @@ Zotero.ZotFile.PdfExtractor = {
           pdf = new PDFJS.PDFDoc(data);
           pageOne = pdf.getPage(1);
         } catch (err) {
-          Components.utils.reportError('error loading pdf '+args.url + ': '+err);
+          logError('error loading pdf '+args.url + ': '+err);
           args.callback.call(args.callbackObj, [], args.item);
           return;
         }
@@ -48,7 +53,7 @@ Zotero.ZotFile.PdfExtractor = {
           try {
             annots = _page.getAnnotations();
           } catch (err) {
-            Components.utils.reportError('error while reading annotations of page '+pageNum+' of '+args.url+' '+err);
+            logError('error while reading annotations of page '+pageNum+' of '+args.url+' '+err);
             return false;
           }
           for each (var annot in annots) {
@@ -64,7 +69,8 @@ Zotero.ZotFile.PdfExtractor = {
           Zotero.ZotFile.pdfAnnotations.pageExtractionComplete(pageNum, pdf.numPages);
 
           if (err || !currentPage.extractedAnnotations) {
-            Components.utils.reportError('An error occurred while rendering page '+pageNum+' of '+args.url+' '+err);
+            logError('An error occurred while rendering page '+pageNum+' of '+args.url+' '+err);
+            // try to scavenge some annotations anyway
           }
 
           const SUPPORTED_ANNOTS = ["Text", "Highlight", "Underline"];
@@ -97,7 +103,7 @@ Zotero.ZotFile.PdfExtractor = {
               try {
                 currentPage.extractedAnnotations = currentPage.getAnnotations();
               } catch (err) {
-                Components.utils.reportError('error while reading annotations of page '+pageNum+' of '+args.url+' '+err);
+                logError('error while reading annotations of page '+pageNum+' of '+args.url+' '+err);
               } finally {
                 renderingDone(false);
               }
@@ -117,13 +123,13 @@ Zotero.ZotFile.PdfExtractor = {
             try {
               currentPage.extractedAnnotations = currentPage.getAnnotations();
             } catch (err) {
-              Components.utils.reportError('error while reading annotations of page '+pageNum+' of '+args.url+' '+err);
+              logError('error while reading annotations of page '+pageNum+' of '+args.url+' '+err);
             } finally {
               renderingDone(false);
             }
           }
         } catch (err) {
-          Components.utils.reportError('An error occurred while starting rendering of page '+pageNum+' of '+args.url+' '+err);
+          logError('An error occurred while starting rendering of page '+pageNum+' of '+args.url+' '+err);
           args.callback.call(args.callbackObj, [], args.item);
           return;
         }
