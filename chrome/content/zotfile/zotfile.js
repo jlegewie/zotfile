@@ -1672,6 +1672,7 @@ Zotero.ZotFile = {
 		*/
 		pdfAttachmentsForExtraction: [],
 		numTotalPdfAttachments: 0,
+		errorExtractingAnnotations: false,
 		/** The hidden browser where PDFs get rendered by pdf.js. */
 		pdfHiddenBrowser: null,
 		PDF_EXTRACT_URL: 'chrome://zotfile/content/pdfextract/extract.html',			
@@ -1808,6 +1809,8 @@ Zotero.ZotFile = {
 				}
 				if (this.pdfAttachmentsForExtraction.length > 0 &&
 				    Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS")) {
+					// setup extraction process
+					this.errorExtractingAnnotations = false;
 					this.numTotalPdfAttachments = this.pdfAttachmentsForExtraction.length;
 					Zotero.showZoteroPaneProgressMeter("Extract PDF annotations (press ESC to cancel)",true);
 					var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser"); 
@@ -2003,6 +2006,10 @@ Zotero.ZotFile = {
                 if (this.pdfAttachmentsForExtraction.length > 0) {
                     this.extractAnnotationsFromFiles();
                 } else { // we're done
+                    if (this.errorExtractingAnnotations) {
+                        Zotero.ZotFile.infoWindow("ZotFile Report","ZotFile was unable to extract all annotations because pdf.js does not support certain PDF standards yet. Please see the JavaScript error console for more details.",8000);
+                    }
+                    this.errorExtractingAnnotations = false;
                     Zotero.Browser.deleteHiddenBrowser(this.pdfHiddenBrowser);
                     this.pdfHiddenBrowser = null;
                     this.numTotalPdfAttachments = 0;
