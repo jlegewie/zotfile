@@ -123,7 +123,10 @@ Zotero.ZotFile = {
 
 				// check whether tool is installed
 				Zotero.ZotFile.pdfAnnotations.pdfExtraction=Zotero.ZotFile.pdfAnnotations.checkInstalled();					
-	 		}  
+			}
+			if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS")) {
+				Zotero.ZotFile.pdfAnnotations.pdfExtraction = true;  
+			}
 		});
 		
 		//this.createUI()
