@@ -122,7 +122,8 @@ Zotero.ZotFile = {
 				Zotero.ZotFile.pdfAnnotations.setExtractorPath();
 
 				// check whether tool is installed
-				Zotero.ZotFile.pdfAnnotations.pdfExtraction=Zotero.ZotFile.pdfAnnotations.checkInstalled();					
+				Zotero.ZotFile.pdfAnnotations.pdfPopplerTool=Zotero.ZotFile.pdfAnnotations.checkInstalled();		
+				Zotero.ZotFile.pdfAnnotations.pdfExtraction=Zotero.ZotFile.pdfAnnotations.pdfPopplerTool;			
 			}
 			if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS")) {
 				Zotero.ZotFile.pdfAnnotations.pdfExtraction = true;  
@@ -1659,6 +1660,7 @@ Zotero.ZotFile = {
 		extractorVersion:1.0,
 		supportedPlatforms:['MacIntel'], 
 		pdfExtraction:false,
+		pdfPopplerTool:false,
 		pdfExtractionCompatible:false,		
 		extractorBaseURL:'http://www.columbia.edu/~jpl2136/PDFTools/',	
 
