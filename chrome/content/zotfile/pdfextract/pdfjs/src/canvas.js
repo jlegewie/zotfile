@@ -741,7 +741,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
           current.x += width * textHScale;
 
           var charX = text.geom.x + (width * text.geom.hScale);
-          var scaledCharWidth = width * text.geom.hScale;
+          var scaledCharWidth = transformed[0] * fontSize * text.geom.hScale;
           for (var j = 0; j < this.annotations.length; j++) {
             var annot = this.annotations[j];
             var quad = this.characterWithinAnnotation(annot, charX, text.geom.y, scaledCharWidth);
@@ -793,7 +793,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
           }
 
           var charX = text.geom.x + (width * text.geom.hScale);
-          var scaledCharWidth = charWidth * text.geom.hScale;
+          var scaledCharWidth = glyph.width * fontSize * .001 * text.geom.hScale;
           for (var j = 0; j < this.annotations.length; j++) {
             var annot = this.annotations[j];
             var quad = this.characterWithinAnnotation(annot, charX, text.geom.y, scaledCharWidth);
