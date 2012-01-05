@@ -1803,7 +1803,9 @@ Zotero.ZotFile = {
 				if (this.pdfAttachmentsForExtraction.length > 0 &&
 				    Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS")) {
 					this.numTotalPdfAttachments = this.pdfAttachmentsForExtraction.length;
-					Zotero.showZoteroPaneProgressMeter("Extract PDF annotations",true);
+					Zotero.showZoteroPaneProgressMeter("Extract PDF annotations (press ESC to cancel)",true);
+					var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser"); 
+					win.ZoteroPane.document.addEventListener('keypress', this.cancellationListener);
 					this.pdfHiddenBrowser = Zotero.Browser.createHiddenBrowser();
 					this.pdfHiddenBrowser.loadURI(this.PDF_EXTRACT_URL);
 				}
@@ -1964,6 +1966,16 @@ Zotero.ZotFile = {
                     this.numTotalPdfAttachments;
                 fractionDone += ((pagesProcessed / totalPages) * (1.0 / this.numTotalPdfAttachments));
                 Zotero.updateZoteroPaneProgressMeter(fractionDone * 100.0);
+            },
+
+            /** Keypress listener that cancels the extraction if the user presses escape. */
+            cancellationListener: function(keyEvent) {
+                if (keyEvent.keyCode == KeyboardEvent.DOM_VK_ESCAPE) {
+                    var zzpa = Zotero.ZotFile.pdfAnnotations;
+                    zzpa.pdfAttachmentsForExtraction = [];
+                    zzpa.extractionComplete([], null);
+                    keyEvent.currentTarget.removeEventListener('keypress', zzpa.cancellationListener);
+                }
             },
 
             /* Called from extract.js when all annotations for a single PDF have
