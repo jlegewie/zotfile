@@ -1670,6 +1670,7 @@ Zotero.ZotFile = {
 		*/
 		pdfAttachmentsForExtraction: [],
 		numTotalPdfAttachments: 0,
+		errorExtractingAnnotations: false,
 		/** The hidden browser where PDFs get rendered by pdf.js. */
 		pdfHiddenBrowser: null,
 		PDF_EXTRACT_URL: 'chrome://zotfile/content/pdfextract/extract.html',			
@@ -1806,6 +1807,8 @@ Zotero.ZotFile = {
 				}
 				if (this.pdfAttachmentsForExtraction.length > 0 &&
 				    Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS")) {
+					// setup extraction process
+					this.errorExtractingAnnotations = false;
 					this.numTotalPdfAttachments = this.pdfAttachmentsForExtraction.length;
 					Zotero.showZoteroPaneProgressMeter("Extract PDF annotations (press ESC to cancel)",true);
 					var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser"); 
@@ -1914,7 +1917,8 @@ Zotero.ZotFile = {
 				if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteFullCite")) cite=Zotero.ZotFile.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ");								
 
 				// add to note text pdfExtractionNoteRemoveHtmlNote
-				if(anno.content && anno.content != "") {
+				if(anno.content && anno.content != "" && 
+				   (!anno.markup || anno.content.trim() != anno.markup.trim())) {
 					note += "<p>"+htmlTagNoteStart+anno.content+htmlTagNoteEnd+"</p><br>";
 				}
 
@@ -2000,6 +2004,10 @@ Zotero.ZotFile = {
                 if (this.pdfAttachmentsForExtraction.length > 0) {
                     this.extractAnnotationsFromFiles();
                 } else { // we're done
+                    if (this.errorExtractingAnnotations) {
+                        Zotero.ZotFile.infoWindow("ZotFile Report","ZotFile was unable to extract all annotations because pdf.js does not support certain PDF standards yet. Please see the JavaScript error console for more details.",8000);
+                    }
+                    this.errorExtractingAnnotations = false;
                     Zotero.Browser.deleteHiddenBrowser(this.pdfHiddenBrowser);
                     this.pdfHiddenBrowser = null;
                     this.numTotalPdfAttachments = 0;
