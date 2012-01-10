@@ -123,8 +123,15 @@ Zotero.ZotFile = {
 
 				// check whether tool is installed
 				Zotero.ZotFile.pdfAnnotations.popplerExtractorTool=Zotero.ZotFile.pdfAnnotations.checkInstalled();		
-				Zotero.ZotFile.pdfAnnotations.pdfExtraction=Zotero.ZotFile.pdfAnnotations.popplerExtractorTool;			
+				Zotero.ZotFile.pdfAnnotations.pdfExtraction=Zotero.ZotFile.pdfAnnotations.popplerExtractorTool;	
+				
+				// set to pdf.js if poppler is not installed
+				if(!Zotero.ZotFile.pdfAnnotations.popplerExtractorTool) Zotero.ZotFile.prefs.setBoolPref("pdfExtraction.UsePDFJS",true);		
 			}
+
+			// set to pdf.js if poppler is not supported
+			if(!Zotero.ZotFile.pdfAnnotations.popplerExtractorCompatible) Zotero.ZotFile.prefs.setBoolPref("pdfExtraction.UsePDFJS",true);		
+
 			if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS")) {
 				Zotero.ZotFile.pdfAnnotations.pdfExtraction = true;  
 			}
