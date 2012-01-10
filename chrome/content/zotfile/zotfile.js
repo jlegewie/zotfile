@@ -114,16 +114,16 @@ Zotero.ZotFile = {
 		   if (Zotero.isWin) Zotero.ZotFile.folderSep="\\";  	
 
 		   // check whether extraction of annotations is supported
-		   if (Zotero.ZotFile.pdfAnnotations.supportedPlatforms.join().indexOf(Zotero.platform)!=-1) Zotero.ZotFile.pdfAnnotations.pdfExtractionCompatible=true;  				
+		   if (Zotero.ZotFile.pdfAnnotations.popplerSupportedPlatforms.join().indexOf(Zotero.platform)!=-1) Zotero.ZotFile.pdfAnnotations.popplerExtractorCompatible=true;  				
 
 		   // set path and check whether installed
-	       if (Zotero.ZotFile.pdfAnnotations.pdfExtractionCompatible) {  
+	       if (Zotero.ZotFile.pdfAnnotations.popplerExtractorCompatible) {  
 				// set Extractor Path
-				Zotero.ZotFile.pdfAnnotations.setExtractorPath();
+				Zotero.ZotFile.pdfAnnotations.setpopplerExtractorPath();
 
 				// check whether tool is installed
-				Zotero.ZotFile.pdfAnnotations.pdfPopplerTool=Zotero.ZotFile.pdfAnnotations.checkInstalled();		
-				Zotero.ZotFile.pdfAnnotations.pdfExtraction=Zotero.ZotFile.pdfAnnotations.pdfPopplerTool;			
+				Zotero.ZotFile.pdfAnnotations.popplerExtractorTool=Zotero.ZotFile.pdfAnnotations.checkInstalled();		
+				Zotero.ZotFile.pdfAnnotations.pdfExtraction=Zotero.ZotFile.pdfAnnotations.popplerExtractorTool;			
 			}
 			if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS")) {
 				Zotero.ZotFile.pdfAnnotations.pdfExtraction = true;  
@@ -1653,14 +1653,14 @@ Zotero.ZotFile = {
 	
 	// class to extract pdf annotations
 	pdfAnnotations : {
-		extractorFileName: 'ExtractPDFAnnotations',
-	    extractorPath:null,
-		extractorVersion:1.0,
-		supportedPlatforms:['MacIntel'], 
+		popplerExtractorFileName: 'ExtractPDFAnnotations',
+	    popplerExtractorPath:null,
+		popplerExtractorVersion:1.0,
+		popplerSupportedPlatforms:['MacIntel'], 
 		pdfExtraction:false,
-		pdfPopplerTool:false,
-		pdfExtractionCompatible:false,		
-		extractorBaseURL:'http://www.columbia.edu/~jpl2136/PDFTools/',	
+		popplerExtractorTool:false,
+		popplerExtractorCompatible:false,		
+		popplerExtractorBaseURL:'http://www.columbia.edu/~jpl2136/PDFTools/',	
 
 		/** The list of PDFs we should extract annotations from.  Each
 		element is an object with the following fields:
@@ -1675,23 +1675,23 @@ Zotero.ZotFile = {
 		pdfHiddenBrowser: null,
 		PDF_EXTRACT_URL: 'chrome://zotfile/content/pdfextract/extract.html',			
 
-		setExtractorPath: function() {	
+		setpopplerExtractorPath: function() {	
 			// extractor filename
-			this.extractorFileName += '-' + Zotero.platform;   
-			if (Zotero.isWin) this.extractorFileName+='.exe';  			
+			this.popplerExtractorFileName += '-' + Zotero.platform;   
+			if (Zotero.isWin) this.popplerExtractorFileName+='.exe';  			
 			/*
 			  “pdftotext-{platform}”, where {platform} is “Win32”, “MacIntel”, “MacPPC”, “Linux-i686”, etc. (To determine your current platform, type javascript:alert(navigator.platform) in the Firefox URL bar and hit Enter.)
 			*/ 			     
 
 			// extractor path
-			this.extractorPath = Zotero.getZoteroDirectory().path + "/ExtractPDFAnnotations/" + this.extractorFileName;
-			if (Zotero.isWin) this.extractorPath.replace(/\\\//g,"\\").replace(/\//g,"\\");					
+			this.popplerExtractorPath = Zotero.getZoteroDirectory().path + "/ExtractPDFAnnotations/" + this.popplerExtractorFileName;
+			if (Zotero.isWin) this.popplerExtractorPath.replace(/\\\//g,"\\").replace(/\//g,"\\");					
 		},
 
 		checkInstalled: function  () {
 //			str = toolIsRegistered ? "Installed..." : "Download Tool to Extract PDF Annotations";
 			try {				
-			    var fileobj = Zotero.ZotFile.createFile(this.extractorPath);
+			    var fileobj = Zotero.ZotFile.createFile(this.popplerExtractorPath);
 			    if (fileobj.exists()) return(1);
 			    if (!fileobj.exists()) return(0);
 			}
@@ -1721,7 +1721,7 @@ Zotero.ZotFile = {
 
 		callExtractor: function (pdfFilePath,outputFile) {
 			// set up process
-			var extractorFile=Zotero.ZotFile.createFile(this.extractorPath);
+			var extractorFile=Zotero.ZotFile.createFile(this.popplerExtractorPath);
 			var proc = Components.classes["@mozilla.org/process/util;1"].
 						createInstance(Components.interfaces.nsIProcess);
 			proc.init(extractorFile);
@@ -1821,7 +1821,7 @@ Zotero.ZotFile = {
 			 
 			} else {
 //				Zotero.debug("ZotFile - pdfAnnotations - getAnnotations() - end - not supported");
-				Zotero.ZotFile.infoWindow("ZotFile Error","Extraction of annotations is currently only supported on " + this.supportedPlatforms.join(', ') + ".",8000);
+				Zotero.ZotFile.infoWindow("ZotFile Error","Extraction of annotations is currently only supported on " + this.popplerSupportedPlatforms.join(', ') + ".",8000);
 			}
 
 		},

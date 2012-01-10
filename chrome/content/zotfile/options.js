@@ -30,7 +30,7 @@ function updatePreferenceWindow(which) {
 	if(Zotero.isStandalone) document.getElementById('id-zotfile-source_dir_ff-true').disabled=true;
 
 	// dis- and enable poppler extractor option
-	document.getElementById('id-zotfile-pdfExtraction-UsePDFJS-false').disabled=!Zotero.ZotFile.pdfAnnotations.pdfPopplerTool;
+	document.getElementById('id-zotfile-pdfExtraction-UsePDFJS-false').disabled=!Zotero.ZotFile.pdfAnnotations.popplerExtractorTool;
 	
 	var revert=(which!="all") ? true : false;	
 		
@@ -553,8 +553,8 @@ function showSelectedSubfolder() {
 // =================== //
 
 function updatePDFToolsStatus() {
-	var toolIsCompatible = Zotero.ZotFile.pdfAnnotations.pdfExtractionCompatible;
-	var toolIsRegistered = Zotero.ZotFile.pdfAnnotations.pdfPopplerTool;		
+	var toolIsCompatible = Zotero.ZotFile.pdfAnnotations.popplerExtractorCompatible;
+	var toolIsRegistered = Zotero.ZotFile.pdfAnnotations.popplerExtractorTool;		
 	var updateButton = document.getElementById('pdf-annotations-extractor-update-button');
 
 	// set button label
@@ -580,12 +580,12 @@ function updatePDFToolsStatus() {
 	
 	// extraction of pdfs 
 	// var annotation_prefs=['Pull','NoteFullCite','NoteTruePage'];
-	// for (var i=0;i<annotation_prefs.length;i++) document.getElementById('id-zotfile-pdfExtraction-' + annotation_prefs[i]).disabled = !Zotero.ZotFile.pdfAnnotations.pdfPopplerTool; 
+	// for (var i=0;i<annotation_prefs.length;i++) document.getElementById('id-zotfile-pdfExtraction-' + annotation_prefs[i]).disabled = !Zotero.ZotFile.pdfAnnotations.popplerExtractorTool; 
 		
 }
 
 function checkForUpdates(button,installedVersion) {
-	var url = Zotero.ZotFile.pdfAnnotations.extractorBaseURL + Zotero.ZotFile.pdfAnnotations.extractorFileName + '.version';
+	var url = Zotero.ZotFile.pdfAnnotations.popplerExtractorBaseURL + Zotero.ZotFile.pdfAnnotations.popplerExtractorFileName + '.version';
 	
 	// Find latest version for this platform
 	var sent = Zotero.HTTP.doGet(url, function (xmlhttp) {
@@ -608,7 +608,7 @@ function checkForUpdates(button,installedVersion) {
 
 function getInstalledVersion () {
 //	var filepath = '/Users/jpl2136/Documents/bibliography/Zotero' + "/ExtractPDFAnnotations/"+'ExtractPDFAnnotations-MacIntel'+'.version';	
-	var filepath = Zotero.ZotFile.pdfAnnotations.extractorPath+'.version';
+	var filepath = Zotero.ZotFile.pdfAnnotations.popplerExtractorPath+'.version';
 	var file=Zotero.ZotFile.createFile(filepath); 
 	if(Zotero.ZotFile.fileExists(filepath)) {	    	
 		var istream=Zotero.ZotFile.pdfAnnotations.openFileStream(file);
@@ -627,9 +627,9 @@ function downloadPDFTool() {
 							.getService(Components.interfaces.nsIIOService);
 							
 		
-		var fileName=Zotero.ZotFile.pdfAnnotations.extractorFileName; 
+		var fileName=Zotero.ZotFile.pdfAnnotations.popplerExtractorFileName; 
 
-		var url = Zotero.ZotFile.pdfAnnotations.extractorBaseURL + fileName+ ".zip";
+		var url = Zotero.ZotFile.pdfAnnotations.popplerExtractorBaseURL + fileName+ ".zip";
 		var uri = ioService.newURI(url, null, null);
 
 		var file = Zotero.getZoteroDirectory();
@@ -659,7 +659,7 @@ function downloadPDFTool() {
 		}
 
 		// Set permissions to 755
-		var extractorFile=Zotero.ZotFile.createFile(Zotero.ZotFile.pdfAnnotations.extractorPath); 
+		var extractorFile=Zotero.ZotFile.createFile(Zotero.ZotFile.pdfAnnotations.popplerExtractorPath); 
 		if (Zotero.isMac) {
 			extractorFile.permissions = 33261;
 		}
@@ -669,7 +669,7 @@ function downloadPDFTool() {
 		
 		// set ZotFile variable
 		Zotero.ZotFile.pdfAnnotations.pdfExtraction=true;
-		Zotero.ZotFile.pdfAnnotations.pdfPopplerTool=true;
+		Zotero.ZotFile.pdfAnnotations.popplerExtractorTool=true;
 
 		// enable poppler extractor option
 		document.getElementById('id-zotfile-pdfExtraction-UsePDFJS-false').disabled=false;
