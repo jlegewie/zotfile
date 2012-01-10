@@ -553,7 +553,7 @@ function showSelectedSubfolder() {
 // =================== //
 
 function updatePDFToolsStatus() {
-	var toolIsCompatible = Zotero.ZotFile.pdfAnnotations.popplerExtractorCompatible;
+	var toolIsCompatible = Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported;
 	var toolIsRegistered = Zotero.ZotFile.pdfAnnotations.popplerExtractorTool;		
 	var updateButton = document.getElementById('pdf-annotations-extractor-update-button');
 
