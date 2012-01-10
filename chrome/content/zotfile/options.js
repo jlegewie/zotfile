@@ -553,27 +553,30 @@ function showSelectedSubfolder() {
 // =================== //
 
 function updatePDFToolsStatus() {
+	var toolIsCompatible = Zotero.ZotFile.pdfAnnotations.pdfExtractionCompatible;
 	var toolIsRegistered = Zotero.ZotFile.pdfAnnotations.pdfPopplerTool;		
 	var updateButton = document.getElementById('pdf-annotations-extractor-update-button');
-			
-	// button
-	var installedVersion = getInstalledVersion();	
+
+	// set button label
 	str = toolIsRegistered ? "Update Poppler Tool" : "Download & Install Poppler Tool";
-	updateButton.setAttribute('label', str);	
-	if(toolIsRegistered) {
-		updateButton.setAttribute('disabled', true);				
-		checkForUpdates(updateButton,installedVersion);
-	}
+	updateButton.setAttribute('label', str);
+	updateButton.setAttribute('disabled', false);
 	
-	// version
-	if(toolIsRegistered) {
+	// poppler pdf tool status if compatible (only mac for now...)
+	if(toolIsCompatible && toolIsRegistered) {
+		// get installed version from file
+		var installedVersion = getInstalledVersion();
+		// disable download botton if registered
+		updateButton.setAttribute('disabled', true);
+		// check for updated
+		checkForUpdates(updateButton,installedVersion);
+		// set version text
 		var versionText = document.getElementById('pdf-annotations-extractor-version');
 		versionText.setAttribute('hidden', false);
 		versionText.setAttribute('value', "(installed v. "+installedVersion +")");		
 	}
-
-	// if tool is not campatible
-	if (!Zotero.ZotFile.pdfAnnotations.pdfExtractionCompatible) updateButton.setAttribute('disabled', true);				
+	// disable button if poppler tool is not compatible
+	if(!toolIsCompatible) updateButton.setAttribute('disabled', true);
 	
 	// extraction of pdfs 
 	// var annotation_prefs=['Pull','NoteFullCite','NoteTruePage'];
@@ -607,7 +610,7 @@ function getInstalledVersion () {
 //	var filepath = '/Users/jpl2136/Documents/bibliography/Zotero' + "/ExtractPDFAnnotations/"+'ExtractPDFAnnotations-MacIntel'+'.version';	
 	var filepath = Zotero.ZotFile.pdfAnnotations.extractorPath+'.version';
 	var file=Zotero.ZotFile.createFile(filepath); 
-	if(file.exists()) {	    	
+	if(Zotero.ZotFile.fileExists(filepath)) {	    	
 		var istream=Zotero.ZotFile.pdfAnnotations.openFileStream(file);
 	
 		// get line

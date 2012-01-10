@@ -294,6 +294,7 @@
 							<label value="ZotFile can extract annotations and highlighted text from your pdf attachments."/>				
 
 							<separator/>
+							<label value="Extraction Method"/>
 							<radiogroup id="id-zotfile-pdfExtraction-UsePDFJS" preference="pref-zotfile-pdfExtraction-UsePDFJS">
 								<hbox style="margin: 0"  align="center">
 									<radio id="id-zotfile-pdfExtraction-UsePDFJS-true" label="Use pdf.js to extract annotations" value="true"/>
