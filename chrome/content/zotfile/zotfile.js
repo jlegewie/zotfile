@@ -123,7 +123,6 @@ Zotero.ZotFile = {
 
 				// check whether tool is installed
 				Zotero.ZotFile.pdfAnnotations.popplerExtractorTool=Zotero.ZotFile.pdfAnnotations.popplerExtractorCheckInstalled();		
-				Zotero.ZotFile.pdfAnnotations.pdfExtraction=Zotero.ZotFile.pdfAnnotations.popplerExtractorTool;	
 				
 				// set to pdf.js if poppler is not installed
 				if(!Zotero.ZotFile.pdfAnnotations.popplerExtractorTool) Zotero.ZotFile.prefs.setBoolPref("pdfExtraction.UsePDFJS",true);		
@@ -132,9 +131,6 @@ Zotero.ZotFile = {
 			// set to pdf.js if poppler is not supported
 			if(!Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported) Zotero.ZotFile.prefs.setBoolPref("pdfExtraction.UsePDFJS",true);		
 
-			if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS")) {
-				Zotero.ZotFile.pdfAnnotations.pdfExtraction = true;  
-			}
 		});
 		
 		//this.createUI()
@@ -388,7 +384,7 @@ Zotero.ZotFile = {
 			}
 
 			// add 'Extract annotations'
-			if(this.pdfAnnotations.pdfExtraction & this.prefs.getBoolPref("pdfExtraction.MenuItem")) show.push(m.extractanno);			
+			if(this.prefs.getBoolPref("pdfExtraction.MenuItem")) show.push(m.extractanno);			
 
 			// tablet menu part
 			if(this.prefs.getBoolPref("tablet") & oneAtt) {
@@ -1485,7 +1481,7 @@ Zotero.ZotFile = {
 			this.clearInfo(att);
 		
 			// extract annotations from attachment and add note    
-			if (this.pdfAnnotations.pdfExtraction & this.prefs.getBoolPref("pdfExtraction.Pull") & option!=1) this.pdfAnnotations.getAnnotations([attID]);
+			if (this.prefs.getBoolPref("pdfExtraction.Pull") & option!=1) this.pdfAnnotations.getAnnotations([attID]);
 		
 			// remove tag from parent item
 			var tagID=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tagParentPush_tag"),0);
@@ -1749,7 +1745,6 @@ Zotero.ZotFile = {
 		getAnnotations: function(attIDs) {
 //			Zotero.debug("ZotFile - pdfAnnotations - getAnnotations() - called");
 			
-			if(this.pdfExtraction) {
 		 		// get selected attachments if no att ids are passed   
 				if(attIDs==null) attIDs=Zotero.ZotFile.getSelectedAttachments();  			
 
@@ -1826,11 +1821,6 @@ Zotero.ZotFile = {
 
 //				Zotero.debug("ZotFile - pdfAnnotations - getAnnotations() - end - done");
 			 
-			} else {
-//				Zotero.debug("ZotFile - pdfAnnotations - getAnnotations() - end - not supported");
-				Zotero.ZotFile.infoWindow("ZotFile Error","Extraction of annotations is currently only supported on " + this.popplerSupportedPlatforms.join(', ') + ".",8000);
-			}
-
 		},
 
 		popplerExtractorGetAnnotationsFromFile: function(outputFile) {

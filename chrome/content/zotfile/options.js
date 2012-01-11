@@ -668,7 +668,6 @@ function downloadPDFTool() {
 		}
 		
 		// set ZotFile variable
-		Zotero.ZotFile.pdfAnnotations.pdfExtraction=true;
 		Zotero.ZotFile.pdfAnnotations.popplerExtractorTool=true;
 
 		// enable poppler extractor option
