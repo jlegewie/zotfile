@@ -1920,7 +1920,7 @@ Zotero.ZotFile = {
 				}
 
 				if(anno.markup && anno.markup != "") {
-					var markup = anno.markup;
+					var markup = this.trim(anno.markup);
 					if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteRemoveHyphens")) markup = this.removeHyphens(markup);
 					var tagStart = htmlTagHighlightStart;
 					var tagEnd = htmlTagHighlightEnd;
