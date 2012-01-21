@@ -749,7 +749,7 @@ Zotero.ZotFile = {
 		  if (this.prefs.getBoolPref("replace_blanks"))  var filename = filename.replace(/ /g, '_');
 
 		  // remove all the accents and other strange characters from filename
-		  if (Zotero.version[0]>=3) var filename = Zotero.Utilities.removeDiacritics(filename);
+		  if (Zotero.version[0]>=3 && this.prefs.getBoolPref("removeDiacritics")) var filename = Zotero.Utilities.removeDiacritics(filename);
 		
 		}
 		if (this.prefs.getBoolPref("useZoteroToRename")) filename=Zotero.Attachments.getFileBaseNameFromItem(item.itemID);

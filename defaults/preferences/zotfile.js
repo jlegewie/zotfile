@@ -15,6 +15,7 @@ pref("extensions.zotfile.truncate_authors", true);
 pref("extensions.zotfile.max_authors", 2);
 pref("extensions.zotfile.add_etal", true);
 pref("extensions.zotfile.etal", " et al");
+pref("extensions.zotfile.removeDiacritics", false);
 pref("extensions.zotfile.confirmation", true);     
 pref("extensions.zotfile.confirmation_batch_ask", true);     
 pref("extensions.zotfile.confirmation_batch", 2);

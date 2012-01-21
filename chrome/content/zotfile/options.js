@@ -28,6 +28,7 @@ function updatePreferenceWindow(which) {
 	
 	// disable ff download folder option for standalone
 	if(Zotero.isStandalone) document.getElementById('id-zotfile-source_dir_ff-true').disabled=true;
+	if(Zotero.version[0]<=2) document.getElementById('id-zotfile-removeDiacritics').disabled=true;	
 
 	// dis- and enable poppler extractor option
 	document.getElementById('id-zotfile-pdfExtraction-UsePDFJS-false').disabled=!Zotero.ZotFile.pdfAnnotations.popplerExtractorTool;
