@@ -327,7 +327,7 @@
 								<textbox id="id-zotfile-confirmation_batch" preference="pref-zotfile-confirmation_batch" width="25"/> 
 								<label id="id-zotfile-confirmation_batch-end"  value="or more attachments."/>																				
 							</hbox>    
-							<checkbox id="id-zotfile-removeDiacritics" label="Remove diacritics from filename" preference="pref-zotfile-removeDiacritics"/> 
+							<checkbox id="id-zotfile-removeDiacritics" label="Remove special characters (diacritics) from filename" preference="pref-zotfile-removeDiacritics"/> 
 						   <hbox style="margin: 0">											
 							   <checkbox id="id-zotfile-useFileTypes" label="Only work with the following filetypes" preference="pref-zotfile-useFileTypes" oncommand="updatePreferenceWindow('filetypes')"/>							
 							   <textbox id="id-zotfile-filetypes" preference="pref-zotfile-filetypes" flex="1"/>						
