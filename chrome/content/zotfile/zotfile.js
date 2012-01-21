@@ -1624,7 +1624,8 @@ Zotero.ZotFile = {
 
 				// preserve attachment note and tags
 				var att_note=att.getNote();
-			    var att_tags=att.getTagIDs();
+			    var att_tags=att.getTags();
+			    for (var i=0; i < att_tags.length; i++) att_tags[i]= att_tags[i]._get('name');
 			
 	            // Rename and Move Attachment 
 				var file = att.getFile();
@@ -1639,7 +1640,7 @@ Zotero.ZotFile = {
 					if(att_note!="" | att_tags) {
 						var att = Zotero.Items.get(attID);  
 						if(att_note!="") att.setNote(att_note);
-						if(att_tags) for each (var tag in att_tags) att.addTagByID(tag);
+						if(att_tags) for each (var tag in att_tags) att.addTag(tag);
 						att.save();                   
 					}
 				}
