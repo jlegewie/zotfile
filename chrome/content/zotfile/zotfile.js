@@ -1811,14 +1811,17 @@ Zotero.ZotFile = {
 				}
 				if (this.pdfAttachmentsForExtraction.length > 0 &&
 				    (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS") || Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler"))) {
-					// setup extraction process
-					this.errorExtractingAnnotations = false;
-					this.numTotalPdfAttachments = this.pdfAttachmentsForExtraction.length;
-					Zotero.showZoteroPaneProgressMeter("Extract PDF annotations (press ESC to cancel)",true);
-					var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser"); 
-					win.ZoteroPane.document.addEventListener('keypress', this.cancellationListener);
-					this.pdfHiddenBrowser = Zotero.Browser.createHiddenBrowser();
-					this.pdfHiddenBrowser.loadURI(this.PDF_EXTRACT_URL);
+				    if (!Zotero.isFx36) {
+    					// setup extraction process
+    					this.errorExtractingAnnotations = false;
+    					this.numTotalPdfAttachments = this.pdfAttachmentsForExtraction.length;
+    					Zotero.showZoteroPaneProgressMeter("Extract PDF annotations (press ESC to cancel)",true);
+    					var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser"); 
+    					win.ZoteroPane.document.addEventListener('keypress', this.cancellationListener);
+    					this.pdfHiddenBrowser = Zotero.Browser.createHiddenBrowser();
+    					this.pdfHiddenBrowser.loadURI(this.PDF_EXTRACT_URL);
+					}
+					else Zotero.ZotFile.infoWindow("ZotFile Error","The extraction of pdf annotations with pdf.js is not supported on Firefox 3.6. Install the most recent Firefox version to use this feature. Mac users can also switch to poppler for the extraction of pdf annotations (in 'ZotFile Preferences' under 'Advanced Settings').",8000);
 				}
 
 //				Zotero.debug("ZotFile - pdfAnnotations - getAnnotations() - end - done");
