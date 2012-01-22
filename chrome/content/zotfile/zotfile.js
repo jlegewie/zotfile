@@ -1916,7 +1916,7 @@ Zotero.ZotFile = {
 
 				// add to note text pdfExtractionNoteRemoveHtmlNote
 				if(anno.content && anno.content != "" && 
-				   (!anno.markup || anno.content.trim() != anno.markup.trim())) {
+				   (!anno.markup || Zotero.Utilities.trimInternal(anno.content).replace(/ /g,"") != Zotero.Utilities.trimInternal(anno.markup).replace(/ /g,""))) {
 					note += "<p>"+htmlTagNoteStart+anno.content+" (note on p." + page + ")"+htmlTagNoteEnd+"</p><br>";
 				}
 
