@@ -83,6 +83,20 @@ Zotero.ZotFile.PdfExtractor = {
               a.type = annot.type;
               a.content = annot.content;
               a.markup = annot.markup ? annot.markup.join(' ') : null;
+              if (a.markup != null) {
+                // translate ligatures
+                var replacements = [['\ufb00','ff'],
+                                    ['\ufb01','fi'],
+                                    ['\ufb02','fl'],
+                                    ['\ufb03','ffi'],
+                                    ['\ufb04','ffl'],
+                                    ['\ufb05','ft'],
+                                    ['\ufb06','st']];
+                for (var i = 0; i < replacements.length; i++) {
+                  a.markup = a.markup.replace(replacements[i][0],replacements[i][1]);
+                }
+              }
+
               annotations.push(a);
             }
           }
