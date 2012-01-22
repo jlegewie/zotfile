@@ -1804,7 +1804,7 @@ Zotero.ZotFile = {
 							if(annotations.length!=0) this.createNote(annotations, item);
 
 							// delete output text file 
-							Zotero.ZotFile.removeFile(Zotero.ZotFile.createFile(outputFile));
+							if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.popplerDeleteTxtFile")) Zotero.ZotFile.removeFile(Zotero.ZotFile.createFile(outputFile));
 						}
 					}
 				}
