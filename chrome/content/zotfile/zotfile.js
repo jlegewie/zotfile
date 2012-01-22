@@ -1791,17 +1791,18 @@ Zotero.ZotFile = {
 
 					// extract annotations from pdf and create note with annotations 
 					if(Zotero.ZotFile.getFiletype(file.leafName)=="pdf") {
-						if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS")) {
+						if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS") || Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler")) {
 							var a = {};
 							a.attachment = att;
 							a.path = file.path;
 							a.item = item;
 							this.pdfAttachmentsForExtraction.push(a);
-						} else {
+						} 
+						if (!Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS") || Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler")) {
 							var outputFile=file.path.replace(".pdf",".txt"); 
 							this.popplerExtractorCall(file.path,outputFile);
 							var annotations = this.popplerExtractorGetAnnotationsFromFile(outputFile);
-							if(annotations.length!=0) this.createNote(annotations, item);
+							if(annotations.length!=0) this.createNote(annotations, item, "poppler");
 
 							// delete output text file 
 							if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.popplerDeleteTxtFile")) Zotero.ZotFile.removeFile(Zotero.ZotFile.createFile(outputFile));
@@ -1809,7 +1810,7 @@ Zotero.ZotFile = {
 					}
 				}
 				if (this.pdfAttachmentsForExtraction.length > 0 &&
-				    Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS")) {
+				    (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS") || Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler"))) {
 					// setup extraction process
 					this.errorExtractingAnnotations = false;
 					this.numTotalPdfAttachments = this.pdfAttachmentsForExtraction.length;
@@ -1870,8 +1871,8 @@ Zotero.ZotFile = {
 			return annotations;
 		},
 
-		createNote: function(annotations, item) {
-			var note_content=this.getNoteContent(annotations, item);
+		createNote: function(annotations, item, method) {
+			var note_content=this.getNoteContent(annotations, item, method);
 			var note = new Zotero.Item("note"); 
 //			note.setNote(Zotero.Utilities.text2html(note_content)); 
 			note.setNote(note_content); 
@@ -1881,12 +1882,14 @@ Zotero.ZotFile = {
 //			Zotero.ZotFile.infoWindow("ZotFile Report","TAB:" + prefWindow.document.getElementById('zotfile-tabbox').selectedTab,8000); 
 		},
 
-		getNoteContent: function(annotations, item) { 
+		getNoteContent: function(annotations, item, method) { 
 			// get current date   
 			var date_str=new Date().toUTCString();
 
 			// set note title
-			var note="<b>Extracted Annotations (" + date_str + ")</b><br><br>";
+			var note="<b>Extracted Annotations (" + date_str;
+			if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler")) note += ", " + method;
+			note += ")</b><br><br>";
 
 			// get html tags for notes and highlights
 			var htmlTagNoteStart=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.NoteHtmlTagStart");
@@ -1996,7 +1999,7 @@ Zotero.ZotFile = {
              * @param item The Zotero item these annotations came from */
             extractionComplete: function(annotations, item) {                
                 // put annotations into a Zotero note
-                if (annotations.length > 0) this.createNote(annotations, item);
+                if (annotations.length > 0) this.createNote(annotations, item, "pdf.js");
                 
                 // move on to the next pdf, if there is one
                 if (this.pdfAttachmentsForExtraction.length > 0) {
