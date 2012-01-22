@@ -1923,7 +1923,8 @@ Zotero.ZotFile = {
 				// add to note text pdfExtractionNoteRemoveHtmlNote
 				if(anno.content && anno.content != "" && 
 				   (!anno.markup || this.strDistance(anno.content,anno.markup)>0.15 )) {
-					note += "<p>"+htmlTagNoteStart+anno.content+" (note on p." + page + ")"+htmlTagNoteEnd+"</p><br>";
+					var content = anno.content.replace(/(\r\n|\n|\r)/gm,"<br/>");
+					note += "<p>"+htmlTagNoteStart+content+" (note on p." + page + ")"+htmlTagNoteEnd+"</p><br>";
 				}
 
 				if(anno.markup && anno.markup != "") {
