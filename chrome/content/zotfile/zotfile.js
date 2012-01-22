@@ -1922,7 +1922,7 @@ Zotero.ZotFile = {
 
 				// add to note text pdfExtractionNoteRemoveHtmlNote
 				if(anno.content && anno.content != "" && 
-				   (!anno.markup || Zotero.Utilities.trimInternal(anno.content).replace(/ /g,"") != Zotero.Utilities.trimInternal(anno.markup).replace(/ /g,""))) {
+				   (!anno.markup || this.strDistance(anno.content,anno.markup)>0.15 )) {
 					note += "<p>"+htmlTagNoteStart+anno.content+" (note on p." + page + ")"+htmlTagNoteEnd+"</p><br>";
 				}
 
@@ -1948,6 +1948,13 @@ Zotero.ZotFile = {
 		trim: function(str) {
 	//   	return str.replace (/^\s+/, '').replace (/\s+$/, '');
 			return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+		},
+
+		strDistance: function (s1,s2) {
+			s1=Zotero.Utilities.trimInternal(s1).replace(/ /g,"");
+			s2=Zotero.Utilities.trimInternal(s2).replace(/ /g,"");
+			var l = (s1.length > s2.length) ? s1.length : s2.length;
+			return Zotero.Utilities.levenshtein(s1,s2)/l;
 		},
 
 		removeHyphens: function(str) {
