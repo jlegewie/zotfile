@@ -1629,7 +1629,10 @@ Zotero.ZotFile = {
                 var file = att.getFile();
                     if(this.fileExists(att) && this.checkFileType(file)) {
                     // move & rename
-                    var attID=this.renameAttachment(item, att,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),true);
+                    if(!this.getTabletStatus(att)) {
+                        var attID=this.renameAttachment(item, att,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),true);
+                    }
+                    else this.infoWindow("Zotfile Error","Attachment could not be renamed because it is on the tablet.",8000);
                     
                     //update list of selected item
                     if(attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
