@@ -7,240 +7,240 @@
 // 'pref' can be passed as string or array
 // returns setting if needed for further changes
 function disablePreference(setting, pref, revert) {
-	setting = document.getElementById('pref-zotfile-' + setting).value;
-	if(revert) setting = !setting;
-	if(typeof(pref)=='string') document.getElementById('id-zotfile-' + pref).disabled = !setting;
-	if(typeof(pref)=='object') for (var i=0;i<pref.length;i++) document.getElementById('id-zotfile-' + pref[i]).disabled = !setting;
-	return(setting);
+    setting = document.getElementById('pref-zotfile-' + setting).value;
+    if(revert) setting = !setting;
+    if(typeof(pref)=='string') document.getElementById('id-zotfile-' + pref).disabled = !setting;
+    if(typeof(pref)=='object') for (var i=0;i<pref.length;i++) document.getElementById('id-zotfile-' + pref[i]).disabled = !setting;
+    return(setting);
 }
 
 function updatePreferenceWindow(which) {
-	var setting;	
-	if(which=="all") {
-		updatePDFToolsStatus();
-		updateFolderIcon("all",false);
-		Zotero.ZotFile.temp=Zotero.ZotFile.prefs.getCharPref("tablet.dest_dir");
-		/*if(document.getElementById('pref-zotfile-tablet-mode').value==2) {
-			document.getElementById('id-zotfile-tablet-storeCopyOfFile').disabled = true;
-			document.getElementById('id-zotfile-tablet-storeCopyOfFile_suffix').disabled = true;
-		}*/
-	}
-	
-	// disable ff download folder option for standalone
-	if(Zotero.isStandalone) document.getElementById('id-zotfile-source_dir_ff-true').disabled=true;
-	if(Zotero.version[0]<=2) document.getElementById('id-zotfile-removeDiacritics').disabled=true;
+    var setting;    
+    if(which=="all") {
+        updatePDFToolsStatus();
+        updateFolderIcon("all",false);
+        Zotero.ZotFile.temp=Zotero.ZotFile.prefs.getCharPref("tablet.dest_dir");
+        /*if(document.getElementById('pref-zotfile-tablet-mode').value==2) {
+            document.getElementById('id-zotfile-tablet-storeCopyOfFile').disabled = true;
+            document.getElementById('id-zotfile-tablet-storeCopyOfFile_suffix').disabled = true;
+        }*/
+    }
+    
+    // disable ff download folder option for standalone
+    if(Zotero.isStandalone) document.getElementById('id-zotfile-source_dir_ff-true').disabled=true;
+    if(Zotero.version[0]<=2) document.getElementById('id-zotfile-removeDiacritics').disabled=true;
 
-	// dis- and enable poppler extractor option
-	document.getElementById('id-zotfile-pdfExtraction-UsePDFJS-false').disabled=!Zotero.ZotFile.pdfAnnotations.popplerExtractorTool;
-	
-	var revert=(which!="all") ? true : false;
-		
-	// Add 'et al'
-	if(which=="etal" || which=="all") disablePreference("add_etal", "etal", revert);
+    // dis- and enable poppler extractor option
+    document.getElementById('id-zotfile-pdfExtraction-UsePDFJS-false').disabled=!Zotero.ZotFile.pdfAnnotations.popplerExtractorTool;
+    
+    var revert=(which!="all") ? true : false;
+        
+    // Add 'et al'
+    if(which=="etal" || which=="all") disablePreference("add_etal", "etal", revert);
 
-	// max title length
-	if(which=="truncate_title_max" || which=="all") disablePreference("truncate_title_max", "max_titlelength", revert);
+    // max title length
+    if(which=="truncate_title_max" || which=="all") disablePreference("truncate_title_max", "max_titlelength", revert);
 
-	// max authors
-	if(which=="truncate_authors" || which=="all") disablePreference("truncate_authors", "max_authors", revert);
+    // max authors
+    if(which=="truncate_authors" || which=="all") disablePreference("truncate_authors", "max_authors", revert);
 
-	// subfolder
-	if(which=="subfolder" || which=="all") disablePreference("subfolder", "subfolderFormat", revert);
-	
-	// subfolder-tablet
-	if(which=="subfolder-tablet" || which=="all") disablePreference("tablet-subfolder", "tablet-subfolderFormat", revert);
-	
-	// storeCopyOfFile-tablet
-	if(which=="storeCopyOfFile" || which=="all") disablePreference("tablet-storeCopyOfFile", "tablet-storeCopyOfFile_suffix", revert);
-	
-	// batch renaming
-	if(which=="confirm" || which=="all") disablePreference("confirmation_batch_ask", "confirmation_batch", revert);
-	
+    // subfolder
+    if(which=="subfolder" || which=="all") disablePreference("subfolder", "subfolderFormat", revert);
+    
+    // subfolder-tablet
+    if(which=="subfolder-tablet" || which=="all") disablePreference("tablet-subfolder", "tablet-subfolderFormat", revert);
+    
+    // storeCopyOfFile-tablet
+    if(which=="storeCopyOfFile" || which=="all") disablePreference("tablet-storeCopyOfFile", "tablet-storeCopyOfFile_suffix", revert);
+    
+    // batch renaming
+    if(which=="confirm" || which=="all") disablePreference("confirmation_batch_ask", "confirmation_batch", revert);
+    
 
-	// filetypes
-	if(which=="filetypes" || which=="all") disablePreference("useFileTypes", 'filetypes', revert);
-			
-	// Source Folder
-	if(which=="source" || which=="all") {
-		disablePreference("source_dir_ff", ['source_dir','source_dir-button'], !revert);
-		if(which!="all") updateFolderIcon("source",true);
-	}
+    // filetypes
+    if(which=="filetypes" || which=="all") disablePreference("useFileTypes", 'filetypes', revert);
+            
+    // Source Folder
+    if(which=="source" || which=="all") {
+        disablePreference("source_dir_ff", ['source_dir','source_dir-button'], !revert);
+        if(which!="all") updateFolderIcon("source",true);
+    }
 
-	// Destination Folder
-	if(which=="dest" || which=="all") {
-		setting=disablePreference("import", ['dest_dir','dest_dir-button','subfolder','subfolderFormat'], !revert);
-		if (setting) document.getElementById('id-zotfile-subfolderFormat').disabled = !document.getElementById('pref-zotfile-subfolder').value;
-		if(which!="all") updateFolderIcon("dest",true);
-	}
-	
-	// userinput
-	if(which=="userinput" || which=="all") disablePreference("userInput", "userInput_Default", revert);
-	
-	// Use Zotero to Rename
-	if(which=="zotrename" || which=="all") {
-		setting=disablePreference("useZoteroToRename", ['renameFormat', 'renameFormat-label', 'renameFormat-des1', 'renameFormat-des2', 'renameFormat-des3', 'renameFormat-des4', 'renameFormat_patent', 'renameFormat_patent-label', 'truncate_title', 'truncate_title_max', 'max_titlelength', 'max_authors','truncate_authors', 'add_etal', 'etal', 'userInput', 'userInput_Default', 'replace_blanks'], !revert);
-		if (which=="all" && setting) {
-			disablePreference("add_etal", "etal", false);
-			disablePreference("userInput", "userInput_Default", false);
-		}
-		
-	}
-	
-	// tablet features
-	if(which=="zotfile-tablet" || which=="all") {
-		setting=disablePreference("tablet", ['tablet-baseFolder', 'tablet-dest_dir', 'tablet-dest_dir-button', 'tablet-dest_dir-show', 'tablet-dest_dir-des', 'tablet-label-subfolders', 'tablet-projectFolders', 'tablet-projectFolders-button', 'tablet-subfolder', 'tablet-subfolderFormat', 'tablet-rename', 'tablet-storeCopyOfFile', 'tablet-storeCopyOfFile_suffix','pdfExtraction-Pull'], revert);
-		if (which=="all" && setting) {
-			disablePreference("tablet-storeCopyOfFile", "tablet-storeCopyOfFile_suffix", false);
-			disablePreference("tablet-subfolder", "tablet-subfolderFormat", false);
-		}
-		// show alert about the tag used by zotfile
-		if(which=="zotfile-tablet" && !document.getElementById('pref-zotfile-tablet').value) alert("Zotfile uses the tag '_READ' to remember files that are on the tablet. Please do not change this tag manually!");
+    // Destination Folder
+    if(which=="dest" || which=="all") {
+        setting=disablePreference("import", ['dest_dir','dest_dir-button','subfolder','subfolderFormat'], !revert);
+        if (setting) document.getElementById('id-zotfile-subfolderFormat').disabled = !document.getElementById('pref-zotfile-subfolder').value;
+        if(which!="all") updateFolderIcon("dest",true);
+    }
+    
+    // userinput
+    if(which=="userinput" || which=="all") disablePreference("userInput", "userInput_Default", revert);
+    
+    // Use Zotero to Rename
+    if(which=="zotrename" || which=="all") {
+        setting=disablePreference("useZoteroToRename", ['renameFormat', 'renameFormat-label', 'renameFormat-des1', 'renameFormat-des2', 'renameFormat-des3', 'renameFormat-des4', 'renameFormat_patent', 'renameFormat_patent-label', 'truncate_title', 'truncate_title_max', 'max_titlelength', 'max_authors','truncate_authors', 'add_etal', 'etal', 'userInput', 'userInput_Default', 'replace_blanks'], !revert);
+        if (which=="all" && setting) {
+            disablePreference("add_etal", "etal", false);
+            disablePreference("userInput", "userInput_Default", false);
+        }
+        
+    }
+    
+    // tablet features
+    if(which=="zotfile-tablet" || which=="all") {
+        setting=disablePreference("tablet", ['tablet-baseFolder', 'tablet-dest_dir', 'tablet-dest_dir-button', 'tablet-dest_dir-show', 'tablet-dest_dir-des', 'tablet-label-subfolders', 'tablet-projectFolders', 'tablet-projectFolders-button', 'tablet-subfolder', 'tablet-subfolderFormat', 'tablet-rename', 'tablet-storeCopyOfFile', 'tablet-storeCopyOfFile_suffix','pdfExtraction-Pull'], revert);
+        if (which=="all" && setting) {
+            disablePreference("tablet-storeCopyOfFile", "tablet-storeCopyOfFile_suffix", false);
+            disablePreference("tablet-subfolder", "tablet-subfolderFormat", false);
+        }
+        // show alert about the tag used by zotfile
+        if(which=="zotfile-tablet" && !document.getElementById('pref-zotfile-tablet').value) alert("Zotfile uses the tag '_READ' to remember files that are on the tablet. Please do not change this tag manually!");
 
-	}
+    }
 }
 
 function updateFolderIcon(which,revert) {
-	var setting, icon_clear,icon_ok,icon_error;
-	// Source Folder
-	if(which=="source" || which=="all") {
-		setting = document.getElementById('pref-zotfile-source_dir_ff').value;
-		if(revert) setting = !setting;
+    var setting, icon_clear,icon_ok,icon_error;
+    // Source Folder
+    if(which=="source" || which=="all") {
+        setting = document.getElementById('pref-zotfile-source_dir_ff').value;
+        if(revert) setting = !setting;
 
-		icon_clear=document.getElementById('id-zotfile-source_dir-clear');
-		icon_ok=document.getElementById('id-zotfile-source_dir-ok');
-		icon_error=document.getElementById('id-zotfile-source_dir-error');
-		
-		// if source dir is set of ff download folder
-		if(setting) {
-			icon_clear.setAttribute('hidden', false);
-			icon_error.setAttribute('hidden', true);
-			icon_ok.setAttribute('hidden', true);
-		}
-		// if source dir is set custom folder
-		if(!setting) {
-			icon_clear.setAttribute('hidden', true);
-			if(checkFolderLocation("source_dir")) {
-				icon_ok.setAttribute('hidden', false);
-				icon_error.setAttribute('hidden', true);
-			}
-			else {
-				icon_error.setAttribute('hidden', false);
-				icon_ok.setAttribute('hidden', true);
-			}
-		}
-	}
+        icon_clear=document.getElementById('id-zotfile-source_dir-clear');
+        icon_ok=document.getElementById('id-zotfile-source_dir-ok');
+        icon_error=document.getElementById('id-zotfile-source_dir-error');
+        
+        // if source dir is set of ff download folder
+        if(setting) {
+            icon_clear.setAttribute('hidden', false);
+            icon_error.setAttribute('hidden', true);
+            icon_ok.setAttribute('hidden', true);
+        }
+        // if source dir is set custom folder
+        if(!setting) {
+            icon_clear.setAttribute('hidden', true);
+            if(checkFolderLocation("source_dir")) {
+                icon_ok.setAttribute('hidden', false);
+                icon_error.setAttribute('hidden', true);
+            }
+            else {
+                icon_error.setAttribute('hidden', false);
+                icon_ok.setAttribute('hidden', true);
+            }
+        }
+    }
 
-	// Dest Folder
-	if(which=="dest" || which=="all") {
-		setting = document.getElementById('pref-zotfile-import').value;
-		if(revert) setting = !setting;
+    // Dest Folder
+    if(which=="dest" || which=="all") {
+        setting = document.getElementById('pref-zotfile-import').value;
+        if(revert) setting = !setting;
 
-		icon_clear=document.getElementById('id-zotfile-dest_dir-clear');
-		icon_ok=document.getElementById('id-zotfile-dest_dir-ok');
-		icon_error=document.getElementById('id-zotfile-dest_dir-error');
-		
-		// if dest dir is set of ff download folder
-		if(setting) {
-			icon_clear.setAttribute('hidden', false);
-			icon_error.setAttribute('hidden', true);
-			icon_ok.setAttribute('hidden', true);
-		}
-		// if dest dir is set custom folder
-		if(!setting) {
-			icon_clear.setAttribute('hidden', true);
-			if(checkFolderLocation("dest_dir")) {
-				icon_ok.setAttribute('hidden', false);
-				icon_error.setAttribute('hidden', true);
-			}
-			else {
-				icon_ok.setAttribute('hidden', true);
-				icon_error.setAttribute('hidden', false);
-			}
-		}
-	}
+        icon_clear=document.getElementById('id-zotfile-dest_dir-clear');
+        icon_ok=document.getElementById('id-zotfile-dest_dir-ok');
+        icon_error=document.getElementById('id-zotfile-dest_dir-error');
+        
+        // if dest dir is set of ff download folder
+        if(setting) {
+            icon_clear.setAttribute('hidden', false);
+            icon_error.setAttribute('hidden', true);
+            icon_ok.setAttribute('hidden', true);
+        }
+        // if dest dir is set custom folder
+        if(!setting) {
+            icon_clear.setAttribute('hidden', true);
+            if(checkFolderLocation("dest_dir")) {
+                icon_ok.setAttribute('hidden', false);
+                icon_error.setAttribute('hidden', true);
+            }
+            else {
+                icon_ok.setAttribute('hidden', true);
+                icon_error.setAttribute('hidden', false);
+            }
+        }
+    }
 
-	// Tablet
-	if(which=="tablet" || which=="all") {
+    // Tablet
+    if(which=="tablet" || which=="all") {
 
-		icon_ok=document.getElementById('id-zotfile-tablet-ok');
-		icon_error=document.getElementById('id-zotfile-tablet-error');
-		
-		// if dest dir is set custom folder
-		if(checkFolderLocation("tablet.dest_dir")) {
-			icon_ok.setAttribute('hidden', false);
-			icon_error.setAttribute('hidden', true);
-		}
-		else {
-			icon_ok.setAttribute('hidden', true);
-			icon_error.setAttribute('hidden', false);
-		}
-		if(which!="all") changedBasefolder(Zotero.ZotFile.prefs.getCharPref("tablet.dest_dir"),Zotero.ZotFile.prefs.getCharPref("tablet.dest_dir"));
-	}
+        icon_ok=document.getElementById('id-zotfile-tablet-ok');
+        icon_error=document.getElementById('id-zotfile-tablet-error');
+        
+        // if dest dir is set custom folder
+        if(checkFolderLocation("tablet.dest_dir")) {
+            icon_ok.setAttribute('hidden', false);
+            icon_error.setAttribute('hidden', true);
+        }
+        else {
+            icon_ok.setAttribute('hidden', true);
+            icon_error.setAttribute('hidden', false);
+        }
+        if(which!="all") changedBasefolder(Zotero.ZotFile.prefs.getCharPref("tablet.dest_dir"),Zotero.ZotFile.prefs.getCharPref("tablet.dest_dir"));
+    }
 }
 
 function checkFolderLocation(folder) {
-	var path=Zotero.ZotFile.prefs.getCharPref(folder);
-	if(path!="") if(Zotero.ZotFile.fileExists(path)) return(true);
-	return(false);
+    var path=Zotero.ZotFile.prefs.getCharPref(folder);
+    if(path!="") if(Zotero.ZotFile.fileExists(path)) return(true);
+    return(false);
 }
 
 function previewFilename() {
-	try {
-		var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser");
-		var items = win.ZoteroPane.getSelectedItems();
-		var item = items[0];
-		
-		var filename;
-		if(item.isRegularItem()) filename=Zotero.ZotFile.getFilename(item, "");
-		if(item.getSource()) if(item.isAttachment()) filename=Zotero.ZotFile.getFilename(Zotero.Items.get(item.getSource()), "");
+    try {
+        var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser");
+        var items = win.ZoteroPane.getSelectedItems();
+        var item = items[0];
+        
+        var filename;
+        if(item.isRegularItem()) filename=Zotero.ZotFile.getFilename(item, "");
+        if(item.getSource()) if(item.isAttachment()) filename=Zotero.ZotFile.getFilename(Zotero.Items.get(item.getSource()), "");
 
-		return(filename);
-	}
-	catch (err) {
-		return("[Please select a zotero item to see a preview of your renaming rules]");
-	}
+        return(filename);
+    }
+    catch (err) {
+        return("[Please select a zotero item to see a preview of your renaming rules]");
+    }
 }
 
 function changedBasefolder(dest_dir) {
-	var baseFolderOld=Zotero.ZotFile.temp;
-	var baseFolderOldValid=Zotero.ZotFile.fileExists(baseFolderOld);
-	var baseFolder=Zotero.ZotFile.prefs.getCharPref("tablet.dest_dir");
-	var baseFolderValid=checkFolderLocation("tablet.dest_dir");
+    var baseFolderOld=Zotero.ZotFile.temp;
+    var baseFolderOldValid=Zotero.ZotFile.fileExists(baseFolderOld);
+    var baseFolder=Zotero.ZotFile.prefs.getCharPref("tablet.dest_dir");
+    var baseFolderValid=checkFolderLocation("tablet.dest_dir");
 
-	// only proceed if folder has changed and the old location was valid
-	if(baseFolderOld!=baseFolder && baseFolderOldValid) {
-		var atts=Zotero.ZotFile.getAttachmentsOnTablet();
-		
-		// change from valid to invalid subfolder
-		if(!baseFolderValid) {
-			if(!confirm("You have changed the location for tablet files to an invalid folder (" + atts.length + " files are in the old location).\n\nDo you want to proceed?")) {
-				Zotero.ZotFile.prefs.setCharPref("tablet.dest_dir",baseFolderOld);
-				updateFolderIcon("tablet",false);
-			}
-		}
-		// change from valid to valid
-		if(baseFolderValid && atts.length>0) {
-			// prompt user
-			if(!confirm("You have changed the location for tablet files. There are " + atts.length + " files in the old location.\n\nDo you want to proceed?")) {
-				Zotero.ZotFile.prefs.setCharPref("tablet.dest_dir",baseFolderOld);
-			}
-			
-/*			var userInput=Zotero.ZotFile.promptUser("You have changed the location for tablet files. There are " + atts.length + " files in the old location.\n\nDo you want to move these files to the new location?","Move to new location","Revert change of location","Cancel");
+    // only proceed if folder has changed and the old location was valid
+    if(baseFolderOld!=baseFolder && baseFolderOldValid) {
+        var atts=Zotero.ZotFile.getAttachmentsOnTablet();
+        
+        // change from valid to invalid subfolder
+        if(!baseFolderValid) {
+            if(!confirm("You have changed the location for tablet files to an invalid folder (" + atts.length + " files are in the old location).\n\nDo you want to proceed?")) {
+                Zotero.ZotFile.prefs.setCharPref("tablet.dest_dir",baseFolderOld);
+                updateFolderIcon("tablet",false);
+            }
+        }
+        // change from valid to valid
+        if(baseFolderValid && atts.length>0) {
+            // prompt user
+            if(!confirm("You have changed the location for tablet files. There are " + atts.length + " files in the old location.\n\nDo you want to proceed?")) {
+                Zotero.ZotFile.prefs.setCharPref("tablet.dest_dir",baseFolderOld);
+            }
+            
+/*          var userInput=Zotero.ZotFile.promptUser("You have changed the location for tablet files. There are " + atts.length + " files in the old location.\n\nDo you want to move these files to the new location?","Move to new location","Revert change of location","Cancel");
 
-			// Move to new location
-			if(userInput==0) {
-				Zotero.ZotFile.setTabletFolder(atts);
-				// remove folder
-				Zotero.ZotFile.removeFile(createFile(baseFolderOld));
-			}
+            // Move to new location
+            if(userInput==0) {
+                Zotero.ZotFile.setTabletFolder(atts);
+                // remove folder
+                Zotero.ZotFile.removeFile(createFile(baseFolderOld));
+            }
 
-			// revert change
-			if(userInput==1) Zotero.ZotFile.prefs.setCharPref("tablet.dest_dir",baseFolderOld);
-			*/
-		}
-	}
+            // revert change
+            if(userInput==1) Zotero.ZotFile.prefs.setCharPref("tablet.dest_dir",baseFolderOld);
+            */
+        }
+    }
 
-	Zotero.ZotFile.temp=Zotero.ZotFile.prefs.getCharPref("tablet.dest_dir");
+    Zotero.ZotFile.temp=Zotero.ZotFile.prefs.getCharPref("tablet.dest_dir");
 }
 
 
@@ -250,303 +250,303 @@ function changedBasefolder(dest_dir) {
 
 function editSubfolderSetting (index) {
 
-	var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
-	var treerow;
-	if (index || treechildren.childNodes.length<Zotero.ZotFile.projectMax) {
-		
-		var label  =null;
-		var folder =null;
-		// get selected tree item if defined
-		if (index != undefined) {
-			if (index == 'rightclickmenu') {
-				var tree = document.getElementById('id-zotfile-tablet-projectFolders-tree');
-				index    = tree.currentIndex;
-			}
-			
-			treerow = treechildren.childNodes[index].firstChild;
-			label   = treerow.childNodes[0].getAttribute('label');
-			folder  = treerow.childNodes[1].getAttribute('label');
-		}
+    var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
+    var treerow;
+    if (index || treechildren.childNodes.length<Zotero.ZotFile.projectMax) {
+        
+        var label  =null;
+        var folder =null;
+        // get selected tree item if defined
+        if (index != undefined) {
+            if (index == 'rightclickmenu') {
+                var tree = document.getElementById('id-zotfile-tablet-projectFolders-tree');
+                index    = tree.currentIndex;
+            }
+            
+            treerow = treechildren.childNodes[index].firstChild;
+            label   = treerow.childNodes[0].getAttribute('label');
+            folder  = treerow.childNodes[1].getAttribute('label');
+        }
 
-		// open dialog
-		var io = {label: label, folder: folder, ok: false};
-		window.openDialog('chrome://zotfile/content/optionsFolderEditor.xul', "id-zotfile-options-FolderEditor", "chrome, modal", io);
-	
-		if (!io.ok) return;
+        // open dialog
+        var io = {label: label, folder: folder, ok: false};
+        window.openDialog('chrome://zotfile/content/optionsFolderEditor.xul', "id-zotfile-options-FolderEditor", "chrome, modal", io);
+    
+        if (!io.ok) return;
                                                          
-		// determine folder seperator depending on OS
-		var folder_sep="/";
-		if (navigator.appVersion.indexOf("Win")!=-1) folder_sep="\\";
+        // determine folder seperator depending on OS
+        var folder_sep="/";
+        if (navigator.appVersion.indexOf("Win")!=-1) folder_sep="\\";
 
-		// check: when folder not defined set to project name
-		if(io.folder=="") io.folder=io.label;
-		// check: beginning / or \ missing, add to folder
-		if(io.folder.substr(0,1)!=folder_sep) io.folder=folder_sep + io.folder;
+        // check: when folder not defined set to project name
+        if(io.folder=="") io.folder=io.label;
+        // check: beginning / or \ missing, add to folder
+        if(io.folder.substr(0,1)!=folder_sep) io.folder=folder_sep + io.folder;
 
-		if (folder_sep=="/") io.folder.replace(/[\\]/g, folder_sep);
-		if (folder_sep=="\\") io.folder.replace("/", folder_sep);
+        if (folder_sep=="/") io.folder.replace(/[\\]/g, folder_sep);
+        if (folder_sep=="\\") io.folder.replace("/", folder_sep);
 
-		io.folder=io.folder.replace(/[:.]/g, folder_sep);
-		io.folder=io.folder.replace("&", "and");
-		io.folder=io.folder.replace(/[\?]/g, ' -');
-		io.folder=io.folder.replace(folder_sep + " ", folder_sep);
+        io.folder=io.folder.replace(/[:.]/g, folder_sep);
+        io.folder=io.folder.replace("&", "and");
+        io.folder=io.folder.replace(/[\?]/g, ' -');
+        io.folder=io.folder.replace(folder_sep + " ", folder_sep);
 
-		//add new item to tree
-		if (index == undefined && io.label!="") {
-			var treeitem   = document.createElement('treeitem');
-			treerow        = document.createElement('treerow');
-			var labelCell  = document.createElement('treecell');
-			var folderCell = document.createElement('treecell');
+        //add new item to tree
+        if (index == undefined && io.label!="") {
+            var treeitem   = document.createElement('treeitem');
+            treerow        = document.createElement('treerow');
+            var labelCell  = document.createElement('treecell');
+            var folderCell = document.createElement('treecell');
 
-			labelCell.setAttribute('label',io.label);
-			folderCell.setAttribute('label',io.folder);
+            labelCell.setAttribute('label',io.label);
+            folderCell.setAttribute('label',io.folder);
 
-			treerow.appendChild(labelCell);
-			treerow.appendChild(folderCell);
-			treeitem.appendChild(treerow);
-			treechildren.appendChild(treeitem);
-		}
-		//change existing tree item
-		if (index != undefined) {
-			treerow.childNodes[0].setAttribute('label',io.label);
-			treerow.childNodes[1].setAttribute('label',io.folder);
-			if (folder.toLowerCase()!=io.folder.toLowerCase()) changedSubfolder(folder,io.folder);
-		}
+            treerow.appendChild(labelCell);
+            treerow.appendChild(folderCell);
+            treeitem.appendChild(treerow);
+            treechildren.appendChild(treeitem);
+        }
+        //change existing tree item
+        if (index != undefined) {
+            treerow.childNodes[0].setAttribute('label',io.label);
+            treerow.childNodes[1].setAttribute('label',io.folder);
+            if (folder.toLowerCase()!=io.folder.toLowerCase()) changedSubfolder(folder,io.folder);
+        }
 
-		updateSubfolderPreferences();
-	}
-	else {
-		Zotero.ZotFile.infoWindow("ZotFile Error","ZotFile only supports up to " + Zotero.ZotFile.projectMax + " subfolders.",8000);
-	}
+        updateSubfolderPreferences();
+    }
+    else {
+        Zotero.ZotFile.infoWindow("ZotFile Error","ZotFile only supports up to " + Zotero.ZotFile.projectMax + " subfolders.",8000);
+    }
 }
   
 function buildFolderList () {
-	// clear tree
-	var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
-	while (treechildren.hasChildNodes()) treechildren.removeChild(treechildren.firstChild);
+    // clear tree
+    var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
+    while (treechildren.hasChildNodes()) treechildren.removeChild(treechildren.firstChild);
 
-	// get list of subfolders (labels and folders)
-	var label = [],folder = [];
-	for (i=0;i<Zotero.ZotFile.projectMax;i++) {
-		if(Zotero.ZotFile.prefs.getBoolPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i])) {
-			label.push(Zotero.ZotFile.prefs.getCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_label"));
-			folder.push(Zotero.ZotFile.prefs.getCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_folder"));
-		}
-	}
+    // get list of subfolders (labels and folders)
+    var label = [],folder = [];
+    for (i=0;i<Zotero.ZotFile.projectMax;i++) {
+        if(Zotero.ZotFile.prefs.getBoolPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i])) {
+            label.push(Zotero.ZotFile.prefs.getCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_label"));
+            folder.push(Zotero.ZotFile.prefs.getCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_folder"));
+        }
+    }
    
     // populate tree with preferences
-	for (var i=0; i<folder.length; i++) {
-		var treeitem = document.createElement('treeitem');
-		var treerow = document.createElement('treerow');
-		var labelCell = document.createElement('treecell');
-		var folderCell = document.createElement('treecell');
+    for (var i=0; i<folder.length; i++) {
+        var treeitem = document.createElement('treeitem');
+        var treerow = document.createElement('treerow');
+        var labelCell = document.createElement('treecell');
+        var folderCell = document.createElement('treecell');
 
-		labelCell.setAttribute('label',label[i]);
-		folderCell.setAttribute('label',folder[i]);
+        labelCell.setAttribute('label',label[i]);
+        folderCell.setAttribute('label',folder[i]);
 
-		treerow.appendChild(labelCell);
-		treerow.appendChild(folderCell);
-		treeitem.appendChild(treerow);
-		treechildren.appendChild(treeitem);
-	}
-	updateSubfolderPreferences();
+        treerow.appendChild(labelCell);
+        treerow.appendChild(folderCell);
+        treeitem.appendChild(treerow);
+        treechildren.appendChild(treeitem);
+    }
+    updateSubfolderPreferences();
 }
           
 function updateSubfolderPreferences () {
-	var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
+    var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
 
-	// clear current preferences
+    // clear current preferences
     for (var i=0;i<Zotero.ZotFile.projectMax;i++) {
-		Zotero.ZotFile.prefs.setBoolPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i],false);
-		Zotero.ZotFile.prefs.setCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_label","");
-		Zotero.ZotFile.prefs.setCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_folder","");
-	}
+        Zotero.ZotFile.prefs.setBoolPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i],false);
+        Zotero.ZotFile.prefs.setCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_label","");
+        Zotero.ZotFile.prefs.setCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_folder","");
+    }
 
-	// populate preferences with tree items
-	for (var i=0;i<treechildren.childNodes.length;i++) {
-		var treerow = treechildren.childNodes[i].firstChild;
-		var label = treerow.childNodes[0].getAttribute('label');
-		var folder = treerow.childNodes[1].getAttribute('label');
-		if (label!="" && folder!="") {
-			Zotero.ZotFile.prefs.setBoolPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i],true);
-			Zotero.ZotFile.prefs.setCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_label",label);
-			Zotero.ZotFile.prefs.setCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_folder",folder);
-		}
+    // populate preferences with tree items
+    for (var i=0;i<treechildren.childNodes.length;i++) {
+        var treerow = treechildren.childNodes[i].firstChild;
+        var label = treerow.childNodes[0].getAttribute('label');
+        var folder = treerow.childNodes[1].getAttribute('label');
+        if (label!="" && folder!="") {
+            Zotero.ZotFile.prefs.setBoolPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i],true);
+            Zotero.ZotFile.prefs.setCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_label",label);
+            Zotero.ZotFile.prefs.setCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_folder",folder);
+        }
 
-	}
+    }
 
 }
 
 function deleteSelectedSubfolder () {
-	try {
-		// get tree and currently selected item
-		var tree = document.getElementById('id-zotfile-tablet-projectFolders-tree');
-		var index = tree.currentIndex;
-		var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
+    try {
+        // get tree and currently selected item
+        var tree = document.getElementById('id-zotfile-tablet-projectFolders-tree');
+        var index = tree.currentIndex;
+        var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
 
-		// get folder name
-		var treerow = treechildren.childNodes[index].firstChild;
-		var subfolder = treerow.childNodes[1].getAttribute('label');
-		
-		// check whether items in folder
-		if(deleteSubfolder(subfolder)) {
-		
-			// remove item
-			treechildren.removeChild(treechildren.childNodes[index]);
-		
-			// refresh subfolder preferences
-			updateSubfolderPreferences();
-				
-			// select tree item
-			if(treechildren.childNodes[index]) tree.view.selection.select(index);
-			if(!treechildren.childNodes[index]) tree.view.selection.select(index-1);
-		
-		}
-	}
-	catch (err) {
-	
-	}
+        // get folder name
+        var treerow = treechildren.childNodes[index].firstChild;
+        var subfolder = treerow.childNodes[1].getAttribute('label');
+        
+        // check whether items in folder
+        if(deleteSubfolder(subfolder)) {
+        
+            // remove item
+            treechildren.removeChild(treechildren.childNodes[index]);
+        
+            // refresh subfolder preferences
+            updateSubfolderPreferences();
+                
+            // select tree item
+            if(treechildren.childNodes[index]) tree.view.selection.select(index);
+            if(!treechildren.childNodes[index]) tree.view.selection.select(index-1);
+        
+        }
+    }
+    catch (err) {
+    
+    }
 }
 
 function deleteSubfolder (subfolder) {
-	
-	//create folder file
-	var folder=Zotero.ZotFile.getTabletLocationFile(subfolder);
-	
-	if(folder.exists()) {
-		// get attachments in old subfolder
-		var attInFolder=Zotero.ZotFile.getAttachmentsOnTablet(subfolder);
-		
-		// iterate through attachments in folder
-		if (attInFolder.length>0) {
-			// ask user
-			var userInput=Zotero.ZotFile.promptUser("There are " + attInFolder.length + " attachments in the subfolder you want to delete. What do you want to do?","Get from Tablet","Move to Base Folder","Cancel");
-	
-			// Pull attachment
-			if(userInput==0) {
-				for (var i=0; i < attInFolder.length; i++) {
-					var att  = attInFolder[i];
-					var item = Zotero.Items.get(att.getSource());
-					var attID=Zotero.ZotFile.removeAttachmentFromTablet(item,att,false);
-				}
-			}
+    
+    //create folder file
+    var folder=Zotero.ZotFile.getTabletLocationFile(subfolder);
+    
+    if(folder.exists()) {
+        // get attachments in old subfolder
+        var attInFolder=Zotero.ZotFile.getAttachmentsOnTablet(subfolder);
+        
+        // iterate through attachments in folder
+        if (attInFolder.length>0) {
+            // ask user
+            var userInput=Zotero.ZotFile.promptUser("There are " + attInFolder.length + " attachments in the subfolder you want to delete. What do you want to do?","Get from Tablet","Move to Base Folder","Cancel");
+    
+            // Pull attachment
+            if(userInput==0) {
+                for (var i=0; i < attInFolder.length; i++) {
+                    var att  = attInFolder[i];
+                    var item = Zotero.Items.get(att.getSource());
+                    var attID=Zotero.ZotFile.removeAttachmentFromTablet(item,att,false);
+                }
+            }
 
-			// move attachments to base folder
-			if(userInput==1) Zotero.ZotFile.setTabletFolder(attInFolder,"");
-			
-			// return false if user canceled
-			if(userInput==2) return(false);
-			
-		}
-		
-		// remove folder
-		Zotero.ZotFile.removeFile(folder);
-	}
+            // move attachments to base folder
+            if(userInput==1) Zotero.ZotFile.setTabletFolder(attInFolder,"");
+            
+            // return false if user canceled
+            if(userInput==2) return(false);
+            
+        }
+        
+        // remove folder
+        Zotero.ZotFile.removeFile(folder);
+    }
 
-	// return true if no false was returned so far
-	return(true);
-			
+    // return true if no false was returned so far
+    return(true);
+            
 }
 
 function changedSubfolder (projectFolderOld,projectFolderNew) {
-	// get attachments in old subfolder
+    // get attachments in old subfolder
     var attInFolder=Zotero.ZotFile.getAttachmentsOnTablet(projectFolderOld);
 
-	// move attachments to new subfolder
-	var confirmed=0;
-	if(attInFolder.length) confirmed=confirm("There are " + attInFolder.length + " attachments in the subfolder \'" + projectFolderOld + "\'. You changed this folder to \'" + projectFolderNew + "\'. Do you want to move the attachments to the new folder?");
+    // move attachments to new subfolder
+    var confirmed=0;
+    if(attInFolder.length) confirmed=confirm("There are " + attInFolder.length + " attachments in the subfolder \'" + projectFolderOld + "\'. You changed this folder to \'" + projectFolderNew + "\'. Do you want to move the attachments to the new folder?");
     if (confirmed) {
-//		var path=attInFolder[0].getFile().parent.path;
-		Zotero.ZotFile.setTabletFolder(attInFolder,projectFolderNew);
-		// remove folder if empty
-		var file=Zotero.ZotFile.getTabletLocationFile(projectFolderOld);
-		Zotero.ZotFile.removeFile(file);
-	}
+//      var path=attInFolder[0].getFile().parent.path;
+        Zotero.ZotFile.setTabletFolder(attInFolder,projectFolderNew);
+        // remove folder if empty
+        var file=Zotero.ZotFile.getTabletLocationFile(projectFolderOld);
+        Zotero.ZotFile.removeFile(file);
+    }
 }
 
 function moveSelectedSubfolderUp () {
-	var tree = document.getElementById('id-zotfile-tablet-projectFolders-tree');
-	var index = tree.currentIndex;
-	if (index>0) {
-		var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
+    var tree = document.getElementById('id-zotfile-tablet-projectFolders-tree');
+    var index = tree.currentIndex;
+    if (index>0) {
+        var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
        
-		// get selected row
-		var treerowSelected = treechildren.childNodes[index].firstChild;
-		var labelSelected = treerowSelected.childNodes[0].getAttribute('label');
-		var folderSelected = treerowSelected.childNodes[1].getAttribute('label');
+        // get selected row
+        var treerowSelected = treechildren.childNodes[index].firstChild;
+        var labelSelected = treerowSelected.childNodes[0].getAttribute('label');
+        var folderSelected = treerowSelected.childNodes[1].getAttribute('label');
 
-		// get upper row
-		var treerowAbove = treechildren.childNodes[index-1].firstChild;
-		var labelAbove = treerowAbove.childNodes[0].getAttribute('label');
-		var folderAbove = treerowAbove.childNodes[1].getAttribute('label');
+        // get upper row
+        var treerowAbove = treechildren.childNodes[index-1].firstChild;
+        var labelAbove = treerowAbove.childNodes[0].getAttribute('label');
+        var folderAbove = treerowAbove.childNodes[1].getAttribute('label');
 
-		// set upper row
-		treerowAbove.childNodes[0].setAttribute('label',labelSelected);
-		treerowAbove.childNodes[1].setAttribute('label',folderSelected);
+        // set upper row
+        treerowAbove.childNodes[0].setAttribute('label',labelSelected);
+        treerowAbove.childNodes[1].setAttribute('label',folderSelected);
 
-		// set selected
-		treerowSelected.childNodes[0].setAttribute('label',labelAbove);
-		treerowSelected.childNodes[1].setAttribute('label',folderAbove);
-	
-		// update preferences
-		updateSubfolderPreferences();
-	
-		// select correct item in tree
-		tree.view.selection.select(index-1);
+        // set selected
+        treerowSelected.childNodes[0].setAttribute('label',labelAbove);
+        treerowSelected.childNodes[1].setAttribute('label',folderAbove);
+    
+        // update preferences
+        updateSubfolderPreferences();
+    
+        // select correct item in tree
+        tree.view.selection.select(index-1);
 
-	}
+    }
 }
 
 function moveSelectedSubfolderDown () {
-	// getSelectedRowIndex
-	var tree = document.getElementById('id-zotfile-tablet-projectFolders-tree');
-	var index = tree.currentIndex;
-	
-	var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
+    // getSelectedRowIndex
+    var tree = document.getElementById('id-zotfile-tablet-projectFolders-tree');
+    var index = tree.currentIndex;
+    
+    var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
 
-	if (index<treechildren.childNodes.length) {
+    if (index<treechildren.childNodes.length) {
        
-		// get selected row
-		var treerowSelected = treechildren.childNodes[index].firstChild;
-		var labelSelected = treerowSelected.childNodes[0].getAttribute('label');
-		var folderSelected = treerowSelected.childNodes[1].getAttribute('label');
+        // get selected row
+        var treerowSelected = treechildren.childNodes[index].firstChild;
+        var labelSelected = treerowSelected.childNodes[0].getAttribute('label');
+        var folderSelected = treerowSelected.childNodes[1].getAttribute('label');
 
-		// get upper row
-		var treerowBelow = treechildren.childNodes[index+1].firstChild;
-		var labelBelow = treerowBelow.childNodes[0].getAttribute('label');
-		var folderBelow = treerowBelow.childNodes[1].getAttribute('label');
+        // get upper row
+        var treerowBelow = treechildren.childNodes[index+1].firstChild;
+        var labelBelow = treerowBelow.childNodes[0].getAttribute('label');
+        var folderBelow = treerowBelow.childNodes[1].getAttribute('label');
 
-		// set upper row
-		treerowBelow.childNodes[0].setAttribute('label',labelSelected);
-		treerowBelow.childNodes[1].setAttribute('label',folderSelected);
+        // set upper row
+        treerowBelow.childNodes[0].setAttribute('label',labelSelected);
+        treerowBelow.childNodes[1].setAttribute('label',folderSelected);
 
-		// set selected
-		treerowSelected.childNodes[0].setAttribute('label',labelBelow);
-		treerowSelected.childNodes[1].setAttribute('label',folderBelow);
-	
-		// update preferences
-		updateSubfolderPreferences();
+        // set selected
+        treerowSelected.childNodes[0].setAttribute('label',labelBelow);
+        treerowSelected.childNodes[1].setAttribute('label',folderBelow);
+    
+        // update preferences
+        updateSubfolderPreferences();
 
-		// select correct item in tree
-		tree.view.selection.select(index+1);
-	}
+        // select correct item in tree
+        tree.view.selection.select(index+1);
+    }
 }
 
 function showSelectedSubfolder() {
-	// getSelectedRowIndex
-	var tree = document.getElementById('id-zotfile-tablet-projectFolders-tree');
-	var index = tree.currentIndex;
-	
-	// get subfolder from tree
-	var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
-	var treerow = treechildren.childNodes[index].firstChild;
-	var folder = treerow.childNodes[1].getAttribute('label');
-	
-	// get folder object
-	var folderFile=Zotero.ZotFile.getTabletLocationFile(folder);
+    // getSelectedRowIndex
+    var tree = document.getElementById('id-zotfile-tablet-projectFolders-tree');
+    var index = tree.currentIndex;
+    
+    // get subfolder from tree
+    var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
+    var treerow = treechildren.childNodes[index].firstChild;
+    var folder = treerow.childNodes[1].getAttribute('label');
+    
+    // get folder object
+    var folderFile=Zotero.ZotFile.getTabletLocationFile(folder);
 
-	// show folder
-	Zotero.ZotFile.showFolder(folderFile);
+    // show folder
+    Zotero.ZotFile.showFolder(folderFile);
 
 }
 
@@ -556,137 +556,137 @@ function showSelectedSubfolder() {
 // =================== //
 
 function updatePDFToolsStatus() {
-	var toolIsCompatible = Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported;
-	var toolIsRegistered = Zotero.ZotFile.pdfAnnotations.popplerExtractorTool;
-	var updateButton = document.getElementById('pdf-annotations-extractor-update-button');
+    var toolIsCompatible = Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported;
+    var toolIsRegistered = Zotero.ZotFile.pdfAnnotations.popplerExtractorTool;
+    var updateButton = document.getElementById('pdf-annotations-extractor-update-button');
 
-	// set button label
-	str = toolIsRegistered ? "Update Poppler Tool" : "Download & Install Poppler Tool";
-	updateButton.setAttribute('label', str);
-	updateButton.setAttribute('disabled', false);
-	
-	// poppler pdf tool status if compatible (only mac for now...)
-	if(toolIsCompatible && toolIsRegistered) {
-		// get installed version from file
-		var installedVersion = getInstalledVersion();
-		// disable download botton if registered
-		updateButton.setAttribute('disabled', true);
-		// check for updated
-		checkForUpdates(updateButton,installedVersion);
-		// set version text
-		var versionText = document.getElementById('pdf-annotations-extractor-version');
-		versionText.setAttribute('hidden', false);
-		versionText.setAttribute('value', "(installed v. "+installedVersion +")");
-	}
-	// disable button if poppler tool is not compatible
-	if(!toolIsCompatible) updateButton.setAttribute('disabled', true);
-	
-	// extraction of pdfs
-	// var annotation_prefs=['Pull','NoteFullCite','NoteTruePage'];
-	// for (var i=0;i<annotation_prefs.length;i++) document.getElementById('id-zotfile-pdfExtraction-' + annotation_prefs[i]).disabled = !Zotero.ZotFile.pdfAnnotations.popplerExtractorTool;
-		
+    // set button label
+    str = toolIsRegistered ? "Update Poppler Tool" : "Download & Install Poppler Tool";
+    updateButton.setAttribute('label', str);
+    updateButton.setAttribute('disabled', false);
+    
+    // poppler pdf tool status if compatible (only mac for now...)
+    if(toolIsCompatible && toolIsRegistered) {
+        // get installed version from file
+        var installedVersion = getInstalledVersion();
+        // disable download botton if registered
+        updateButton.setAttribute('disabled', true);
+        // check for updated
+        checkForUpdates(updateButton,installedVersion);
+        // set version text
+        var versionText = document.getElementById('pdf-annotations-extractor-version');
+        versionText.setAttribute('hidden', false);
+        versionText.setAttribute('value', "(installed v. "+installedVersion +")");
+    }
+    // disable button if poppler tool is not compatible
+    if(!toolIsCompatible) updateButton.setAttribute('disabled', true);
+    
+    // extraction of pdfs
+    // var annotation_prefs=['Pull','NoteFullCite','NoteTruePage'];
+    // for (var i=0;i<annotation_prefs.length;i++) document.getElementById('id-zotfile-pdfExtraction-' + annotation_prefs[i]).disabled = !Zotero.ZotFile.pdfAnnotations.popplerExtractorTool;
+        
 }
 
 function checkForUpdates(button,installedVersion) {
-	var url = Zotero.ZotFile.pdfAnnotations.popplerExtractorBaseURL + Zotero.ZotFile.pdfAnnotations.popplerExtractorFileName + '.version';
-	
-	// Find latest version for this platform
-	var sent = Zotero.HTTP.doGet(url, function (xmlhttp) {
-		try {
-			if (xmlhttp.status == 200) {
-				
-				var serverVersion = parseFloat(xmlhttp.responseText);
+    var url = Zotero.ZotFile.pdfAnnotations.popplerExtractorBaseURL + Zotero.ZotFile.pdfAnnotations.popplerExtractorFileName + '.version';
+    
+    // Find latest version for this platform
+    var sent = Zotero.HTTP.doGet(url, function (xmlhttp) {
+        try {
+            if (xmlhttp.status == 200) {
+                
+                var serverVersion = parseFloat(xmlhttp.responseText);
 
-				// if server version higher... update!
-				if(serverVersion>installedVersion) button.setAttribute('disabled', false);
-									
-			}
-		}
-		catch (e) {
-//			onPDFToolsDownloadError(e);
-		}
-	});
-		
+                // if server version higher... update!
+                if(serverVersion>installedVersion) button.setAttribute('disabled', false);
+                                    
+            }
+        }
+        catch (e) {
+//          onPDFToolsDownloadError(e);
+        }
+    });
+        
 }
 
 function getInstalledVersion () {
-//	var filepath = '/Users/jpl2136/Documents/bibliography/Zotero' + "/ExtractPDFAnnotations/"+'ExtractPDFAnnotations-MacIntel'+'.version';
-	var filepath = Zotero.ZotFile.pdfAnnotations.popplerExtractorPath+'.version';
-	var file=Zotero.ZotFile.createFile(filepath);
-	if(Zotero.ZotFile.fileExists(filepath)) {
-		var istream=Zotero.ZotFile.pdfAnnotations.openFileStream(file);
-	
-		// get line
-		var line = {};
-		cont = istream.readLine(line);
-		return(parseFloat(line['value']));
-	}
-	else return(1);
+//  var filepath = '/Users/jpl2136/Documents/bibliography/Zotero' + "/ExtractPDFAnnotations/"+'ExtractPDFAnnotations-MacIntel'+'.version';
+    var filepath = Zotero.ZotFile.pdfAnnotations.popplerExtractorPath+'.version';
+    var file=Zotero.ZotFile.createFile(filepath);
+    if(Zotero.ZotFile.fileExists(filepath)) {
+        var istream=Zotero.ZotFile.pdfAnnotations.openFileStream(file);
+    
+        // get line
+        var line = {};
+        cont = istream.readLine(line);
+        return(parseFloat(line['value']));
+    }
+    else return(1);
 }
 
 function downloadPDFTool() {
-	
-		var ioService = Components.classes["@mozilla.org/network/io-service;1"]
-							.getService(Components.interfaces.nsIIOService);
-							
-		
-		var fileName=Zotero.ZotFile.pdfAnnotations.popplerExtractorFileName;
+    
+        var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                            .getService(Components.interfaces.nsIIOService);
+                            
+        
+        var fileName=Zotero.ZotFile.pdfAnnotations.popplerExtractorFileName;
 
-		var url = Zotero.ZotFile.pdfAnnotations.popplerExtractorBaseURL + fileName+ ".zip";
-		var uri = ioService.newURI(url, null, null);
+        var url = Zotero.ZotFile.pdfAnnotations.popplerExtractorBaseURL + fileName+ ".zip";
+        var uri = ioService.newURI(url, null, null);
 
-		var file = Zotero.getZoteroDirectory();
-		var zotero_dir=file.path;
-		file.append(fileName+ ".zip");
-		var fileURL = ioService.newFileURI(file);
+        var file = Zotero.getZoteroDirectory();
+        var zotero_dir=file.path;
+        file.append(fileName+ ".zip");
+        var fileURL = ioService.newFileURI(file);
 
-		const nsIWBP = Components.interfaces.nsIWebBrowserPersist;
-		var wbp = Components.classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"].createInstance(nsIWBP);
+        const nsIWBP = Components.interfaces.nsIWebBrowserPersist;
+        var wbp = Components.classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"].createInstance(nsIWBP);
 
-		var progressListener = new Zotero.WebProgressFinishListener(function () {
+        var progressListener = new Zotero.WebProgressFinishListener(function () {
 
-		// extract zip file
-		var proc = Components.classes["@mozilla.org/process/util;1"].
-					createInstance(Components.interfaces.nsIProcess);
-		proc.init(Zotero.ZotFile.createFile("/usr/bin/unzip"));
-		// define arguments
-		var args = ["-o","-q",file.path,"-d"  + zotero_dir + "/ExtractPDFAnnotations"];
+        // extract zip file
+        var proc = Components.classes["@mozilla.org/process/util;1"].
+                    createInstance(Components.interfaces.nsIProcess);
+        proc.init(Zotero.ZotFile.createFile("/usr/bin/unzip"));
+        // define arguments
+        var args = ["-o","-q",file.path,"-d"  + zotero_dir + "/ExtractPDFAnnotations"];
 
-		// run process
-		if (!Zotero.isFx36) {
-			proc.runw(true, args, args.length);
-		}
-		else {
-			proc.run(true, args, args.length);
-		}
+        // run process
+        if (!Zotero.isFx36) {
+            proc.runw(true, args, args.length);
+        }
+        else {
+            proc.run(true, args, args.length);
+        }
 
-		// Set permissions to 755
-		var extractorFile=Zotero.ZotFile.createFile(Zotero.ZotFile.pdfAnnotations.popplerExtractorPath);
-		if (Zotero.isMac) {
-			extractorFile.permissions = 33261;
-		}
-		else if (Zotero.isLinux) {
-			extractorFile.permissions = 493;
-		}
-		
-		// set ZotFile variable
-		Zotero.ZotFile.pdfAnnotations.popplerExtractorTool=true;
+        // Set permissions to 755
+        var extractorFile=Zotero.ZotFile.createFile(Zotero.ZotFile.pdfAnnotations.popplerExtractorPath);
+        if (Zotero.isMac) {
+            extractorFile.permissions = 33261;
+        }
+        else if (Zotero.isLinux) {
+            extractorFile.permissions = 493;
+        }
+        
+        // set ZotFile variable
+        Zotero.ZotFile.pdfAnnotations.popplerExtractorTool=true;
 
-		// enable poppler extractor option
-		document.getElementById('id-zotfile-pdfExtraction-UsePDFJS-false').disabled=false;
-		
-		// update settings
-		updatePDFToolsStatus();
+        // enable poppler extractor option
+        document.getElementById('id-zotfile-pdfExtraction-UsePDFJS-false').disabled=false;
+        
+        // update settings
+        updatePDFToolsStatus();
 
-	});
-	
-	document.getElementById('pdf-annotations-extractor-update-button').disabled = true;
-	document.getElementById('pdf-annotations-extractor-update-button').setAttribute('label', "Downloading Poppler Tool...");
-	
-	wbp.progressListener = progressListener;
-//	Zotero.debug("Saving " + uri.spec + " to " + fileURL.spec);
-	wbp.saveURI(uri, null, null, null, null, fileURL);
-			
+    });
+    
+    document.getElementById('pdf-annotations-extractor-update-button').disabled = true;
+    document.getElementById('pdf-annotations-extractor-update-button').setAttribute('label', "Downloading Poppler Tool...");
+    
+    wbp.progressListener = progressListener;
+//  Zotero.debug("Saving " + uri.spec + " to " + fileURL.spec);
+    wbp.saveURI(uri, null, null, null, null, fileURL);
+            
 }
       
    
