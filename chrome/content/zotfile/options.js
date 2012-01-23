@@ -36,50 +36,50 @@ function updatePreferenceWindow(which) {
 	var revert=(which!="all") ? true : false;	
 		
 	// Add 'et al' 
-	if(which=="etal" | which=="all") disablePreference("add_etal", "etal", revert);
+	if(which=="etal" || which=="all") disablePreference("add_etal", "etal", revert);
 
 	// max title length
-	if(which=="truncate_title_max" | which=="all") disablePreference("truncate_title_max", "max_titlelength", revert);	
+	if(which=="truncate_title_max" || which=="all") disablePreference("truncate_title_max", "max_titlelength", revert);	
 
 	// max authors 
-	if(which=="truncate_authors" | which=="all") disablePreference("truncate_authors", "max_authors", revert);	
+	if(which=="truncate_authors" || which=="all") disablePreference("truncate_authors", "max_authors", revert);	
 
 	// subfolder 
-	if(which=="subfolder" | which=="all") disablePreference("subfolder", "subfolderFormat", revert);		
+	if(which=="subfolder" || which=="all") disablePreference("subfolder", "subfolderFormat", revert);		
 	
 	// subfolder-tablet
-	if(which=="subfolder-tablet" | which=="all") disablePreference("tablet-subfolder", "tablet-subfolderFormat", revert);
+	if(which=="subfolder-tablet" || which=="all") disablePreference("tablet-subfolder", "tablet-subfolderFormat", revert);
 	
 	// storeCopyOfFile-tablet
-	if(which=="storeCopyOfFile" | which=="all") disablePreference("tablet-storeCopyOfFile", "tablet-storeCopyOfFile_suffix", revert);
+	if(which=="storeCopyOfFile" || which=="all") disablePreference("tablet-storeCopyOfFile", "tablet-storeCopyOfFile_suffix", revert);
 	
 	// batch renaming
-	if(which=="confirm" | which=="all") disablePreference("confirmation_batch_ask", "confirmation_batch", revert);
+	if(which=="confirm" || which=="all") disablePreference("confirmation_batch_ask", "confirmation_batch", revert);
 	
 
 	// filetypes
-	if(which=="filetypes" | which=="all") disablePreference("useFileTypes", 'filetypes', revert);
+	if(which=="filetypes" || which=="all") disablePreference("useFileTypes", 'filetypes', revert);
 			
 	// Source Folder
-	if(which=="source" | which=="all") {
+	if(which=="source" || which=="all") {
 		disablePreference("source_dir_ff", ['source_dir','source_dir-button'], !revert);
 		if(which!="all") updateFolderIcon("source",true);  		
   	}
 
 	// Destination Folder
-	if(which=="dest" | which=="all") {
+	if(which=="dest" || which=="all") {
 		var setting=disablePreference("import", ['dest_dir','dest_dir-button','subfolder','subfolderFormat'], !revert);		
 		if (setting) document.getElementById('id-zotfile-subfolderFormat').disabled = !document.getElementById('pref-zotfile-subfolder').value;  			
 		if(which!="all") updateFolderIcon("dest",true);  		
 	}
 	          
 	// userinput 
-	if(which=="userinput" | which=="all") disablePreference("userInput", "userInput_Default", revert);
+	if(which=="userinput" || which=="all") disablePreference("userInput", "userInput_Default", revert);
 	
 	// Use Zotero to Rename
-	if(which=="zotrename" | which=="all") {	
+	if(which=="zotrename" || which=="all") {	
 		var setting=disablePreference("useZoteroToRename", ['renameFormat', 'renameFormat-label', 'renameFormat-des1', 'renameFormat-des2', 'renameFormat-des3', 'renameFormat-des4', 'renameFormat_patent', 'renameFormat_patent-label', 'truncate_title', 'truncate_title_max', 'max_titlelength', 'max_authors','truncate_authors', 'add_etal', 'etal', 'userInput', 'userInput_Default', 'replace_blanks'], !revert);		
-		if (which=="all" & setting) {
+		if (which=="all" && setting) {
 			  disablePreference("add_etal", "etal", false);
 			  disablePreference("userInput", "userInput_Default", false);
 		}
@@ -87,14 +87,14 @@ function updatePreferenceWindow(which) {
 	}
 	
 	// tablet features
-	if(which=="zotfile-tablet" | which=="all") {	
+	if(which=="zotfile-tablet" || which=="all") {	
 		var setting=disablePreference("tablet", ['tablet-baseFolder', 'tablet-dest_dir', 'tablet-dest_dir-button', 'tablet-dest_dir-show', 'tablet-dest_dir-des', 'tablet-label-subfolders', 'tablet-projectFolders', 'tablet-projectFolders-button', 'tablet-subfolder', 'tablet-subfolderFormat', 'tablet-rename', 'tablet-storeCopyOfFile', 'tablet-storeCopyOfFile_suffix','pdfExtraction-Pull'], revert);		
-		if (which=="all" & setting) {
+		if (which=="all" && setting) {
 			disablePreference("tablet-storeCopyOfFile", "tablet-storeCopyOfFile_suffix", false);
   			disablePreference("tablet-subfolder", "tablet-subfolderFormat", false);
 		}
 		// show alert about the tag used by zotfile 
-		if(which=="zotfile-tablet" & !document.getElementById('pref-zotfile-tablet').value) alert("Zotfile uses the tag '_READ' to remember files that are on the tablet. Please do not change this tag manually!");
+		if(which=="zotfile-tablet" && !document.getElementById('pref-zotfile-tablet').value) alert("Zotfile uses the tag '_READ' to remember files that are on the tablet. Please do not change this tag manually!");
 
 	}
 	
@@ -103,7 +103,7 @@ function updatePreferenceWindow(which) {
 
 function updateFolderIcon(which,revert) {
 	// Source Folder
-	if(which=="source" | which=="all") {
+	if(which=="source" || which=="all") {
 		var setting = document.getElementById('pref-zotfile-source_dir_ff').value;
 		if(revert) var setting = !setting;
 
@@ -132,7 +132,7 @@ function updateFolderIcon(which,revert) {
   	}
 
 	// Dest Folder
-	if(which=="dest" | which=="all") {
+	if(which=="dest" || which=="all") {
 		var setting = document.getElementById('pref-zotfile-import').value;
 		if(revert) var setting = !setting;
 
@@ -161,7 +161,7 @@ function updateFolderIcon(which,revert) {
   	}
 
 	// Tablet
-	if(which=="tablet" | which=="all") {
+	if(which=="tablet" || which=="all") {
 
 		var icon_ok=document.getElementById('id-zotfile-tablet-ok');
 		var icon_error=document.getElementById('id-zotfile-tablet-error');
@@ -208,7 +208,7 @@ function changedBasefolder(dest_dir) {
 	var baseFolderValid=checkFolderLocation("tablet.dest_dir");
 
 	// only proceed if folder has changed and the old location was valid
-	if(baseFolderOld!=baseFolder & baseFolderOldValid) {
+	if(baseFolderOld!=baseFolder && baseFolderOldValid) {
 		var atts=Zotero.ZotFile.getAttachmentsOnTablet();
 		
 		// change from valid to invalid subfolder
@@ -219,7 +219,7 @@ function changedBasefolder(dest_dir) {
 			}
 		}
 		// change from valid to valid		
-		if(baseFolderValid & atts.length>0) {
+		if(baseFolderValid && atts.length>0) {
 			// prompt user
 			if(!confirm("You have changed the location for tablet files. There are " + atts.length + " files in the old location.\n\nDo you want to proceed?")) {
 				Zotero.ZotFile.prefs.setCharPref("tablet.dest_dir",baseFolderOld);
@@ -252,7 +252,7 @@ function editSubfolderSetting (index) {
 
 	var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
 
-	if (index | treechildren.childNodes.length<Zotero.ZotFile.projectMax) {
+	if (index || treechildren.childNodes.length<Zotero.ZotFile.projectMax) {
 			
 		// get selected tree item if defined   
 		if (index != undefined) {
@@ -290,7 +290,7 @@ function editSubfolderSetting (index) {
 		io.folder=io.folder.replace(folder_sep + " ", folder_sep); 	   
 
 		//add new item to tree
-		if (index == undefined & io.label!="") {	
+		if (index == undefined && io.label!="") {	
 			var treeitem = document.createElement('treeitem');
 			var treerow = document.createElement('treerow');
 			var labelCell = document.createElement('treecell');
@@ -365,7 +365,7 @@ function updateSubfolderPreferences () {
 		var treerow = treechildren.childNodes[i].firstChild;
 		var label = treerow.childNodes[0].getAttribute('label');
 		var folder = treerow.childNodes[1].getAttribute('label');
-		if (label!="" & folder!="") {
+		if (label!="" && folder!="") {
 			Zotero.ZotFile.prefs.setBoolPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i],true);		 	
 		 	Zotero.ZotFile.prefs.setCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_label",label);
 		 	Zotero.ZotFile.prefs.setCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_folder",folder);

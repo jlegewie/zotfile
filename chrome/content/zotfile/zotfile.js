@@ -77,7 +77,7 @@ Zotero.ZotFile = {
 			.getService(Components.interfaces.nsIWindowMediator);
 			
 		// set source dir to custom folder if zotero standalone
-		if(Zotero.isStandalone & this.prefs.getBoolPref('source_dir_ff')) this.prefs.setBoolPref('source_dir_ff',false);
+		if(Zotero.isStandalone && this.prefs.getBoolPref('source_dir_ff')) this.prefs.setBoolPref('source_dir_ff',false);
 
 		// version handeling
 		var oldVersion=this.prefs.getCharPref("version");
@@ -103,7 +103,7 @@ Zotero.ZotFile = {
 			}
 
 //			code for specific version upgrades
-//			if(currentVersion=="2.1" & oldVersion!="2.1")
+//			if(currentVersion=="2.1" && oldVersion!="2.1")
 			
 		});								
 		
@@ -387,7 +387,7 @@ Zotero.ZotFile = {
 			if(this.prefs.getBoolPref("pdfExtraction.MenuItem")) show.push(m.extractanno);			
 
 			// tablet menu part
-			if(this.prefs.getBoolPref("tablet") & oneAtt) {
+			if(this.prefs.getBoolPref("tablet") && oneAtt) {
 				// add sep 
 				show.push(m.sep1);
 				
@@ -401,7 +401,7 @@ Zotero.ZotFile = {
 					menu.childNodes[m.warning2].setAttribute('label',"Selected item is in group library.");												
 				}
 												
-				if(dest_dir_valid & !groupLib) {
+				if(dest_dir_valid && !groupLib) {
 					show.push(m.push2reader,m.pullreader);
 
 					// set tooltip for base folder
@@ -461,7 +461,7 @@ Zotero.ZotFile = {
 			        }  
 
 			   		// message that no folders are defined
-					if(!projectsSet & this.prefs.getIntPref("tablet.projectFolders")!=0) {
+					if(!projectsSet && this.prefs.getIntPref("tablet.projectFolders")!=0) {
 						show.push(m.warning3);
 						if(this.prefs.getIntPref("tablet.projectFolders")==1) var warning="Item is in no collection."; 
 						if(this.prefs.getIntPref("tablet.projectFolders")==2) var warning="No subfolders defined."; 
@@ -492,7 +492,7 @@ Zotero.ZotFile = {
 		var default_str = this.prefs.getCharPref("userInput_Default");   
 		if (default_str=="[original filename]") var default_str=original_filename;
 		var filesuffix = prompt("Enter file suffix (press Cancel to add nothing)\n\nOriginal Filename\n"+original_filename+"\n\nNew Filename\n"+filename + " (YOUR INPUT)", default_str);
-		if (filesuffix != '' & filesuffix != null) {
+		if (filesuffix != '' && filesuffix != null) {
 			// add file type to the file name
 			filename = filename + " (" + filesuffix + ")";
 		}             
@@ -517,7 +517,7 @@ Zotero.ZotFile = {
 		var title = title.substr(0,max_titlelength);
 	    
 	   	// remove the last word until a space is found 
-	    if(this.prefs.getBoolPref("truncate_smart") & title.search(" ")!=-1 & before_trunc_char.search(/[a-zA-Z0-9]/!=-1)) {
+	    if(this.prefs.getBoolPref("truncate_smart") && title.search(" ")!=-1 && before_trunc_char.search(/[a-zA-Z0-9]/!=-1)) {
 			while (title.substring(title.length-1, title.length) != ' ') title = title.substring(0, title.length-1);
 			var title = title.substring(0, title.length-1);
 		}   
@@ -586,7 +586,7 @@ Zotero.ZotFile = {
 	  if (numauthors>max_authors) var numauthors = 1;
 	  var j=0;
 	  for (var i=0; i < creators.length; i++) {
-	    if (j<numauthors & creatorType.indexOf(creators[i].creatorTypeID)!=-1) {
+	    if (j<numauthors && creatorType.indexOf(creators[i].creatorTypeID)!=-1) {
 	      if (author!="") var author = author + "_" + creators[i].ref.lastName;  
 	      if (author=="") var author = creators[i].ref.lastName;
 	      var j=j+1;
@@ -912,7 +912,7 @@ Zotero.ZotFile = {
 			    var file = files.getNext(); 
 			    file.QueryInterface(Components.interfaces.nsIFile); 
 			    // only look at files which are neither folders nor hidden
-			    if(!file.isDirectory() & !file.isHidden()) {    
+			    if(!file.isDirectory() && !file.isHidden()) {    
 					// is this a file we want to work with?
 				     if (this.checkFileType(file))  {           			          
 						return_files[success]=file;
@@ -948,7 +948,7 @@ Zotero.ZotFile = {
 		    var file = files.getNext(); 
 		    file.QueryInterface(Components.interfaces.nsIFile); 
 		    // only look at files which are neither folders nor hidden
-		    if(!file.isDirectory() & !file.isHidden()) {    
+		    if(!file.isDirectory() && !file.isHidden()) {    
 		     // now we want to check which filetype we are looking at
 		     // we only want to consider pdfs, docs, ... 
 		      if (this.checkFileType(file)) {  
@@ -982,7 +982,7 @@ Zotero.ZotFile = {
 		   	                      .getService(Components.interfaces.nsIDownloadManager);
 				var path=downloadManager.userDownloadsDirectory.path;
 		  }
-	      if(!this.ffPrefs.getBoolPref('useDownloadDir') & this.ffPrefs.prefHasUserValue('lastDir') ) {									  				
+	      if(!this.ffPrefs.getBoolPref('useDownloadDir') && this.ffPrefs.prefHasUserValue('lastDir') ) {									  				
 		  	    var path=this.ffPrefs.getCharPref('lastDir');
 		  }
 		} 
@@ -1000,7 +1000,7 @@ Zotero.ZotFile = {
 		if (!this.prefs.getBoolPref("source_dir_ff")) var source_dir=this.prefs.getCharPref("source_dir");
                                    
 		// test whether valid source dir
-		if (source_dir!="" & this.fileExists(source_dir)) {
+		if (source_dir!="" && this.fileExists(source_dir)) {
 			return (source_dir);			
 		} else {
 			if(message) this.infoWindow("ZotFile Error","The source folder is not valid. Please change the the source folder under Zotero-Actions-Zotfile Preferences. You might have to use a custom folder.",8000);
@@ -1021,7 +1021,7 @@ Zotero.ZotFile = {
 		if (item.isRegularItem()) { 
 
 			  // check whether valid FF default download folder
-			  if(this.prefs.getBoolPref('source_dir_ff') &  this.getSourceDir(false)==-1) {
+			  if(this.prefs.getBoolPref('source_dir_ff') &&  this.getSourceDir(false)==-1) {
 				this.prefs.setBoolPref('source_dir_ff',false);
 			  	this.prefs.setCharPref('source_dir',prompt("ZotFile Settings\n\nZotfile is not able to determine your default FF download folder. Please enter a custom source dir. The source dir is the directory where ZotFile looks for the most recently modified file when you use the ZotFile function 'Attach New File'."));  			
 				return;
@@ -1038,7 +1038,7 @@ Zotero.ZotFile = {
 			  if ( this.prefs.getBoolPref("allFiles")) file=this.getAllFilesInFolder(source_dir);
 
 			  // attach them
-			  if(file!=-1 & file!=-2) {
+			  if(file!=-1 && file!=-2) {
 					for (var i=0; i < file.length; i++) {
 
 						// confirmation from user
@@ -1105,7 +1105,7 @@ Zotero.ZotFile = {
 		var tag_content=this.getInfo(att,tagname).replace(this.prefs.getCharPref("tablet.dest_dir"),"[BaseFolder]");
 
 		// for location tag: replace destination folder with [BaseFolder]		
-		if(tagname=="location" & this.prefs.getBoolPref("tablet.dest_dir_relativePath")) var value=value.replace(this.prefs.getCharPref("tablet.dest_dir"),"[BaseFolder]");
+		if(tagname=="location" && this.prefs.getBoolPref("tablet.dest_dir_relativePath")) var value=value.replace(this.prefs.getCharPref("tablet.dest_dir"),"[BaseFolder]");
 
 		// check whether tag already exists
 		var search=note.search(tagname);
@@ -1205,7 +1205,7 @@ Zotero.ZotFile = {
 		        this.addInfo(att,"location",newFile.path);
 				this.addInfo(att,"projectFolder",projectFolder);									
 				*/
-				if(att_mode==1 | att_mode!=this.prefs.getIntPref("tablet.mode")) {
+				if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
 					var itemID=this.removeAttachmentFromTablet(parent,item,true);
 					var item = Zotero.Items.get(itemID); 											   
 				}
@@ -1246,7 +1246,7 @@ Zotero.ZotFile = {
 					// get file    
 					var file=this.getTabletFile(item);
 
-					if (file.exists() & this.getInfo(item,"mode")!="") {
+					if (file.exists() && this.getInfo(item,"mode")!="") {
 
 						// get last modified time from att note
 						var lastmod=this.getInfo(item,"lastmod");
@@ -1269,7 +1269,7 @@ Zotero.ZotFile = {
 									// first pull if already on reader
 									// this.removeAttachmentFromTablet(parent,item,true);									
 									var att_mode=this.getInfo(item,"mode");
-									if(att_mode==1 | att_mode!=this.prefs.getIntPref("tablet.mode")) {
+									if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
 										var itemID=this.removeAttachmentFromTablet(parent,item,true);
 										var item = Zotero.Items.get(itemID); 											   
 									}
@@ -1294,7 +1294,7 @@ Zotero.ZotFile = {
 		var newAttID=null; 
 		var file = att.getFile();     
 
-	   if(this.fileExists(att) & this.checkFileType(att.getFile())) {
+	   if(this.fileExists(att) && this.checkFileType(att.getFile())) {
 			
 			// background mode: Rename and Move Attachment    				
 	        if(this.prefs.getIntPref("tablet.mode")==1) {
@@ -1369,17 +1369,17 @@ Zotero.ZotFile = {
 	
 	   // Push attachments
 	   var confirmed=1; 
-	   if (this.prefs.getBoolPref("confirmation_batch_ask") & attIDs.length>=this.prefs.getIntPref("confirmation_batch")) var confirmed=confirm("Do you want to send " + attIDs.length + " attachments to the reader?");  			   		
+	   if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) var confirmed=confirm("Do you want to send " + attIDs.length + " attachments to the reader?");  			   		
 	   if(confirmed) {
-		    if (!repush & attOnReaderCount>0) var repush=confirm(attOnReaderCount + " of the selected attachments are already on the reader. Do you want to replace these files on the reader?"); 
+		    if (!repush && attOnReaderCount>0) var repush=confirm(attOnReaderCount + " of the selected attachments are already on the reader. Do you want to replace these files on the reader?"); 
    	    	for (var i=0; i < attIDs.length; i++) { 
 		        var att = Zotero.Items.get(attIDs[i]);			
 		  		var item= Zotero.Items.get(att.getSource());
-		  		if(!attOnReader[i] | (attOnReader[i] & repush)) {
+		  		if(!attOnReader[i] || (attOnReader[i] && repush)) {
 					// first pull if already on reader
 					if (attOnReader[i]) { 
 						var att_mode=this.getInfo(att,"mode");
-						if(att_mode==1 | att_mode!=this.prefs.getIntPref("tablet.mode")) {
+						if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
 							var attID=this.removeAttachmentFromTablet(item,att,true);
 							var att = Zotero.Items.get(attID); 											   
 						}
@@ -1411,10 +1411,10 @@ Zotero.ZotFile = {
 
 			if (time_reader!=0 || time_zotero!=0) {
 				// set options
-				if (time_reader>time_saved  & time_zotero<=time_saved) var option=0;
-				if (time_reader<=time_saved & time_zotero<=time_saved) var option=1;
-				if (time_reader<=time_saved & time_zotero>time_saved) var option=1;
-				if (time_reader>time_saved  & time_zotero>time_saved) var option=2;			
+				if (time_reader>time_saved  && time_zotero<=time_saved) var option=0;
+				if (time_reader<=time_saved && time_zotero<=time_saved) var option=1;
+				if (time_reader<=time_saved && time_zotero>time_saved) var option=1;
+				if (time_reader>time_saved  && time_zotero>time_saved) var option=2;			
 			
 				// if attachment gets replaced			
 				if (!this.prefs.getBoolPref("tablet.storeCopyOfFile")) {						
@@ -1434,13 +1434,13 @@ Zotero.ZotFile = {
 						var filename=this.addSuffix(file_zotero.leafName,this.prefs.getCharPref("tablet.storeCopyOfFile_suffix"));
 						
 						//add linked attachment
-	 					if (!item.libraryID & !this.prefs.getBoolPref("import")) {
+	 					if (!item.libraryID && !this.prefs.getBoolPref("import")) {
 							file_reader.moveTo(file_zotero.parent,filename);	
 							var attID=Zotero.Attachments.linkFromFile(file_reader, item.itemID,item.libraryID);
 							var itemPulled=true;
 						}
 						//imports attachment					
-	 					if (item.libraryID | this.prefs.getBoolPref("import")) {
+	 					if (item.libraryID || this.prefs.getBoolPref("import")) {
 							// import file on reader
 							var attID=Zotero.Attachments.importFromFile(file_reader, item.itemID,item.libraryID);
 							var attAnnotated = Zotero.Items.get(attID);
@@ -1474,14 +1474,14 @@ Zotero.ZotFile = {
 		}
       	
 		// post-processing if attachment has been removed & it's not a fake-pull
-		if (itemPulled & !fakeRemove) {
+		if (itemPulled && !fakeRemove) {
 	        // remove info (tag and att note)
 			var tagID=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tag"),0);
 			att.removeTag(tagID);		
 			this.clearInfo(att);
 		
 			// extract annotations from attachment and add note    
-			if (this.prefs.getBoolPref("pdfExtraction.Pull") & option!=1) this.pdfAnnotations.getAnnotations([attID]);
+			if (this.prefs.getBoolPref("pdfExtraction.Pull") && option!=1) this.pdfAnnotations.getAnnotations([attID]);
 		
 			// remove tag from parent item
 			var tagID=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tagParentPush_tag"),0);
@@ -1510,7 +1510,7 @@ Zotero.ZotFile = {
 		// Pull attachments
 		var tagID=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tag"),0);
 		var confirmed=1;
-		if (this.prefs.getBoolPref("confirmation_batch_ask") & attIDs.length>=this.prefs.getIntPref("confirmation_batch")) var confirmed=confirm("Do you want to get the " + attIDs.length + " selected attachments from your tablet?");  		
+		if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) var confirmed=confirm("Do you want to get the " + attIDs.length + " selected attachments from your tablet?");  		
 		if(confirmed) for (var i=0; i < attIDs.length; i++) {   	        
             var att = Zotero.Items.get(attIDs[i]);			
 			var item= Zotero.Items.get(att.getSource());
@@ -1533,7 +1533,7 @@ Zotero.ZotFile = {
 		var itemID = item.id;
 	
 		// only proceed if linked or imported attachment
-		if(att.isImportedAttachment() | linkmode==Zotero.Attachments.LINK_MODE_LINKED_FILE) {
+		if(att.isImportedAttachment() || linkmode==Zotero.Attachments.LINK_MODE_LINKED_FILE) {
 	
 			// get object of attached file
 			var file = att.getFile();
@@ -1542,7 +1542,7 @@ Zotero.ZotFile = {
 			var filename = this.getFilename(item, file.leafName);
 			var location = this.getLocation(item,dest_dir,subfolder,subfolderFormat);
 
-			if (import_att | item.libraryID) {	
+			if (import_att || item.libraryID) {	
 										
 				// rename file associated with attachment
 				att.renameAttachmentFile(filename);
@@ -1555,12 +1555,12 @@ Zotero.ZotFile = {
 				var file = att.getFile();	
 			
 				// output
-				if (linkmode!=Zotero.Attachments.LINK_MODE_LINKED_FILE & notification) this.infoWindow("Zotfile Report","Imported Attachment renamed to \'" + filename + "\'.",8000);	
+				if (linkmode!=Zotero.Attachments.LINK_MODE_LINKED_FILE && notification) this.infoWindow("Zotfile Report","Imported Attachment renamed to \'" + filename + "\'.",8000);	
 								
 			}
 	
 			// (a) LINKED ATTACHMENT TO IMPORTED ATTACHMENT
-			if (linkmode==Zotero.Attachments.LINK_MODE_LINKED_FILE	& import_att) {	
+			if (linkmode==Zotero.Attachments.LINK_MODE_LINKED_FILE	&& import_att) {	
 																	
 				// Attach file to selected Zotero item
 	            var newAttID=Zotero.Attachments.importFromFile(file, itemID,item.libraryID);
@@ -1579,8 +1579,8 @@ Zotero.ZotFile = {
 			}
 		
 			// (b) TO LINKED ATTACHMENT (only if library is local and not cloud)
-	//		if (linkmode==Zotero.Attachments.LINK_MODE_IMPORTED_FILE & !import_att) {
-			if (!import_att & !item.libraryID) {												
+	//		if (linkmode==Zotero.Attachments.LINK_MODE_IMPORTED_FILE && !import_att) {
+			if (!import_att && !item.libraryID) {												
 				// move pdf file 
 				var newfile_path=this.moveFile(file,location, filename);
 			
@@ -1615,7 +1615,7 @@ Zotero.ZotFile = {
 		
 		// Pull attachments
 		var confirmed=1;    
-		if (this.prefs.getBoolPref("confirmation_batch_ask") & attIDs.length>=this.prefs.getIntPref("confirmation_batch")) var confirmed=confirm("Do you want to move and rename " + attIDs.length + " attachments?");  		
+		if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) var confirmed=confirm("Do you want to move and rename " + attIDs.length + " attachments?");  		
 		if(confirmed) {
 			for (var i=0; i < attIDs.length; i++) {			
 				// get attachment and item
@@ -1629,7 +1629,7 @@ Zotero.ZotFile = {
 			
 	            // Rename and Move Attachment 
 				var file = att.getFile();
-			    if(this.fileExists(att) & this.checkFileType(file)) {                                                  
+			    if(this.fileExists(att) && this.checkFileType(file)) {                                                  
 					// move & rename
 					var attID=this.renameAttachment(item, att,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),true);												
 					
@@ -1637,7 +1637,7 @@ Zotero.ZotFile = {
 			        if(attIDs[i]!=attID) var selection=this.arrayReplace(selection,attIDs[i],attID);
 
 					// restore attachments note and tags
-					if(att_note!="" | att_tags) {
+					if(att_note!="" || att_tags) {
 						var att = Zotero.Items.get(attID);  
 						if(att_note!="") att.setNote(att_note);
 						if(att_tags) for each (var tag in att_tags) att.addTag(tag);
@@ -1759,7 +1759,7 @@ Zotero.ZotFile = {
 					var item = Zotero.Items.get(att.getSource());     
 			
 					// if file is on tablet in background mode, take the one which was modified
-					if(Zotero.ZotFile.getTabletStatus(att) & Zotero.ZotFile.getInfo(att,"mode")==1) {
+					if(Zotero.ZotFile.getTabletStatus(att) && Zotero.ZotFile.getInfo(att,"mode")==1) {
 						var file_zotero=att.getFile();
 						var file_reader=Zotero.ZotFile.getTabletFile(att);
 						
@@ -1773,10 +1773,10 @@ Zotero.ZotFile = {
 						if (time_reader!=0 || time_zotero!=0) {
 
 							// set options
-							if (time_reader>time_saved  & time_zotero<=time_saved) var option=0;
-							if (time_reader<=time_saved & time_zotero<=time_saved) var option=1;
-							if (time_reader<=time_saved & time_zotero>time_saved) var option=1;
-							if (time_reader>time_saved  & time_zotero>time_saved) var option=2;			
+							if (time_reader>time_saved  && time_zotero<=time_saved) var option=0;
+							if (time_reader<=time_saved && time_zotero<=time_saved) var option=1;
+							if (time_reader<=time_saved && time_zotero>time_saved) var option=1;
+							if (time_reader>time_saved  && time_zotero>time_saved) var option=2;			
 
 							// prompt if both file have been modified
 							if(option==2) var option=Zotero.ZotFile.promptUser("Both copies of the attachment file \'" + file_zotero.leafName + "\'  have been modified. From which copy do you want to extract annotations?","Use Copy on Tablet","Use Copy in Zotero","Cancel");					    					
@@ -1852,7 +1852,7 @@ Zotero.ZotFile = {
 
 					// create annotation object
 					/*			    structure: filename ; page ; ID ; type ; text ; textMarkUp */				
-		            if(strMarkUp!="" | strText!="") {
+		            if(strMarkUp!="" || strText!="") {
 						a = {
 				      		filename:line_split[0],
 							page:parseInt(line_split[1]),
