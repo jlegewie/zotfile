@@ -1625,7 +1625,7 @@ Zotero.ZotFile = {
 				// preserve attachment note and tags
 				var att_note=att.getNote();
 			    var att_tags=att.getTags();
-			    for (var i=0; i < att_tags.length; i++) att_tags[i]= att_tags[i]._get('name');
+			    for (var j=0; j < att_tags.length; j++) att_tags[j]= att_tags[j]._get('name');
 			
 	            // Rename and Move Attachment 
 				var file = att.getFile();
