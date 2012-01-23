@@ -73,8 +73,7 @@ Zotero.ZotFile = {
 		this.ffPrefs = Components.classes["@mozilla.org/preferences-service;1"].
 		            getService(Components.interfaces.nsIPrefService).getBranch("browser.download.");
 		
-		this.wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-			.getService(Components.interfaces.nsIWindowMediator);
+		this.wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
 			
 		// set source dir to custom folder if zotero standalone
 		if(Zotero.isStandalone && this.prefs.getBoolPref('source_dir_ff')) this.prefs.setBoolPref('source_dir_ff',false);
@@ -1044,7 +1043,7 @@ Zotero.ZotFile = {
 						// confirmation from user
 						var file_oldpath=file[i].leafName;								
 						var confirmed=1;
-						if (this.prefs.getBoolPref("confirmation")) var confirmed=confirm("Do you want to rename and attach/link the file \'" + file_oldpath + "\' to the currently selected Zotero item?");  		
+						if (this.prefs.getBoolPref("confirmation")) confirmed=confirm("Do you want to rename and attach/link the file \'" + file_oldpath + "\' to the currently selected Zotero item?");  		
 						if(confirmed){
 
 							// create linked attachment if local library
@@ -1369,7 +1368,7 @@ Zotero.ZotFile = {
 	
 	   // Push attachments
 	   var confirmed=1; 
-	   if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) var confirmed=confirm("Do you want to send " + attIDs.length + " attachments to the reader?");  			   		
+	   if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) confirmed=confirm("Do you want to send " + attIDs.length + " attachments to the reader?");  			   		
 	   if(confirmed) {
 		    if (!repush && attOnReaderCount>0) var repush=confirm(attOnReaderCount + " of the selected attachments are already on the reader. Do you want to replace these files on the reader?"); 
    	    	for (var i=0; i < attIDs.length; i++) { 
@@ -1510,7 +1509,7 @@ Zotero.ZotFile = {
 		// Pull attachments
 		var tagID=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tag"),0);
 		var confirmed=1;
-		if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) var confirmed=confirm("Do you want to get the " + attIDs.length + " selected attachments from your tablet?");  		
+		if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) confirmed=confirm("Do you want to get the " + attIDs.length + " selected attachments from your tablet?");  		
 		if(confirmed) for (var i=0; i < attIDs.length; i++) {   	        
             var att = Zotero.Items.get(attIDs[i]);			
 			var item= Zotero.Items.get(att.getSource());
@@ -1615,7 +1614,7 @@ Zotero.ZotFile = {
 		
 		// Pull attachments
 		var confirmed=1;    
-		if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) var confirmed=confirm("Do you want to move and rename " + attIDs.length + " attachments?");  		
+		if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) confirmed=confirm("Do you want to move and rename " + attIDs.length + " attachments?");  		
 		if(confirmed) {
 			for (var i=0; i < attIDs.length; i++) {			
 				// get attachment and item

@@ -7,8 +7,8 @@
 // 'pref' can be passed as string or array
 // returns setting if needed for further changes
 function disablePreference(setting, pref, revert) {
-	var setting = document.getElementById('pref-zotfile-' + setting).value;
-	if(revert) var setting = !setting;
+	setting = document.getElementById('pref-zotfile-' + setting).value;
+	if(revert) setting = !setting;
 	if(typeof(pref)=='string') document.getElementById('id-zotfile-' + pref).disabled = !setting;  			   
 	if(typeof(pref)=='object') for (var i=0;i<pref.length;i++) document.getElementById('id-zotfile-' + pref[i]).disabled = !setting;
 	return(setting);
@@ -105,7 +105,7 @@ function updateFolderIcon(which,revert) {
 	// Source Folder
 	if(which=="source" || which=="all") {
 		var setting = document.getElementById('pref-zotfile-source_dir_ff').value;
-		if(revert) var setting = !setting;
+		if(revert) setting = !setting;
 
 		var icon_clear=document.getElementById('id-zotfile-source_dir-clear');
 		var icon_ok=document.getElementById('id-zotfile-source_dir-ok');
@@ -134,7 +134,7 @@ function updateFolderIcon(which,revert) {
 	// Dest Folder
 	if(which=="dest" || which=="all") {
 		var setting = document.getElementById('pref-zotfile-import').value;
-		if(revert) var setting = !setting;
+		if(revert) setting = !setting;
 
 		var icon_clear=document.getElementById('id-zotfile-dest_dir-clear');
 		var icon_ok=document.getElementById('id-zotfile-dest_dir-ok');
@@ -258,7 +258,7 @@ function editSubfolderSetting (index) {
 		if (index != undefined) {
 			if (index == 'rightclickmenu') {					
 				var tree = document.getElementById('id-zotfile-tablet-projectFolders-tree');
-				var index = tree.currentIndex;	
+				index = tree.currentIndex;	
 			}
 			
 			var treerow = treechildren.childNodes[index].firstChild;
@@ -452,7 +452,7 @@ function changedSubfolder (projectFolderOld,projectFolderNew) {
 
 	// move attachments to new subfolder
    	var confirmed=0;         
-	if(attInFolder.length) var confirmed=confirm("There are " + attInFolder.length + " attachments in the subfolder \'" + projectFolderOld + "\'. You changed this folder to \'" + projectFolderNew + "\'. Do you want to move the attachments to the new folder?"); 
+	if(attInFolder.length) confirmed=confirm("There are " + attInFolder.length + " attachments in the subfolder \'" + projectFolderOld + "\'. You changed this folder to \'" + projectFolderNew + "\'. Do you want to move the attachments to the new folder?"); 
     if (confirmed) {
 //		var path=attInFolder[0].getFile().parent.path;
 		Zotero.ZotFile.setTabletFolder(attInFolder,projectFolderNew);  
@@ -639,8 +639,7 @@ function downloadPDFTool() {
 		var fileURL = ioService.newFileURI(file);
 
 		const nsIWBP = Components.interfaces.nsIWebBrowserPersist;
-		var wbp = Components.classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"]
-					.createInstance(nsIWBP);
+		var wbp = Components.classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"].createInstance(nsIWBP);
 
 		var progressListener = new Zotero.WebProgressFinishListener(function () {
 
