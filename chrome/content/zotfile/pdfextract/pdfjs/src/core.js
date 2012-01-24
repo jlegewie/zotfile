@@ -70,8 +70,7 @@ var Page = (function PageClosure() {
     this.xref = xref;
     this.ref = ref;
 
-    this.ctx = null;
-    this.callback = null;
+    this.displayReadyPromise = null;
   }
 
   Page.prototype = {
@@ -167,21 +166,12 @@ var Page = (function PageClosure() {
                                                 IRQueue, fonts) {
       var self = this;
       this.IRQueue = IRQueue;
-      this.extractedAnnotations = this.getAnnotations();
-      var gfx = new CanvasGraphics(this.ctx, this.objs, this.textLayer, this.extractedAnnotations);
 
       var displayContinuation = function pageDisplayContinuation() {
         // Always defer call to display() to work around bug in
         // Firefox error reporting from XHR callbacks.
         setTimeout(function pageSetTimeout() {
-          try {
-            self.display(gfx, self.callback);
-          } catch (e) {
-            if (self.callback)
-              self.callback(e);
-            else
-              throw e;
-          }
+          self.displayReadyPromise.resolve();
         });
       };
 
@@ -206,6 +196,9 @@ var Page = (function PageClosure() {
         for (i = 0; i < n; ++i)
           content[i] = xref.fetchIfRef(content[i]);
         content = new StreamsSequenceStream(content);
+      } else if (!content) {
+        // replacing non-existent page content with empty one
+        content = new Stream(new Uint8Array(0));
       }
 
       var pe = this.pe = new PartialEvaluator(
@@ -278,7 +271,7 @@ var Page = (function PageClosure() {
     },
     getLinks: function pageGetLinks() {
       var links = [];
-      var annotations = pageGetAnnotations();
+      var annotations = this.getAnnotations();
       var i, n = annotations.length;
       for (i = 0; i < n; ++i) {
         if (annotations[i].type != 'Link')
@@ -288,6 +281,8 @@ var Page = (function PageClosure() {
       return links;
     },
     getAnnotations: function pageGetAnnotations() {
+      if (this.annotationsList) return this.annotationsList;
+
       var xref = this.xref;
       function getInheritableProperty(annotation, name) {
         var item = annotation;
@@ -318,13 +313,15 @@ var Page = (function PageClosure() {
         item.quadPoints = [];
         var quadpts = annotation.get('QuadPoints') || [];
         for (var j = 0; j < quadpts.length; j += 8) {
-          var topLeftCorner = this.rotatePoint(quadpts[j+4], quadpts[j+5]);
-          var bottomRightCorner = this.rotatePoint(quadpts[j+2], quadpts[j+3]);
+          // NB: we don't transform the quadpoints here, but later once we know
+          // the user space => device space transformation.
+          var topLeft = {x: quadpts[j + 4], y: quadpts[j + 5]};
+          var bottomRight = {x: quadpts[j + 2], y: quadpts[j + 3]};
           var quad = {};
-          quad.x = Math.min(topLeftCorner.x, bottomRightCorner.x);
-          quad.y = Math.min(topLeftCorner.y, bottomRightCorner.y);
-          quad.width = Math.abs(topLeftCorner.x - bottomRightCorner.x);
-          quad.height = Math.abs(topLeftCorner.y - bottomRightCorner.y);
+          quad.x = Math.min(topLeft.x, bottomRight.x);
+          quad.y = Math.min(topLeft.y, bottomRight.y);
+          quad.width = Math.abs(topLeft.x - bottomRight.x);
+          quad.height = Math.abs(topLeft.y - bottomRight.y);
           item.quadPoints.push(quad);
         }
 
@@ -402,9 +399,10 @@ var Page = (function PageClosure() {
           case 'Text':
             var content = annotation.get('Contents');
             var title = annotation.get('T');
+            var name = annotation.get('Name');
             item.content = stringToPDFString(content || '');
-            item.title = stringToPDFString(title || '');
-            item.name = annotation.get('Name').name;
+            item.title = stringToPDFString(title || ''); 
+            item.name = name ? name.name : 'Note';
             break;
           case 'Highlight':
           case 'Underline':
@@ -429,15 +427,40 @@ var Page = (function PageClosure() {
       }
       items.sort(sortAnnotations);
 
-      return items;
+      this.annotationsList = items;
+      return this.annotationsList;
     },
     startRendering: function pageStartRendering(ctx, callback, textLayer)  {
-      this.ctx = ctx;
-      this.callback = callback;
-      this.textLayer = textLayer;
-
       this.startRenderingTime = Date.now();
-      this.pdf.startRendering(this);
+
+      // If there is no displayReadyPromise yet, then the IRQueue was never
+      // requested before. Make the request and create the promise.
+      if (!this.displayReadyPromise) {
+        this.pdf.startRendering(this);
+        this.displayReadyPromise = new Promise();
+      }
+
+      // Once the IRQueue and fonts are loaded, perform the actual rendering.
+      this.displayReadyPromise.then(
+        function pageDisplayReadyPromise() {
+          var gfx = new CanvasGraphics(ctx, this.objs, textLayer,
+                                       this.getAnnotations());
+          try {
+            this.display(gfx, callback);
+          } catch (e) {
+            if (callback)
+              callback(e);
+            else
+              throw e;
+          }
+        }.bind(this),
+        function pageDisplayReadPromiseError(reason) {
+          if (callback)
+            callback(reason);
+          else
+            throw reason;
+        }
+      );
     }
   };
 
@@ -560,13 +583,15 @@ var PDFDocModel = (function PDFDocModelClosure() {
     },
     setup: function pdfDocSetup(ownerPassword, userPassword) {
       this.checkHeader();
-      this.xref = new XRef(this.stream,
-                           this.startXRef,
-                           this.mainXRefEntriesOffset);
-      this.catalog = new Catalog(this.xref);
-      if (this.xref.trailer && this.xref.trailer.has('ID')) {
+      var xref = new XRef(this.stream,
+                          this.startXRef,
+                          this.mainXRefEntriesOffset);
+      this.xref = xref;
+      this.catalog = new Catalog(xref);
+      if (xref.trailer && xref.trailer.has('ID')) {
         var fileID = '';
-        this.xref.trailer.get('ID')[0].split('').forEach(function(el) {
+        var id = xref.fetchIfRef(xref.trailer.get('ID'))[0];
+        id.split('').forEach(function(el) {
           fileID += Number(el.charCodeAt(0)).toString(16);
         });
         this.fileID = fileID;
@@ -645,8 +670,7 @@ var PDFDoc = (function PDFDocClosure() {
         var worker = new Worker(workerSrc);
 
         var messageHandler = new MessageHandler('main', worker);
-        // Tell the worker the file it was created from.
-        messageHandler.send('workerSrc', workerSrc);
+
         messageHandler.on('test', function pdfDocTest(supportTypedArray) {
           if (supportTypedArray) {
             this.worker = worker;
@@ -751,8 +775,8 @@ var PDFDoc = (function PDFDocClosure() {
 
       messageHandler.on('page_error', function pdfDocError(data) {
         var page = this.pageCache[data.pageNum];
-        if (page.callback)
-          page.callback(data.error);
+        if (page.displayReadyPromise)
+          page.displayReadyPromise.reject(data.error);
         else
           throw data.error;
       }, this);
