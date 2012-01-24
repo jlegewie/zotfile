@@ -1764,7 +1764,7 @@ Zotero.ZotFile = {
                         
                         // get times
                         var time_reader = file_reader.exists() ? parseInt(file_reader.lastModifiedTime+"",10) : 0;
-                        var time_saved  = parseInt(this.getInfo(att,"lastmod"),10);
+                        var time_saved  = parseInt(Zotero.ZotFile.getInfo(att,"lastmod"),10);
                         var time_zotero = (file_zotero!=false) ? parseInt(file_zotero.lastModifiedTime+"",10) : 0;
 
                         if (time_reader!=0 || time_zotero!=0) {
