@@ -1317,7 +1317,7 @@ Zotero.ZotFile = {
             }
 
             // add tag to attachment
-            att.addTag(this.prefs.getCharPref("tablet.tag"));
+            if(!this.getTabletStatus(att)) att.addTag(this.prefs.getCharPref("tablet.tag"));
             
             // add tag to parent item
             if (this.prefs.getBoolPref("tablet.tagParentPush")) item.addTag(this.prefs.getCharPref("tablet.tagParentPush_tag"));
