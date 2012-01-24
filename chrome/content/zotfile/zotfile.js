@@ -1622,29 +1622,28 @@ Zotero.ZotFile = {
 
                 // preserve attachment note and tags
                 var att_note=att.getNote();
-                    var att_tags=att.getTags();
-                    for (var j=0; j < att_tags.length; j++) att_tags[j]= att_tags[j]._get('name');
+                var att_tags=att.getTags();
+                if(att_tags.length>0) for (var j=0; j < att_tags.length; j++) att_tags[j]= att_tags[j]._get('name');
             
                 // Rename and Move Attachment
                 var file = att.getFile();
-                    if(this.fileExists(att) && this.checkFileType(file)) {
+                if(this.fileExists(att) && this.checkFileType(file) && !this.getTabletStatus(att)) {
                     // move & rename
-                    if(!this.getTabletStatus(att)) {
-                        var attID=this.renameAttachment(item, att,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),true);
-                    }
-                    else this.infoWindow("Zotfile Error","Attachment could not be renamed because it is on the tablet.",8000);
+                    var attID=this.renameAttachment(item, att,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),true);
                     
                     //update list of selected item
                     if(attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
 
                     // restore attachments note and tags
-                    if(att_note!="" || att_tags) {
+                    if(att_note!="" || att_tags.length>0) {
                         att = Zotero.Items.get(attID);
                         if(att_note!="") att.setNote(att_note);
                         if(att_tags) for each(var tag in att_tags) att.addTag(tag);
                         att.save();
                     }
                 }
+                if(this.getTabletStatus(att)) this.infoWindow("Zotfile Error","Attachment could not be renamed because it is on the tablet.",8000);
+
             }
                 // restore selection
             win.ZoteroPane.itemsView.selectItems(selection);
