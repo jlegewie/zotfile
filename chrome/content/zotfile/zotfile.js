@@ -1363,9 +1363,9 @@ Zotero.ZotFile = {
     
         // Push attachments
         var confirmed=1;
-        if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) confirmed=confirm("Do you want to send " + attIDs.length + " attachments to the reader?");
+        if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) confirmed=confirm("Do you want to send " + attIDs.length + " attachments to the tablet?");
         if(confirmed) {
-                if (!repush && attOnReaderCount>0) repush=confirm(attOnReaderCount + " of the selected attachments are already on the reader. Do you want to replace these files on the reader?");
+                if (!repush && attOnReaderCount>0) repush=confirm(attOnReaderCount + " of the selected attachments are already on the tablet. Do you want to replace these files on the tablet?");
                 for (i=0; i < attIDs.length; i++) {
                     var att = Zotero.Items.get(attIDs[i]);
                     var item= Zotero.Items.get(att.getSource());
@@ -1413,7 +1413,7 @@ Zotero.ZotFile = {
                 // if attachment gets replaced
                 if (!this.prefs.getBoolPref("tablet.storeCopyOfFile")) {
                     // prompt if both file have been modified
-                    if (option==2) option=this.promptUser("Both copies of the attachment file \'" + file_zotero.leafName + "\'  have been modified. What do you want to do?\n\nRemoving without replacement discards all changes made to the file on the reader.","Replace Zotero File","Get from Reader without Replacement","Cancel");
+                    if (option==2) option=this.promptUser("Both copies of the attachment file \'" + file_zotero.leafName + "\'  have been modified. What do you want to do?\n\nRemoving without replacement discards all changes made to the file on the tablet.","Replace Zotero File","Get from Tablet without Replacement","Cancel");
 
                     // Replace Zotero file
                     if(option==0) {
