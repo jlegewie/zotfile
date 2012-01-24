@@ -1389,20 +1389,21 @@ Zotero.ZotFile = {
     },
     
     removeAttachmentFromTablet: function (item, att,fakeRemove) {
-        var attID;
+        var attID=att.getID();
         var option=2;
         var itemPulled=false;
+
+        // get files
+        var file_zotero=att.getFile();
+        var file_reader=this.getTabletFile(att);
+
+        // get modification times for files
+        var time_reader = file_reader.exists() ? parseInt(file_reader.lastModifiedTime+"",10) : 0;
+        var time_saved  = parseInt(this.getInfo(att,"lastmod"),10);
+        var time_zotero = (file_zotero!=false) ? parseInt(file_zotero.lastModifiedTime+"",10) : 0;
+
         // background mode
         if(this.getInfo(att,"mode")==1) {
-            attID=att.getID();
-            var file_zotero=att.getFile();
-            var file_reader=this.getTabletFile(att);
-
-            // get times
-            var time_reader = file_reader.exists() ? parseInt(file_reader.lastModifiedTime+"",10) : 0;
-            var time_saved  = parseInt(this.getInfo(att,"lastmod"),10);
-            var time_zotero = (file_zotero!=false) ? parseInt(file_zotero.lastModifiedTime+"",10) : 0;
-
             if (time_reader!=0 || time_zotero!=0) {
                 // set options
                 if (time_reader>time_saved  && time_zotero<=time_saved) option=0;
@@ -1465,7 +1466,7 @@ Zotero.ZotFile = {
             attID=this.renameAttachment(item, att,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),false);
             att = Zotero.Items.get(attID);
             itemPulled=true;
-            option=0;
+            option = time_zotero>time_saved ? 0 : 1;
         }
         
         // post-processing if attachment has been removed & it's not a fake-pull
