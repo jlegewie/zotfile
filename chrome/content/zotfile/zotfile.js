@@ -1413,7 +1413,7 @@ Zotero.ZotFile = {
                 // if attachment gets replaced
                 if (!this.prefs.getBoolPref("tablet.storeCopyOfFile")) {
                     // prompt if both file have been modified
-                    if (option==2) option=this.promptUser("Both copies of the attachment file \'" + file_zotero.leafName + "\'  have been modified. What do you want to do?\n\nRemoving without replacement discards all changes made to the file on the tablet.","Replace Zotero File","Get from Tablet without Replacement","Cancel");
+                    if (option==2) option=this.promptUser("Both copies of the attachment file \'" + file_zotero.leafName + "\'  have been modified. What do you want to do?\n\nRemoving the tablet file discards all changes made to the file on the tablet.","Replace Zotero File","Remove Tablet File","Cancel");
 
                     // Replace Zotero file
                     if(option==0) {
