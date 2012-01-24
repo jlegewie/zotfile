@@ -688,12 +688,14 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         var lastCharSpace = (annot.markup[quad].charAt(markupEnd) == ' ');
         if (isSpace && lastCharSpace) return;
 
-        if (!isSpace && !lastCharSpace &&
-            charDims.x >= annot.markupGeom[quad].brx + charDims.spaceWidth) {
+        if (!isSpace && !lastCharSpace && charDims.spaceWidth != 0 &&
+            charDims.x > annot.markupGeom[quad].brx + charDims.spaceWidth) {
           annot.markup[quad] += ' ';
         }
-        annot.markupGeom[quad].brx = charDims.x + charDims.width;
-        annot.markup[quad] += character;
+        if (annot.markupGeom[quad].brx < charDims.x + charDims.width) {
+          annot.markupGeom[quad].brx = charDims.x + charDims.width;
+          annot.markup[quad] += character;
+        }
       }
     },
     showText: function canvasGraphicsShowText(str, skipTextSelection) {
