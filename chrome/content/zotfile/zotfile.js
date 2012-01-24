@@ -1641,7 +1641,7 @@ Zotero.ZotFile = {
                     if(att_note!="" || att_tags) {
                         att = Zotero.Items.get(attID);
                         if(att_note!="") att.setNote(att_note);
-                        if(att_tags) att.addTags(att_tags);
+                        if(att_tags) for each(var tag in att_tags) att.addTag(tag);
                         att.save();
                     }
                 }
