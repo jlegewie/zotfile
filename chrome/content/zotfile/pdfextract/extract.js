@@ -47,6 +47,7 @@ Zotero.ZotFile.PdfExtractor = {
         var annotations = [];
         var pageNum = 1;
         var currentPage = pageOne;
+        var scale = 1.0;
 
         function pageRequiresRendering(_page) {
           var annots = null;
@@ -68,13 +69,13 @@ Zotero.ZotFile.PdfExtractor = {
         var renderingDone = function(err) {
           Zotero.ZotFile.pdfAnnotations.pageExtractionComplete(pageNum, pdf.numPages);
 
-          if (err || !currentPage.extractedAnnotations) {
+          if (err || !currentPage.getAnnotations()) {
             logError('An error occurred while rendering page '+pageNum+' of '+args.url+' '+err);
             // try to scavenge some annotations anyway
           }
 
           const SUPPORTED_ANNOTS = ["Text", "Highlight", "Underline"];
-          for each (var annot in currentPage.extractedAnnotations) {
+          for each (var annot in currentPage.getAnnotations()) {
             var at = annot.type;
             if (at && SUPPORTED_ANNOTS.indexOf(at) >= 0) {
               var a = {};
@@ -82,6 +83,7 @@ Zotero.ZotFile.PdfExtractor = {
               a.page = pageNum;
               a.type = annot.type;
               a.content = annot.content;
+
               a.markup = annot.markup ? annot.markup.join(' ') : null;
               if (a.markup != null) {
                 // translate ligatures
@@ -106,8 +108,6 @@ Zotero.ZotFile.PdfExtractor = {
             args.callback.call(args.callbackObj, annotations, args.item);
           } else {
             currentPage = pdf.getPage(pageNum);
-            // NB: highlight annotation extraction currently requires scale == 1.0
-            var scale = 1.0;
             canvas.height = currentPage.height * scale;
             canvas.width = currentPage.width * scale;
 
@@ -115,7 +115,7 @@ Zotero.ZotFile.PdfExtractor = {
               currentPage.startRendering(context, renderingDone);
             } else {
               try {
-                currentPage.extractedAnnotations = currentPage.getAnnotations();
+                var foo = currentPage.getAnnotations();
               } catch (err) {
                 logError('error while reading annotations of page '+pageNum+' of '+args.url+' '+err);
               } finally {
@@ -125,8 +125,6 @@ Zotero.ZotFile.PdfExtractor = {
           }
         };
 
-        // NB: highlight annotation extraction currently requires scale == 1.0
-        var scale = 1.0;
         canvas.height = pageOne.height * scale;
         canvas.width = pageOne.width * scale;
 
@@ -135,7 +133,7 @@ Zotero.ZotFile.PdfExtractor = {
             currentPage.startRendering(context, renderingDone);
           } else {
             try {
-              currentPage.extractedAnnotations = currentPage.getAnnotations();
+              var foo = currentPage.getAnnotations();
             } catch (err) {
               logError('error while reading annotations of page '+pageNum+' of '+args.url+' '+err);
             } finally {
