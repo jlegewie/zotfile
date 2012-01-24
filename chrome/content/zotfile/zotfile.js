@@ -1796,7 +1796,10 @@ Zotero.ZotFile = {
                             a.item = item;
                             this.pdfAttachmentsForExtraction.push(a);
                         }
-                        if (!Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS") || Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler")) {
+                        if (this.popplerExtractorTool && (
+                            !Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS") || 
+                            Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler"))) {
+                                
                             var outputFile=file.path.replace(".pdf",".txt");
                             this.popplerExtractorCall(file.path,outputFile);
                             var annotations = this.popplerExtractorGetAnnotationsFromFile(outputFile);
