@@ -1815,7 +1815,7 @@ Zotero.ZotFile = {
                     this.numTotalPdfAttachments = this.pdfAttachmentsForExtraction.length;
                     Zotero.showZoteroPaneProgressMeter("Extract PDF annotations (press ESC to cancel)",true);
                     var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser");
-                    win.ZoteroPane.document.addEventListener('keypress', this.cancellationListener);
+                    win.ZoteroPane.document.addEventListener('keypress', this.cancellationListener,false);
                     this.pdfHiddenBrowser = Zotero.Browser.createHiddenBrowser();
                     this.pdfHiddenBrowser.loadURI(this.PDF_EXTRACT_URL);
                     }
