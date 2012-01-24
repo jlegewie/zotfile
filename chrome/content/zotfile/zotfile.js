@@ -1325,7 +1325,7 @@ Zotero.ZotFile = {
             // add info to note (date of modification to attachment, location, and mode)
             this.addInfo(att,"lastmod",newFile.lastModifiedTime);
             this.addInfo(att,"mode",this.prefs.getIntPref("tablet.mode"));
-                this.addInfo(att,"location",newFile.path);
+            this.addInfo(att,"location",newFile.path);
             this.addInfo(att,"projectFolder",projectFolder);
             
             // notification
@@ -1355,8 +1355,8 @@ Zotero.ZotFile = {
         var attOnReaderCount=0;
         for (var i=0; i < attIDs.length; i++) {
             var hasTag=this.getTabletStatus(Zotero.Items.get(attIDs[i]));
-                attOnReader.push(hasTag);
-                if (hasTag) attOnReaderCount++;
+            attOnReader.push(hasTag);
+            if (hasTag) attOnReaderCount++;
         }
         
         var repush=!this.prefs.getBoolPref("tablet.confirmRepush");
