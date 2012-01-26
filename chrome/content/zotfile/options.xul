@@ -299,7 +299,7 @@
 							<radiogroup id="id-zotfile-pdfExtraction-UsePDFJS" preference="pref-zotfile-pdfExtraction-UsePDFJS">
 								<hbox style="margin: 0"  align="center">
 									<radio id="id-zotfile-pdfExtraction-UsePDFJS-true" label="Use pdf.js to extract annotations" value="true"/>
-									<image src="chrome://zotfile/skin/information.png" tooltiptext="Zofile supports two ways to extract annotations from pdf files. The pdf.js-based tool works across all platforms and runs directly from zotero. The poppler-based extraction tool only works for Mac OS and requires a separate download. Currently, the poppler-based tool is more thoroughly tested, might work with a broader range of pdfs, and runs faster with larger pdfs. The pdf.js-based extraction, however, seems to handle umlaute in a better way."/>
+									<image src="chrome://zotfile/skin/information.png" tooltiptext="Zofile supports two methods to extract annotations from pdf files. The pdf.js-based tool works across all platforms and runs directly from zotero. The poppler-based extraction tool only works for Mac OS and requires a separate download. Currently, pdf.js is more reliable and should be the default in most cases. The poppler-based tool,however, is faster and might handle certain pdf standards that are not yet supported by pdf.js."/>
 								</hbox> 
 								<hbox  style="margin: 0"  align="center">									
 								 	<radio id="id-zotfile-pdfExtraction-UsePDFJS-false" label="Use poppler to extract annotations" value="false"/>	
