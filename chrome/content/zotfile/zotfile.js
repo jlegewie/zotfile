@@ -1168,46 +1168,16 @@ Zotero.ZotFile = {
 
                 // first pull if already on reader
                 var att_mode=this.getInfo(item,"mode");
-                /*
-                // background mode: Move to new location
-                if(att_mode==1) {
-                    var file=item.getFile();
-                    var folder=this.getInfo(item,"location").replace(file.leafName,"");
-                    if(projectFolder!=null) var folder=folder.replace(this.getInfo(item,"projectFolder"),projectFolder);
-                    var path=this.moveFile(file,folder,file.leafName);
-                    var newFile=this.createFile(path);
-                    
-                }
-                
-                // foreground mode: Move to new location
-                if(att_mode==2) {
-                    var newAttID=this.renameAttachment(parent, item,false,this.prefs.getCharPref("tablet.dest_dir")+projectFolder,this.prefs.getBoolPref("tablet.subfolder"),this.prefs.getCharPref("tablet.subfolderFormat"),false);
-
-                        if(projectFolder!=null) var newAttID=this.renameAttachment(parent, item,false,this.prefs.getCharPref("tablet.dest_dir")+projectFolder,this.prefs.getBoolPref("tablet.subfolder"),this.prefs.getCharPref("tablet.subfolderFormat"),false);
-                        if(projectFolder==null) var newAttID=this.renameAttachment(parent, item,false,this.prefs.getCharPref("tablet.dest_dir")+this.getInfo(item,"projectFolder"),this.prefs.getBoolPref("tablet.subfolder"),this.prefs.getCharPref("tablet.subfolderFormat"),false);
-
-                    // get new attachment and file
-                    var att = Zotero.Items.get(newAttID);
-                    var newFile = att.getFile();
-                    
-                }
-                    
-                // add info to note (date of modification to attachment, location, and mode)
-//              this.addInfo(att,"lastmod",newFile.lastModifiedTime);
-//              this.addInfo(att,"mode",this.prefs.getIntPref("tablet.mode"));
-                    this.addInfo(att,"location",newFile.path);
-                this.addInfo(att,"projectFolder",projectFolder);
-                */
                 if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
                     var itemID=this.removeAttachmentFromTablet(parent,item,true);
                     item = Zotero.Items.get(itemID);
                 }
                 // now push
                 if(parent.isRegularItem()) {
-                        if(projectFolder!=null) this.moveAttachmentToTablet(parent,item,projectFolder,false);
-                        if(projectFolder==null) this.moveAttachmentToTablet(parent,item,this.getInfo(item,"projectFolder"),false);
+                    if(projectFolder!=null) this.moveAttachmentToTablet(parent,item,projectFolder,false);
+                    if(projectFolder==null) this.moveAttachmentToTablet(parent,item,this.getInfo(item,"projectFolder"),false);
                 }
-                }
+            }
         }
         // report
         var mess_loc=(projectFolder!="") ? ("'..." + projectFolder + "'.") : "the base folder.";
