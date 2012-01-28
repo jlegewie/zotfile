@@ -1164,9 +1164,7 @@ Zotero.ZotFile = {
                 // get parent item
                 var parent=Zotero.Items.get(item.getSource());
 
-                // Rename and Move Attachment
-
-                // first pull if already on reader
+                // first pull if background mode
                 var att_mode=this.getInfo(item,"mode");
                 if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
                     var itemID=this.removeAttachmentFromTablet(parent,item,true);
@@ -1174,13 +1172,13 @@ Zotero.ZotFile = {
                 }
                 // now push
                 if(parent.isRegularItem()) {
-                    if(projectFolder!=null) this.moveAttachmentToTablet(parent,item,projectFolder,false);
-                    if(projectFolder==null) this.moveAttachmentToTablet(parent,item,this.getInfo(item,"projectFolder"),false);
+                    if(projectFolder!==null) this.moveAttachmentToTablet(parent,item,projectFolder,false);
+                    if(projectFolder===null) this.moveAttachmentToTablet(parent,item,this.getInfo(item,"projectFolder"),false);
                 }
             }
         }
         // report
-        var mess_loc=(projectFolder!="") ? ("'..." + projectFolder + "'.") : "the base folder.";
+        var mess_loc=(projectFolder!=="" && projectFolder!==null) ? ("'..." + projectFolder + "'.") : "the base folder.";
         Zotero.ZotFile.infoWindow("ZotFile Report","ZotFile has moved " + items.length + " attachments to " + mess_loc,8000);
     },
         
