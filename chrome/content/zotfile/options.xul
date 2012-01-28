@@ -87,7 +87,7 @@
 							   <label value="another folder as a new attachment to the currently selected Zotero item."/>					
 							   <separator/>
 							
-							    <caption label="Attaching New File(s)"/>                               								
+							    <caption label="Source Folder for Attaching new Files"/>                               								
 								<radiogroup id="id-zotfile-source_dir_ff" preference="pref-zotfile-source_dir_ff" oncommand="if(document.getElementById('pref-zotfile-source_dir_ff').value) if(document.getElementById('pref-zotfile-source_dir').value=='') Zotero.ZotFile.prefs.setCharPref('source_dir',Zotero.ZotFile.chooseDirectory()); ">
 									<radio id="id-zotfile-source_dir_ff-true" label="Use Firefox download folder" value="true" oncommand="updatePreferenceWindow('source');"/>
 									<hbox  style="margin: 0"  align="center">									
