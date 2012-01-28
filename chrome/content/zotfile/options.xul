@@ -88,7 +88,7 @@
 							   <separator/>
 							
 							    <caption label="Source Folder for Attaching new Files"/>                               								
-								<radiogroup id="id-zotfile-source_dir_ff" preference="pref-zotfile-source_dir_ff" oncommand="if(document.getElementById('pref-zotfile-source_dir_ff').value) if(document.getElementById('pref-zotfile-source_dir').value=='') Zotero.ZotFile.prefs.setCharPref('source_dir',Zotero.ZotFile.chooseDirectory()); ">
+								<radiogroup id="id-zotfile-source_dir_ff" preference="pref-zotfile-source_dir_ff" oncommand="if(document.getElementById('pref-zotfile-source_dir_ff').value) if(document.getElementById('pref-zotfile-source_dir').value=='') {Zotero.ZotFile.prefs.setCharPref('source_dir',Zotero.ZotFile.chooseDirectory()); updateFolderIcon('source',true);}">
 									<radio id="id-zotfile-source_dir_ff-true" label="Use Firefox download folder" value="true" oncommand="updatePreferenceWindow('source');"/>
 									<hbox  style="margin: 0"  align="center">									
 									 	<radio label="Custom:" value="false"  oncommand="updatePreferenceWindow('source');" />										
@@ -110,7 +110,7 @@
 			                    <label value="Zotero server, or move the file to a custom folder and link to that location from Zotero."/>											
 								<separator/>
 
-							   	<radiogroup id="id-zotfile-import" preference="pref-zotfile-import" oncommand="if(document.getElementById('pref-zotfile-import').value) if(document.getElementById('pref-zotfile-dest_dir').value=='') Zotero.ZotFile.prefs.setCharPref('dest_dir',Zotero.ZotFile.chooseDirectory());">
+							   	<radiogroup id="id-zotfile-import" preference="pref-zotfile-import" oncommand="if(document.getElementById('pref-zotfile-import').value) if(document.getElementById('pref-zotfile-dest_dir').value=='') {Zotero.ZotFile.prefs.setCharPref('dest_dir',Zotero.ZotFile.chooseDirectory()); updateFolderIcon('dest',true);}">
 									<radio label="Attach stored copy of file(s)" value="true" oncommand="updatePreferenceWindow('dest');"/>
 									<hbox  style="margin: 0"  align="center">
 										<radio label="Custom Location:" value="false" oncommand="updatePreferenceWindow('dest');"/>		
