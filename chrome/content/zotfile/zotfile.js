@@ -1157,7 +1157,7 @@ Zotero.ZotFile = {
     },
 
     setTabletFolder:function (items,projectFolder) {
-            for (var i=0; i < items.length; i++) {
+        for (var i=0; i < items.length; i++) {
             var item = items[i];
             if(item.getSource()) {
 
