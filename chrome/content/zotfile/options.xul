@@ -74,7 +74,7 @@
 			<tabbox id="zotfile-tabbox">
 				<tabs id="zotfile-tabs">
 					<tab label="General Settings"/>
-					<tab label="On Your Tablet"/>					
+					<tab label="Tablet Settings"/>
 					<tab label="Renaming Rules"/>
 					<tab label="Advanced Settings"/>
 				</tabs>
@@ -144,7 +144,7 @@
 													 							   		 
 		   			</tabpanel>
 		
-		<!-- ON YOUR TABLET -->
+		<!-- TABLET SETTINGS -->
 					<tabpanel orient="vertical">
 
 						<label value="ZotFile can streamline the process of reading and annotating your Zotero attachments" />
