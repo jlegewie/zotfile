@@ -132,7 +132,7 @@
 							</groupbox>
     					   																			
 						    <hbox style="margin: 0">					
-							   <label style="margin-right:0px" value="For a detailed description of each preference see the "/>
+							   <label style="margin-right:0px" value="For more information see the "/>
 							   <label style="margin-left:0px; margin-right:0px" class="text-link" href="http://www.columbia.edu/~jpl2136/zotfile.html" value="zotfile website"/>
 							   <label style="margin-left:0px; margin-right:0px" value="."/>								
 						    </hbox>
