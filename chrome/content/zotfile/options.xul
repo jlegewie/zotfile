@@ -152,7 +152,7 @@
 						<label value="from the tablet, renames and sorts them into subfolders so that you can find them, and" />
 						<label value="extracts the annotations and highlighted text to a Zotero note." />
 						<separator class="thin"/>						
-						<checkbox id="id-zotfile-tablet" label="Use ZotFile's tablet feature" preference="pref-zotfile-tablet" oncommand="updatePreferenceWindow('zotfile-tablet');"/>
+						<checkbox id="id-zotfile-tablet" label="Use ZotFile to send and get files from tablet" preference="pref-zotfile-tablet" oncommand="updatePreferenceWindow('zotfile-tablet');"/>
 						<separator/>
 
 		  				<groupbox>
