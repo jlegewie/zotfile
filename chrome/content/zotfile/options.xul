@@ -93,7 +93,7 @@
 									<hbox  style="margin: 0"  align="center">									
 									 	<radio label="Custom:" value="false"  oncommand="updatePreferenceWindow('source');" />										
 										<textbox id="id-zotfile-source_dir" preference="pref-zotfile-source_dir" flex="1" onchange="updateFolderIcon('source',false); "/>
-										<button id="id-zotfile-source_dir-button" label="Choose..." oncommand="Zotero.ZotFile.prefs.setCharPref('source_dir',Zotero.ZotFile.chooseDirectory());"/> <!-- updateFolderIcon('source',false);-->
+										<button id="id-zotfile-source_dir-button" label="Choose..." oncommand="Zotero.ZotFile.prefs.setCharPref('source_dir',Zotero.ZotFile.chooseDirectory());updateFolderIcon('source',false);"/>
 										<image id="id-zotfile-source_dir-clear" width='16' height='16' hidden="false"/>										    
 									    <image id="id-zotfile-source_dir-ok" src="chrome://zotfile/skin/accept.png" hidden="true"/>	
 									    <image id="id-zotfile-source_dir-error" src="chrome://zotfile/skin/exclamation.png" hidden="true"/>		
@@ -115,7 +115,7 @@
 									<hbox  style="margin: 0"  align="center">
 										<radio label="Custom Location:" value="false" oncommand="updatePreferenceWindow('dest');"/>		
 										<textbox id="id-zotfile-dest_dir" preference="pref-zotfile-dest_dir" flex="1" onchange="updateFolderIcon('dest',false);"/>
-										<button id="id-zotfile-dest_dir-button" label="Choose..." oncommand="Zotero.ZotFile.prefs.setCharPref('dest_dir',Zotero.ZotFile.chooseDirectory());"/>		<!--updateFolderIcon('dest',false);-->
+										<button id="id-zotfile-dest_dir-button" label="Choose..." oncommand="Zotero.ZotFile.prefs.setCharPref('dest_dir',Zotero.ZotFile.chooseDirectory());updateFolderIcon('dest',false);"/>
 										<image id="id-zotfile-dest_dir-clear" width='16' height='16' hidden="false"/>										    
 									    <image id="id-zotfile-dest_dir-ok" src="chrome://zotfile/skin/accept.png" hidden="true"/>	
 									    <image id="id-zotfile-dest_dir-error" src="chrome://zotfile/skin/exclamation.png" hidden="true"/>		
@@ -160,7 +160,7 @@
 						   <label id="id-zotfile-tablet-baseFolder" value="Base Folder" control="id-zotfile-tablet-dest_dir"/>					
 						   <hbox style="margin: 0" align="center">					
 							   <textbox id="id-zotfile-tablet-dest_dir" preference="pref-zotfile-tablet-dest_dir" flex="1" onchange="updateFolderIcon('tablet');"/>								
-							   <button id="id-zotfile-tablet-dest_dir-button" label="Choose..." oncommand="Zotero.ZotFile.prefs.setCharPref('tablet.dest_dir',Zotero.ZotFile.chooseDirectory());updateFolderIcon('tablet');"/>
+							   <button id="id-zotfile-tablet-dest_dir-button" label="Choose..." oncommand="Zotero.ZotFile.prefs.setCharPref('tablet.dest_dir',Zotero.ZotFile.chooseDirectory());updateFolderIcon('tablet',false);"/>
 							   <button id="id-zotfile-tablet-dest_dir-show" label="Show Folder" oncommand="Zotero.ZotFile.showFolder(Zotero.ZotFile.getTabletLocationFile());"/>
 							   <image id="id-zotfile-tablet-ok" src="chrome://zotfile/skin/accept.png" hidden="true"/>	 
 							   <image id="id-zotfile-tablet-error" src="chrome://zotfile/skin/exclamation.png" hidden="true"/>									
