@@ -1338,18 +1338,18 @@ Zotero.ZotFile = {
                     var att = Zotero.Items.get(attIDs[i]);
                     var item= Zotero.Items.get(att.getSource());
                     if(!attOnReader[i] || (attOnReader[i] && repush)) {
-                    // first pull if already on reader
-                    if (attOnReader[i]) {
-                        var att_mode=this.getInfo(att,"mode");
-                        if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
-                            attID=this.removeAttachmentFromTablet(item,att,true);
-                            att = Zotero.Items.get(attID);
+                        // first pull if already on reader
+                        if (attOnReader[i]) {
+                            var att_mode=this.getInfo(att,"mode");
+                            if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
+                                attID=this.removeAttachmentFromTablet(item,att,true);
+                                att = Zotero.Items.get(attID);
+                            }
                         }
+                        // now push
+                        attID=this.moveAttachmentToTablet(item,att,projectFolder);
+                        if(attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
                     }
-                    // now push
-                    attID=this.moveAttachmentToTablet(item,att,projectFolder);
-                    if(attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
-                }
                 }
                 // restore selection
             win.ZoteroPane.itemsView.selectItems(selection);
