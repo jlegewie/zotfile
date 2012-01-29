@@ -427,7 +427,7 @@ function deleteSubfolder (subfolder) {
                 for (var i=0; i < attInFolder.length; i++) {
                     var att  = attInFolder[i];
                     var item = Zotero.Items.get(att.getSource());
-                    var attID=Zotero.ZotFile.removeAttachmentFromTablet(item,att,false);
+                    var attID=Zotero.ZotFile.getAttachmentFromTablet(item,att,false);
                 }
             }
 
