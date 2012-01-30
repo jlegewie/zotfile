@@ -1250,6 +1250,7 @@ Zotero.ZotFile = {
     },
                 
     sendAttachmentToTablet: function(item, att, projectFolder, verbose) {
+        if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendAttachmentToTablet - sending attachment " + att.getID() + " (mode is " + this.prefs.getIntPref("tablet.mode") + ")");
         var newFile;
         verbose = (typeof verbose == 'undefined') ? true : verbose;
         var newAttID=null;
@@ -1285,6 +1286,7 @@ Zotero.ZotFile = {
             }
 
             // add tag to attachment
+            if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendAttachmentToTablet - attachment moved, now tagging '" + this.prefs.getCharPref("tablet.tag") + "'");
             if(!this.getTabletStatus(att)) att.addTag(this.prefs.getCharPref("tablet.tag"));
             
             // add tag to parent item
@@ -1299,6 +1301,7 @@ Zotero.ZotFile = {
             // notification
             if(verbose) this.infoWindow("ZotFile Report","The attachment \'" + newFile.leafName + "\' was sent to the tablet.",8000); // at \'" + projectFolder + "\'.
         }
+        if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendAttachmentToTablet - attachment send with new ID " + newAttID);
         return(newAttID);
     },
     
@@ -1310,6 +1313,9 @@ Zotero.ZotFile = {
         // get selected attachments
         var attIDs=this.getSelectedAttachments();
         var attID;
+
+        // debug
+        if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - sending " + attIDs.length + " attachments to tablet");
             
         // get projectFolder
         var projectFolder="";
@@ -1317,6 +1323,9 @@ Zotero.ZotFile = {
             if(this.prefs.getIntPref("tablet.projectFolders")==1) projectFolder=this.projectPath[parseInt(project,10)-1];
             if(this.prefs.getIntPref("tablet.projectFolders")==2) projectFolder=this.prefs.getCharPref("tablet.projectFolders" + project + "_folder");
         }
+
+        // debug
+        if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - projectFolder set to '" + projectFolder +"'");
         
         // Check which attachments are already on the reader
         var attOnReader=[];
@@ -1326,6 +1335,9 @@ Zotero.ZotFile = {
             attOnReader.push(hasTag);
             if (hasTag) attOnReaderCount++;
         }
+
+        // debug
+        if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - attachments on tablet: " + attOnReaderCount);
         
         var repush=!this.prefs.getBoolPref("tablet.confirmRepush");
     
@@ -1334,12 +1346,14 @@ Zotero.ZotFile = {
         if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) confirmed=confirm("Do you want to send " + attIDs.length + " attachments to the tablet?");
         if(confirmed) {
                 if (!repush && attOnReaderCount>0) repush=confirm(attOnReaderCount + " of the selected attachments are already on the tablet. Do you want to replace these files on the tablet?");
+                if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - iterating through " + attIDs.length + " attachments...");
                 for (i=0; i < attIDs.length; i++) {
                     var att = Zotero.Items.get(attIDs[i]);
                     var item= Zotero.Items.get(att.getSource());
                     if(!attOnReader[i] || (attOnReader[i] && repush)) {
                         // first pull if already on reader
                         if (attOnReader[i]) {
+                            if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - get attachment " + i + " from tablet before sending it");
                             var att_mode=this.getInfo(att,"mode");
                             if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
                                 attID=this.getAttachmentFromTablet(item,att,true);
@@ -1347,19 +1361,28 @@ Zotero.ZotFile = {
                             }
                         }
                         // now push
+                        if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - send attachment " + i);
                         attID=this.sendAttachmentToTablet(item,att,projectFolder);
                         if(attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
                     }
                 }
                 // restore selection
             if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
+
+            // debug
+            if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - attachments sent to tablet");
         }
+        if(confirmed===0 && this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - sending attachments canceled by user");
     },
     
     getAttachmentFromTablet: function (item, att,fakeRemove) {
         var attID=att.getID();
         var option=2;
         var itemPulled=false;
+        var att_mode=this.getInfo(att,"mode");
+
+        //debug
+        if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.getAttachmentFromTablet - begin with mode " + att_mode);
 
         // get files
         var file_zotero=att.getFile();
@@ -1370,8 +1393,11 @@ Zotero.ZotFile = {
         var time_saved  = parseInt(this.getInfo(att,"lastmod"),10);
         var time_zotero = (file_zotero!=false) ? parseInt(file_zotero.lastModifiedTime+"",10) : 0;
 
+        //debug
+        if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.getAttachmentFromTablet - modification times: tablet=" + time_reader + "; saved=" + time_saved + "; zotero=" + time_zotero);
+
         // background mode
-        if(this.getInfo(att,"mode")==1) {
+        if(att_mode==1) {
             if (time_reader!=0 || time_zotero!=0) {
                 // set options
                 if (time_reader>time_saved  && time_zotero<=time_saved) option=0;
@@ -1430,7 +1456,7 @@ Zotero.ZotFile = {
             }
         }
         // foreground mode
-        if(this.getInfo(att,"mode")==2) {
+        if(att_mode==2) {
             attID=this.renameAttachment(item, att,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),false);
             att = Zotero.Items.get(attID);
             itemPulled=true;
@@ -1439,6 +1465,7 @@ Zotero.ZotFile = {
         
         // post-processing if attachment has been removed & it's not a fake-pull
         if (itemPulled && !fakeRemove) {
+            if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.getAttachmentFromTablet - post-processing after attachment was removed");
                 // remove info (tag and att note)
             var tagID=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tag"),0);
             att.removeTag(tagID);
@@ -1458,6 +1485,9 @@ Zotero.ZotFile = {
             this.infoWindow("ZotFile Report","The attachment \'" + att.getFile().leafName + "\' was removed from the tablet.",8000);
             
         }
+
+        //debug
+        if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.getAttachmentFromTablet - end");
         
         // return new id
         return(attID);

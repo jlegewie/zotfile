@@ -1,3 +1,4 @@
+pref("extensions.zotfile.debug",false);
 pref("extensions.zotfile.source_dir_ff",true);
 pref("extensions.zotfile.source_dir","");
 pref("extensions.zotfile.dest_dir", "");
