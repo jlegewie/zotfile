@@ -1352,7 +1352,7 @@ Zotero.ZotFile = {
                     }
                 }
                 // restore selection
-            win.ZoteroPane.itemsView.selectItems(selection);
+            if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
         }
     },
     
@@ -1484,7 +1484,7 @@ Zotero.ZotFile = {
             }
         }
             // restore selection
-        win.ZoteroPane.itemsView.selectItems(selection);
+        if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
     },
     
     
@@ -1615,7 +1615,7 @@ Zotero.ZotFile = {
 
             }
                 // restore selection
-            win.ZoteroPane.itemsView.selectItems(selection);
+            if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
         }
     },
     
