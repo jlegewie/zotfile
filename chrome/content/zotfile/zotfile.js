@@ -1539,7 +1539,8 @@ Zotero.ZotFile = {
             
     // Rename & Move Existing Attachments
     renameAttachment: function(item, att,import_att,dest_dir,subfolder,subfolderFormat,notification) {
-        var file,newAttID;
+        var file;
+        var newAttID=null;
         // get link mode and item ID
         var linkmode = att.attachmentLinkMode;
         var itemID = item.id;
@@ -1614,6 +1615,8 @@ Zotero.ZotFile = {
                 }
             }
         }
+        // return id of attachment
+        return newAttID;
     },
             
     // FUNCTION: Rename & Move Existing Attachments
