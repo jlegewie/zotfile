@@ -74,7 +74,7 @@
 			<tabbox id="zotfile-tabbox">
 				<tabs id="zotfile-tabs">
 					<tab label="General Settings"/>
-					<tab label="On Your Tablet"/>					
+					<tab label="Tablet Settings"/>
 					<tab label="Renaming Rules"/>
 					<tab label="Advanced Settings"/>
 				</tabs>
@@ -87,13 +87,13 @@
 							   <label value="another folder as a new attachment to the currently selected Zotero item."/>					
 							   <separator/>
 							
-							    <caption label="Attaching New File(s)"/>                               								
-								<radiogroup id="id-zotfile-source_dir_ff" preference="pref-zotfile-source_dir_ff" oncommand="if(document.getElementById('pref-zotfile-source_dir_ff').value) if(document.getElementById('pref-zotfile-source_dir').value=='') Zotero.ZotFile.prefs.setCharPref('source_dir',Zotero.ZotFile.chooseDirectory()); ">
+							    <caption label="Source Folder for Attaching new Files"/>                               								
+								<radiogroup id="id-zotfile-source_dir_ff" preference="pref-zotfile-source_dir_ff" oncommand="if(document.getElementById('pref-zotfile-source_dir_ff').value) if(document.getElementById('pref-zotfile-source_dir').value=='') {Zotero.ZotFile.prefs.setCharPref('source_dir',Zotero.ZotFile.chooseDirectory()); updateFolderIcon('source',true);}">
 									<radio id="id-zotfile-source_dir_ff-true" label="Use Firefox download folder" value="true" oncommand="updatePreferenceWindow('source');"/>
 									<hbox  style="margin: 0"  align="center">									
 									 	<radio label="Custom:" value="false"  oncommand="updatePreferenceWindow('source');" />										
 										<textbox id="id-zotfile-source_dir" preference="pref-zotfile-source_dir" flex="1" onchange="updateFolderIcon('source',false); "/>
-										<button id="id-zotfile-source_dir-button" label="Choose..." oncommand="Zotero.ZotFile.prefs.setCharPref('source_dir',Zotero.ZotFile.chooseDirectory());"/> <!-- updateFolderIcon('source',false);-->
+										<button id="id-zotfile-source_dir-button" label="Choose..." oncommand="var folder=Zotero.ZotFile.chooseDirectory(); if(folder!='') {Zotero.ZotFile.prefs.setCharPref('source_dir',folder);updateFolderIcon('source',false);}"/>
 										<image id="id-zotfile-source_dir-clear" width='16' height='16' hidden="false"/>										    
 									    <image id="id-zotfile-source_dir-ok" src="chrome://zotfile/skin/accept.png" hidden="true"/>	
 									    <image id="id-zotfile-source_dir-error" src="chrome://zotfile/skin/exclamation.png" hidden="true"/>		
@@ -110,12 +110,12 @@
 			                    <label value="Zotero server, or move the file to a custom folder and link to that location from Zotero."/>											
 								<separator/>
 
-							   	<radiogroup id="id-zotfile-import" preference="pref-zotfile-import" oncommand="if(document.getElementById('pref-zotfile-import').value) if(document.getElementById('pref-zotfile-dest_dir').value=='') Zotero.ZotFile.prefs.setCharPref('dest_dir',Zotero.ZotFile.chooseDirectory());">
+							   	<radiogroup id="id-zotfile-import" preference="pref-zotfile-import" oncommand="if(document.getElementById('pref-zotfile-import').value) if(document.getElementById('pref-zotfile-dest_dir').value=='') {Zotero.ZotFile.prefs.setCharPref('dest_dir',Zotero.ZotFile.chooseDirectory()); updateFolderIcon('dest',true);}">
 									<radio label="Attach stored copy of file(s)" value="true" oncommand="updatePreferenceWindow('dest');"/>
 									<hbox  style="margin: 0"  align="center">
 										<radio label="Custom Location:" value="false" oncommand="updatePreferenceWindow('dest');"/>		
 										<textbox id="id-zotfile-dest_dir" preference="pref-zotfile-dest_dir" flex="1" onchange="updateFolderIcon('dest',false);"/>
-										<button id="id-zotfile-dest_dir-button" label="Choose..." oncommand="Zotero.ZotFile.prefs.setCharPref('dest_dir',Zotero.ZotFile.chooseDirectory());"/>		<!--updateFolderIcon('dest',false);-->
+										<button id="id-zotfile-dest_dir-button" label="Choose..." oncommand="var folder=Zotero.ZotFile.chooseDirectory(); if(folder!='') {Zotero.ZotFile.prefs.setCharPref('dest_dir',folder);updateFolderIcon('dest',false);}"/>
 										<image id="id-zotfile-dest_dir-clear" width='16' height='16' hidden="false"/>										    
 									    <image id="id-zotfile-dest_dir-ok" src="chrome://zotfile/skin/accept.png" hidden="true"/>	
 									    <image id="id-zotfile-dest_dir-error" src="chrome://zotfile/skin/exclamation.png" hidden="true"/>		
@@ -132,7 +132,7 @@
 							</groupbox>
     					   																			
 						    <hbox style="margin: 0">					
-							   <label style="margin-right:0px" value="For a detailed description of each preference see the "/>
+							   <label style="margin-right:0px" value="For more information see the "/>
 							   <label style="margin-left:0px; margin-right:0px" class="text-link" href="http://www.columbia.edu/~jpl2136/zotfile.html" value="zotfile website"/>
 							   <label style="margin-left:0px; margin-right:0px" value="."/>								
 						    </hbox>
@@ -144,7 +144,7 @@
 													 							   		 
 		   			</tabpanel>
 		
-		<!-- ON YOUR TABLET -->
+		<!-- TABLET SETTINGS -->
 					<tabpanel orient="vertical">
 
 						<label value="ZotFile can streamline the process of reading and annotating your Zotero attachments" />
@@ -152,7 +152,7 @@
 						<label value="from the tablet, renames and sorts them into subfolders so that you can find them, and" />
 						<label value="extracts the annotations and highlighted text to a Zotero note." />
 						<separator class="thin"/>						
-						<checkbox id="id-zotfile-tablet" label="Use ZotFile's tablet feature" preference="pref-zotfile-tablet" oncommand="updatePreferenceWindow('zotfile-tablet');"/>
+						<checkbox id="id-zotfile-tablet" label="Use ZotFile to send and get files from tablet" preference="pref-zotfile-tablet" oncommand="updatePreferenceWindow('zotfile-tablet');"/>
 						<separator/>
 
 		  				<groupbox>
@@ -160,7 +160,7 @@
 						   <label id="id-zotfile-tablet-baseFolder" value="Base Folder" control="id-zotfile-tablet-dest_dir"/>					
 						   <hbox style="margin: 0" align="center">					
 							   <textbox id="id-zotfile-tablet-dest_dir" preference="pref-zotfile-tablet-dest_dir" flex="1" onchange="updateFolderIcon('tablet');"/>								
-							   <button id="id-zotfile-tablet-dest_dir-button" label="Choose..." oncommand="Zotero.ZotFile.prefs.setCharPref('tablet.dest_dir',Zotero.ZotFile.chooseDirectory());updateFolderIcon('tablet');"/>
+							   <button id="id-zotfile-tablet-dest_dir-button" label="Choose..." oncommand="var folder=Zotero.ZotFile.chooseDirectory(); if(folder!='') {Zotero.ZotFile.prefs.setCharPref('tablet.dest_dir',folder);updateFolderIcon('tablet',false);}"/>
 							   <button id="id-zotfile-tablet-dest_dir-show" label="Show Folder" oncommand="Zotero.ZotFile.showFolder(Zotero.ZotFile.getTabletLocationFile());"/>
 							   <image id="id-zotfile-tablet-ok" src="chrome://zotfile/skin/accept.png" hidden="true"/>	 
 							   <image id="id-zotfile-tablet-error" src="chrome://zotfile/skin/exclamation.png" hidden="true"/>									
@@ -299,7 +299,7 @@
 							<radiogroup id="id-zotfile-pdfExtraction-UsePDFJS" preference="pref-zotfile-pdfExtraction-UsePDFJS">
 								<hbox style="margin: 0"  align="center">
 									<radio id="id-zotfile-pdfExtraction-UsePDFJS-true" label="Use pdf.js to extract annotations" value="true"/>
-									<image src="chrome://zotfile/skin/information.png" tooltiptext="Zofile supports two ways to extract annotations from pdf files. The pdf.js-based tool works across all platforms and runs directly from zotero. The poppler-based extraction tool only works for Mac OS and requires a separate download. Currently, the poppler-based tool is more thoroughly tested, might work with a broader range of pdfs, and runs faster with larger pdfs. The pdf.js-based extraction, however, seems to handle umlaute in a better way."/>
+									<image src="chrome://zotfile/skin/information.png" tooltiptext="Zofile supports two methods to extract annotations from pdf files. The pdf.js-based tool works across all platforms and runs directly from zotero. The poppler-based extraction tool only works for Mac OS and requires a separate download. Currently, pdf.js is more reliable and should be the default in most cases. The poppler-based tool,however, is faster and might handle certain pdf standards that are not yet supported by pdf.js."/>
 								</hbox> 
 								<hbox  style="margin: 0"  align="center">									
 								 	<radio id="id-zotfile-pdfExtraction-UsePDFJS-false" label="Use poppler to extract annotations" value="false"/>	
