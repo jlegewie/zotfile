@@ -1,13 +1,12 @@
 ZotFile: Zotero plugin to manage your attachments
 by Joscha Legewie
 
-ZotFile is a Zotero plugin that allows you to automatically rename, move, and attach pdf (or other) files to Zotero items by pressing a single button. The plugin supports batch renaming, user specified directories, renaming rules using metadata from Zotero items, and the organization of attachment files into subfolders. The plugin also syncs PDFs from your Zotero library to your (mobile) PDF reader (e.g. an iPad, Android tablet, etc.), and extracts highlighted text from pdfs to zotero notes (mac only).
+Zotfile is a Zotero plugin to manage your attachments: automatically rename, move, and attach PDFs (or other files) to Zotero items, sync PDFs from your Zotero library to your (mobile) PDF reader (e.g. an iPad, Android tablet, etc.) and extract annotations from PDF files.
 
 
 Installation
-The currently released version (1.6.x) is available at
+The currently released version (2.x) is available at (after review process)
 https://addons.mozilla.org/en-US/firefox/addon/zotfile/
-The version on github is the development version for 2.0. Beta releases for this version are posted at http://forums.zotero.org/discussion/18737/3/zotfile-reader-zotero-plugin-to-work-with-tablet-ipad-android-tablets-etc/ (see end of thread for most recent version).
 
 To install the development version on github:
 - download .zip file from github
