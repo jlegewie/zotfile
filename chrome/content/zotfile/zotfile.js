@@ -1260,6 +1260,7 @@ Zotero.ZotFile = {
             
             // background mode: Rename and Move Attachment
             if(this.prefs.getIntPref("tablet.mode")==1) {
+
                 // change name of file
                 if (this.prefs.getBoolPref("tablet.rename"))  {
                     var filename=this.getFilename(item,file.leafName);
@@ -1270,10 +1271,27 @@ Zotero.ZotFile = {
                         file = att.getFile();
                     }
                 }
-                // create copy on tablet
-                var folder=this.getLocation(item,this.prefs.getCharPref("tablet.dest_dir")+projectFolder,this.prefs.getBoolPref("tablet.subfolder"),this.prefs.getCharPref("tablet.subfolderFormat"));
-                newFile=this.copyFile(file,folder,file.leafName);
                 newAttID=att.getID();
+
+                // add tags and catch error if it does not work
+                try {
+                    if(!this.getTabletStatus(att)) att.addTag(this.prefs.getCharPref("tablet.tag"));
+                    if (this.prefs.getBoolPref("tablet.tagParentPush")) item.addTag(this.prefs.getCharPref("tablet.tagParentPush_tag"));
+                }
+                catch (err) {
+                    return(null);
+                }
+
+                // create copy of file on tablet and catch errors
+                try {
+                    // create copy on tablet
+                    var folder=this.getLocation(item,this.prefs.getCharPref("tablet.dest_dir")+projectFolder,this.prefs.getBoolPref("tablet.subfolder"),this.prefs.getCharPref("tablet.subfolderFormat"));
+                    newFile=this.copyFile(file,folder,file.leafName);
+                }
+                catch (err) {
+                    if(this.getTabletStatus(att)) att.removeTag(Zotero.Tags.getID(this.prefs.getCharPref("tablet.tag"),0));
+                    return(null);
+                }
             }
 
             // foreground mode: Rename and Move Attachment
@@ -1283,14 +1301,11 @@ Zotero.ZotFile = {
                 // get new attachment and file
                 att = Zotero.Items.get(newAttID);
                 newFile = att.getFile();
-            }
 
-            // add tag to attachment
-            if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendAttachmentToTablet - attachment moved, now tagging '" + this.prefs.getCharPref("tablet.tag") + "'");
-            if(!this.getTabletStatus(att)) att.addTag(this.prefs.getCharPref("tablet.tag"));
-            
-            // add tag to parent item
-            if (this.prefs.getBoolPref("tablet.tagParentPush")) item.addTag(this.prefs.getCharPref("tablet.tagParentPush_tag"));
+                // add tag to attachment
+                if(!this.getTabletStatus(att)) att.addTag(this.prefs.getCharPref("tablet.tag"));
+                if (this.prefs.getBoolPref("tablet.tagParentPush")) item.addTag(this.prefs.getCharPref("tablet.tagParentPush_tag"));
+            }
             
             // add info to note (date of modification to attachment, location, and mode)
             this.addInfo(att,"lastmod",newFile.lastModifiedTime);
