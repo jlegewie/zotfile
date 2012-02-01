@@ -1363,7 +1363,7 @@ Zotero.ZotFile = {
                         // now push
                         if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - send attachment " + i);
                         attID=this.sendAttachmentToTablet(item,att,projectFolder);
-                        if(attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
+                        if(attID!==null && attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
                     }
                 }
                 // restore selection
@@ -1510,7 +1510,7 @@ Zotero.ZotFile = {
             var item= Zotero.Items.get(att.getSource());
             if(att.hasTag(tagID)) {
                 var attID=this.getAttachmentFromTablet(item,att,false);
-                if(attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
+                if(attID!==null && attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
             }
         }
             // restore selection
@@ -1631,7 +1631,7 @@ Zotero.ZotFile = {
                     var attID=this.renameAttachment(item, att,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),true);
                     
                     //update list of selected item
-                    if(attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
+                    if(attID!==null && attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
 
                     // restore attachments note and tags
                     if(att_note!="" || att_tags.length>0) {
