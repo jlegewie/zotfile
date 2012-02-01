@@ -1279,6 +1279,7 @@ Zotero.ZotFile = {
                     if (this.prefs.getBoolPref("tablet.tagParentPush")) item.addTag(this.prefs.getCharPref("tablet.tagParentPush_tag"));
                 }
                 catch (err) {
+                    this.infoWindow("ZotFile Error","Zotfile was unable to send the file \'" + file.leafName + "\' to the tablet (error: tag assignment). Please try again and report the problem if it happens again.",8000);
                     return(null);
                 }
 
@@ -1290,6 +1291,7 @@ Zotero.ZotFile = {
                 }
                 catch (err) {
                     if(this.getTabletStatus(att)) att.removeTag(Zotero.Tags.getID(this.prefs.getCharPref("tablet.tag"),0));
+                    this.infoWindow("ZotFile Error","Zotfile was unable to send the file \'" + file.leafName + "\' to the tablet (error: moving the file). Please try again and report the problem if it happens again.",8000);
                     return(null);
                 }
             }
