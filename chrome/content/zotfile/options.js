@@ -221,7 +221,7 @@ function changedBasefolder(dest_dir) {
         // change from valid to valid
         if(baseFolderValid && atts.length>0) {
             // prompt user
-            if(!confirm("You have changed the location for tablet files. There are " + atts.length + " files in the old location.\n\nDo you want to proceed?")) {
+            if(!confirm("You have changed the location for tablet files. There are " + atts.length + " files in the old location. Zotfile currently does not move these files to the new folder. I recommend that you first get them back from the tablet.\n\nDo you want to proceed and change the tablet folder now?")) {
                 Zotero.ZotFile.prefs.setCharPref("tablet.dest_dir",baseFolderOld);
             }
             
