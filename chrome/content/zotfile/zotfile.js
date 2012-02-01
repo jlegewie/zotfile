@@ -85,7 +85,7 @@ Zotero.ZotFile = {
         if (oldVersion=="") this.firstRun();
 
         // update current version
-        if(!Zotero.isFx36) if(!Zotero.isFx36) AddonManager.getAddonByID("zotfile@columbia.edu",function(aAddon) {
+        if(!Zotero.isFx36) AddonManager.getAddonByID("zotfile@columbia.edu",function(aAddon) {
             var currentVersion=aAddon.version;
             
             // if different version then previously
