@@ -198,7 +198,7 @@
 						
 						-->  
 												 					 
-					   <checkbox id="id-zotfile-tablet-rename" label="Rename files when they are send to the tablet" preference="pref-zotfile-tablet-rename"/>				    						
+					   <checkbox id="id-zotfile-tablet-rename" label="Rename files when they are sent to the tablet" preference="pref-zotfile-tablet-rename"/>				    						
 					   <hbox style="margin: 0"  align="center">					  		   
 						   <checkbox id="id-zotfile-tablet-storeCopyOfFile" label="Save copy of annotated file with suffix" preference="pref-zotfile-tablet-storeCopyOfFile"  oncommand="updatePreferenceWindow('storeCopyOfFile')"/>
 						   <textbox id="id-zotfile-tablet-storeCopyOfFile_suffix" preference="pref-zotfile-tablet-storeCopyOfFile_suffix" width="130"/>
