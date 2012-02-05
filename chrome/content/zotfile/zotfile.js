@@ -1141,19 +1141,27 @@ Zotero.ZotFile = {
         var results = search.search();
         var items = Zotero.Items.get(results);
         var atts = [];
+        
+        // iterate through attachment items
+        for (var i=0; i < items.length; i++) {
+            var item = items[i];
 
-            // if subfolder argument defined, iterate through attachments from search
-        if(subfolder!=null) {
-            for (var i=0; i < items.length; i++) {
-                var item = items[i];
+            // show warning if regular item with tablet tag
+            if(item.isRegularItem()) this.infoWindow("ZotFile Warning","A regular Zotero item has the \'" + this.prefs.getCharPref("tablet.tag") + "\' tag. This tag should only be used by zotfile and not assigned manually.",8000);
 
-                // attachment item with tag
-                if(item.isAttachment()) if(this.getInfo(item,"projectFolder").toLowerCase()==subfolder.toLowerCase()) atts.push(item);
+            // check whether non-top level attachment
+            if(!item.isTopLevelItem() && item.isAttachment()) {
+
+                // show warning if no information in note
+                if(this.getInfo(item,"mode")==="") this.infoWindow("ZotFile Warning","The information stored in attachment notes is missing for an attachment on the tablet. Make sure that you do not delete this information manually.",8000);
+                if(this.getInfo(item,"mode")!="") {
+                    if(subfolder===undefined) atts.push(item);
+                    if(subfolder!==undefined) if(this.getInfo(item,"projectFolder").toLowerCase()==subfolder.toLowerCase()) atts.push(item);
+                }
             }
-            return(atts);
         }
-        if(subfolder==null) return(items);
-
+        // return attachments
+        return(atts);
     },
 
     setTabletFolder:function (items,projectFolder) {
@@ -1190,63 +1198,48 @@ Zotero.ZotFile = {
         
         // iterate through attachment items
         for (var i=0; i < items.length; i++) {
+            // get attachment item, parent and file
             var item = items[i];
+            var parent=Zotero.Items.get(item.getSource());
+            var file=this.getTabletFile(item);
 
-            // regular item with tag
-            //if(item.isRegularItem()) this.infoWindow("ZotFile Error","A regular Zotero item has the \'" + this.prefs.getCharPref("tablet.tag") + "\' tag. This tag should only be used by zotfile and not assigned manually.",8000);
+            if (file.exists()) {
 
-            // attachment item with tag
-            if(item.getSource()) if(item.isAttachment()) {
+                // get last modified time from att note
+                var lastmod=this.getInfo(item,"lastmod");
 
-                // get parent item
-                var parent=Zotero.Items.get(item.getSource());
+                // check whether file was modified and prompt if it was
+                if(file.lastModifiedTime + ""!=lastmod) if (lastmod!="") {
 
-                // Rename and Move Attachment
-                if(parent.isRegularItem()) {
+                    // ask user
+                    var userInput=this.promptUser("Attachment \'" + file.leafName + "\' was modified. What do you want to do?","Get Attachment from Tablet","Update Zotero File","Cancel");
 
-                    // get file
-                    var file=this.getTabletFile(item);
+                    // Pull attachment
+                    if(userInput===0) this.getAttachmentFromTablet(parent,item,false);
 
-                    if (file.exists() && this.getInfo(item,"mode")!="") {
+                    // change modification date of attachment and update file
+                    if(userInput==1) {
+                        if(this.getInfo(item,"mode")==2) this.addInfo(item,"lastmod",file.lastModifiedTime);
+                        if(this.getInfo(item,"mode")==1) {
+                                var projectFolder=this.getInfo(item,"projectFolder");
 
-                        // get last modified time from att note
-                        var lastmod=this.getInfo(item,"lastmod");
-
-                        // check whether file was modified and prompt if it was
-                        if(file.lastModifiedTime + ""!=lastmod) if (lastmod!="") {
-
-                            // ask user
-                            var userInput=this.promptUser("Attachment \'" + file.leafName + "\' was modified. What do you want to do?","Get Attachment from Tablet","Update Zotero File","Cancel");
-
-                            // Pull attachment
-                            if(userInput==0) this.getAttachmentFromTablet(parent,item,false);
-
-                            // change modification date of attachment and update file
-                            if(userInput==1) {
-                                if(this.getInfo(item,"mode")==2) this.addInfo(item,"lastmod",file.lastModifiedTime);
-                                if(this.getInfo(item,"mode")==1) {
-                                        var projectFolder=this.getInfo(item,"projectFolder");
-
-                                    // first pull if already on reader
-                                    // this.getAttachmentFromTablet(parent,item,true);
-                                    var att_mode=this.getInfo(item,"mode");
-                                    if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
-                                        var itemID=this.getAttachmentFromTablet(parent,item,true);
-                                        item = Zotero.Items.get(itemID);
-                                    }
-                                    // now push
-                                    var newAttID=this.sendAttachmentToTablet(parent,item,projectFolder);
-                                }
-
+                            // first pull if already on reader
+                            // this.getAttachmentFromTablet(parent,item,true);
+                            var att_mode=this.getInfo(item,"mode");
+                            if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
+                                var itemID=this.getAttachmentFromTablet(parent,item,true);
+                                item = Zotero.Items.get(itemID);
                             }
-                            count=count+1;
-
+                            // now push
+                            var newAttID=this.sendAttachmentToTablet(parent,item,projectFolder);
                         }
+
                     }
+                    count=count+1;
                 }
             }
         }
-        if(count==0) this.infoWindow("ZotFile Report","Scan Tablet did not find any updated items in the destination folder.",8000);
+        if(count===0) this.infoWindow("ZotFile Report","Scan Tablet did not find any updated items in the destination folder.",8000);
     },
                 
     sendAttachmentToTablet: function(item, att, projectFolder, verbose) {
