@@ -1191,7 +1191,7 @@ Zotero.ZotFile = {
             var parent=Zotero.Items.get(item.getSource());
             var file=this.getTabletFile(item);
 
-            if (file.exists()) {
+            if(file!==false) if (file.exists()) {
                 // get last modified time from att note and add att to list if file was modified
                 var lastmod=this.getInfo(item,"lastmod");
                 if(file.lastModifiedTime + ""!=lastmod) if (lastmod!="") atts.push(item);
