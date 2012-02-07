@@ -131,6 +131,10 @@ Zotero.ZotFile = {
 
         });
 
+        // add event listener for selecting the 'modified tablet attachments' saved search
+        var win = this.wm.getMostRecentWindow("navigator:browser");
+        win.document.getElementById('zotero-collections-tree').addEventListener('click', this.updateModifiedAttachmentsSearch, false);
+        
         // show items in right-click menu conditional on options using an event listener
         // CODE NOT IMPLEMENTED (just to remember how it works if needed)
         /*var cm = document.getElementById('zotero-itemmenu');
@@ -1226,6 +1230,33 @@ Zotero.ZotFile = {
         var mess_loc=(projectFolder!=="" && projectFolder!==null) ? ("'..." + projectFolder + "'.") : "the base folder.";
         Zotero.ZotFile.infoWindow("ZotFile Report","ZotFile has moved " + items.length + " attachments to " + mess_loc,8000);
     },
+
+    updateModifiedAttachmentsSearch: function(event) {
+        // debug output
+        if(Zotero.ZotFile.prefs.getBoolPref("debug")) Zotero.debug("zotfile.updateModifiedAttachmentsSearch - event fired");
+
+        // get selected saved search
+        var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser");
+        var savedSearch = win.ZoteroPane.getSelectedSavedSearch();
+        // returns false if no saved search is selected (e.g. collection)
+        
+        // only proceed if saved search is selected
+        if(savedSearch!==false) {
+            // check whether saved search 'tablet files (modified)' is selected based on search conditions
+            var searchModifiedTabletFiles=false;
+            var savedSearchConditions=savedSearch.getSearchConditions();
+            for (var i=1; i < savedSearchConditions.length; i++) {
+                if(savedSearchConditions[i].condition=="tag" && savedSearchConditions[i].value==Zotero.ZotFile.prefs.getCharPref("tablet.tagModified")) searchModifiedTabletFiles=true;
+            }
+
+            // update saved search
+            if(searchModifiedTabletFiles) {
+                var items = Zotero.ZotFile.getModifiedAttachmentsOnTablet();
+                if(Zotero.ZotFile.prefs.getBoolPref("debug")) Zotero.debug("zotfile.updateModifiedAttachmentsSearch - saved search selected with " + items.length + " modified atts.");
+                for (var j=0; j < items.length; j++) items[j].addTag(Zotero.ZotFile.prefs.getCharPref("tablet.tagModified"));
+            }
+        }
+    },
         
     scanTabletFiles: function() {
         // get items on tablet
@@ -1518,6 +1549,12 @@ Zotero.ZotFile = {
             // notification
             this.infoWindow("ZotFile Report","The attachment \'" + att.getFile().leafName + "\' was removed from the tablet.",8000);
             
+        }
+
+        // remove modified tag from attachment
+        if (itemPulled) {
+            var tagIDModified=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tagModified"),0);
+            if(att.hasTag(tagIDModified)) att.removeTag(tagIDModified);
         }
 
         //debug

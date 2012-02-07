@@ -33,6 +33,7 @@ pref("extensions.zotfile.tablet.dest_dir", "");
 pref("extensions.zotfile.tablet.rename", true);
 pref("extensions.zotfile.tablet.dest_dir_relativePath", true);
 pref("extensions.zotfile.tablet.tag", "_READ");
+pref("extensions.zotfile.tablet.tagModified", "_tablet_modified");
 pref("extensions.zotfile.tablet.tagParentPush", false);
 pref("extensions.zotfile.tablet.tagParentPush_tag", "_READ");
 pref("extensions.zotfile.tablet.tagParentPull", false);
