@@ -130,9 +130,20 @@ Zotero.ZotFile = {
             if(!Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported) Zotero.ZotFile.prefs.setBoolPref("pdfExtraction.UsePDFJS",true);
 
         });
+
+        // show items in right-click menu conditional on options using an event listener
+        // CODE NOT IMPLEMENTED (just to remember how it works if needed)
+        /*var cm = document.getElementById('zotero-itemmenu');
+        cm.addEventListener("popupshowing", this.showMenu, false);
+        // Register the callback in Zotero as an item observer
+        var notifierID = Zotero.Notifier.registerObserver(this.notifierCallback, ['item']);*/
         
         //this.createUI()
     },
+
+    /*showMenu: function(event) {
+        Zotero.ZotFile.infoWindow("ZotFile Report","event fired!",8000);
+    },*/
     
     
     // ============================ //
