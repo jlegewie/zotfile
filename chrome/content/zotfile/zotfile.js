@@ -211,7 +211,7 @@ Zotero.ZotFile = {
         search.addCondition('tag', 'is', "_READ");
         search.addCondition('includeParentsAndChildren', 'true');
         search.addCondition('noChildren', 'true');
-        search.setName("Files on Tablet");
+        search.setName("Tablet Files");
         search.save();
     },
     
