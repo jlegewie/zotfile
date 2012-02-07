@@ -1132,12 +1132,17 @@ Zotero.ZotFile = {
     },
 
     getTabletFile: function(att) {
-        if(this.getTabletStatus(att)) {
-            // get file depending on mode
-            var file=this.getInfo(att,"mode")==1 ? this.createFile(this.getInfo(att,"location")) : att.getFile();
-            return(file);
+        try {
+            if(this.getTabletStatus(att)) {
+                // get file depending on mode
+                var file=this.getInfo(att,"mode")==1 ? this.createFile(this.getInfo(att,"location")) : att.getFile();
+                return(file);
+            }
+            return(false);
         }
-        return(false);
+        catch (err) {
+            return(false);
+        }
     },
     
     getTabletLocationFile: function(subfolder) {
