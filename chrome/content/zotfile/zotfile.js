@@ -1142,6 +1142,18 @@ Zotero.ZotFile = {
         return(att.hasTag(tagID));
     },
 
+    getTabletStatusModified: function(item) {
+        var modified=false;
+        var file=this.getTabletFile(item);
+
+        if(file!==false) if (file.exists()) {
+            // get last modified time from att note and add att to list if file was modified
+            var lastmod=this.getInfo(item,"lastmod");
+            if(file.lastModifiedTime + ""!=lastmod) if (lastmod!="") modified=true;
+        }
+        return modified;
+    },
+
     getTabletFile: function(att) {
         try {
             if(this.getTabletStatus(att)) {
@@ -1199,14 +1211,8 @@ Zotero.ZotFile = {
         for (var i=0; i < items.length; i++) {
             // get attachment item, parent and file
             var item = items[i];
-            var parent=Zotero.Items.get(item.getSource());
-            var file=this.getTabletFile(item);
 
-            if(file!==false) if (file.exists()) {
-                // get last modified time from att note and add att to list if file was modified
-                var lastmod=this.getInfo(item,"lastmod");
-                if(file.lastModifiedTime + ""!=lastmod) if (lastmod!="") atts.push(item);
-            }
+            if(this.getTabletStatusModified(item)) atts.push(item);
         }
         // return attachments
         return(atts);
