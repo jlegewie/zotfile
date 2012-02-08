@@ -1449,7 +1449,7 @@ Zotero.ZotFile = {
         if(confirmed===0 && this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - sending attachments canceled by user");
     },
 
-    updateSelectedTabletAttachments: function () {
+    syncSelectedTabletAttachments: function () {
         this.infoWindow("ZotFile Report","update att function called.",8000);
     },
     

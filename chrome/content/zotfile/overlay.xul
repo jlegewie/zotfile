@@ -27,7 +27,7 @@
 				<menuseparator/>												
 				<menuitem label="Warning" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>								
 				<menuitem id="id-push2reader-00" label="Send to Tablet" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('');"/>
-				<menuitem label="Update Tablet File" tooltiptext="Update Attachment File on Tablet." oncommand="Zotero.ZotFile.updateSelectedTabletAttachments();"/>	
+				<menuitem label="Sync Tablet Files" tooltiptext="Sync attachment file on tablet with file in Zotero." oncommand="Zotero.ZotFile.syncSelectedTabletAttachments();"/>	
 				<menuitem label="Get from Tablet" tooltiptext="Get Attachment File from Tablet." oncommand="Zotero.ZotFile.getSelectedAttachmentsFromTablet();"/>				
 				<menuseparator/>																
 				<menuitem label="Send to Subfolder on Tablet" disabled="true" style="font-size: 80%; background: none; -moz-appearance: none;"/>								
