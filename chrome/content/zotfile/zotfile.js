@@ -1144,7 +1144,7 @@ Zotero.ZotFile = {
 
     getTabletStatusModified: function(item) {
         var modified=false;
-        if (this.getTabletStatus()) {
+        if (this.getTabletStatus(item)) {
             var file=this.getTabletFile(item);
 
             if(file!==false) if (file.exists()) {
