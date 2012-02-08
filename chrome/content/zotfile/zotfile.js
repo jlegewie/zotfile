@@ -1144,12 +1144,14 @@ Zotero.ZotFile = {
 
     getTabletStatusModified: function(item) {
         var modified=false;
-        var file=this.getTabletFile(item);
+        if (this.getTabletStatus()) {
+            var file=this.getTabletFile(item);
 
-        if(file!==false) if (file.exists()) {
-            // get last modified time from att note and add att to list if file was modified
-            var lastmod=this.getInfo(item,"lastmod");
-            if(file.lastModifiedTime + ""!=lastmod) if (lastmod!="") modified=true;
+            if(file!==false) if (file.exists()) {
+                // get last modified time from att note and add att to list if file was modified
+                var lastmod=this.getInfo(item,"lastmod");
+                if(file.lastModifiedTime + ""!=lastmod) if (lastmod!="") modified=true;
+            }
         }
         return modified;
     },
