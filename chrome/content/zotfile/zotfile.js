@@ -1465,11 +1465,13 @@ Zotero.ZotFile = {
         // iterate through selected attachments
         for (i=0; i < itemIDs.length; i++) {
             var item = Zotero.Items.get(itemIDs[i]);
+            var parent=Zotero.Items.get(item.getSource());
+            var file=this.getTabletFile(item);
 
             if(this.getTabletStatusModified(item)) {
                 if(this.getInfo(item,"mode")==2) this.addInfo(item,"lastmod",file.lastModifiedTime);
                 if(this.getInfo(item,"mode")==1) {
-                        var projectFolder=this.getInfo(item,"projectFolder");
+                    var projectFolder=this.getInfo(item,"projectFolder");
 
                     // first pull if already on reader
                     // this.getAttachmentFromTablet(parent,item,true);
