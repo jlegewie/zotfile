@@ -1458,7 +1458,31 @@ Zotero.ZotFile = {
     },
 
     syncSelectedTabletAttachments: function () {
-        this.infoWindow("ZotFile Report","update att function called.",8000);
+        // get selected attachments
+        var itemIDs=this.getSelectedAttachments();
+        var attID;
+
+        // iterate through selected attachments
+        for (i=0; i < itemIDs.length; i++) {
+            var item = Zotero.Items.get(itemIDs[i]);
+
+            if(this.getTabletStatusModified(item)) {
+                if(this.getInfo(item,"mode")==2) this.addInfo(item,"lastmod",file.lastModifiedTime);
+                if(this.getInfo(item,"mode")==1) {
+                        var projectFolder=this.getInfo(item,"projectFolder");
+
+                    // first pull if already on reader
+                    // this.getAttachmentFromTablet(parent,item,true);
+                    var att_mode=this.getInfo(item,"mode");
+                    if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
+                        var itemID=this.getAttachmentFromTablet(parent,item,true);
+                        item = Zotero.Items.get(itemID);
+                    }
+                    // now push
+                    var newAttID=this.sendAttachmentToTablet(parent,item,projectFolder);
+                }
+            }
+        }
     },
     
     getAttachmentFromTablet: function (item, att,fakeRemove) {
