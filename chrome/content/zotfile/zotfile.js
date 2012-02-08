@@ -1233,7 +1233,7 @@ Zotero.ZotFile = {
 
     checkSelectedSearch: function() {
         // get selected saved search
-        var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser");
+        var win = this.wm.getMostRecentWindow("navigator:browser");
         var savedSearch = win.ZoteroPane.getSelectedSavedSearch();
         // returns false if no saved search is selected (e.g. collection)
 
