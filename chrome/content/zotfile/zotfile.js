@@ -319,14 +319,15 @@ Zotero.ZotFile = {
             sep1: 3,
             warning2: 4,
             push2reader: 5,
-            pullreader: 6,
-            sep2: 7,
-            subfolders: 8,
-            warning3: 9,
-            push2readerFolder:new Array(10,11,12,13,14,15,16,17,18,19,20,21,22,23,24),
-            sep3: 25,
-            menuConfigure: 26,
-            length:27
+            updatefile: 6,
+            pullreader: 7,
+            sep2: 8,
+            subfolders: 9,
+            warning3: 10,
+            push2readerFolder:new Array(11,12,13,14,15,16,17,18,19,20,21,22,23,24,25),
+            sep3: 26,
+            menuConfigure: 27,
+            length:28
         };
 
         // list of disabled and show menu-items
@@ -415,6 +416,12 @@ Zotero.ZotFile = {
                     menu.childNodes[m.push2reader].setAttribute('tooltiptext',"Send Attachment File to \'" + this.prefs.getCharPref("tablet.dest_dir") + "\'");
 
                     if(!onePushed) disable.push(m.pullreader);
+
+                    // add update menu item
+                    if(this.checkSelectedSearch()) {
+                        show.push(m.updatefile);
+                        if(!onePushed) disable.push(m.updatefile);
+                    }
 
                     // Collection based project folders
                     var projectsSet=0;
@@ -1440,6 +1447,10 @@ Zotero.ZotFile = {
             if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - attachments sent to tablet");
         }
         if(confirmed===0 && this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - sending attachments canceled by user");
+    },
+
+    updateSelectedTabletAttachments: function () {
+        this.infoWindow("ZotFile Report","update att function called.",8000);
     },
     
     getAttachmentFromTablet: function (item, att,fakeRemove) {
