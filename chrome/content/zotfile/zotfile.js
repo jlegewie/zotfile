@@ -30,8 +30,6 @@ Zotero.ZotFile = {
     },
     
     firstRun: function() {
-        // create saved search
-        this.createSavedSearch();
         
         // transfer preferences and uninstall zotreader
         if(!Zotero.isFx36) AddonManager.getAddonByID("zotreader@columbia.edu",function(aAddon) {
