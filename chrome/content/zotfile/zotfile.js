@@ -132,8 +132,7 @@ Zotero.ZotFile = {
         });
 
         // add event listener for selecting the 'modified tablet attachments' saved search
-        var win = this.wm.getMostRecentWindow("navigator:browser");
-        win.document.getElementById('zotero-collections-tree').addEventListener('click', this.updateModifiedAttachmentsSearch, false);
+        if(this.prefs.getBoolPref("tablet")) this.savedSearchEventListener(true);
         
         // show items in right-click menu conditional on options using an event listener
         // CODE NOT IMPLEMENTED (just to remember how it works if needed)
@@ -143,6 +142,13 @@ Zotero.ZotFile = {
         var notifierID = Zotero.Notifier.registerObserver(this.notifierCallback, ['item']);*/
         
         //this.createUI()
+    },
+
+    savedSearchEventListener: function(activate) {
+        var win = this.wm.getMostRecentWindow("navigator:browser");
+        if(activate)  win.document.getElementById('zotero-collections-tree').addEventListener('click', this.updateModifiedAttachmentsSearch, false);
+        if(!activate) win.document.getElementById('zotero-collections-tree').removeEventListener('click', this.updateModifiedAttachmentsSearch, false);
+
     },
 
     /*showMenu: function(event) {

@@ -94,7 +94,13 @@ function updatePreferenceWindow(which) {
             disablePreference("tablet-subfolder", "tablet-subfolderFormat", false);
         }
         // show alert about the tag used by zotfile
-        if(which=="zotfile-tablet" && !document.getElementById('pref-zotfile-tablet').value) alert("Zotfile uses the tag '_READ' to remember files that are on the tablet. Please do not change this tag manually!");
+        if(which=="zotfile-tablet") {
+            if(!document.getElementById('pref-zotfile-tablet').value) {
+                alert("Zotfile uses the tag '_READ' to remember files that are on the tablet. Please do not change this tag manually!");
+                Zotero.ZotFile.savedSearchEventListener(true);
+            }
+            else Zotero.ZotFile.savedSearchEventListener(false);
+        }
 
     }
 }
