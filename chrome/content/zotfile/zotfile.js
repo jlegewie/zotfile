@@ -10,24 +10,10 @@ Zotero.ZotFile = {
     zotfileURL:"http://www.columbia.edu/~jpl2136/zotfile.html",
     temp:"",
 
-    mergeObserver: {
-        observe: function(a, b, c){
-            //this should get called when the dynamic overlay loading in createUI is complete.
-            //we adjust UI stuff according to preferences here.
-            document.getElementById("zotfile-usetags").setAttribute("checked",
-                Zotero.ZotFile.prefs.getBoolPref("useTags").toString());
-        }
-    },
-
 
     // ========================= //
     // FUNCTIONS: INIT FUNCTIONS //
     // ========================= //
-
-    createUI: function() {
-        //load the overlay
-        document.loadOverlay("chrome://zotfile/content/overlay.xul", this.mergeObserver);
-    },
     
     firstRun: function() {
         
@@ -139,7 +125,6 @@ Zotero.ZotFile = {
         // Register the callback in Zotero as an item observer
         var notifierID = Zotero.Notifier.registerObserver(this.notifierCallback, ['item']);*/
         
-        //this.createUI()
     },
 
     savedSearchEventListener: function(activate) {
