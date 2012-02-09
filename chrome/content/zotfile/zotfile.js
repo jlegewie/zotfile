@@ -1465,24 +1465,29 @@ Zotero.ZotFile = {
         // iterate through selected attachments
         for (i=0; i < itemIDs.length; i++) {
             var item = Zotero.Items.get(itemIDs[i]);
-            var parent=Zotero.Items.get(item.getSource());
-            var file=this.getTabletFile(item);
 
             if(this.getTabletStatusModified(item)) {
-                if(this.getInfo(item,"mode")==2) this.addInfo(item,"lastmod",file.lastModifiedTime);
-                if(this.getInfo(item,"mode")==1) {
-                    var projectFolder=this.getInfo(item,"projectFolder");
+                // get parent and file
+                var parent=Zotero.Items.get(item.getSource());
+                var file=this.getTabletFile(item);
+                var filename=file.leafName;
 
-                    // first pull if already on reader
-                    // this.getAttachmentFromTablet(parent,item,true);
-                    var att_mode=this.getInfo(item,"mode");
-                    if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
-                        var itemID=this.getAttachmentFromTablet(parent,item,true);
-                        item = Zotero.Items.get(itemID);
-                    }
-                    // now push
-                    var newAttID=this.sendAttachmentToTablet(parent,item,projectFolder);
+                var att_mode=this.getInfo(item,"mode");
+                if(att_mode==2) {
+                    this.addInfo(item,"lastmod",file.lastModifiedTime);
+                    var tagIDModified=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tagModified"),0);
+                    if(att.hasTag(tagIDModified)) att.removeTag(tagIDModified);
                 }
+                if(att_mode==1) {
+                    var projectFolder=this.getInfo(item,"projectFolder");
+                    // first get from tablet
+                    var itemID=this.getAttachmentFromTablet(parent,item,true);
+                    item = Zotero.Items.get(itemID);
+                    // now send back to reader
+                    var newAttID=this.sendAttachmentToTablet(parent,item,projectFolder,false);
+                }
+                // show message
+                this.infoWindow("ZotFile Report","The attachment \'" + filename + "\' was synced between Zotero and the tablet folder.",8000);
             }
         }
     },
