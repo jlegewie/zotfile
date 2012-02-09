@@ -412,7 +412,7 @@ Zotero.ZotFile = {
                     if(!onePushed) disable.push(m.pullreader);
 
                     // add update menu item
-                    if(this.checkSelectedSearch()) {
+                    if(this.checkSelectedSearch() || this.prefs.getBoolPref("tablet.updateAlwaysShow")) {
                         show.push(m.updatefile);
                         if(!onePushed) disable.push(m.updatefile);
                     }
