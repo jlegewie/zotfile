@@ -32,6 +32,7 @@ pref("extensions.zotfile.tablet", false);
 pref("extensions.zotfile.tablet.dest_dir", "");
 pref("extensions.zotfile.tablet.rename", true);
 pref("extensions.zotfile.tablet.updateAlwaysShow", false);
+pref("extensions.zotfile.tablet.updateExtractAnnotations", false);
 pref("extensions.zotfile.tablet.dest_dir_relativePath", true);
 pref("extensions.zotfile.tablet.tag", "_READ");
 pref("extensions.zotfile.tablet.tagModified", "_tablet_modified");

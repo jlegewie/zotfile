@@ -1454,7 +1454,7 @@ Zotero.ZotFile = {
     syncSelectedTabletAttachments: function () {
         // get selected attachments
         var itemIDs=this.getSelectedAttachments();
-        var attID;
+        var attID, newAttID;
 
         // iterate through selected attachments
         for (i=0; i < itemIDs.length; i++) {
@@ -1471,6 +1471,7 @@ Zotero.ZotFile = {
                     this.addInfo(item,"lastmod",file.lastModifiedTime);
                     var tagIDModified=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tagModified"),0);
                     if(att.hasTag(tagIDModified)) att.removeTag(tagIDModified);
+                    newAttID=att.getID();
                 }
                 if(att_mode==1) {
                     var projectFolder=this.getInfo(item,"projectFolder");
@@ -1478,8 +1479,12 @@ Zotero.ZotFile = {
                     var itemID=this.getAttachmentFromTablet(parent,item,true);
                     item = Zotero.Items.get(itemID);
                     // now send back to reader
-                    var newAttID=this.sendAttachmentToTablet(parent,item,projectFolder,false);
+                    newAttID=this.sendAttachmentToTablet(parent,item,projectFolder,false);
                 }
+
+                // extract annotations
+                if (this.prefs.getBoolPref("tablet.updateExtractAnnotations")) this.pdfAnnotations.getAnnotations([newAttID]);
+
                 // show message
                 this.infoWindow("ZotFile Report","The attachment \'" + filename + "\' was synced between Zotero and the tablet folder.",8000);
             }
