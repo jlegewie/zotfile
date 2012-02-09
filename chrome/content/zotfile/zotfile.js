@@ -212,11 +212,16 @@ Zotero.ZotFile = {
     
     createSavedSearch: function() {
         var search = new Zotero.Search();
-        search.addCondition('tag', 'is', "_READ");
+        search.addCondition('tag', 'is', this.prefs.getCharPref("tablet.tag"));
         search.addCondition('includeParentsAndChildren', 'true');
         search.addCondition('noChildren', 'true');
         search.setName("Tablet Files");
         search.save();
+
+        var search_modified = new Zotero.Search();
+        search_modified.addCondition('tag', 'is', this.prefs.getCharPref("tablet.tagModified"));
+        search_modified.setName("Tablet Files (modified)");
+        search_modified.save();
     },
     
     
