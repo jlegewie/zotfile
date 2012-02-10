@@ -331,8 +331,12 @@
 						   <hbox style="margin: 0">											
 							   <checkbox id="id-zotfile-useFileTypes" label="Only work with the following filetypes" preference="pref-zotfile-useFileTypes" oncommand="updatePreferenceWindow('filetypes')"/>							
 							   <textbox id="id-zotfile-filetypes" preference="pref-zotfile-filetypes" flex="1"/>						
-					   	   </hbox> 
-							<button id="id-zotfile-add-search" label="Add Saved Searches for Attachments on Tablet" oncommand="Zotero.ZotFile.createSavedSearch();"/>
+					   	   </hbox> 					   	   
+					   	   <label value="Add Saved Searches"/>
+					   	   <hbox >						   	   
+							<button id="id-zotfile-add-search" label="Attachments on Tablet" oncommand="Zotero.ZotFile.createSavedSearch('tablet');"/>
+							<button id="id-zotfile-add-search2" label="Modified Attachments on Tablet" oncommand="Zotero.ZotFile.createSavedSearch('tablet_modified');"/>
+							</hbox>
 						
 						</groupbox>  																													
 						

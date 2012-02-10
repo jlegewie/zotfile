@@ -195,18 +195,22 @@ Zotero.ZotFile = {
         tm.mainThread.dispatch({run: function(){aFunc();}},Components.interfaces.nsIThread.DISPATCH_NORMAL);
     },
     
-    createSavedSearch: function() {
-        var search = new Zotero.Search();
-        search.addCondition('tag', 'is', this.prefs.getCharPref("tablet.tag"));
-        search.addCondition('includeParentsAndChildren', 'true');
-        search.addCondition('noChildren', 'true');
-        search.setName("Tablet Files");
-        search.save();
+    createSavedSearch: function(which) {
+        if(which=="tablet" || which=="both") {
+            var search = new Zotero.Search();
+            search.addCondition('tag', 'is', this.prefs.getCharPref("tablet.tag"));
+            search.addCondition('includeParentsAndChildren', 'true');
+            search.addCondition('noChildren', 'true');
+            search.setName("Tablet Files");
+            search.save();
+        }
 
-        var search_modified = new Zotero.Search();
-        search_modified.addCondition('tag', 'is', this.prefs.getCharPref("tablet.tagModified"));
-        search_modified.setName("Tablet Files (modified)");
-        search_modified.save();
+        if(which=="tablet_modified" || which=="both") {
+            var search_modified = new Zotero.Search();
+            search_modified.addCondition('tag', 'is', this.prefs.getCharPref("tablet.tagModified"));
+            search_modified.setName("Tablet Files (modified)");
+            search_modified.save();
+        }
     },
     
     
