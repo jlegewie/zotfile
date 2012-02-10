@@ -79,6 +79,9 @@ Zotero.ZotFile = {
                     if(!Zotero.isStandalone) Zotero.ZotFile.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.zotfileURL); });
                     if( Zotero.isStandalone) Zotero.ZotFile.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.zotfileURL); });
                 }
+
+                // add saved search
+                if(currentVersion=="2.1" && Zotero.ZotFile.prefs.getBoolPref("tablet")) Zotero.ZotFile.createSavedSearch("tablet_modified");
                 
                 // set current version
                 Zotero.ZotFile.prefs.setCharPref("version",currentVersion);
