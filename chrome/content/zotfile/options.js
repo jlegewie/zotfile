@@ -96,7 +96,7 @@ function updatePreferenceWindow(which) {
         // show alert about the tag used by zotfile
         if(which=="zotfile-tablet") {
             if(!document.getElementById('pref-zotfile-tablet').value) {
-                if(confirm("Zotfile can create saved searches for the attachments on the tablet. Do you want to create these searches now?\n\nWarning: Zotfile uses the tag '_READ' to remember files that are on the tablet. Please do not change this tag manually!")) Zotero.ZotFile.createSavedSearch("both");
+                if(confirm("Zotfile can create saved searches for the attachments on the tablet. Do you want to create these searches now?\n\nWarning: Zotfile uses the tag '" + Zotero.ZotFile.prefs.getCharPref("tablet.tag") + "' to remember files that are on the tablet. Please do not change this tag manually!")) Zotero.ZotFile.createSavedSearch("both");
                 Zotero.ZotFile.savedSearchEventListener(true);
             }
             else Zotero.ZotFile.savedSearchEventListener(false);
