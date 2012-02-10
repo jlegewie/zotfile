@@ -1273,6 +1273,10 @@ Zotero.ZotFile = {
             var items = Zotero.ZotFile.getModifiedAttachmentsOnTablet();
             if(Zotero.ZotFile.prefs.getBoolPref("debug")) Zotero.debug("zotfile.updateModifiedAttachmentsSearch - saved search selected with " + items.length + " modified atts.");
             for (var j=0; j < items.length; j++) items[j].addTag(Zotero.ZotFile.prefs.getCharPref("tablet.tagModified"));
+
+            // expand all rows in when search is selected
+            //var win = this.wm.getMostRecentWindow("navigator:browser");
+            //win.ZoteroPane.itemsView.expandAllRows();
         }
     },
         
