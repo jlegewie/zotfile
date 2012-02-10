@@ -56,6 +56,7 @@ Zotero.ZotFile = {
 
         // add saved search and change tag when upgrading to 2.1
         if(currentVersion=="2.1" && this.prefs.getBoolPref("tablet")) {
+            // create saved search for modified tablet items
             this.createSavedSearch("tablet_modified");
 
             if(Zotero.Tags.getID("_READ",0)!==false) {
@@ -63,23 +64,23 @@ Zotero.ZotFile = {
                     // change tablet tag
                     Zotero.Tags.rename(Zotero.Tags.getID("_READ",0), "_tablet");
 
-                    // change saved searches
-                    var searches=Zotero.Searches.getAll();
-                    for(var i=0; i<searches.length;i++ ) {
-                        var conditions=searches[i].getSearchConditions();
-                        for(var j=1; j<conditions.length;j++ ) {
-                            if(conditions[j].condition=="tag" && conditions[j].value=="_READ") {
-                                searches[i].updateCondition(conditions[j].id,'tag','is','_tablet');
-                                searches[i].save();
-                            }
-                        }
-                    }
-
                     // show message
                     this.infoWindow("ZotFile Warning","In ZotFile 2.1, the tag for tablet attachments was changed from '_READ' to '_tablet'. Please do not use or change the '_tablet' tag manually!",8000);
 
                 } catch (ex) {
                     alert("Warning: ZotFile has changed the tag for attachments on the tablet from '_READ' to '_tablet' but was unable to automatically change the existing tag. Please make the changes manually or ask for help in the zotfile thread on the zotero forum.");
+                }
+            }
+
+            // change saved searches
+            var searches=Zotero.Searches.getAll();
+            for(var i=0; i<searches.length;i++ ) {
+                var conditions=searches[i].getSearchConditions();
+                for(var j=1; j<conditions.length;j++ ) {
+                    if(conditions[j].condition=="tag" && conditions[j].value=="_READ") {
+                        searches[i].updateCondition(conditions[j].id,'tag','is','_tablet');
+                        searches[i].save();
+                    }
                 }
             }
         }
