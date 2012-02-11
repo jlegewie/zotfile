@@ -1516,8 +1516,8 @@ Zotero.ZotFile = {
                 if(att_mode==2) {
                     this.addInfo(item,"lastmod",file.lastModifiedTime);
                     var tagIDModified=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tagModified"),0);
-                    if(att.hasTag(tagIDModified)) att.removeTag(tagIDModified);
-                    newAttID=att.getID();
+                    if(item.hasTag(tagIDModified)) item.removeTag(tagIDModified);
+                    newAttID=item.getID();
                 }
                 if(att_mode==1) {
                     var projectFolder=this.getInfo(item,"projectFolder");
