@@ -78,7 +78,7 @@ Zotero.ZotFile = {
                 var conditions=searches[i].getSearchConditions();
                 for(var j=1; j<conditions.length;j++ ) {
                     if(conditions[j].condition=="tag" && conditions[j].value=="_READ") {
-                        searches[i].updateCondition(conditions[j].id,'tag','is','_tablet');
+                        searches[i].updateCondition(conditions[j].id,'tag',conditions[j].operator,'_tablet');
                         searches[i].save();
                     }
                 }
