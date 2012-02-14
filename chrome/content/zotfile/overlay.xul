@@ -48,41 +48,19 @@
 				<menuitem id="id-push2reader-14" hidden="true" label="menu14" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('14');"/>
 				<menuitem id="id-push2reader-15" hidden="true" label="menu15" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('15');"/>
 
-<!--				<menuitem id="id-push2reader-path10" hidden="true" label="" disabled="true" style="font-size: 70%; margin:0px; border-top-width:0px;padding-top:0px; background: none; -moz-appearance: none;"/> -->
 				<menuseparator/>								
 				<menuitem id="id-push2reader-configure" label="Change subfolders..." tooltiptext="Add and delete subfolders to Menu." oncommand="Zotero.ZotFile.openSubfolderWindow();"/>
 
-				<!--
-				<menuitem id="id-push2reader-new" label="Configure project folders..." tooltiptext="Add and delete project folders to Menu." oncommand=""/>				
-				document.getElementById('id-push2reader-01').hidden=false;
-				-->
 			</menupopup>
 		</menu>       
 
 
 	</menupopup>
 	
-	
-	
-<!--	
-	<menupopup id="zotero-itemmenu">
-		<menuseparator/>
-		<menuitem label="ZotFile - Attach New File(s)" tooltiptext="Move and attach last file in user defined folder to selected Zotero item" oncommand="Zotero.ZotFile.attachNewFile();"/>
-		<menuitem id="id-zotfile-menu" label="ZotFile - Rename Existing Attachments" tooltiptext="Move and rename existing Attachments from selected Zotero item" oncommand="Zotero.ZotFile.renameSelectedAttachments();"/>
-	</menupopup>         
--->
 	<menupopup id="zotero-tb-actions-popup">
 	<menuitem id="zotreader_tbmenu_scan" insertafter="zotero-tb-actions-rtfScan" label="Scan Tablet Files..." oncommand="Zotero.ZotFile.scanTabletFiles();"/>    	
     <menuitem id="zotfile-options" insertafter="zotero-tb-actions-prefs" label="ZotFile Preferences..." oncommand="Zotero.ZotFile.openPreferenceWindow();"/>
 	</menupopup>
-	
-	
-	<!--
-	<menupopup id="zotero-tb-attachment-add">
-		<menuitem class="menuitem-zotfile-new-item" label="ZotFile - Attach New File" oncommand="Zotero.ZotFile.attachNewFile();"/>
-		<menuitem class="menuitem-zotfile-rename-item" label="ZotFile - Rename Existing Attachments" oncommand="Zotero.ZotFile.renameAttachments();"/>
-	</menupopup>	
-	-->
 	
 	<!-- Include the main extension logic -->
 	<script src="chrome://zotero/content/include.js"/>
