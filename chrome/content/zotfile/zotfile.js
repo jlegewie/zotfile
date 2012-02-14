@@ -157,6 +157,11 @@ Zotero.ZotFile = {
             });
         }
 
+        // add event listener for zotfile menu items
+        var win = this.wm.getMostRecentWindow("navigator:browser");
+        win.document.getElementById('zotero-itemmenu').addEventListener('popupshowing', this.showMenu, false);
+
+
         // add event listener for selecting the 'modified tablet attachments' saved search
         if(this.prefs.getBoolPref("tablet")) this.savedSearchEventListener(true);
         
@@ -341,6 +346,26 @@ Zotero.ZotFile = {
     // FUNCTIONS: ZOTFILE MENU //
     // ======================= //
 
+    showMenu: function() {
+        var showMenu=false;
+
+        // get selected items
+        var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser");
+        var items = win.ZoteroPane.getSelectedItems();
+
+        //iterate through selected items
+        for (var i=0; i < items.length; i++) {
+            if(items[i].isAttachment() || items[i].isRegularItem()) {
+                showMenu=true;
+                break;
+            }
+        }
+
+        // show or hide zotfile menu items
+        win.document.getElementById("id-zotfile-separator").hidden = !showMenu;
+        win.document.getElementById("id-zotfile-attach-file").hidden = !showMenu;
+        win.document.getElementById("id-zotfile-manage-attachments").hidden = !showMenu;
+    },
 
     buildZotFileMenu: function () {
         var menuItemExtract=true;
