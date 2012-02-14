@@ -94,64 +94,68 @@ Zotero.ZotFile = {
     },
     
     init: function () {
-        //get preference objects
-        this.prefs = Components.classes["@mozilla.org/preferences-service;1"].
-                    getService(Components.interfaces.nsIPrefService);
-        this.prefs = this.prefs.getBranch("extensions.zotfile.");
 
-        this.ffPrefs = Components.classes["@mozilla.org/preferences-service;1"].
-                    getService(Components.interfaces.nsIPrefService).getBranch("browser.download.");
-        
-        this.wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
+        // only do this stuff for the first run
+        if(this.prefs===null) {
+            //get preference objects
+            this.prefs = Components.classes["@mozilla.org/preferences-service;1"].
+                        getService(Components.interfaces.nsIPrefService);
+            this.prefs = this.prefs.getBranch("extensions.zotfile.");
+
+            this.ffPrefs = Components.classes["@mozilla.org/preferences-service;1"].
+                        getService(Components.interfaces.nsIPrefService).getBranch("browser.download.");
             
-        // set source dir to custom folder if zotero standalone
-        if(Zotero.isStandalone && this.prefs.getBoolPref('source_dir_ff')) this.prefs.setBoolPref('source_dir_ff',false);
-
-        // version handeling
-        var oldVersion=this.prefs.getCharPref("version");
-        if(!Zotero.isFx36) Components.utils.import("resource://gre/modules/AddonManager.jsm");
-        
-        // if first run, check for zotfile reader and transfer preferences
-        if (oldVersion=="") this.firstRun();
-
-        // update current version
-        if(!Zotero.isFx36) AddonManager.getAddonByID("zotfile@columbia.edu",function(aAddon) {
-            var currentVersion=aAddon.version;
-            // if different version then previously
-            if(currentVersion!=oldVersion) Zotero.ZotFile.versionChanges(currentVersion);
-        });
-
-        if(Zotero.isFx36) {
-            var em = Components.classes["@mozilla.org/extensions/manager;1"].getService(Components.interfaces.nsIExtensionManager);
-            var addon = em.getItemForID("zotfile@columbia.edu");
-            if(addon.version!=oldVersion) this.versionChanges(addon.version);
-        }
-        
-        // run in future to not burden start-up
-        this.futureRun(function(){
-            // determine folder seperator depending on OS
-            Zotero.ZotFile.folderSep="/";
-            if (Zotero.isWin) Zotero.ZotFile.folderSep="\\";
-
-            // check whether extraction of annotations is supported
-            if (Zotero.ZotFile.pdfAnnotations.popplerSupportedPlatforms.join().indexOf(Zotero.platform)!=-1) Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported=true;
-
-            // set path and check whether installed
-            if (Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported) {
-                // set Extractor Path
-                Zotero.ZotFile.pdfAnnotations.popplerExtractorSetPath();
-
-                // check whether tool is installed
-                Zotero.ZotFile.pdfAnnotations.popplerExtractorTool=Zotero.ZotFile.pdfAnnotations.popplerExtractorCheckInstalled();
+            this.wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
                 
-                // set to pdf.js if poppler is not installed
-                if(!Zotero.ZotFile.pdfAnnotations.popplerExtractorTool) Zotero.ZotFile.prefs.setBoolPref("pdfExtraction.UsePDFJS",true);
+            // set source dir to custom folder if zotero standalone
+            if(Zotero.isStandalone && this.prefs.getBoolPref('source_dir_ff')) this.prefs.setBoolPref('source_dir_ff',false);
+
+            // version handeling
+            var oldVersion=this.prefs.getCharPref("version");
+            if(!Zotero.isFx36) Components.utils.import("resource://gre/modules/AddonManager.jsm");
+            
+            // if first run, check for zotfile reader and transfer preferences
+            if (oldVersion=="") this.firstRun();
+
+            // update current version
+            if(!Zotero.isFx36) AddonManager.getAddonByID("zotfile@columbia.edu",function(aAddon) {
+                var currentVersion=aAddon.version;
+                // if different version then previously
+                if(currentVersion!=oldVersion) Zotero.ZotFile.versionChanges(currentVersion);
+            });
+
+            if(Zotero.isFx36) {
+                var em = Components.classes["@mozilla.org/extensions/manager;1"].getService(Components.interfaces.nsIExtensionManager);
+                var addon = em.getItemForID("zotfile@columbia.edu");
+                if(addon.version!=oldVersion) this.versionChanges(addon.version);
             }
+            
+            // run in future to not burden start-up
+            this.futureRun(function(){
+                // determine folder seperator depending on OS
+                Zotero.ZotFile.folderSep="/";
+                if (Zotero.isWin) Zotero.ZotFile.folderSep="\\";
 
-            // set to pdf.js if poppler is not supported
-            if(!Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported) Zotero.ZotFile.prefs.setBoolPref("pdfExtraction.UsePDFJS",true);
+                // check whether extraction of annotations is supported
+                if (Zotero.ZotFile.pdfAnnotations.popplerSupportedPlatforms.join().indexOf(Zotero.platform)!=-1) Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported=true;
 
-        });
+                // set path and check whether installed
+                if (Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported) {
+                    // set Extractor Path
+                    Zotero.ZotFile.pdfAnnotations.popplerExtractorSetPath();
+
+                    // check whether tool is installed
+                    Zotero.ZotFile.pdfAnnotations.popplerExtractorTool=Zotero.ZotFile.pdfAnnotations.popplerExtractorCheckInstalled();
+                    
+                    // set to pdf.js if poppler is not installed
+                    if(!Zotero.ZotFile.pdfAnnotations.popplerExtractorTool) Zotero.ZotFile.prefs.setBoolPref("pdfExtraction.UsePDFJS",true);
+                }
+
+                // set to pdf.js if poppler is not supported
+                if(!Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported) Zotero.ZotFile.prefs.setBoolPref("pdfExtraction.UsePDFJS",true);
+
+            });
+        }
 
         // add event listener for selecting the 'modified tablet attachments' saved search
         if(this.prefs.getBoolPref("tablet")) this.savedSearchEventListener(true);
