@@ -2073,6 +2073,7 @@ Zotero.ZotFile = {
         createNote: function(annotations, item, method) {
             var note_content=this.getNoteContent(annotations, item, method);
             var note = new Zotero.Item("note");
+            note.libraryID = item._libraryID;
 //          note.setNote(Zotero.Utilities.text2html(note_content));
             note.setNote(note_content);
             note.setSource(item.getID());
