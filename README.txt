@@ -22,4 +22,17 @@ The source code is released under GNU General Public License, version 3.0
 Contributions preferably through pull requests are welcome!
 
 
+Changelog
 
+Changes in 2.1
+- Important: the tag for tablet files was changed from '_READ' to '_tablet'
+- New saved search for modified files on tablet
+  (updates automatically, replaces 'Scan Tablet Files' function, which has been removed)
+- Bug fix: allow the extraction of annotations in group libraries
+- Other bug fixes
+
+Changes in 2.0
+- Sync Zotero Attachments with your iPad or Android tablet
+- Extract Annotations from PDF Files (thanks to Joe Devietti)
+- redesigned preference pane
+- many more features and bug fixes
