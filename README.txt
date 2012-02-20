@@ -28,6 +28,7 @@ Changes in 2.1
 - Important: the tag for tablet files was changed from '_READ' to '_tablet'
 - New saved search for modified files on tablet
   (updates automatically, replaces 'Scan Tablet Files' function, which has been removed)
+- Zotfile menu items only appear for bibliographic items and attachments (not for notes)
 - Bug fix: allow the extraction of annotations in group libraries
 - Other bug fixes
 
