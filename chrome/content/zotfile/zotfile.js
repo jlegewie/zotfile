@@ -851,6 +851,8 @@ Zotero.ZotFile = {
         var subfolderFormat="";
         if(subfolder) {
             subfolderFormat=this.replaceWildcard(zitem, rule);
+            if (!Zotero.isWin) subfolderFormat=subfolderFormat.replace('//','/undefined/');
+            if ( Zotero.isWin) subfolderFormat=subfolderFormat.replace('\\\\','\\undefined\\');
         }
 
 //      var journal = zitem.getField('publicationTitle');
