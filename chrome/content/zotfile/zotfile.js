@@ -857,7 +857,7 @@ Zotero.ZotFile = {
 
 //      var journal = zitem.getField('publicationTitle');
         var folder = dest_dir + subfolderFormat;
-        return(folder.replace(/[\?%\*:|"<>]/g, ''));
+        return(folder);
     },
 
     // ================ //
