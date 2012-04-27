@@ -24,6 +24,9 @@ Contributions preferably through pull requests are welcome!
 
 Changelog
 
+Changes in 2.1.1
+- bug fix: zotfile produced error when trying to move open files on Windows (thanks to Dominik)
+
 Changes in 2.1
 - Important: the tag for tablet files was changed from '_READ' to '_tablet'
 - New saved search for modified files on tablet
