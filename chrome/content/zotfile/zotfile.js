@@ -906,41 +906,34 @@ Zotero.ZotFile = {
      * -> returns the path to the new (created) file, in case of an error: path="NULL"
      */
     
-    //  file.path!= this.createFile(this.completePath(location, filename)).path
-    if(file.path!=this.completePath(destination,filename)) {
-            var filename_temp=filename;
-            var k=2;
-            while(this.fileExists(destination, filename_temp)) {
-                filename_temp = this.addSuffix(filename,k);
-                k++;
-                if(k>99) 
-          //TODO There should be a prompt window which let the user choose a name
-          // If not, it would create an error like file exists or more severe: it will override the existing file
-          break;
-            }
-            filename=filename_temp;
-        
-        try {
-          // create a nslFile Object of the destination folder
-          var dir = this.createFile(destination);
+        //  file.path!= this.createFile(this.completePath(location, filename)).path
+        if(file.path!=this.completePath(destination,filename)) {
+                var filename_temp=filename;
+                var k=2;
+                while(this.fileExists(destination, filename_temp)) {
+                    filename_temp = this.addSuffix(filename,k);
+                    k++;
+                    if(k>99)  break;
+                    //TODO There should be a prompt window which let the user choose a name
+                    // If not, it would create an error like file exists or more severe: it will override the existing file
+                }
+                filename=filename_temp;
+            
+            try {
+              // create a nslFile Object of the destination folder
+              var dir = this.createFile(destination);
 
-          // move file to new location
-          file.moveTo(dir, filename);
-        }
-        catch(err) {
-          if(err.name == "NS_ERROR_FILE_IS_LOCKED")
-        this.infoWindow("ZotFile Report",
-                "ZotFile was unable to move the attachment with name '" + att_name + "' because it is locked. " +
-                "Probably it is opened in a program, so please close it.",
-                100000);
-          else
-        this.infoWindow("ZotFile Report",
-                "ZotFile gets an untreated error while moving the attachment with name '" + att_name + ". \n\n" + 
-                "Error details: " + err,
-                100000);
-        
-          file.path = "NULL";
-        }
+              // move file to new location
+              file.moveTo(dir, filename);
+            }
+            catch(err) {
+                if(err.name == "NS_ERROR_FILE_IS_LOCKED")
+                    this.infoWindow("ZotFile Report","ZotFile was unable to move the attachment with name '" + att_name + "' because it is locked. " + "Probably it is opened in a program, so please close it.", 8000);
+                else
+                    this.infoWindow("ZotFile Report","ZotFile gets an untreated error while moving the attachment with name '" + att_name + ". \n\n" + "Error details: " + err,8000);
+            
+                file.path = "NULL";
+            }
         }
         return(file.path);
     },
