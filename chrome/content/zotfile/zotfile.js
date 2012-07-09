@@ -171,7 +171,73 @@ Zotero.ZotFile = {
         cm.addEventListener("popupshowing", this.showMenu, false);
         // Register the callback in Zotero as an item observer
         var notifierID = Zotero.Notifier.registerObserver(this.notifierCallback, ['item']);*/
+
+        var notifierID = Zotero.Notifier.registerObserver(this.notifierCallback, ['item']);
         
+    },
+
+    // Callback implementing the notify() method to pass to the Notifier
+    notifierCallback: {
+        parent: this,
+        notify: function(event, type, ids, extraData) {
+            if (type == 'item' && event == 'add') {
+                Application.console.log(ids.length + " items added");
+
+                // Retrieve the added/modified items as Item objects
+                var items = Zotero.Items.get(ids);
+
+
+                for each(var item in items){
+                    try {
+                        var prefs = Zotero.ZotFile.prefs;
+                        Application.console.log(prefs.getCharPref("dest_dir"));
+                        // Is the item an attachment?
+                        if(item.isAttachment()){
+                            // If so, try and get the fie
+                            var file = item.getFile();
+                            // If you can't then it isn't a proper attachment so continue
+                            if(!file){
+                                continue;
+                            }
+
+                            // If it's a HTML file then exit so we don't rename snapshorts
+                            if (Zotero.File.getExtension(file) == "html") {
+                                continue;
+                            }
+
+                            var sourceItemID = item.getSource();
+                            if(!sourceItemID){
+                                continue;
+                            }
+
+                            var parentItem = Zotero.Items.get(sourceItemID);
+
+                            // If the path of the attachment is the same as the path of the
+                            // dest_dir then we don't need to rename it
+                            // (even if it was dragged and dropped from the dest_dir,
+                            // Zotero will have put it in its own storage directory by the time
+                            // this extension gets to dealing with it)
+                            if (file.path.indexOf(prefs.getCharPref("dest_dir")) == 0) {
+                                continue;
+                            }
+
+                            // If we've got here then we need to rename the file
+
+                            // Get the attachment item itself
+                            var att = Zotero.Items.get(item.getID());
+
+                            // Rename the file
+                            Zotero.ZotFile.renameAttachment(parentItem, att,prefs.getBoolPref("import"),prefs.getCharPref("dest_dir"),prefs.getBoolPref("subfolder"),prefs.getCharPref("subfolderFormat"),true);
+
+
+
+                        }
+                    } catch (e) {
+                        alert(e);
+                    }
+                }
+            }
+        }
     },
 
     savedSearchEventListener: function(activate) {
