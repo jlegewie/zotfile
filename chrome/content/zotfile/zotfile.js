@@ -183,13 +183,14 @@ Zotero.ZotFile = {
             if (type == 'item' && event == 'add') {
                 Application.console.log(ids.length + " items added");
 
+                // get preference object
+                var prefs = Zotero.ZotFile.prefs;
                 // Retrieve the added/modified items as Item objects
                 var items = Zotero.Items.get(ids);
 
 
                 for each(var item in items){
                     try {
-                        var prefs = Zotero.ZotFile.prefs;
                         Application.console.log(prefs.getCharPref("dest_dir"));
                         // Is the item an attachment?
                         if(item.isAttachment()){
