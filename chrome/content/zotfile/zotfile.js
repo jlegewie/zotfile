@@ -181,14 +181,16 @@ Zotero.ZotFile = {
         parent: this,
         notify: function(event, type, ids, extraData) {
             if (type == 'item' && event == 'add') {
+                // alerts
                 Application.console.log(ids.length + " items added");
+                Zotero.ZotFile.infoWindow("ZotFile Report",ids.length + " items added.", 8000);
 
                 // get preference object
                 var prefs = Zotero.ZotFile.prefs;
                 // Retrieve the added/modified items as Item objects
                 var items = Zotero.Items.get(ids);
 
-
+                // iterate through added attachments
                 for each(var item in items){
                     try {
                         Application.console.log(prefs.getCharPref("dest_dir"));
@@ -211,27 +213,40 @@ Zotero.ZotFile = {
                                 continue;
                             }
 
+                            // get parent item
                             var parentItem = Zotero.Items.get(sourceItemID);
-
-                            // If the path of the attachment is the same as the path of the
-                            // dest_dir then we don't need to rename it
-                            // (even if it was dragged and dropped from the dest_dir,
-                            // Zotero will have put it in its own storage directory by the time
-                            // this extension gets to dealing with it)
-                            if (file.path.indexOf(prefs.getCharPref("dest_dir")) == 0) {
-                                continue;
-                            }
-
-                            // If we've got here then we need to rename the file
-
                             // Get the attachment item itself
                             var att = Zotero.Items.get(item.getID());
 
-                            // Rename the file
-                            Zotero.ZotFile.renameAttachment(parentItem, att,prefs.getBoolPref("import"),prefs.getCharPref("dest_dir"),prefs.getBoolPref("subfolder"),prefs.getCharPref("subfolderFormat"),true);
 
+                            // LINKED ATTACHMENTS
+                            if(!prefs.getBoolPref("import")) {
+                                // If the path of the attachment is the same as the path of the
+                                // dest_dir then we don't need to rename it
+                                // (even if it was dragged and dropped from the dest_dir,
+                                // Zotero will have put it in its own storage directory by the time
+                                // this extension gets to dealing with it)
+                                if (file.path.indexOf(prefs.getCharPref("dest_dir")) != 0) {
 
+                                    // Rename the file
+                                    Zotero.ZotFile.renameAttachment(parentItem, att,prefs.getBoolPref("import"),prefs.getCharPref("dest_dir"),prefs.getBoolPref("subfolder"),prefs.getCharPref("subfolderFormat"),true);
 
+                                }
+                            }
+                            // IMPORTED ATTACHMENTS
+                            if(prefs.getBoolPref("import")) {
+                                // rename
+                                var filename = Zotero.ZotFile.getFilename(parentItem, file.leafName);
+                                // rename file associated with attachment
+                                att.renameAttachmentFile(filename);
+                                // change title of attachment item
+                                att.setField('title', filename);
+                                att.save();
+                                // get object of attached file
+                                file = att.getFile();                                
+                                // show zotfile report
+                                Zotero.ZotFile.infoWindow("Zotfile Report","Renamed attachment to \'" + file.leafName + "\'.",8000);                                
+                            }
                         }
                     } catch (e) {
                         alert(e);
