@@ -182,7 +182,6 @@ Zotero.ZotFile = {
         notify: function(event, type, ids, extraData) {
             if (type == 'item' && event == 'add') {
                 // alerts
-                Application.console.log(ids.length + " items added");
                 Zotero.ZotFile.infoWindow("ZotFile Report",ids.length + " items added.", 8000);
 
                 // get preference object
@@ -193,7 +192,6 @@ Zotero.ZotFile = {
                 // iterate through added attachments
                 for each(var item in items){
                     try {
-                        Application.console.log(prefs.getCharPref("dest_dir"));
                         // Is the item an attachment?
                         if(item.isAttachment()){
                             // If so, try and get the fie
