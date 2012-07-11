@@ -15,7 +15,7 @@ function disablePreference(setting, pref, revert) {
 }
 
 function updatePreferenceWindow(which) {
-    var setting;    
+    var setting;
     if(which=="all") {
         updatePDFToolsStatus();
         updateFolderIcon("all",false);
