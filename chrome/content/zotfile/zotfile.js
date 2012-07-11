@@ -220,8 +220,8 @@ Zotero.ZotFile = {
                                 if(prefs.getBoolPref("import")) {
                                     // get filename
                                     var filename = Zotero.ZotFile.getFilename(parentItem, file.leafName);
-                                    //Zotero.ZotFile.infoWindow("Zotfile Report","Filename \'" + filename + "\'; leafname: \'" + file.leafName + "\'",8000);                                     
-                                    if (filename!=file.path) {
+                                    // check whether attachment already has the correct name
+                                    if (filename!=file.leafName) {
                                         // rename file associated with attachment
                                         att.renameAttachmentFile(filename);
                                         // change title of attachment item
