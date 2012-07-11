@@ -197,25 +197,17 @@ Zotero.ZotFile = {
                             // If so, try and get the fie
                             var file = item.getFile();
                             // If you can't then it isn't a proper attachment so continue
-                            if(!file){
-                                continue;
-                            }
-
+                            if(!file) continue;
                             // If it's a HTML file then exit so we don't rename snapshorts
-                            if (Zotero.File.getExtension(file) == "html") {
-                                continue;
-                            }
-
+                            if (Zotero.File.getExtension(file) == "html") continue;
+                            // check if attachment has parent item
                             var sourceItemID = item.getSource();
-                            if(!sourceItemID){
-                                continue;
-                            }
+                            if(!sourceItemID) continue;
 
                             // get parent item
                             var parentItem = Zotero.Items.get(sourceItemID);
                             // Get the attachment item itself
                             var att = Zotero.Items.get(item.getID());
-
 
                             // LINKED ATTACHMENTS
                             if(!prefs.getBoolPref("import")) {
