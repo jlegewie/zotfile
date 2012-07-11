@@ -239,7 +239,7 @@ Zotero.ZotFile = {
                             }
                         }
                     } catch (e) {
-                        alert(e);
+                        Zotero.ZotFile.infoWindow("Zotfile Error","Zotfile failed to automatically rename an attachment.",8000);
                     }
                 }
             }
