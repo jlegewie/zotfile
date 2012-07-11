@@ -193,49 +193,40 @@ Zotero.ZotFile = {
                 for each(var item in items){
                     try {
                         // Is the item an attachment?
-                        if(item.isAttachment()){
-                            // If so, try and get the fie
-                            var file = item.getFile();
-                            // If you can't then it isn't a proper attachment so continue
-                            if(!file) continue;
-                            // If it's a HTML file then exit so we don't rename snapshorts
-                            if (Zotero.File.getExtension(file) == "html") continue;
-                            // check if attachment has parent item
-                            var sourceItemID = item.getSource();
-                            if(!sourceItemID) continue;
+                        if(item.isAttachment()) {
+                            // Is imported attachment?
+                            if (item.isImportedAttachment()) {
+                                // If so, try and get the fie
+                                var file = item.getFile();
+                                // If you can't then it isn't a proper attachment so continue
+                                if(!file) continue;
+                                // If it's a HTML file then exit so we don't rename snapshorts
+                                if (Zotero.File.getExtension(file) == "html") continue;
+                                // check if attachment has parent item
+                                var sourceItemID = item.getSource();
+                                if(!sourceItemID) continue;
 
-                            // get parent item
-                            var parentItem = Zotero.Items.get(sourceItemID);
-                            // Get the attachment item itself
-                            var att = Zotero.Items.get(item.getID());
+                                // get parent item
+                                var parentItem = Zotero.Items.get(sourceItemID);
+                                // get the attachment item itself
+                                var att = Zotero.Items.get(item.getID());
 
-                            // LINKED ATTACHMENTS
-                            if(!prefs.getBoolPref("import")) {
-                                // If the path of the attachment is the same as the path of the
-                                // dest_dir then we don't need to rename it
-                                // (even if it was dragged and dropped from the dest_dir,
-                                // Zotero will have put it in its own storage directory by the time
-                                // this extension gets to dealing with it)
-                                if (file.path.indexOf(prefs.getCharPref("dest_dir")) != 0) {
-
-                                    // Rename the file
-                                    Zotero.ZotFile.renameAttachment(parentItem, att,prefs.getBoolPref("import"),prefs.getCharPref("dest_dir"),prefs.getBoolPref("subfolder"),prefs.getCharPref("subfolderFormat"),true);
-
+                                // Rename the file
+                                /*if(!prefs.getBoolPref("import"))*/ Zotero.ZotFile.renameAttachment(parentItem, att,prefs.getBoolPref("import"),prefs.getCharPref("dest_dir"),prefs.getBoolPref("subfolder"),prefs.getCharPref("subfolderFormat"),true);
+                                /*if(prefs.getBoolPref("import")) {
+                                    // rename
+                                    var filename = Zotero.ZotFile.getFilename(parentItem, file.leafName);
+                                    // rename file associated with attachment
+                                    att.renameAttachmentFile(filename);
+                                    // change title of attachment item
+                                    att.setField('title', filename);
+                                    att.save();
+                                    // get object of attached file
+                                    file = att.getFile();                                
+                                    // show zotfile report
+                                    Zotero.ZotFile.infoWindow("Zotfile Report","Imported Attachment renamed to \'" + filename + "\'.",8000);                                    
                                 }
-                            }
-                            // IMPORTED ATTACHMENTS
-                            if(prefs.getBoolPref("import")) {
-                                // rename
-                                var filename = Zotero.ZotFile.getFilename(parentItem, file.leafName);
-                                // rename file associated with attachment
-                                att.renameAttachmentFile(filename);
-                                // change title of attachment item
-                                att.setField('title', filename);
-                                att.save();
-                                // get object of attached file
-                                file = att.getFile();                                
-                                // show zotfile report
-                                Zotero.ZotFile.infoWindow("Zotfile Report","Renamed attachment to \'" + file.leafName + "\'.",8000);                                
+ */
                             }
                         }
                     } catch (e) {
