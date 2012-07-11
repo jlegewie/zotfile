@@ -161,7 +161,6 @@ Zotero.ZotFile = {
         var win = this.wm.getMostRecentWindow("navigator:browser");
         win.document.getElementById('zotero-itemmenu').addEventListener('popupshowing', this.showMenu, false);
 
-
         // add event listener for selecting the 'modified tablet attachments' saved search
         if(this.prefs.getBoolPref("tablet")) this.savedSearchEventListener(true);
         
@@ -172,7 +171,8 @@ Zotero.ZotFile = {
         // Register the callback in Zotero as an item observer
         var notifierID = Zotero.Notifier.registerObserver(this.notifierCallback, ['item']);*/
 
-        var notifierID = Zotero.Notifier.registerObserver(this.notifierCallback, ['item']);
+        // add event listener for automatically renaming attachments
+        var notifierID = Zotero.Notifier.registerObserver(this.autoRename, ['item']);
         
     },
 
