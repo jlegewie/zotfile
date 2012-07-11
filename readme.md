@@ -20,8 +20,8 @@ To install the development version on github:
 
 ## License
 The source code is released under GNU General Public License, version 3.0
-Contributions preferably through pull requests are welcome!
 
+Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
