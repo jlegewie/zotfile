@@ -15,7 +15,8 @@
 				<preference id="pref-zotfile-filetypes" name="extensions.zotfile.filetypes" type="string"/>                                                                                              				
 				<preference id="pref-zotfile-useFileTypes" name="extensions.zotfile.useFileTypes" type="bool"/>
 
-				<preference id="pref-zotfile-import" name="extensions.zotfile.import" type="bool"/>                                                                                              				
+				<preference id="pref-zotfile-import" name="extensions.zotfile.import" type="bool"/>
+				<preference id="pref-zotfile-autoRename" name="extensions.zotfile.autoRename" type="bool"/>                                                                                              				
 				<preference id="pref-zotfile-dest_dir" name="extensions.zotfile.dest_dir" type="string"/>
 
 				<preference id="pref-zotfile-useZoteroToRename" name="extensions.zotfile.useZoteroToRename" type="bool"/>                                                                                              
@@ -321,6 +322,7 @@
 						<separator/>
 						<groupbox>
 						   <caption label="Other Advanced Settings"/> 
+						   <checkbox id="id-zotfile-autoRename" label="Automatically rename new attachments" preference="pref-zotfile-autoRename"/>
 						   <checkbox id="id-zotfile-confirmation" label="Ask user when attaching new files" preference="pref-zotfile-confirmation"/>
 						   <hbox style="margin: 0"  align="center">					
 							    <checkbox id="id-zotfile-confirmation_batch_ask" label="Ask user to (batch) rename or move" preference="pref-zotfile-confirmation_batch_ask" oncommand="updatePreferenceWindow('confirm')"/>	
