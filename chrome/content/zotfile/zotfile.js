@@ -177,7 +177,7 @@ Zotero.ZotFile = {
     },
 
     // Callback implementing the notify() method to pass to the Notifier
-    notifierCallback: {
+    autoRename: {
         parent: this,
         notify: function(event, type, ids, extraData) {
             if (type == 'item' && event == 'add') {
