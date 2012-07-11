@@ -180,7 +180,7 @@ Zotero.ZotFile = {
     autoRename: {
         parent: this,
         notify: function(event, type, ids, extraData) {
-            if (type == 'item' && event == 'add') {
+            if (Zotero.ZotFile.prefs.getBoolPref("autoRename") && type == 'item' && event == 'add') {
                 // alerts
                 Zotero.ZotFile.infoWindow("ZotFile Report",ids.length + " items added.", 8000);
 

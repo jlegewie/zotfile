@@ -21,6 +21,7 @@ pref("extensions.zotfile.confirmation", true);
 pref("extensions.zotfile.confirmation_batch_ask", true);
 pref("extensions.zotfile.confirmation_batch", 2);
 pref("extensions.zotfile.import", true);
+pref("extensions.zotfile.autoRename", true);
 pref("extensions.zotfile.replace_blanks", false);
 pref("extensions.zotfile.subfolder", false);
 pref("extensions.zotfile.subfolderFormat", "/%w/%y");
