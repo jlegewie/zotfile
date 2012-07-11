@@ -194,6 +194,7 @@ Zotero.ZotFile = {
                         if(item.isAttachment()) {
                             // Is imported attachment?
                             if (item.isImportedAttachment()) {
+                                var file_renamed=false;
                                 // If so, try and get the fie
                                 var file = item.getFile();
                                 // If you can't then it isn't a proper attachment so continue
@@ -210,7 +211,10 @@ Zotero.ZotFile = {
                                 var att = Zotero.Items.get(item.getID());
 
                                 // Rename the file (linked attachment)
-                                if(!prefs.getBoolPref("import")) Zotero.ZotFile.renameAttachment(parentItem, att,prefs.getBoolPref("import"),prefs.getCharPref("dest_dir"),prefs.getBoolPref("subfolder"),prefs.getCharPref("subfolderFormat"),true);
+                                if(!prefs.getBoolPref("import")) {
+                                    Zotero.ZotFile.renameAttachment(parentItem, att,prefs.getBoolPref("import"),prefs.getCharPref("dest_dir"),prefs.getBoolPref("subfolder"),prefs.getCharPref("subfolderFormat"),false);
+                                    file_renamed=true;
+                                }
 
                                 // Rename the file (imported attachment)
                                 if(prefs.getBoolPref("import")) {
@@ -223,11 +227,17 @@ Zotero.ZotFile = {
                                         // change title of attachment item
                                         att.setField('title', filename);
                                         att.save();
-                                        // get object of attached file
-                                        file = att.getFile();                                
-                                        // show zotfile report
-                                        Zotero.ZotFile.infoWindow("Zotfile Report","Imported Attachment renamed to \'" + filename + "\'.",8000);    
-                                    }                                
+
+                                        file_renamed=true;
+                                    }
+                                }
+
+                                // user notification
+                                if (file_renamed) {
+                                    // get object of attached file
+                                    file = att.getFile();                                
+                                    // show zotfile report
+                                    Zotero.ZotFile.infoWindow("Zotfile Report","New attachment file automatically renamed to \'" + file.leafName + "\'.",8000);
                                 }
                             }
                         }
