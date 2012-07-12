@@ -251,7 +251,7 @@
 							   <label id="id-zotfile-renameFormat-des1" style="font-size: 9px" value="%a - author last name; %y - year; %t - title; %w - journal/publisher; %v - volume; %e - issue; %T - item type"/>					   							   
 							   <hbox style="margin: 0">					
 								   <label id="id-zotfile-renameFormat-des2" style="font-size: 9px; margin-right:0px" value="For a full list of place holder see the "/>
-								   <label id="id-zotfile-renameFormat-des3" style="font-size: 9px; margin-left:0px; margin-right:0px" class="text-link" href="http://www.columbia.edu/~jpl2136/zotfile.html&#35;rename" value="zotfile website"/>
+								   <label id="id-zotfile-renameFormat-des3" style="font-size: 9px; margin-left:0px; margin-right:0px" class="text-link" href="http://www.jlegewie.com/zotfile.html&#35;rename" value="zotfile website"/>
 								   <label id="id-zotfile-renameFormat-des4" style="font-size: 9px; margin-left:0px; margin-right:0px" value="."/>								
 							   </hbox>
 						    			

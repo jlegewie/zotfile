@@ -7,7 +7,7 @@ Zotero.ZotFile = {
     projectNr: new Array("01","02","03","04","05","06","07","08","09","10","11","12","13","14","15"),
     projectPath: new Array("","","","","","","","","","","","","","",""),
     projectMax:15,
-    zotfileURL:"http://www.columbia.edu/~jpl2136/zotfile.html",
+    zotfileURL:"http://www.jlegewie.com/zotfile.html",
     temp:"",
 
 
@@ -1961,7 +1961,7 @@ Zotero.ZotFile = {
         pdfExtraction:false,
         popplerExtractorTool:false,
         popplerExtractorSupported:false,
-        popplerExtractorBaseURL:'http://www.columbia.edu/~jpl2136/PDFTools/',
+        popplerExtractorBaseURL:'http://www.jlegewie.com/PDFTools/',
 
         /** The list of PDFs we should extract annotations from.  Each
         element is an object with the following fields:
