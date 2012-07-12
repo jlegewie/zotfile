@@ -616,7 +616,6 @@ function checkForUpdates(button,installedVersion) {
 }
 
 function getInstalledVersion () {
-//  var filepath = '/Users/jpl2136/Documents/bibliography/Zotero' + "/ExtractPDFAnnotations/"+'ExtractPDFAnnotations-MacIntel'+'.version';
     var filepath = Zotero.ZotFile.pdfAnnotations.popplerExtractorPath+'.version';
     var file=Zotero.ZotFile.createFile(filepath);
     if(Zotero.ZotFile.fileExists(filepath)) {
