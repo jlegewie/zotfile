@@ -1678,7 +1678,7 @@ Zotero.ZotFile = {
         var file_reader=this.getTabletFile(att);
 
         // get modification times for files
-        var time_reader = file_reader.exists() ? parseInt(file_reader.lastModifiedTime+"",10) : 0;
+        var time_reader = this.fileExists(file_reader) ? parseInt(file_reader.lastModifiedTime+"",10) : 0;
         var time_saved  = parseInt(this.getInfo(att,"lastmod"),10);
         var time_zotero = (file_zotero!=false) ? parseInt(file_zotero.lastModifiedTime+"",10) : 0;
 
@@ -2059,7 +2059,7 @@ Zotero.ZotFile = {
                         var file_reader=Zotero.ZotFile.getTabletFile(att);
                         
                         // get times
-                        var time_reader = file_reader.exists() ? parseInt(file_reader.lastModifiedTime+"",10) : 0;
+                        var time_reader = this.fileExists(file_reader) ? parseInt(file_reader.lastModifiedTime+"",10) : 0;
                         var time_saved  = parseInt(Zotero.ZotFile.getInfo(att,"lastmod"),10);
                         var time_zotero = (file_zotero!=false) ? parseInt(file_zotero.lastModifiedTime+"",10) : 0;
 
