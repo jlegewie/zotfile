@@ -730,10 +730,10 @@ Zotero.ZotFile = {
         // get creator and create authors string
         // creator types: author/editor(1,3) for book(2), inventor(14) for patent(19),programmer(24) for computer prog.(27),presenter(21) for presentation(32)
         var creatorType=[1];
-        if (zitem.getType()==2)  creatorType=[1,3];
-        if (zitem.getType()==19) creatorType=[14];
-        if (zitem.getType()==32) creatorType=[21];
-        if (zitem.getType()==27) creatorType=[24];
+        if (item_type==2)  creatorType=[1,3];
+        if (item_type==19) creatorType=[14];
+        if (item_type==32) creatorType=[21];
+        if (item_type==27) creatorType=[24];
         var add_etal=this.prefs.getBoolPref("add_etal");
         var author = "";
         var creators = zitem.getCreators();
