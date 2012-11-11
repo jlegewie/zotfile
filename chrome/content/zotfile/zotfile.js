@@ -744,7 +744,7 @@ Zotero.ZotFile = {
         var max_authors=(this.prefs.getBoolPref("truncate_authors")) ? this.prefs.getIntPref("max_authors") : 500;
         if (numauthors<=max_authors) add_etal=0;
         if (numauthors>max_authors) numauthors = 1;
-		var delimiter=(this.prefs.getBoolPref("creators_delimiter")) ? this.prefs.getCharPref("delimiter") : "_";
+		var delimiter=this.prefs.getCharPref("authors_delimiter");
         var j=0;
         for (i=0; i < creators.length; i++) {
             if (j<numauthors && creatorType.indexOf(creators[i].creatorTypeID)!=-1) {
