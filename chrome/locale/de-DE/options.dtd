@@ -1,0 +1,11 @@
+<!ENTITY zotfile-preferences "ZotFile Einstellungen"> 
+<!ENTITY zotfile-prefpane "ZotFile Einstellungen"> 
+<!ENTITY general-settings "Allgemein"> 
+<!ENTITY tablet-settings "Tablet Einstellungen"> 
+<!ENTITY renaming-rules "Umbenennungs-Regeln"> 
+<!ENTITY advanced-settings "Erweitert"> 
+<!ENTITY attachments-source-folder "Quellordner für das Anhängen neuer Dateien">
+<!ENTITY source-folder-desc "ZotFile kann die als letztes hinzugefügte Datei aus dem Firefox Download oder einem anderen Ordner als neuen Anhang zum aktuell ausgewählten Zotero Objekt hinzufügen."> 
+<!ENTITY use-firefox-download-folder "Firefox Download Folder verwenden"> 
+<!ENTITY custom-source-folder "Benutzerdefiniert:"> 
+<!ENTITY choose-source-folder "Auswählen"> 

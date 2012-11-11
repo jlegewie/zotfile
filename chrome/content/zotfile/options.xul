@@ -1,13 +1,15 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
+<!DOCTYPE window SYSTEM "chrome://zotfile/locale/options.dtd">
+
 <prefwindow 
 	id="zotfile-perf" 
-	title="ZotFile Preferences" 
+	title="&zotfile-preferences;" 
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"  
 	onload="updatePreferenceWindow('all');">
         
-		<prefpane label="Zotfile Perferences" id="zotfile-perfpane">
+		<prefpane label="&zotfile-prefpane;" id="zotfile-perfpane">
 			<preferences>
 				<preference id="pref-zotfile-source_dir_ff" name="extensions.zotfile.source_dir_ff" type="bool"/>                                                                                              							 
 				<preference id="pref-zotfile-source_dir" name="extensions.zotfile.source_dir" type="string"/>                                                                                              				
@@ -74,27 +76,26 @@
 			
 			<tabbox id="zotfile-tabbox">
 				<tabs id="zotfile-tabs">
-					<tab label="General Settings"/>
-					<tab label="Tablet Settings"/>
-					<tab label="Renaming Rules"/>
-					<tab label="Advanced Settings"/>
+					<tab label="&general-settings;"/>
+					<tab label="&tablet-settings;"/>
+					<tab label="&renaming-rules;"/>
+					<tab label="&advanced-settings;"/>
 				</tabs>
 
 				<tabpanels id="zotfile-tabpanels">
 					<tabpanel orient="vertical">
 		   				 <groupbox>
 					
-							   <label value="ZotFile can add the most recently modified file from the Firefox download or"/>					
-							   <label value="another folder as a new attachment to the currently selected Zotero item."/>					
+							   <description style="width: 420px">&source-folder-desc;</description>					
 							   <separator/>
 							
-							    <caption label="Source Folder for Attaching new Files"/>                               								
+							    <caption label="&attachments-source-folder;"/>                               								
 								<radiogroup id="id-zotfile-source_dir_ff" preference="pref-zotfile-source_dir_ff" oncommand="if(document.getElementById('pref-zotfile-source_dir_ff').value) if(document.getElementById('pref-zotfile-source_dir').value=='') {Zotero.ZotFile.prefs.setCharPref('source_dir',Zotero.ZotFile.chooseDirectory()); updateFolderIcon('source',true);}">
-									<radio id="id-zotfile-source_dir_ff-true" label="Use Firefox download folder" value="true" oncommand="updatePreferenceWindow('source');"/>
+									<radio id="id-zotfile-source_dir_ff-true" label="&use-firefox-download-folder;" value="true" oncommand="updatePreferenceWindow('source');"/>
 									<hbox  style="margin: 0"  align="center">									
-									 	<radio label="Custom:" value="false"  oncommand="updatePreferenceWindow('source');" />										
+									 	<radio label="&custom-source-folder;" value="false"  oncommand="updatePreferenceWindow('source');" />										
 										<textbox id="id-zotfile-source_dir" preference="pref-zotfile-source_dir" flex="1" onchange="updateFolderIcon('source',false); "/>
-										<button id="id-zotfile-source_dir-button" label="Choose..." oncommand="var folder=Zotero.ZotFile.chooseDirectory(); if(folder!='') {Zotero.ZotFile.prefs.setCharPref('source_dir',folder);updateFolderIcon('source',false);}"/>
+										<button id="id-zotfile-source_dir-button" label="&choose-source-folder;" oncommand="var folder=Zotero.ZotFile.chooseDirectory(); if(folder!='') {Zotero.ZotFile.prefs.setCharPref('source_dir',folder);updateFolderIcon('source',false);}"/>
 										<image id="id-zotfile-source_dir-clear" width='16' height='16' hidden="false"/>										    
 									    <image id="id-zotfile-source_dir-ok" src="chrome://zotfile/skin/accept.png" hidden="true"/>	
 									    <image id="id-zotfile-source_dir-error" src="chrome://zotfile/skin/exclamation.png" hidden="true"/>		
