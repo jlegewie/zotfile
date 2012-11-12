@@ -25,6 +25,10 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 2.2.2
+
+- Add option to change delimiter between multiple authors (thanks to [gracile-fr](https://github.com/gracile-fr))
+
 #### Changes in 2.2
 
 - New feature: automatic renaming of attachment files (thanks to [Robin Wilson](www.rtwilson.com/academic))
