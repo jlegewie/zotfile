@@ -262,6 +262,11 @@
 						
 							<groupbox>
 							   <caption label="Additional Settings"/>  
+							   		<hbox style="margin: 0">					
+									   <label control="id-zotfile-label-authors_delimiter" value="Change the delimiter between multiple authors"/>
+									   <textbox style="margin: -2px 0px 0px 0px" id="id-zotfile-authors_delimiter" preference="pref-zotfile-authors_delimiter" width="50"/>
+								   </hbox>
+								   
 								   <hbox style="margin: 0">					
 									   <checkbox id="id-zotfile-userInput" label="Add user input to filename. Default is " preference="pref-zotfile-userInput"  oncommand="updatePreferenceWindow('userinput')"/>
 									   <textbox id="id-zotfile-userInput_Default" preference="pref-zotfile-userInput_Default" width="100"/>
@@ -286,10 +291,6 @@
 									   <checkbox id="id-zotfile-add_etal" label="Add suffix when authors are omitted" preference="pref-zotfile-add_etal" oncommand="updatePreferenceWindow('etal')"/>
 									   <textbox id="id-zotfile-etal" preference="pref-zotfile-etal" width="50"/>
 								   </hbox>													
-						   		   <hbox style="margin: 0">					
-									   <label control="id-zotfile-label-authors_delimiter" value="Change the delimiter between multiple authors"/>
-									   <textbox id="id-zotfile-authors_delimiter" preference="pref-zotfile-authors_delimiter" width="50"/>
-								   </hbox>
 							</groupbox>																		   											                                                                                                                                                                      				    
 			   		  </tabpanel>		 
 			

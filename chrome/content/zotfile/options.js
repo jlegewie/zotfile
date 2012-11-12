@@ -44,9 +44,6 @@ function updatePreferenceWindow(which) {
     // max authors
     if(which=="truncate_authors" || which=="all") disablePreference("truncate_authors", "max_authors", revert);
 	
-	//authors delimiter
-	if(which=="authors_delimiter" || which=="all") disablePreference("authors_delimiter", revert);
-	
     // subfolder
     if(which=="subfolder" || which=="all") disablePreference("subfolder", "subfolderFormat", revert);
     
