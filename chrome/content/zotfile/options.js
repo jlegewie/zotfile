@@ -261,7 +261,7 @@ function editSubfolderSetting (index) {
 
     var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
     var treerow;
-    if (index || treechildren.childNodes.length<Zotero.ZotFile.projectMax) {
+    if (index != undefined || treechildren.childNodes.length<Zotero.ZotFile.projectMax) {
         
         var label  =null;
         var folder =null;
