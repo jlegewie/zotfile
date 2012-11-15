@@ -1959,9 +1959,11 @@ Zotero.ZotFile = {
                     // restore attachments note and tags
                     if(att_note!="" || att_tags.length>0) {
                         att = Zotero.Items.get(attID);
-                        if(att_note!="") att.setNote(att_note);
-                        if(att_tags) for each(var tag in att_tags) att.addTag(tag);
-                        att.save();
+                        if(att!=false) {
+                            if(att_note!="") att.setNote(att_note);
+                            if(att_tags) for each(var tag in att_tags) att.addTag(tag);
+                            att.save();
+                        }
                     }
                 }
                 if(this.getTabletStatus(att)) this.infoWindow("Zotfile Error","Attachment could not be renamed because it is on the tablet.",8000);
