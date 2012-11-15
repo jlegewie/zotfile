@@ -1323,8 +1323,11 @@ Zotero.ZotFile = {
     },
 
     getTabletStatus: function(att) {
-        var tagID=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tag"),0);
-        return(att.hasTag(tagID));
+        if(att!=false) {
+            var tagID=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tag"),0);
+            return(att.hasTag(tagID));
+        }
+        return(false);
     },
 
     getTabletStatusModified: function(item) {
