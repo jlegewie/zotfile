@@ -27,7 +27,11 @@ Contributions preferably through pull requests are welcome!
 
 #### Changes in 2.2.2
 
-- Add option to change delimiter between multiple authors (thanks to [gracile-fr](https://github.com/gracile-fr))
+- bug fix: 
+
+#### Changes in 2.2.2
+
+- bug fix: editing custom folder created error if user had maximum number of custom folders
 
 #### Changes in 2.2
 
