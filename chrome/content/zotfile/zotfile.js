@@ -290,12 +290,33 @@ Zotero.ZotFile = {
         return(x);
     },
 
+    // check whether valid attachment
+    // argument: zotero item, or item ID
+    validAttachment: function (att) {
+        // get item if passed ID
+        if(typeof(att)=="number") att=Zotero.Items.get(att);
+        // check whether attachment
+        if (!att.isAttachment()) return(false);
+        // check that not top-level item
+        if (!att.isTopLevelItem())
+            // check that file exists
+            if (this.fileExists(att))
+                // check that it's not a web attachment
+                if (!att.isWebAttachment())
+                    return(true);
+                else this.infoWindow("ZotFile Warning","The attachment '" + att.getField("title") + "' is a web attachment.", 8000);
+            else this.infoWindow("ZotFile Warning","The attachment file '" + att.getField("title") + "' does not exist.", 8000);
+        else this.infoWindow("ZotFile Warning","The attachment '" + att.getField("title") + "' is a top-level item.", 8000);
+        // return false
+        return(false);
+    },
+
     getSelectedAttachments: function () {
         // get selected items
         var win = this.wm.getMostRecentWindow("navigator:browser");
         var items = win.ZoteroPane.getSelectedItems();
 
-        // create array of attachments to pull
+        // create array of attachments from selection
         var attIDs=[];
         for (var i=0; i < items.length; i++) {
             var item = items[i];
@@ -303,17 +324,17 @@ Zotero.ZotFile = {
             if(item.isRegularItem()) {
                 // get all attachments
                 var attachments = item.getAttachments();
-
                 // go through all attachments and add those with a tag
-                for (var j=0; j < attachments.length; j++) attIDs.push(attachments[j]);
-
+                for (var j=0; j < attachments.length; j++) 
+                    if (this.validAttachment(attachments[j])) attIDs.push(attachments[j]);
             }
-            // attachment item
-            if(item.isAttachment()) attIDs.push(item.getID());
+            // attachment item that is not top level
+            if(item.isAttachment()) 
+                if (this.validAttachment(item)) attIDs.push(item.getID());
         }
         // remove duplicate elements
-        attIDs=this.removeDuplicates(attIDs);
-
+        if(attIDs.length>0) attIDs=this.removeDuplicates(attIDs);
+        // return array of attachment IDs
         return(attIDs);
     },
 
