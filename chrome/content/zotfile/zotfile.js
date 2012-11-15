@@ -911,8 +911,10 @@ Zotero.ZotFile = {
     },
         
     getFilename: function(item,filename_org){
-        var filename;
+        // check whether regular item
+        if (!item.isRegularItem()) return(null);
         // create the new filename from the selected item
+        var filename;
         var item_type =  item.getType();
         var rename_rule=this.prefs.getCharPref("renameFormat");
         if(item_type==19) rename_rule=this.prefs.getCharPref("renameFormat_patent");
