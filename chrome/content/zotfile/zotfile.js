@@ -304,7 +304,7 @@ Zotero.ZotFile = {
                 return(true);
             else {
                 // show warning
-                if(warning) this.infoWindow("ZotFile Warning","Zotfile skipped '" + att.getField("title") + "' (top-level item, snapshot or the file does not exists).", 8000);
+                if(warning) this.infoWindow("ZotFile Warning","Zotfile skipped the attachment '" + att.getField("title") + "' (top-level item, snapshot or the file does not exists).", 8000);
                 // return false
                 return(false);
             }
