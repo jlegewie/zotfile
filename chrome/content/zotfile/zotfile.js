@@ -292,22 +292,23 @@ Zotero.ZotFile = {
 
     // check whether valid attachment
     // argument: zotero item, or item ID
-    validAttachment: function (att) {
-        // get item if passed ID
+    validAttachment: function (att, warning) {
+        // set default setting
+        warning = typeof warning !== 'undefined' ? warning : true;
+        // get item if passed itemID
         if(typeof(att)=="number") att=Zotero.Items.get(att);
-        // check whether attachment
-        if (!att.isAttachment()) return(false);
-        // check that not top-level item
-        if (!att.isTopLevelItem())
-            // check that file exists
-            if (this.fileExists(att))
-                // check that it's not a web attachment
-                if (!att.isWebAttachment())
-                    return(true);
-                else this.infoWindow("ZotFile Warning","The attachment '" + att.getField("title") + "' is a web attachment.", 8000);
-            else this.infoWindow("ZotFile Warning","The attachment file '" + att.getField("title") + "' does not exist.", 8000);
-        else this.infoWindow("ZotFile Warning","The attachment '" + att.getField("title") + "' is a top-level item.", 8000);
-        // return false
+        // check whether attachment is valid (not top-level item, file exists and not a web attachment)
+        if(att.isAttachment()) {
+            var file = att.getFile();
+            if (!att.isTopLevelItem() && this.fileExists(file) && Zotero.File.getExtension(file) != "html") 
+                return(true);
+            else {
+                // show warning
+                if(warning) this.infoWindow("ZotFile Warning","Zotfile skipped '" + att.getField("title") + "' (top-level item, snapshot or the file does not exists).", 8000);
+                // return false
+                return(false);
+            }
+        }
         return(false);
     },
 
