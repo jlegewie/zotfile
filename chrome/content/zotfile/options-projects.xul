@@ -3,12 +3,12 @@
 
 <prefwindow 
 	id="zotfile-tablet-subfolders-window" 
-	title="ZotFile Preferences" 
+	title="&zotfile-tablet-subfolders-window;" 
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"  
 	onload="buildFolderList();"
 	onunload="updateSubfolderPreferences();">
       
-		<prefpane label="ZotFile - Configuration of Sub-Folders" id="zotfile-tablet-subfolders">
+		<prefpane label="&configuration-subfolders;" id="zotfile-tablet-subfolders">
 			<preferences>
 				<preference id="pref-zotfile-tablet-projectFolders01" name="extensions.zotfile.tablet.projectFolders01" type="bool"/>                       
 				<preference id="pref-zotfile-tablet-projectFolders01_folder" name="extensions.zotfile.tablet.projectFolders01_folder" type="string"/>                       
@@ -60,8 +60,8 @@
             <tree flex="1" id="id-zotfile-tablet-projectFolders-tree" hidecolumnpicker="true" rows="10" seltype="single"
 				ondblclick="editSubfolderSetting(this.currentIndex)" context="id-zotfile-tablet-projectFolders-menu">
 				<treecols>
-					<treecol id="quickCopy-urlColumn" label="Label" flex="1"/>
-					<treecol id="quickCopy-formatColumn" label="Folder" flex="2"/>
+					<treecol id="quickCopy-urlColumn" label="&label;" flex="1"/>
+					<treecol id="quickCopy-formatColumn" label="&folder;" flex="2"/>
 				</treecols>
 				<treechildren id="id-zotfile-tablet-projectFolders-rows"/>
 			</tree>
@@ -76,8 +76,8 @@
 				  <rows>
 					  <row>         
 						<hbox pack="end">    
-							<button label="Move Down" onclick="moveSelectedSubfolderDown()"/>
-							<button label="Move Up" onclick="moveSelectedSubfolderUp()"/>
+							<button label="&move-down;" onclick="moveSelectedSubfolderDown()"/>
+							<button label="&move-up;" onclick="moveSelectedSubfolderUp()"/>
 						</hbox>
 						<label value=""/>														   					    							    
 						<hbox pack="end">    
@@ -93,11 +93,11 @@
 		<popupset>
 			<menupopup id="id-zotfile-tablet-projectFolders-menu">
 				<menuitem label="Edit Folder" oncommand="editSubfolderSetting('rightclickmenu')"/>
-				<menuitem label="Show Folder" oncommand="showSelectedSubfolder()"/>
-				<menuitem label="Delete Folder" oncommand="deleteSelectedSubfolder()"/>
+				<menuitem label="&show-folder;" oncommand="showSelectedSubfolder()"/>
+				<menuitem label="&delete-folder;" oncommand="deleteSelectedSubfolder()"/>
 				<menuseparator/>				
-				<menuitem label="Move Up" oncommand="moveSelectedSubfolderUp()"/>
-				<menuitem label="Move Down" oncommand="moveSelectedSubfolderDown()"/>
+				<menuitem label="&move-up;" oncommand="moveSelectedSubfolderUp()"/>
+				<menuitem label="&move-down;" oncommand="moveSelectedSubfolderDown()"/>
 			</menupopup>
 		</popupset>
 		

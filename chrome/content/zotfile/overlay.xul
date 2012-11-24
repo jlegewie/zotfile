@@ -22,35 +22,35 @@
        	<menuitem id="id-zotfile-attach-file" label="&zotfile-attach-file;" tooltiptext="Move and attach last file in user defined folder to selected Zotero item" oncommand="Zotero.ZotFile.attachNewFile();"/>
  		<menu id="id-zotfile-manage-attachments" label="&manage-attachments;" > 
 			<menupopup id="id-zotfile-menu" onpopupshowing="Zotero.ZotFile.buildZotFileMenu();">
-				<menuitem label="Warning" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>							
+				<menuitem label="&warning;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>							
 				<menuitem label="&rename-attachments;" tooltiptext="Move and rename existing Attachments from selected Zotero item" oncommand="Zotero.ZotFile.renameSelectedAttachments();"/>
 				<menuitem label="&extract-annotations;" tooltiptext="Extract Annotations and Highlighted Text from pdf file." oncommand="Zotero.ZotFile.pdfAnnotations.getAnnotations();"/>				
 				<menuseparator/>												
-				<menuitem label="Warning" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>								
-				<menuitem id="id-push2reader-00" label="Send to Tablet" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('');"/>
-				<menuitem label="Update File &amp; Modification Time" tooltiptext="Sync attachment file on tablet with file in Zotero." oncommand="Zotero.ZotFile.updateSelectedTabletAttachments();"/>	
-				<menuitem label="Get from Tablet" tooltiptext="Get Attachment File from Tablet." oncommand="Zotero.ZotFile.getSelectedAttachmentsFromTablet();"/>				
+				<menuitem label="&warning;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>								
+				<menuitem id="id-push2reader-00" label="&send-to-tablet;" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('');"/>
+				<menuitem label="&update-file-modification-time;" tooltiptext="&sync-attachment-file;" oncommand="Zotero.ZotFile.updateSelectedTabletAttachments();"/>	
+				<menuitem label="&get-from-tablet" tooltiptext="&get-attachment-file-from-tablet;" oncommand="Zotero.ZotFile.getSelectedAttachmentsFromTablet();"/>				
 				<menuseparator/>																
-				<menuitem label="Send to Subfolder on Tablet" disabled="true" style="font-size: 80%; background: none; -moz-appearance: none;"/>								
-				<menuitem label="Warning" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>								
-				<menuitem id="id-push2reader-01" hidden="true" label="menu1" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('01');"/>
-				<menuitem id="id-push2reader-02" hidden="true" label="menu2" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('02');"/>
-				<menuitem id="id-push2reader-03" hidden="true" label="menu3" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('03');"/>
-				<menuitem id="id-push2reader-04" hidden="true" label="menu4" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('04');"/>
-				<menuitem id="id-push2reader-05" hidden="true" label="menu5" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('05');"/>
-				<menuitem id="id-push2reader-06" hidden="true" label="menu6" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('06');"/>
-				<menuitem id="id-push2reader-07" hidden="true" label="menu7" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('07');"/>
-				<menuitem id="id-push2reader-08" hidden="true" label="menu8" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('08');"/>
-				<menuitem id="id-push2reader-09" hidden="true" label="menu9" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('09');"/>
-				<menuitem id="id-push2reader-10" hidden="true" label="menu10" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('10');"/>
-				<menuitem id="id-push2reader-11" hidden="true" label="menu11" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('11');"/>
-				<menuitem id="id-push2reader-12" hidden="true" label="menu12" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('12');"/>
-				<menuitem id="id-push2reader-13" hidden="true" label="menu13" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('13');"/>
-				<menuitem id="id-push2reader-14" hidden="true" label="menu14" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('14');"/>
-				<menuitem id="id-push2reader-15" hidden="true" label="menu15" tooltiptext="Send Attachment File to Tablet." oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('15');"/>
+				<menuitem label="&send-to-subfolder-on-tablet;" disabled="true" style="font-size: 80%; background: none; -moz-appearance: none;"/>								
+				<menuitem label="&warning;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>								
+				<menuitem id="id-push2reader-01" hidden="true" label="menu1" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('01');"/>
+				<menuitem id="id-push2reader-02" hidden="true" label="menu2" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('02');"/>
+				<menuitem id="id-push2reader-03" hidden="true" label="menu3" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('03');"/>
+				<menuitem id="id-push2reader-04" hidden="true" label="menu4" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('04');"/>
+				<menuitem id="id-push2reader-05" hidden="true" label="menu5" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('05');"/>
+				<menuitem id="id-push2reader-06" hidden="true" label="menu6" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('06');"/>
+				<menuitem id="id-push2reader-07" hidden="true" label="menu7" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('07');"/>
+				<menuitem id="id-push2reader-08" hidden="true" label="menu8" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('08');"/>
+				<menuitem id="id-push2reader-09" hidden="true" label="menu9" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('09');"/>
+				<menuitem id="id-push2reader-10" hidden="true" label="menu10" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('10');"/>
+				<menuitem id="id-push2reader-11" hidden="true" label="menu11" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('11');"/>
+				<menuitem id="id-push2reader-12" hidden="true" label="menu12" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('12');"/>
+				<menuitem id="id-push2reader-13" hidden="true" label="menu13" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('13');"/>
+				<menuitem id="id-push2reader-14" hidden="true" label="menu14" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('14');"/>
+				<menuitem id="id-push2reader-15" hidden="true" label="menu15" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('15');"/>
 
 				<menuseparator/>								
-				<menuitem id="id-push2reader-configure" label="Change subfolders..." tooltiptext="Add and delete subfolders to Menu." oncommand="Zotero.ZotFile.openSubfolderWindow();"/>
+				<menuitem id="id-push2reader-configure" label="&change-subfolders;" tooltiptext="&add-and-delete-subfolders;" oncommand="Zotero.ZotFile.openSubfolderWindow();"/>
 
 			</menupopup>
 		</menu>       
