@@ -31,12 +31,22 @@
 	   </Description>
 	 </em:requires>	
     <!-- Front End MetaData -->
-    <em:name>ZotFile</em:name>
-    <em:description>Zotero plugin to manage your attachments: automatically rename, move, and attach PDFs (or other files) to Zotero items, sync PDFs from your Zotero library to your (mobile) PDF reader (e.g. an iPad, Android tablet, etc.), and extract PDF annotations.</em:description>
+    <em:localized>
+      <Description>
+	<em:locale>en-US</em:locale>
+	<em:name>ZotFile</em:name>
+          <em:description>Zotero plugin to manage your attachments: automatically rename, move, and attach PDFs (or other files) to Zotero items, sync PDFs from your Zotero library to your (mobile) PDF reader (e.g. an iPad, Android tablet, etc.), and extract PDF annotations.</em:description>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+	<em:locale>de-DE</em:locale>
+	<em:name>ZotFile</em:name>
+          <em:description>Zotero Plug-in zur Verwaltung Ihrer Anhänge: Automatisches Umbennen, Verschieben und Anhängen von PDFs (oder anderen Dateien) zu Zotero Objekten, Synchronisation von PDFs aus Ihrer Zotero Bibliothek mit (mobilen) PDF Lesegeräten (z.B. einem iPad, Android Tablet, etc.), und Herauskopieren von PDF Annotationen.</em:description>
+      </Description>
+    </em:localized>
     <em:creator>Joscha Legewie</em:creator>
     <em:homepageURL>http://www.jlegewie.com/zotfile.html</em:homepageURL>
     <em:optionsURL>chrome://zotfile/content/options.xul</em:optionsURL>
   </Description>      
 </RDF>
-                              
-

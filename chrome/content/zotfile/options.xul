@@ -345,6 +345,10 @@
 			</tabbox>			                      
 		</prefpane> 
 		
+		<stringbundleset id="stringbundleset">
+		  <stringbundle id="stringbundle-poppler" src="chrome://zotfile/locale/options.properties"/>
+		</stringbundleset>
+
 		<script src="options.js"/> 
 		<script src="chrome://zotero/content/include.js"/>
 		<script src="chrome://zotfile/content/include.js"/>	

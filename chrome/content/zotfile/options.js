@@ -565,9 +565,13 @@ function updatePDFToolsStatus() {
     var toolIsCompatible = Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported;
     var toolIsRegistered = Zotero.ZotFile.pdfAnnotations.popplerExtractorTool;
     var updateButton = document.getElementById('pdf-annotations-extractor-update-button');
+    var stringsBundle = document.getElementById('stringbundle-poppler');
+    var installPoppler = stringsBundle.getString('installPoppler');
+    var updatePoppler = stringsBundle.getString('updatePoppler');
 
     // set button label
-    str = toolIsRegistered ? "Update Poppler Tool" : "Download & Install Poppler Tool";
+    str = toolIsRegistered ? updatePoppler : installPoppler;
+//  str = toolIsRegistered ? "Update Poppler Tool" : "Download & Install Poppler Tool";
     updateButton.setAttribute('label', str);
     updateButton.setAttribute('disabled', false);
     
