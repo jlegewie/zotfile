@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://zotfile/skin/overlay.css" type="text/css"?>
-
 <!DOCTYPE overlay SYSTEM "chrome://zotfile/locale/overlay.dtd">
 
 <overlay id="zotfile-overlay"
@@ -29,7 +28,7 @@
 				<menuitem label="&warning;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>								
 				<menuitem id="id-push2reader-00" label="&send-to-tablet;" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('');"/>
 				<menuitem label="&update-file-modification-time;" tooltiptext="&sync-attachment-file;" oncommand="Zotero.ZotFile.updateSelectedTabletAttachments();"/>	
-				<menuitem label="&get-from-tablet" tooltiptext="&get-attachment-file-from-tablet;" oncommand="Zotero.ZotFile.getSelectedAttachmentsFromTablet();"/>				
+				<menuitem label="&get-from-tablet;" tooltiptext="&get-attachment-file-from-tablet;" oncommand="Zotero.ZotFile.getSelectedAttachmentsFromTablet();"/>				
 				<menuseparator/>																
 				<menuitem label="&send-to-subfolder-on-tablet;" disabled="true" style="font-size: 80%; background: none; -moz-appearance: none;"/>								
 				<menuitem label="&warning;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>								
