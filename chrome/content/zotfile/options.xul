@@ -8,7 +8,12 @@
 	title="&zotfile-preferences;" 
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"  
 	onload="updatePreferenceWindow('all');">
-        
+	
+	<stringbundleset id="stringbundleset">
+		<stringbundle id="zotfile-options"
+			      src="chrome://zotfile/locale/options.properties"/>
+	</stringbundleset>
+
 		<prefpane label="&zotfile-prefpane;" id="zotfile-perfpane">
 			<preferences>
 				<preference id="pref-zotfile-source_dir_ff" name="extensions.zotfile.source_dir_ff" type="bool"/>                                                                                              							 
@@ -345,10 +350,6 @@
 			</tabbox>			                      
 		</prefpane> 
 		
-		<stringbundleset id="stringbundleset">
-		  <stringbundle id="stringbundle-poppler" src="chrome://zotfile/locale/options.properties"/>
-		</stringbundleset>
-
 		<script src="options.js"/> 
 		<script src="chrome://zotero/content/include.js"/>
 		<script src="chrome://zotfile/content/include.js"/>	

@@ -4,12 +4,7 @@
 
 <overlay id="zotfile-overlay"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">	
-	
-	<stringbundleset id="stringbundleset">
-		<stringbundle id="zotfile-strings"
-			      src="chrome://zotfile/locale/zotfile.properties"/>
-	</stringbundleset>
-	
+        
 	<!-- ZotFile context menus -->	
 	
 	
