@@ -290,12 +290,34 @@ Zotero.ZotFile = {
         return(x);
     },
 
+    // check whether valid attachment
+    // argument: zotero item, or item ID
+    validAttachment: function (att, warning) {
+        // set default setting
+        warning = typeof warning !== 'undefined' ? warning : true;
+        // get item if passed itemID
+        if(typeof(att)=="number") att=Zotero.Items.get(att);
+        // check whether attachment is valid (not top-level item, file exists and not a web attachment)
+        if(att.isAttachment()) {
+            var file = att.getFile();
+            if (!att.isTopLevelItem() && this.fileExists(file) && Zotero.File.getExtension(file) != "html") 
+                return(true);
+            else {
+                // show warning
+                if(warning) this.infoWindow("ZotFile Warning","Zotfile skipped the attachment '" + att.getField("title") + "' (top-level item, snapshot or the file does not exists).", 8000);
+                // return false
+                return(false);
+            }
+        }
+        return(false);
+    },
+
     getSelectedAttachments: function () {
         // get selected items
         var win = this.wm.getMostRecentWindow("navigator:browser");
         var items = win.ZoteroPane.getSelectedItems();
 
-        // create array of attachments to pull
+        // create array of attachments from selection
         var attIDs=[];
         for (var i=0; i < items.length; i++) {
             var item = items[i];
@@ -303,17 +325,17 @@ Zotero.ZotFile = {
             if(item.isRegularItem()) {
                 // get all attachments
                 var attachments = item.getAttachments();
-
                 // go through all attachments and add those with a tag
-                for (var j=0; j < attachments.length; j++) attIDs.push(attachments[j]);
-
+                for (var j=0; j < attachments.length; j++) 
+                    if (this.validAttachment(attachments[j])) attIDs.push(attachments[j]);
             }
-            // attachment item
-            if(item.isAttachment()) attIDs.push(item.getID());
+            // attachment item that is not top level
+            if(item.isAttachment()) 
+                if (this.validAttachment(item)) attIDs.push(item.getID());
         }
         // remove duplicate elements
-        attIDs=this.removeDuplicates(attIDs);
-
+        if(attIDs.length>0) attIDs=this.removeDuplicates(attIDs);
+        // return array of attachment IDs
         return(attIDs);
     },
 
@@ -730,10 +752,10 @@ Zotero.ZotFile = {
         // get creator and create authors string
         // creator types: author/editor(1,3) for book(2), inventor(14) for patent(19),programmer(24) for computer prog.(27),presenter(21) for presentation(32)
         var creatorType=[1];
-        if (zitem.getType()==2)  creatorType=[1,3];
-        if (zitem.getType()==19) creatorType=[14];
-        if (zitem.getType()==32) creatorType=[21];
-        if (zitem.getType()==27) creatorType=[24];
+        if (item_type==2)  creatorType=[1,3];
+        if (item_type==19) creatorType=[14];
+        if (item_type==32) creatorType=[21];
+        if (item_type==27) creatorType=[24];
         var add_etal=this.prefs.getBoolPref("add_etal");
         var author = "";
         var creators = zitem.getCreators();
@@ -744,10 +766,11 @@ Zotero.ZotFile = {
         var max_authors=(this.prefs.getBoolPref("truncate_authors")) ? this.prefs.getIntPref("max_authors") : 500;
         if (numauthors<=max_authors) add_etal=0;
         if (numauthors>max_authors) numauthors = 1;
+		var delimiter=this.prefs.getCharPref("authors_delimiter");
         var j=0;
         for (i=0; i < creators.length; i++) {
             if (j<numauthors && creatorType.indexOf(creators[i].creatorTypeID)!=-1) {
-                if (author!="") author = author + "_" + creators[i].ref.lastName;
+                if (author!="") author = author + delimiter + creators[i].ref.lastName;
                 if (author=="") author = creators[i].ref.lastName;
                 j=j+1;
             }
@@ -889,8 +912,10 @@ Zotero.ZotFile = {
     },
         
     getFilename: function(item,filename_org){
-        var filename;
+        // check whether regular item
+        if (!item.isRegularItem()) return(null);
         // create the new filename from the selected item
+        var filename;
         var item_type =  item.getType();
         var rename_rule=this.prefs.getCharPref("renameFormat");
         if(item_type==19) rename_rule=this.prefs.getCharPref("renameFormat_patent");
@@ -1301,8 +1326,11 @@ Zotero.ZotFile = {
     },
 
     getTabletStatus: function(att) {
-        var tagID=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tag"),0);
-        return(att.hasTag(tagID));
+        if(att!=false) {
+            var tagID=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tag"),0);
+            return(att.hasTag(tagID));
+        }
+        return(false);
     },
 
     getTabletStatusModified: function(item) {
@@ -1934,9 +1962,11 @@ Zotero.ZotFile = {
                     // restore attachments note and tags
                     if(att_note!="" || att_tags.length>0) {
                         att = Zotero.Items.get(attID);
-                        if(att_note!="") att.setNote(att_note);
-                        if(att_tags) for each(var tag in att_tags) att.addTag(tag);
-                        att.save();
+                        if(att!=false) {
+                            if(att_note!="") att.setNote(att_note);
+                            if(att_tags) for each(var tag in att_tags) att.addTag(tag);
+                            att.save();
+                        }
                     }
                 }
                 if(this.getTabletStatus(att)) this.infoWindow("Zotfile Error","Attachment could not be renamed because it is on the tablet.",8000);

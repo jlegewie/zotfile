@@ -25,6 +25,15 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 2.2.3
+
+- bug fix: check whether selected attachments are valid (no top-level item, no web attachments and attachment exists)
+- bug fix: editing custom folder created error if user had maximum number of custom folders
+
+#### Changes in 2.2.2
+
+- Add option to change delimiter between multiple authors (thanks to [gracile-fr](https://github.com/gracile-fr))
+
 #### Changes in 2.2
 
 - New feature: automatic renaming of attachment files (thanks to [Robin Wilson](www.rtwilson.com/academic))

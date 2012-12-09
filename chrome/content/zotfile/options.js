@@ -44,6 +44,9 @@ function updatePreferenceWindow(which) {
     // max authors
     if(which=="truncate_authors" || which=="all") disablePreference("truncate_authors", "max_authors", revert);
 
+    // creators delimiter
+    // if(which=="creators_delimiter" || which=="all") disablePreference("creators_delimiter", "delimiter", revert);
+	
     // subfolder
     if(which=="subfolder" || which=="all") disablePreference("subfolder", "subfolderFormat", revert);
     
@@ -78,7 +81,7 @@ function updatePreferenceWindow(which) {
     
     // Use Zotero to Rename
     if(which=="zotrename" || which=="all") {
-        setting=disablePreference("useZoteroToRename", ['renameFormat', 'renameFormat-label', 'renameFormat-des1', 'renameFormat-des2', 'renameFormat-des3', 'renameFormat-des4', 'renameFormat_patent', 'renameFormat_patent-label', 'truncate_title', 'truncate_title_max', 'max_titlelength', 'max_authors','truncate_authors', 'add_etal', 'etal', 'userInput', 'userInput_Default', 'replace_blanks'], !revert);
+        setting=disablePreference("useZoteroToRename", ['renameFormat', 'renameFormat-label', 'renameFormat-des1', 'renameFormat-des2', 'renameFormat-des3', 'renameFormat-des4', 'renameFormat_patent', 'renameFormat_patent-label', 'truncate_title', 'truncate_title_max', 'max_titlelength', 'max_authors','truncate_authors', 'add_etal', 'etal', 'authors_delimiter', 'userInput', 'userInput_Default', 'replace_blanks'], !revert);
         if (which=="all" && setting) {
             disablePreference("add_etal", "etal", false);
             disablePreference("userInput", "userInput_Default", false);
@@ -258,7 +261,7 @@ function editSubfolderSetting (index) {
 
     var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
     var treerow;
-    if (index || treechildren.childNodes.length<Zotero.ZotFile.projectMax) {
+    if (index != undefined || treechildren.childNodes.length<Zotero.ZotFile.projectMax) {
         
         var label  =null;
         var folder =null;
