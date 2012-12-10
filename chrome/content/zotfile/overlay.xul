@@ -13,20 +13,20 @@
 		<menuseparator id="id-zotfile-separator"/>		
 		<!-- Make sure the menu separator for utilities is visible -->
        	<!--insertafter="id-zotfile-menu" -->
-       	<menuitem id="id-zotfile-attach-file" label="&zotfile-attach-file;" tooltiptext="Move and attach last file in user defined folder to selected Zotero item" oncommand="Zotero.ZotFile.attachNewFile();"/>
- 		<menu id="id-zotfile-manage-attachments" label="&manage-attachments;" > 
+       	<menuitem id="id-zotfile-attach-file" label="&zotfile-attach-file.label;" tooltiptext="&zotfile-attach-file.tooltiptext;" oncommand="Zotero.ZotFile.attachNewFile();"/>
+ 		<menu id="id-zotfile-manage-attachments" label="&zotfile-manage-attachments.label;" > 
 			<menupopup id="id-zotfile-menu" onpopupshowing="Zotero.ZotFile.buildZotFileMenu();">
-				<menuitem label="&warning;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>							
-				<menuitem label="&rename-attachments;" tooltiptext="Move and rename existing Attachments from selected Zotero item" oncommand="Zotero.ZotFile.renameSelectedAttachments();"/>
+				<menuitem label="&warning.label;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>							
+				<menuitem label="&renameSelectedAttachments.label;" tooltiptext="&renameSelectedAttachments.tooltiptext;" oncommand="Zotero.ZotFile.renameSelectedAttachments();"/>
 				<menuitem label="&extract-annotations;" tooltiptext="Extract Annotations and Highlighted Text from pdf file." oncommand="Zotero.ZotFile.pdfAnnotations.getAnnotations();"/>				
 				<menuseparator/>												
-				<menuitem label="&warning;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>								
+				<menuitem label="&warning.label;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>								
 				<menuitem id="id-push2reader-00" label="&send-to-tablet;" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('');"/>
 				<menuitem label="&update-file-modification-time;" tooltiptext="&sync-attachment-file;" oncommand="Zotero.ZotFile.updateSelectedTabletAttachments();"/>	
 				<menuitem label="&get-from-tablet;" tooltiptext="&get-attachment-file-from-tablet;" oncommand="Zotero.ZotFile.getSelectedAttachmentsFromTablet();"/>				
 				<menuseparator/>																
 				<menuitem label="&send-to-subfolder-on-tablet;" disabled="true" style="font-size: 80%; background: none; -moz-appearance: none;"/>								
-				<menuitem label="&warning;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>								
+				<menuitem label="&warning.label;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>								
 				<menuitem id="id-push2reader-01" hidden="true" label="menu1" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('01');"/>
 				<menuitem id="id-push2reader-02" hidden="true" label="menu2" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('02');"/>
 				<menuitem id="id-push2reader-03" hidden="true" label="menu3" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet('03');"/>
@@ -54,7 +54,7 @@
 	
 	<menupopup id="zotero-tb-actions-popup">
 	<!--<menuitem id="zotreader_tbmenu_scan" insertafter="zotero-tb-actions-rtfScan" label="Scan Tablet Files..." oncommand="Zotero.ZotFile.scanTabletFiles();"/>-->   	
-    <menuitem id="zotfile-options" insertafter="zotero-tb-actions-prefs" label="&zotfile-options;" oncommand="Zotero.ZotFile.openPreferenceWindow();"/>
+    <menuitem id="zotfile-options" insertafter="zotero-tb-actions-prefs" label="&zotfile-options.label;" oncommand="Zotero.ZotFile.openPreferenceWindow();"/>
 	</menupopup>
 	
 	<!-- Include the main extension logic -->

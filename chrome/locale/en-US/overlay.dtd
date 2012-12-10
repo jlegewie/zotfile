@@ -1,9 +1,10 @@
-<!ENTITY zotfile-options "ZotFile Preferences...">
-<!ENTITY zotfile-attach-file "Attach New File">
-<!ENTITY manage-attachments "Manage Attachments">
-<!ENTITY rename-attachments "Rename Attachments">
+<!ENTITY zotfile-attach-file.label "Attach New File">
+<!ENTITY zotfile-attach-file.tooltiptext "Move and attach last file in user defined folder to selected Zotero item">
+<!ENTITY zotfile-manage-attachments.label "Manage Attachments">
+<!ENTITY warning.label "Warning">
+<!ENTITY renameSelectedAttachments.label "Rename Attachments">
+<!ENTITY renameSelectedAttachments.tooltiptext "Move and rename existing Attachments from selected Zotero item">
 <!ENTITY extract-annotations "Extract Annotations">
-<!ENTITY warning "Warning">
 <!ENTITY send-to-tablet "Send to Tablet">
 <!ENTITY send-attachment-file-to-tablet "Send Attachment File to Tablet.">
 <!ENTITY update-file-modification-time "Update File Modification Time">
@@ -13,3 +14,4 @@
 <!ENTITY send-to-subfolder-on-tablet "Send to Subfolder on Tablet">
 <!ENTITY change-subfolders "Change subfolders...">
 <!ENTITY add-and-delete-subfolders "Add and delete subfolders to Menu.">
+<!ENTITY zotfile-options.label "ZotFile Preferences...">

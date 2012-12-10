@@ -1,7 +1,9 @@
-<!ENTITY zotfile-attach-file "Neue Datei anhängen">
-<!ENTITY manage-attachments "Anhänge verwalten">
-<!ENTITY warning "Warnung">
-<!ENTITY rename-attachments "Anhänge umbennen">
+<!ENTITY zotfile-attach-file.label "Neue Datei anhängen">
+<!ENTITY zotfile-attach-file.tooltiptext "Die zuletzt in den benutzerdefinierten Ordner hinzugefügte Datei verschieben und an das ausgewählte Zotero Objekt anhängen">
+<!ENTITY zotfile-manage-attachments.label "Anhänge verwalten">
+<!ENTITY warning.label "Warnung">
+<!ENTITY renameSelectedAttachments.label "Anhänge umbennen">
+<!ENTITY renameSelectedAttachments.tooltiptext "Vorhandene Anhänge des ausgewählten Zotero Objekts verschieben und umbennen">
 <!ENTITY extract-annotations "Annotierungen herauskopieren">
 <!ENTITY send-to-tablet "An Tablet PC schicken">
 <!ENTITY send-attachment-file-to-tablet "Angehängte Datei an Tablet PC schicken.">
@@ -12,4 +14,4 @@
 <!ENTITY send-to-subfolder-on-tablet "An Unterordner auf Tablet PC senden">
 <!ENTITY change-subfolders "Unterordner ändern...">
 <!ENTITY add-and-delete-subfolders "Menü-Unterordner hinzufügen oder löschen.">
-<!ENTITY zotfile-options "ZotFile Einstellungen...">
+<!ENTITY zotfile-options.label "ZotFile Einstellungen...">
