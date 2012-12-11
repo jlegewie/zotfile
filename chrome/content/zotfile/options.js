@@ -81,7 +81,7 @@ function updatePreferenceWindow(which) {
     
     // Use Zotero to Rename
     if(which=="zotrename" || which=="all") {
-        setting=disablePreference("useZoteroToRename", ['renameFormat', 'renameFormat-label', 'renameFormat-des1', 'renameFormat-des2', 'renameFormat-des3', 'renameFormat-des4', 'renameFormat_patent', 'renameFormat_patent-label', 'truncate_title', 'truncate_title_max', 'max_titlelength', 'max_authors','truncate_authors', 'add_etal', 'etal', 'authors_delimiter', 'userInput', 'userInput_Default', 'replace_blanks'], !revert);
+        setting=disablePreference("useZoteroToRename", ['renameFormat', 'renameFormat-label', 'renameFormat-des1', 'renameFormat-des2', 'renameFormat-des3', 'renameFormat-des4', 'renameFormat_patent', 'renameFormat_patent-label', 'truncate_title', 'truncate_title_max', 'max_titlelength', 'max_authors','truncate_authors', 'add_etal', 'etal', 'authors_delimiter', 'userInput', 'userInput_Default', 'replace_blanks', 'lower_case'], !revert);
         if (which=="all" && setting) {
             disablePreference("add_etal", "etal", false);
             disablePreference("userInput", "userInput_Default", false);
