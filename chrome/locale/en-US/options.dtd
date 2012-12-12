@@ -14,6 +14,7 @@
 <!ENTITY attach-stored-copy "Attach stored copy of file(s)"> 
 <!ENTITY custom-location "Custom Location:"> 
 <!ENTITY use-subfolder "Use subfolder defined by"> 
+<!ENTITY subfolder-information "Subfolders are based on metadata from Zotero items. Use &#37;a for author name, &#37;y for year, &#37;w for journal/publisher, or &#37;T for item type (see the zotfile website for a full list). Make sure to insert the appropriate separators (/ for Mac OS and other Unix systems and \ for windows).">
 <!ENTITY for-more-information "For more information see the "> 
 <!ENTITY zotfile-website "ZotFile website"> 
 <!ENTITY consider-donation "If you find this plugin helpful, please consider a ">
@@ -34,6 +35,7 @@
 <!ENTITY additional-options "Additional options">
 <!ENTITY rename-when-sent-to-tablet "Rename files when they are sent to the tablet">
 <!ENTITY save-annotated-file "Save copy of annotated file with suffix ">
+<!ENTITY tablet-copy-information "By default, getting an attachment back from the tablet replaces the file saved in Zotero. When this option is enabled, zotfile instead creates a copy of the file with a specified suffix and adds this file as an additional attachment to Zotero.">
 <!ENTITY automatically-extract-annotations "Automatically extract annotations when getting PDFs back from tablet">
 <!ENTITY preview-renaming-rules "Preview of Current Renaming Rules">
 <!ENTITY update "Aktualisieren">
@@ -45,6 +47,9 @@
 <!ENTITY add-user-input-to-filename "Add user input to filename. Default is ">
 <!ENTITY replace-blanks "Replace Blanks">
 <!ENTITY truncate-title "Truncate title after . or : or ?">
+<!ENTITY zotfile-truncate_title_max "Maximum length of title">
+<!ENTITY zotfile-truncate_authors "Maximum number of authors">
+<!ENTITY zotfile-add_etal "Add suffix when authors are omitted">
 <!ENTITY extract-annotations "Extract Annotations and Highlighted Text from PDF Files">
 <!ENTITY extract-annotations-and-highlighted-text "ZotFile can extract annotations and highlighted text from your pdf attachments.">
 <!ENTITY extraction-method "Extraction Method">

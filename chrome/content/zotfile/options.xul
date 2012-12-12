@@ -130,7 +130,7 @@
 								<hbox style="margin: 0"  align="center">									   
 								   <checkbox id="id-zotfile-subfolder" label="&use-subfolder;" preference="pref-zotfile-subfolder"  oncommand="updatePreferenceWindow('subfolder')"/>
 								   <textbox id="id-zotfile-subfolderFormat" preference="pref-zotfile-subfolderFormat" width="100"/>
-								   <image src="chrome://zotfile/skin/information.png" tooltiptext="Subfolders are based on metadata from Zotero items. Use %a for author name, %y for year, %w for journal/publisher, or %T for item type (see the zotfile website for a full list). Make sure to insert the appropriate separators (/ for Mac OS and other Unix systems and \ for windows)."/>
+								   <image src="chrome://zotfile/skin/information.png" tooltiptext="&subfolder-information;"/>
 							   </hbox>
 								
 							
@@ -205,7 +205,7 @@
 					   <hbox style="margin: 0"  align="center">					  		   
 						   <checkbox id="id-zotfile-tablet-storeCopyOfFile" label="&save-annotated-file;" preference="pref-zotfile-tablet-storeCopyOfFile"  oncommand="updatePreferenceWindow('storeCopyOfFile')"/>
 						   <textbox id="id-zotfile-tablet-storeCopyOfFile_suffix" preference="pref-zotfile-tablet-storeCopyOfFile_suffix" width="130"/>
-						   <image src="chrome://zotfile/skin/information.png" tooltiptext="By default, getting an attachment back from the tablet replaces the file saved in Zotero. When this option is enabled, zotfile instead creates a copy of the file with a specified suffix and adds this file as an additional attachment to Zotero."/>
+						   <image src="chrome://zotfile/skin/information.png" tooltiptext="&tablet-copy-information;"/>
 					   </hbox>		
 					   <checkbox id="id-zotfile-pdfExtraction-Pull" label="&automatically-extract-annotations;" preference="pref-zotfile-pdfExtraction-Pull"/>				    						
 					<!--										
@@ -282,15 +282,15 @@
 <!--								   <checkbox id="id-zotfile-truncate_smart" label="Smart truncation of title (avoids truncation in the middle of a word)" preference="pref-zotfile-truncate_smart"/>
 -->
 								   <hbox style="margin: 0">
-									   <checkbox id="id-zotfile-truncate_title_max" label="Maximum length of title" preference="pref-zotfile-truncate_title_max" oncommand="updatePreferenceWindow('truncate_title_max')"/>								
+									   <checkbox id="id-zotfile-truncate_title_max" label="&zotfile-truncate_title_max;" preference="pref-zotfile-truncate_title_max" oncommand="updatePreferenceWindow('truncate_title_max')"/>								
 										<textbox id="id-zotfile-max_titlelength" preference="pref-zotfile-max_titlelength" width="40"/>
 								   </hbox>
 								   <hbox style="margin: 0">
-									   <checkbox id="id-zotfile-truncate_authors" label="Maximum number of authors" preference="pref-zotfile-truncate_authors" oncommand="updatePreferenceWindow('truncate_authors')"/>								
+									   <checkbox id="id-zotfile-truncate_authors" label="&zotfile-truncate_authors;" preference="pref-zotfile-truncate_authors" oncommand="updatePreferenceWindow('truncate_authors')"/>								
 									   <textbox id="id-zotfile-max_authors" preference="pref-zotfile-max_authors" width="25"/>
 								   </hbox>
 						   		   <hbox style="margin: 0">					
-									   <checkbox id="id-zotfile-add_etal" label="Add suffix when authors are omitted" preference="pref-zotfile-add_etal" oncommand="updatePreferenceWindow('etal')"/>
+									   <checkbox id="id-zotfile-add_etal" label="&zotfile-add_etal;" preference="pref-zotfile-add_etal" oncommand="updatePreferenceWindow('etal')"/>
 									   <textbox id="id-zotfile-etal" preference="pref-zotfile-etal" width="50"/>
 								   </hbox>													
 							</groupbox>																		   											                                                                                                                                                                      				    

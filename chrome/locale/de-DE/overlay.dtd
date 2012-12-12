@@ -4,7 +4,8 @@
 <!ENTITY warning.label "Warnung">
 <!ENTITY renameSelectedAttachments.label "Anhänge umbennen">
 <!ENTITY renameSelectedAttachments.tooltiptext "Vorhandene Anhänge des ausgewählten Zotero Objekts verschieben und umbennen">
-<!ENTITY extract-annotations "Annotierungen herauskopieren">
+<!ENTITY extract-annotations.label "Annotationen herauskopieren">
+<!ENTITY extract-annotations.tooltiptext "Annotationen und hervorgehobenen Text aus PDF Datei herauskopieren">
 <!ENTITY send-to-tablet "An Tablet PC schicken">
 <!ENTITY send-attachment-file-to-tablet "Angehängte Datei an Tablet PC schicken.">
 <!ENTITY update-file-modification-time "Datei Zeit der letzten Änderung aktualisieren">

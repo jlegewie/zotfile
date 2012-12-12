@@ -14,6 +14,7 @@
 <!ENTITY attach-stored-copy "In Zotero gespeicherte Kopie von Datei(en) anhängen"> 
 <!ENTITY custom-location "Benutzerdefinierter Ort:"> 
 <!ENTITY use-subfolder "Durch folgendes Muster definierten Unterordner verwenden"> 
+<!ENTITY subfolder-information "Unterordner basieren auf Metadaten von Zotero Objekten. Verwenden Sie &#37;a für den Namen des Authors, &#37;y für das Jahr, &#37;w für die Zeitschrift bzw. den Verlag oder &#37;T für die Art des Objekts (siehe die zotfile Internetseite für eine vollständige Liste). Stellen Sie die Verwendung des richtigen Trennungszeichens (&quot;/&quot; unter Mac OS und anderen Unix Systemen und &quot;\&quot; unter Windows).">
 <!ENTITY for-more-information "Für weitere Informationen siehe "> 
 <!ENTITY zotfile-website "ZotFile Webseite"> 
 <!ENTITY consider-donation "Falls Sie dieses Plug-in hilfreich finden, überlegen Sie sich bitte etwas zu ">
@@ -34,6 +35,7 @@
 <!ENTITY additional-options "Weitere Optionen">
 <!ENTITY rename-when-sent-to-tablet "Dateien umbennen, wenn sie auf den Tablet PC übertragen umbennen">
 <!ENTITY save-annotated-file "Kopie von annotierten Dateien mit folgendem Suffix speichern:  ">
+<!ENTITY tablet-copy-information "Als Voreinstellung wird beim Holen einer Datei vom Tablet die in Zotero gespeicherte Datei ersetzt. Falls diese Option aktiviert ist, erzeugt zotfile stattdessen eine Kopie der Datei mit dem angegebenen Suffix und fügt diese Datei als zusätzlichen Anhang zu Zotero hinzu.">
 <!ENTITY automatically-extract-annotations "Annotationen automatisch herauskopieren wenn PDF-Dateien vom Tablet PC zurück übertragen werden">
 <!ENTITY preview-renaming-rules "Vorschau der aktuellen Umbennenungs-Regeln">
 <!ENTITY update "Aktualisieren">
@@ -44,7 +46,10 @@
 <!ENTITY additional-settings "Weitere Einstellungen">
 <!ENTITY add-user-input-to-filename "Benutzereingabe an Dateiname anhängen. Anfnagsvorgabe ist ">
 <!ENTITY replace-blanks "Leerzeichen ersetzen">
-<!ENTITY truncate-title "Title nach . oder : oder ? abschneiden">
+<!ENTITY truncate-title "Titel nach . oder : oder ? abschneiden">
+<!ENTITY zotfile-truncate_title_max "Maximale Länge des Titels">
+<!ENTITY zotfile-truncate_authors "Maximale Anzahl an Autoren">
+<!ENTITY zotfile-add_etal "Suffix anfügen falls Autoren ausgelassen werden">
 <!ENTITY extract-annotations "Annotationen und hervorgehobenen Text aus PDF Datei herauskopieren">
 <!ENTITY extract-annotations-and-highlighted-text "ZotFile kann Annotationen und hervorgehobenen Text aus Ihren PDF Anhängen herauskopieren.">
 <!ENTITY extraction-method "Methode zur Erstellung der Textauszüge">
