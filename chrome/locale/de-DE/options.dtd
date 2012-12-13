@@ -45,6 +45,7 @@
 <!ENTITY format-for-patents "Format für Patente">
 <!ENTITY additional-settings "Weitere Einstellungen">
 <!ENTITY add-user-input-to-filename "Benutzereingabe an Dateiname anhängen. Anfnagsvorgabe ist ">
+<!ENTITY lower-case "Kleinbuchstaben verwenden">
 <!ENTITY replace-blanks "Leerzeichen ersetzen">
 <!ENTITY truncate-title "Titel nach . oder : oder ? abschneiden">
 <!ENTITY zotfile-truncate_title_max "Maximale Länge des Titels">

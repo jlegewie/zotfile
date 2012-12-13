@@ -276,7 +276,7 @@
 								   </hbox>     
 
                    <hbox style="margin: 0">         
-                     <checkbox id="id-zotfile-lower_case" label="Set in lower case" preference="pref-zotfile-lower_case"/>
+                     <checkbox id="id-zotfile-lower_case" label="&lower-case;" preference="pref-zotfile-lower_case"/>
                    </hbox>
 								   
 								   <hbox style="margin: 0">					

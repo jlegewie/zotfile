@@ -45,7 +45,8 @@
 <!ENTITY format-for-patents "Format for Patents">
 <!ENTITY additional-settings "Additional Settings">
 <!ENTITY add-user-input-to-filename "Add user input to filename. Default is ">
-<!ENTITY replace-blanks "Replace Blanks">
+<!ENTITY lower-case "Change to lower case">
+<!ENTITY replace-blanks "Replace blanks">
 <!ENTITY truncate-title "Truncate title after . or : or ?">
 <!ENTITY zotfile-truncate_title_max "Maximum length of title">
 <!ENTITY zotfile-truncate_authors "Maximum number of authors">
