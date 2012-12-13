@@ -28,12 +28,12 @@
 	</script>
 	
 	<vbox id="id-zotfile-options-FolderEditor">
-		<label value="Label" control="id-zotfile-projectFolder-label"/>
+		<label value="&label;" control="id-zotfile-projectFolder-label"/>
 		<textbox id="id-zotfile-projectFolder-label"/>
 		<separator class="thin"/>
-		<label value="Subfolder" control="id-zotfile-projectFolder-folder"/>
+		<label value="&subfolder;" control="id-zotfile-projectFolder-folder"/>
 		<textbox id="id-zotfile-projectFolder-folder"/>
-		<label style="font-size: 9px" value="Leave this field empty to automatically generated the folder from the label."/>
+		<label style="font-size: 9px" value="&leave-empty;"/>
 		
 		<separator class="thin"/>
 	</vbox>
