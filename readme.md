@@ -25,6 +25,12 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 2.2.5
+
+- Zotfile translation to German (thanks to wuffi)
+- Allow periods as delimiter in filenames (thanks to jjatria)
+- "lower case" option for filenames (thanks to jjatria)
+
 #### Changes in 2.2.3
 
 - bug fix: check whether selected attachments are valid (no top-level item, no web attachments and attachment exists)
