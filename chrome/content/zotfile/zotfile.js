@@ -717,7 +717,25 @@ Zotero.ZotFile = {
         title = title.replace(/[\?:]/g, ' -');
         return(title);
     },
-    
+
+
+    selectiveReplace: function(output, attribute, exclusive, conditional){
+        if (exclusive==1) {
+            if (attribute!='') {
+                output = output + attribute;
+                exclusive=2
+            }
+        }
+        if (conditional==1) {
+            if (attribute!='') {
+                output = output + attribute;
+                conditional=2
+            }
+        }
+        return {'output': output, 'exclusive': exclusive, 'conditional':conditional};
+    },
+
+
     // Function replaces wildcard both for filename and subfolder definition
     replaceWildcard: function(zitem, rule){
         // get item type
@@ -787,88 +805,177 @@ Zotero.ZotFile = {
     
         // create output from rule
         var field=0;
+        var exclusive=0;
+        var conditional=0;
         var output='';
         for (i=0; i<rule.length; i++) {
-            var char=rule.charAt(i);
-            switch (char) {
+            var chr=rule.charAt(i);
+            switch (chr) {
                 case '%':
                     field=1;
                     break;
 
-                case 'a':
-                    if (field==1) output = output + author;
-                    field=0;
+                case '[':
+                    exclusive=1;
                     break;
-                
+
+                case ']':
+                    exclusive=0;
+                    break;
+
+                case '{':
+                    conditional=1;
+                    break;
+
+                case '}':
+                    conditional=0;
+                    break;
+
+                case 'a':
+                    if (field==1) {
+                        result = this.selectiveReplace(output, author, exclusive, conditional);
+                        output = result.output;
+                        exclusive = result.exclusive;
+                        conditional = result.conditional;
+                        field=0;
+                    }
+                    break;
+
                 case 'A':
-                    if (field==1) output = output + author.substr(0,1).toUpperCase();
-                    field=0;
+                    if (field==1) {
+                        result = this.selectiveReplace(output, author.substr(0,1).toUpperCase(), exclusive, conditional);
+                        output = result.output;
+                        exclusive = result.exclusive;
+                        conditional = result.conditional;
+                        field=0;
+                    }
                     break;
 
                 case 't':
-                    if (field==1) output = output + title;
-                    field=0;
+                    if (field==1) {
+                        result = this.selectiveReplace(output, title, exclusive, conditional);
+                        output = result.output;
+                        exclusive = result.exclusive;
+                        conditional = result.conditional;
+                        field=0;
+                    }
                     break;
 
                 case 'y':
-                    if (field==1) output = output + year;
-                    field=0;
+                    if (field==1) {
+                        result = this.selectiveReplace(output, year, exclusive, conditional);
+                        output = result.output;
+                        exclusive = result.exclusive;
+                        conditional = result.conditional;
+                        field=0;
+                    }
                     break;
 
                 case 'j':
-                    if (field==1) output = output + journal;
-                    field=0;
+                    if (field==1) {
+                        result = this.selectiveReplace(output, journal, exclusive, conditional);
+                        output = result.output;
+                        exclusive = result.exclusive;
+                        conditional = result.conditional;
+                        field=0;
+                    }
                     break;
 
                 case 'p':
-                    if (field==1) output = output + publisher;
-                    field=0;
+                    if (field==1) {
+                        result = this.selectiveReplace(output, publisher, exclusive, conditional);
+                        output = result.output;
+                        exclusive = result.exclusive;
+                        conditional = result.conditional;
+                        field=0;
+                    }
                     break;
 
                 case 'n':
-                    if (field==1) output = output + patentnr;
-                    field=0;
+                    if (field==1) {
+                        result = this.selectiveReplace(output, patentnr, exclusive, conditional);
+                        output = result.output;
+                        exclusive = result.exclusive;
+                        conditional = result.conditional;
+                        field=0;
+                    }
                     break;
 
                 case 'i':
-                    if (field==1) output = output + assignee;
-                    field=0;
+                    if (field==1) {
+                        result = this.selectiveReplace(output, assignee, exclusive, conditional);
+                        output = result.output;
+                        exclusive = result.exclusive;
+                        conditional = result.conditional;
+                        field=0;
+                    }
                     break;
 
                 case 'u':
-                    if (field==1) output = output + year_issue;
-                    field=0;
+                    if (field==1) {
+                        result = this.selectiveReplace(output, year_issue, exclusive, conditional);
+                        output = result.output;
+                        exclusive = result.exclusive;
+                        conditional = result.conditional;
+                        field=0;
+                    }
                     break;
 
                 case 'w':
                     if (field==1) {
-                        output = output + journal;
-                        if(journal=="") output = output + publisher;
+                        attribute = journal ? journal!='' : publisher
+                        result = this.selectiveReplace(output, attribute, exclusive, conditional);
+                        output = result.output;
+                        exclusive = result.exclusive;
+                        conditional = result.conditional;
+                        field=0;
                     }
-                    field=0;
                 break;
 
                 case 's':
-                    if (field==1) output = output + journal_abb;
-                    field=0;
+                    if (field==1) {
+                        result = this.selectiveReplace(output, journal_abb, exclusive, conditional);
+                        output = result.output;
+                        exclusive = result.exclusive;
+                        conditional = result.conditional;
+                        field=0;
+                    }
                     break;
 
                 case 'v':
-                    if (field==1) output = output + volume;
-                    field=0;
+                    if (field==1) {
+                        result = this.selectiveReplace(output, volume, exclusive, conditional);
+                        output = result.output;
+                        exclusive = result.exclusive;
+                        conditional = result.conditional;
+                        field=0;
+                    }
                     break;
 
                 case 'e':
-                    if (field==1) output = output + issue;
-                    field=0;
-                    break;
-        
-                case 'T':
-                    if (field==1) output = output + item_type_string;
-                    field=0;
+                    if (field==1) {
+                        result = this.selectiveReplace(output, issue, exclusive, conditional);
+                        output = result.output;
+                        exclusive = result.exclusive;
+                        conditional = result.conditional;
+                        field=0;
+                    }
                     break;
 
-                default: output = output + char;
+                case 'T':
+                    if (field==1) {
+                        result = this.selectiveReplace(output, item_type_string, exclusive, conditional);
+                        output = result.output;
+                        exclusive = result.exclusive;
+                        conditional = result.conditional;
+                        field=0;
+                    }
+                    break;
+
+                default:
+                    if (field!=1 && exclusive!=1 && conditional!=1) {
+                        output = output + chr;
+                    }
             }
         }
     return(output);
