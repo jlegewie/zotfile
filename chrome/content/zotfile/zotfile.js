@@ -726,11 +726,14 @@ Zotero.ZotFile = {
                 exclusive=2
             }
         }
-        if (conditional==1) {
+        else if (conditional==1) {
             if (attribute!='') {
                 output = output + attribute;
                 conditional=2
             }
+        }
+        else if (exclusive==0 && conditional==0) {
+            output = output + attribute;
         }
         return {'output': output, 'exclusive': exclusive, 'conditional':conditional};
     },
