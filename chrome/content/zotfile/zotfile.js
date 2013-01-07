@@ -1021,17 +1021,18 @@ Zotero.ZotFile = {
         return(temp[0] + k + "." + this.getFiletype(filename));
     },
         
-    getFilename: function(item,filename_org){
+    getFilename: function(item,filename_org,rename_format){
         // check whether regular item
         if (!item.isRegularItem()) return(null);
+        // rename format
+        var item_type =  item.getType();
+        var rename_format_setting = item_type==19 ? this.prefs.getCharPref("renameFormat_patent") : this.prefs.getCharPref("renameFormat");
+        rename_format = typeof rename_format !== 'undefined' ? rename_format : rename_format_setting;        
         // create the new filename from the selected item
         var filename;
-        var item_type =  item.getType();
-        var rename_rule=this.prefs.getCharPref("renameFormat");
-        if(item_type==19) rename_rule=this.prefs.getCharPref("renameFormat_patent");
         if (!this.prefs.getBoolPref("useZoteroToRename")) {
             
-            filename=this.replaceWildcard(item, rename_rule);
+            filename=this.replaceWildcard(item, rename_format);
             //var filename =  author + "_" + year + "_" + title;
 
             // Strip potentially invalid characters

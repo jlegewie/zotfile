@@ -31,14 +31,14 @@
 <!ENTITY custom-subfolders "Custom subfolders">
 <!ENTITY change-subfolders "Change subfolders">
 <!ENTITY use-additional-subfolders "Use additional subfolders defined by ">
-<!ENTITY additional-subfolders "Additional subfolders are based on metadata from Zotero items. Use %a for author name, &#37;y for year, &#37;w for journal/publisher, or &#37;T for item type (see the zotfile website for a full list). Make sure to insert the appropriate separators (/ for Mac OS and other Unix systems and \ for windows).">
+<!ENTITY additional-subfolders "Additional subfolders are based on metadata from Zotero items. Use &#37;a for author name, &#37;y for year, &#37;w for journal/publisher, or &#37;T for item type (see the zotfile website for a full list). Make sure to insert the appropriate separators (/ for Mac OS and other Unix systems and \ for windows).">
 <!ENTITY additional-options "Additional options">
 <!ENTITY rename-when-sent-to-tablet "Rename files when they are sent to the tablet">
 <!ENTITY save-annotated-file "Save copy of annotated file with suffix ">
 <!ENTITY tablet-copy-information "By default, getting an attachment back from the tablet replaces the file saved in Zotero. When this option is enabled, zotfile instead creates a copy of the file with a specified suffix and adds this file as an additional attachment to Zotero.">
 <!ENTITY automatically-extract-annotations "Automatically extract annotations when getting PDFs back from tablet">
 <!ENTITY preview-renaming-rules "Preview of Current Renaming Rules">
-<!ENTITY update "Aktualisieren">
+<!ENTITY update "Update">
 <!ENTITY renaming-format "Renaming Format">
 <!ENTITY zotero-to-rename "Use Zotero to Rename">
 <!ENTITY format-for-all-types "Format for all Item Types except Patents">

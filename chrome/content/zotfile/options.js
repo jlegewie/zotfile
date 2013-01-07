@@ -195,14 +195,17 @@ function checkFolderLocation(folder) {
 
 function previewFilename() {
     try {
+        // get current item
         var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser");
         var items = win.ZoteroPane.getSelectedItems();
         var item = items[0];
-        
+        // get renaming rules
+        var rename_format = document.getElementById('pref-zotfile-renameFormat').value;
+        // get filename for preview
         var filename;
-        if(item.isRegularItem()) filename=Zotero.ZotFile.getFilename(item, "");
-        if(item.getSource()) if(item.isAttachment()) filename=Zotero.ZotFile.getFilename(Zotero.Items.get(item.getSource()), "");
-
+        if(item.isRegularItem()) filename=Zotero.ZotFile.getFilename(item, "", rename_format);
+        if(item.getSource()) if(item.isAttachment()) filename=Zotero.ZotFile.getFilename(Zotero.Items.get(item.getSource()), "", rename_format);
+        // return preview of filename
         return(filename);
     }
     catch (err) {
