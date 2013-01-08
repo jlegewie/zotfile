@@ -30,6 +30,7 @@ Contributions preferably through pull requests are welcome!
 - Zotfile translation to German (thanks to wuffi)
 - Allow periods as delimiter in filenames (thanks to jjatria)
 - "lower case" option for filenames (thanks to jjatria)
+- fix preview of renaming rules for unix and Windows
 
 #### Changes in 2.2.3
 
