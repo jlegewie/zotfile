@@ -641,24 +641,23 @@ function getInstalledVersion () {
 
 function downloadPDFTool() {
     
-        var ioService = Components.classes["@mozilla.org/network/io-service;1"]
-                            .getService(Components.interfaces.nsIIOService);
-                            
-        
-        var fileName=Zotero.ZotFile.pdfAnnotations.popplerExtractorFileName;
+    var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                        .getService(Components.interfaces.nsIIOService);
+                        
+    var fileName=Zotero.ZotFile.pdfAnnotations.popplerExtractorFileName;
 
-        var url = Zotero.ZotFile.pdfAnnotations.popplerExtractorBaseURL + fileName+ ".zip";
-        var uri = ioService.newURI(url, null, null);
+    var url = Zotero.ZotFile.pdfAnnotations.popplerExtractorBaseURL + fileName+ ".zip";
+    var uri = ioService.newURI(url, null, null);
 
-        var file = Zotero.getZoteroDirectory();
-        var zotero_dir=file.path;
-        file.append(fileName+ ".zip");
-        var fileURL = ioService.newFileURI(file);
+    var file = Zotero.getZoteroDirectory();
+    var zotero_dir=file.path;
+    file.append(fileName+ ".zip");
+    var fileURL = ioService.newFileURI(file);
 
-        const nsIWBP = Components.interfaces.nsIWebBrowserPersist;
-        var wbp = Components.classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"].createInstance(nsIWBP);
+    const nsIWBP = Components.interfaces.nsIWebBrowserPersist;
+    var wbp = Components.classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"].createInstance(nsIWBP);
 
-        var progressListener = new Zotero.WebProgressFinishListener(function () {
+    var progressListener = new Zotero.WebProgressFinishListener(function () {
 
         // extract zip file
         var proc = Components.classes["@mozilla.org/process/util;1"].
