@@ -659,38 +659,45 @@ function downloadPDFTool() {
 
     var progressListener = new Zotero.WebProgressFinishListener(function () {
 
-        // extract zip file
-        var proc = Components.classes["@mozilla.org/process/util;1"].
-                    createInstance(Components.interfaces.nsIProcess);
-        proc.init(Zotero.ZotFile.createFile("/usr/bin/unzip"));
-        // define arguments
-        var args = ["-o","-q",file.path,"-d"  + zotero_dir + "/ExtractPDFAnnotations"];
+        try {
+            // extract zip file
+            var proc = Components.classes["@mozilla.org/process/util;1"].
+                        createInstance(Components.interfaces.nsIProcess);
+            proc.init(Zotero.ZotFile.createFile("/usr/bin/unzip"));
+            // define arguments
+            var args = ["-o","-q",file.path,"-d"  + zotero_dir + "/ExtractPDFAnnotations"];
 
-        // run process
-        if (!Zotero.isFx36) {
-            proc.runw(true, args, args.length);
+            // run process
+            if (!Zotero.isFx36) {
+                proc.runw(true, args, args.length);
+            }
+            else {
+                proc.run(true, args, args.length);
+            }
+
+            // Set permissions to 755
+            var extractorFile=Zotero.ZotFile.createFile(Zotero.ZotFile.pdfAnnotations.popplerExtractorPath);
+            if (Zotero.isMac) {
+                extractorFile.permissions = 33261;
+            }
+            else if (Zotero.isLinux) {
+                extractorFile.permissions = 493;
+            }
+            
+            // set ZotFile variable
+            Zotero.ZotFile.pdfAnnotations.popplerExtractorTool=true;
+
+            // enable poppler extractor option
+            document.getElementById('id-zotfile-pdfExtraction-UsePDFJS-false').disabled=false;
+            
         }
-        else {
-            proc.run(true, args, args.length);
+        catch(e) {
+            Zotero.ZotFile.infoWindow("ZotFile Error","Unable to download the poppler tool.\n\n" + e.name + "\n" + e.message,8000);
         }
 
-        // Set permissions to 755
-        var extractorFile=Zotero.ZotFile.createFile(Zotero.ZotFile.pdfAnnotations.popplerExtractorPath);
-        if (Zotero.isMac) {
-            extractorFile.permissions = 33261;
-        }
-        else if (Zotero.isLinux) {
-            extractorFile.permissions = 493;
-        }
-        
-        // set ZotFile variable
-        Zotero.ZotFile.pdfAnnotations.popplerExtractorTool=true;
-
-        // enable poppler extractor option
-        document.getElementById('id-zotfile-pdfExtraction-UsePDFJS-false').disabled=false;
-        
         // update settings
         updatePDFToolsStatus();
+
 
     });
     
