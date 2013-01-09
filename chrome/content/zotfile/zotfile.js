@@ -1989,7 +1989,7 @@ Zotero.ZotFile = {
     // class to extract pdf annotations
     pdfAnnotations : {
         popplerExtractorFileName: 'ExtractPDFAnnotations',
-            popplerExtractorPath:null,
+        popplerExtractorPath:null,
         popplerExtractorVersion:1.0,
         popplerSupportedPlatforms:['MacIntel'],
         pdfExtraction:false,
