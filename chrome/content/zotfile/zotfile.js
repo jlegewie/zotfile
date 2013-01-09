@@ -173,6 +173,12 @@ Zotero.ZotFile = {
 
         // add event listener for automatically renaming attachments
         var notifierID = Zotero.Notifier.registerObserver(this.autoRename, ['item']);
+
+            // Load zotero.js first
+        Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+            .getService(Components.interfaces.mozIJSSubScriptLoader)
+            .loadSubScript("chrome://zotfile/content/ProgressWindow.js", Zotero.ZotFile);
+
         
     },
 
@@ -416,13 +422,14 @@ Zotero.ZotFile = {
         }
     },
 
-    infoWindow: function(main, message, time){
-        var pw = new (Zotero.ProgressWindow);
+    infoWindow: function(main, message, time, callback){
+        var pw = new (this.ProgressWindow);
         pw.changeHeadline(main);
         if (main=="error") pw.changeHeadline(Zotero.getString("general.errorHasOccurred"));  pw.addDescription(message);
         pw.show();
         pw.startCloseTimer(time);
-
+        // add callback
+        if (callback!==undefined) pw.addCallback(callback)
     },
 
     promptUser: function(message,option1,option2,option3) {
