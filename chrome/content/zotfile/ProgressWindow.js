@@ -113,19 +113,10 @@ Zotero.ZotFile.ProgressWindow = function(_window){
                 newText.setAttribute("class", "zotero-progress-item-label");
                 newText.setAttribute("crop", "end");
                 
-                var newImageHolder = _progressWindow.document.createElement("vbox");
-                var newImage = _progressWindow.document.createElement("image");
-                newImage.setAttribute("class", "zotero-progress-item-icon");
-                newImage.setAttribute("src", icons[i]);
-                newImage.setAttribute("flex", 0);
-                newImage.setAttribute("orient", "horizontal");
-                newImage.setAttribute("pack", "start");
-                newImageHolder.appendChild(newImage);
-                
                 var newHB = _progressWindow.document.createElement("hbox");
                 newHB.setAttribute("class", "zotero-progress-item-hbox");
                 
-                newHB.appendChild(newImageHolder);
+                //newHB.appendChild(newImageHolder);
                 newHB.appendChild(newText);
                 
                 _progressWindow.document.getElementById("zotero-progress-text-box").appendChild(newHB);
