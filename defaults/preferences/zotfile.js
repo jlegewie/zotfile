@@ -23,6 +23,7 @@ pref("extensions.zotfile.confirmation_batch_ask", true);
 pref("extensions.zotfile.confirmation_batch", 2);
 pref("extensions.zotfile.import", true);
 pref("extensions.zotfile.automatic_renaming", 2);
+pref("extensions.zotfile.disable_renaming", false);
 pref("extensions.zotfile.replace_blanks", false);
 pref("extensions.zotfile.lower_case", false);
 pref("extensions.zotfile.subfolder", false);

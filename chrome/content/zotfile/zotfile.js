@@ -224,7 +224,8 @@ Zotero.ZotFile = {
                                 // get parent item
                                 var parent = Zotero.Items.get(id_parent);
                                 // skip if file already has correct filename
-                                if(Zotero.ZotFile.getFilename(parent,"")==item.getFilename().replace(/\.[^/.]+$/, "")) continue;
+                                var filename = item.getFilename().replace(/\.[^/.]+$/, "");
+                                if(Zotero.ZotFile.getFilename(parent,filename)==filename) continue;
                                 // flag for notification
                                 var file_renamed=false;
                                 // function to rename attachments
@@ -271,12 +272,12 @@ Zotero.ZotFile = {
                                 Zotero.ZotFile.excludeAutorenameKeys.push(key);
                                 // ask user
                                 if(auto_rename==2) {                                    
-                                    Zotero.ZotFile.infoWindow("ZotFile: New attachment",{lines:["'" + file.leafName + "'"],txt:"(click here to rename)"},prefs.getIntPref("info_window_duration_clickable"),renameAttachment);
+                                    Zotero.ZotFile.infoWindow("ZotFile: New attachment",{lines:["'" + file.leafName + "'"],txt:"(click here to move and rename)"},prefs.getIntPref("info_window_duration_clickable"),renameAttachment);
                                 }
                                 // ask user if item has other attachments
                                 if(auto_rename==3) {
                                     if(parent.getAttachments().length>1)
-                                        Zotero.ZotFile.infoWindow("ZotFile: New attachment",{lines:["'" + file.leafName + "'"],txt:"(click here to rename)"},prefs.getIntPref("info_window_duration_clickable"),renameAttachment);
+                                        Zotero.ZotFile.infoWindow("ZotFile: New attachment",{lines:["'" + file.leafName + "'"],txt:"(click here to move and rename)"},prefs.getIntPref("info_window_duration_clickable"),renameAttachment);
                                     else
                                         renameAttachment();
                                 }
@@ -975,6 +976,8 @@ Zotero.ZotFile = {
     },
         
     getFilename: function(item,filename_org,rename_format){
+        // check whether renaming is disables
+        if(this.prefs.getBoolPref("disable_renaming")) return(filename_org);
         // check whether regular item
         if (!item.isRegularItem()) return(null);
         // rename format
@@ -1100,9 +1103,9 @@ Zotero.ZotFile = {
             }
             catch(err) {
                 if(err.name == "NS_ERROR_FILE_IS_LOCKED")
-                    this.infoWindow("ZotFile Report","ZotFile was unable to move the attachment with name '" + att_name + "' because it is locked. " + "Probably it is opened in a program, so please close it.", 8000);
+                    this.infoWindow("ZotFile Error","ZotFile was unable to move the attachment with name '" + att_name + "' because it is locked. " + "Probably it is opened in a program, so please close it.", 8000);
                 else
-                    this.infoWindow("ZotFile Report","ZotFile gets an untreated error while moving the attachment with name '" + att_name + ". \n\n" + "Error details: " + err,8000);
+                    this.infoWindow("ZotFile Error","ZotFile gets an untreated error while moving the attachment with name '" + att_name + ". \n\n" + "Error details: " + err,8000);
             
                 file.path = "NULL";
             }
