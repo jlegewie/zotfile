@@ -12,6 +12,7 @@ Zotero.ZotFile = {
     messages_warning:[],
     messages_report:[],
     messages_error:[],
+    excludeAutorenameKeys: [],
 
 
     // ========================= //
@@ -187,8 +188,7 @@ Zotero.ZotFile = {
 
     // Callback implementing the notify() method to pass to the Notifier
     autoRename: {
-        parent: this,
-        keys: [],
+        parent: this,        
         notify: function(event, type, ids, extraData) {
             // 'add item' event
             if (type == 'item' && event == 'add') {
@@ -210,9 +210,9 @@ Zotero.ZotFile = {
                                 // get id and key
                                 var id = item.getID();
                                 var key = item.key;
-                                // check whether already in progress
-                                if(this.keys.indexOf(key)!=-1) continue;
-                                // try to get the fie
+                                // check whether key is excluded                                
+                                if(Zotero.ZotFile.excludeAutorenameKeys.indexOf(key)!=-1) continue;
+                                // try to get the file
                                 var file = item.getFile();
                                 // If you can't then it isn't a proper attachment so continue
                                 if(!file) continue;
@@ -221,10 +221,12 @@ Zotero.ZotFile = {
                                 // check if attachment has parent item
                                 var id_parent = item.getSource();
                                 if(!id_parent) continue;
-                                // flag for notification
-                                var file_renamed=false;
                                 // get parent item
                                 var parent = Zotero.Items.get(id_parent);
+                                // skip if file already has correct filename
+                                if(Zotero.ZotFile.getFilename(parent,"")==item.getFilename().replace(/\.[^/.]+$/, "")) continue;
+                                // flag for notification
+                                var file_renamed=false;
                                 // function to rename attachments
                                 renameAttachment = function() {
 
@@ -266,7 +268,7 @@ Zotero.ZotFile = {
                                     }
                                 }
                                 
-                                this.keys.push(key);
+                                Zotero.ZotFile.excludeAutorenameKeys.push(key);
                                 // ask user
                                 if(auto_rename==2) {                                    
                                     Zotero.ZotFile.infoWindow("ZotFile: New attachment",{lines:["'" + file.leafName + "'"],txt:"(click here to rename)"},prefs.getIntPref("info_window_duration_clickable"),renameAttachment);
