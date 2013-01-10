@@ -941,14 +941,8 @@ Zotero.ZotFile = {
     },
     
     getFiletype: function(fname){
-        if(fname) {
-            var temp = [];
-            temp = fname.split('.');
-            return(temp[temp.length-1].toLowerCase());
-        }
-        else {
-             return("");
-        }
+        var pos = fname.lastIndexOf('.');
+        return pos==-1 ? '' : fname.substr(pos+1);
     },
     
     checkFileType: function (file) {
