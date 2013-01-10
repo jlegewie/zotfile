@@ -1878,7 +1878,7 @@ Zotero.ZotFile = {
         var attIDs=this.getSelectedAttachments();
         
         // Pull attachments
-        var get_attachments = function() {
+        var on_confirm = function() {
             for (var i=0; i < attIDs.length; i++) {
                 var att = Zotero.Items.get(attIDs[i]);
                 var item= Zotero.Items.get(att.getSource());
@@ -1899,10 +1899,10 @@ Zotero.ZotFile = {
                 confirmed=false;
                 this.infoWindow("ZotFile: Get attachments from tablet",
                     {lines:["Do you want to get " + attIDs.length + " selected attachments from your tablet?"],txt:"(click here to get files)"},
-                    this.prefs.getIntPref("info_window_duration_clickable"),get_attachments);
+                    this.prefs.getIntPref("info_window_duration_clickable"),on_confirm);
             }
         }
-        if(confirmed) get_attachments();
+        if(confirmed) on_confirm();
 
         // show messages
         this.showReportMessages("ZotFile: Attachments removed from tablet")
