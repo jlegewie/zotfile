@@ -481,10 +481,7 @@ Zotero.ZotFile = {
         pw.show();
         pw.startCloseTimer(time);
         // add callback
-        if (callback!==undefined) {
-            pw.addCallback(callback)
-            //pw.addLines("(click here to confirm)")
-        }
+        if (callback!==undefined) pw.addCallback(callback)
         // return window
         return(pw);
     },
