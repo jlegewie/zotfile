@@ -32,7 +32,8 @@ Contributions preferably through pull requests are welcome!
 - revised notifications
 - Zotfile translation to German (thanks to wuffi)
 - Allow periods as delimiter in filenames (thanks to jjatria)
-- "lower case" option for filenames (thanks to jjatria)
+- new option: "lower case" filenames (thanks to jjatria)
+- new option: disable renaming so that attachments are only moved (hidden: disable_renaming)
 - fix preview of renaming rules for unix and Windows
 - fix problem that sending to and getting from tablet deletes note content
 
