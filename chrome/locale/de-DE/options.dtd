@@ -61,7 +61,13 @@
 <!ENTITY use-article-book-chapter-page "Zugehörige Artikel/Buch Kapitel-Seite für Textteile verwenden">
 <!ENTITY page-number-determination "Die Seitenzahl im Artikel wird durch Addition der Seitenzahl innerhalb des PDF Dokuments und der ersten Seite aus dem &quot;Seiten&quot; Feld in den zotero Metadaten berechnet. Dieser Ansatz scheitert, falls die erste Seite des PDF Dokuments nicht die erste Seite innerhalb des Artikels/Buchkapitels ist.">
 <!ENTITY other-advanced-settings "Erweiterte Einstellungen">
-<!ENTITY automatically-rename-new-attachments "Neue Anhänge automatisch umbenennen">
+
+<!ENTITY automatic_renaming_label "Automatisches umbennen von neuen Anhängen">
+<!ENTITY automatic_renaming_no "Nie">
+<!ENTITY automatic_renaming_ask "Immer nachfragen (non-disruptive)">
+<!ENTITY automatic_renaming_ask_mult "Nur nachfragen wenn weitere Anh. vorhanden">
+<!ENTITY automatic_renaming_always "Immer umbennen">
+
 <!ENTITY ask-when-attaching-new-files "Nachfragen beim Anhängen neuer Dateien">
 <!ENTITY ask-to-batch-rename "Nachfragen beim stapelweisen Umbenennen oder Verschieben von ">
 <!ENTITY or-more-attachments " oder mehr Anhängen">

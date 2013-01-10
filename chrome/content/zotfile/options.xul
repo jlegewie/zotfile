@@ -23,7 +23,7 @@
 				<preference id="pref-zotfile-useFileTypes" name="extensions.zotfile.useFileTypes" type="bool"/>
 
 				<preference id="pref-zotfile-import" name="extensions.zotfile.import" type="bool"/>
-				<preference id="pref-zotfile-autoRename" name="extensions.zotfile.autoRename" type="bool"/>                                                                                              				
+				<preference id="pref-zotfile-automatic_renaming" name="extensions.zotfile.automatic_renaming" type="int"/>                                                                                              				
 				<preference id="pref-zotfile-dest_dir" name="extensions.zotfile.dest_dir" type="string"/>
 
 				<preference id="pref-zotfile-useZoteroToRename" name="extensions.zotfile.useZoteroToRename" type="bool"/>                                                                                              
@@ -57,7 +57,8 @@
 				<preference id="pref-zotfile-tablet-storeCopyOfFile" name="extensions.zotfile.tablet.storeCopyOfFile" type="bool"/>								
 				<preference id="pref-zotfile-tablet-storeCopyOfFile_suffix" name="extensions.zotfile.tablet.storeCopyOfFile_suffix" type="string"/> 
 				
-				<preference id="pref-zotfile-tablet-projectFolders" name="extensions.zotfile.tablet.projectFolders" type="int"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders" name="extensions.zotfile.tablet.projectFolders" type="int"/>
+
 	            <preference id="pref-zotfile-tablet-subfolder" name="extensions.zotfile.tablet.subfolder" type="bool"/>   
 				<preference id="pref-zotfile-tablet-subfolderFormat" name="extensions.zotfile.tablet.subfolderFormat" type="string"/>   
 				<preference id="pref-zotfile-tablet-tag" name="extensions.zotfile.tablet.tag" type="string"/>   
@@ -335,7 +336,22 @@
 						<separator/>
 						<groupbox>
 						   <caption label="&other-advanced-settings;"/> 
-						   <checkbox id="id-zotfile-autoRename" label="&automatically-rename-new-attachments;" preference="pref-zotfile-autoRename"/>
+						   	<row>
+						   		<hbox align="center">
+						   			<label value="&automatic_renaming_label;" control="id-zotfile-automatic_renaming"/>
+						   		</hbox>
+						   		<hbox>
+						   			<menulist id="id-zotfile-automatic_renaming" preference="pref-zotfile-automatic_renaming">
+						   				<menupopup>
+						   					<menuitem label="&automatic_renaming_no;" value="1"/>
+						   					<menuitem label="&automatic_renaming_ask;" value="2"/>
+						   					<menuitem label="&automatic_renaming_ask_mult;" value="3"/>
+						   					<menuitem label="&automatic_renaming_always;" value="4"/>
+						   				</menupopup>
+						   			</menulist>
+						   		</hbox>
+						   	</row>
+
 						   <checkbox id="id-zotfile-confirmation" label="&ask-when-attaching-new-files;" preference="pref-zotfile-confirmation"/>
 						   <hbox style="margin: 0"  align="center">					
 							    <checkbox id="id-zotfile-confirmation_batch_ask" label="&ask-to-batch-rename;" preference="pref-zotfile-confirmation_batch_ask" oncommand="updatePreferenceWindow('confirm')"/>	
