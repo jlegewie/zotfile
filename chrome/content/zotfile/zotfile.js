@@ -1650,27 +1650,27 @@ Zotero.ZotFile = {
         var confirmed=1;
         if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) confirmed=confirm("Do you want to send " + attIDs.length + " attachments to the tablet?");
         if(confirmed) {
-                if (!repush && attOnReaderCount>0) repush=confirm(attOnReaderCount + " of the selected attachments are already on the tablet. Do you want to replace these files on the tablet?");
-                if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - iterating through " + attIDs.length + " attachments...");
-                for (i=0; i < attIDs.length; i++) {
-                    var att = Zotero.Items.get(attIDs[i]);
-                    var item= Zotero.Items.get(att.getSource());
-                    if(!attOnReader[i] || (attOnReader[i] && repush)) {
-                        // first pull if already on reader
-                        if (attOnReader[i]) {
-                            if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - get attachment " + i + " from tablet before sending it");
-                            var att_mode=this.getInfo(att,"mode");
-                            if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
-                                attID=this.getAttachmentFromTablet(item,att,true);
-                                att = Zotero.Items.get(attID);
-                            }
+            if (!repush && attOnReaderCount>0) repush=confirm(attOnReaderCount + " of the selected attachments are already on the tablet. Do you want to replace these files on the tablet?");
+            if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - iterating through " + attIDs.length + " attachments...");
+            for (i=0; i < attIDs.length; i++) {
+                var att = Zotero.Items.get(attIDs[i]);
+                var item= Zotero.Items.get(att.getSource());
+                if(!attOnReader[i] || (attOnReader[i] && repush)) {
+                    // first pull if already on reader
+                    if (attOnReader[i]) {
+                        if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - get attachment " + i + " from tablet before sending it");
+                        var att_mode=this.getInfo(att,"mode");
+                        if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
+                            attID=this.getAttachmentFromTablet(item,att,true);
+                            att = Zotero.Items.get(attID);
                         }
-                        // now push
-                        if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - send attachment " + i);
-                        attID=this.sendAttachmentToTablet(item,att,projectFolder);
-                        if(attID!==null && attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
                     }
+                    // now push
+                    if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendSelectedAttachmentsToTablet - send attachment " + i);
+                    attID=this.sendAttachmentToTablet(item,att,projectFolder);
+                    if(attID!==null && attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
                 }
+            }
             // show messages
             this.showReportMessages("List of attachments moved to tablet.");
             // restore selection
