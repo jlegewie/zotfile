@@ -456,6 +456,12 @@ Zotero.ZotFile = {
         }
     },
 
+    showReportMessages: function(message){
+        // show report messages
+        if(this.messages_report.length>0) this.infoWindow("ZotFile Report",{lines:this.messages_report,txt:message}, 8000);
+        this.messages_report = [];
+    },
+
     infoWindow: function(main, message, time, callback){
         var pw = new (this.ProgressWindow);
         pw.changeHeadline(main);
@@ -1598,7 +1604,7 @@ Zotero.ZotFile = {
             this.addInfo(att,"projectFolder",projectFolder);
             
             // notification
-            if(verbose) this.infoWindow("ZotFile Report","The attachment \'" + newFile.leafName + "\' was sent to the tablet.",8000); // at \'" + projectFolder + "\'.
+            if(verbose) this.messages_report.push("'" + newFile.leafName + "'");
         }
         if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendAttachmentToTablet - attachment send with new ID " + newAttID);
         return(newAttID);
@@ -1665,7 +1671,9 @@ Zotero.ZotFile = {
                         if(attID!==null && attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
                     }
                 }
-                // restore selection
+            // show messages
+            this.showReportMessages("List of attachments moved to tablet.");
+            // restore selection
             if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
 
             // debug
@@ -1994,8 +2002,7 @@ Zotero.ZotFile = {
                 if(this.getTabletStatus(att)) this.infoWindow("Zotfile Error","Attachment could not be renamed because it is on the tablet.",8000);
             }
             // show report messages
-            if(this.messages_report.length>0) this.infoWindow("ZotFile Report",{lines:this.messages_report,txt:"List of renamed attachments."}, 8000);
-            this.messages_report = [];
+            this.showReportMessages("List of renamed attachments.");
             // restore selection
             if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
         }
