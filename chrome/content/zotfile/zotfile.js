@@ -188,7 +188,7 @@ Zotero.ZotFile = {
 
     // Callback implementing the notify() method to pass to the Notifier
     autoRename: {
-        parent: this,        
+        parent: this,
         notify: function(event, type, ids, extraData) {
             // 'add item' event
             if (type == 'item' && event == 'add') {
@@ -1350,8 +1350,9 @@ Zotero.ZotFile = {
     // =========================== //
     
     clearInfo: function (att) {
-        att.setNote("");
-            att.save();
+        note = att.getNote().split("; lastmod{")[0];
+        att.setNote(note.split("lastmod{")[0]);
+        att.save();
     },
 
     getInfo: function (att,tagname) {
@@ -1588,15 +1589,19 @@ Zotero.ZotFile = {
 
             // foreground mode: Rename and Move Attachment
             if(this.prefs.getIntPref("tablet.mode")==2) {
+                // get note content
+                var note = att.getNote();
+                // rename attachment
                 newAttID=this.renameAttachment(item, att,false,this.prefs.getCharPref("tablet.dest_dir")+projectFolder,this.prefs.getBoolPref("tablet.subfolder"),this.prefs.getCharPref("tablet.subfolderFormat"),false);
-
                 // get new attachment and file
                 att = Zotero.Items.get(newAttID);
                 newFile = att.getFile();
-
                 // add tag to attachment
                 if(!this.getTabletStatus(att)) att.addTag(this.prefs.getCharPref("tablet.tag"));
                 if (this.prefs.getBoolPref("tablet.tagParentPush")) item.addTag(this.prefs.getCharPref("tablet.tagParentPush_tag"));
+                // add note content
+                att.setNote(note);
+                att.save();
             }
             
             // add info to note (date of modification to attachment, location, and mode)
@@ -1806,10 +1811,18 @@ Zotero.ZotFile = {
         }
         // foreground mode
         if(att_mode==2) {
+            // get note content
+            var note = att.getNote();
+            // rename and move attachment
             attID=this.renameAttachment(item, att,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),false);
+            // get new attachment object
             att = Zotero.Items.get(attID);
+            // finish up
             itemPulled=true;
             option = time_zotero>time_saved ? 0 : 1;
+            // add note content
+            att.setNote(note);
+            att.save();
         }
         
         // post-processing if attachment has been removed & it's not a fake-pull
