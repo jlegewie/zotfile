@@ -10,6 +10,8 @@ Zotero.ZotFile = {
     zotfileURL:"http://www.jlegewie.com/zotfile.html",
     temp:"",
     messages_warning:[],
+    messages_report:[],
+    messages_error:[],
 
 
     // ========================= //
@@ -1318,8 +1320,10 @@ Zotero.ZotFile = {
 
                             // Rename and Move Attachment
                             var att = Zotero.Items.get(attID);
-                            this.renameAttachment(item, att,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),true);
-
+                            var newAttID = this.renameAttachment(item, att,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),false);
+                            // show message
+                            var new_file_name = Zotero.Items.get(newAttID).getFile().leafName;
+                            this.infoWindow("Zotfile Report","New attachment '" + new_file_name + "' added to Zotero item.",8000);
                         }
                     }
 
@@ -1933,7 +1937,7 @@ Zotero.ZotFile = {
                 file = att.getFile();
             
                 // output
-                if (linkmode!=Zotero.Attachments.LINK_MODE_LINKED_FILE && notification) this.infoWindow("Zotfile Report","Imported Attachment renamed to \'" + filename + "\'.",8000);
+                if (linkmode!=Zotero.Attachments.LINK_MODE_LINKED_FILE && notification) this.messages_report.push("'" + filename + "' (imported)");
                                 
             }
     
@@ -1950,7 +1954,7 @@ Zotero.ZotFile = {
                 att.erase();
         
                 // output
-                if(notification) this.infoWindow("Zotfile Report","Imported Attachment \'" + filename + "\'.",8000);
+                if(notification) this.messages_report.push("'" + filename + "' (imported)");                    
                 
                 // return id of attachment
                 return newAttID;
@@ -1973,7 +1977,7 @@ Zotero.ZotFile = {
                     // erase old attachment
                     att.erase();
         
-                    if(notification) this.infoWindow("Zotfile Report","Linked Attachment \'" + file.leafName + "\'.",8000);
+                    if(notification) this.messages_report.push("'" + file.leafName + "' (linked)");                        
                     
                     // return id of attachment
                     return newAttID;
@@ -2027,9 +2031,11 @@ Zotero.ZotFile = {
                     }
                 }
                 if(this.getTabletStatus(att)) this.infoWindow("Zotfile Error","Attachment could not be renamed because it is on the tablet.",8000);
-
             }
-                // restore selection
+            // show report messages
+            if(this.messages_report.length>0) this.infoWindow("ZotFile Report",{lines:this.messages_report,txt:"List of renamed attachments."}, 8000);
+            this.messages_report = [];
+            // restore selection
             if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
         }
     },
