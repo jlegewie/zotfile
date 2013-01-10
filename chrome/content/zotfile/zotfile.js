@@ -1868,17 +1868,32 @@ Zotero.ZotFile = {
         var attIDs=this.getSelectedAttachments();
         
         // Pull attachments
-        var tagID=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tag"),0);
-        var confirmed=1;
-        if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) confirmed=confirm("Do you want to get the " + attIDs.length + " selected attachments from your tablet?");
-        if(confirmed) for (var i=0; i < attIDs.length; i++) {
-            var att = Zotero.Items.get(attIDs[i]);
-            var item= Zotero.Items.get(att.getSource());
-            if(att.hasTag(tagID)) {
-                var attID=this.getAttachmentFromTablet(item,att,false);
-                if(attID!==null && attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
+        var get_attachments = function() {
+            for (var i=0; i < attIDs.length; i++) {
+                var att = Zotero.Items.get(attIDs[i]);
+                var item= Zotero.Items.get(att.getSource());
+                if(att.hasTag(tagID)) {
+                    var attID=Zotero.ZotFile.getAttachmentFromTablet(item,att,false);
+                    if(attID!==null && attIDs[i]!=attID) selection=Zotero.ZotFile.arrayReplace(selection,attIDs[i],attID);
+                }
             }
         }
+        // confirm
+        var tagID=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tag"),0);
+        var confirmed=true;
+        if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) {
+            try {
+                confirmed=confirm("Do you want to get the " + attIDs.length + " selected attachments from your tablet?");                
+            }
+            catch (err) {
+                confirmed=false;
+                this.infoWindow("ZotFile: Get attachments from tablet",
+                    {lines:["Do you want to get " + attIDs.length + " selected attachments from your tablet?"],txt:"(click here to get files)"},
+                    this.prefs.getIntPref("info_window_duration_clickable"),get_attachments);
+            }
+        }
+        if(confirmed) get_attachments();
+
         // show messages
         this.showReportMessages("ZotFile: Attachments removed from tablet")
         // restore selection
