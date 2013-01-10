@@ -1932,7 +1932,7 @@ Zotero.ZotFile = {
             var location = this.getLocation(item,dest_dir,subfolder,subfolderFormat);
 
             // (a) LINKED ATTACHMENT TO IMPORTED ATTACHMENT
-            if (linkmode==Zotero.Attachments.LINK_MODE_LINKED_FILE  && import_att) {                                                                    
+            if (linkmode==Zotero.Attachments.LINK_MODE_LINKED_FILE  && import_att) {
                 // Attach file to selected Zotero item
                 newAttID=Zotero.Attachments.importFromFile(file, itemID,item.libraryID);
                 // remove file from hard-drive
