@@ -1905,7 +1905,7 @@ Zotero.ZotFile = {
         if(confirmed) on_confirm();
 
         // show messages
-        this.showReportMessages("ZotFile: Attachments removed from tablet")
+        this.showReportMessages("ZotFile: Attachments got from tablet")
         // restore selection
         if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
     },
