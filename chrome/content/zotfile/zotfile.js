@@ -207,13 +207,13 @@ Zotero.ZotFile = {
                         if(item.isAttachment()) {
                             // Is imported attachment?
                             if (item.isImportedAttachment()) {
-                                // get id
+                                // get id and key
                                 var id = item.getID();
-                                var key = item.getSourceKey();
+                                var key = item.key;
+                                // try to get the fie
+                                var file = item.getFile();
                                 // check whether already in progress
                                 if(this.keys.indexOf(key)!=-1) continue;
-                                // If so, try and get the fie
-                                var file = item.getFile();
                                 // If you can't then it isn't a proper attachment so continue
                                 if(!file) continue;
                                 // If it's a HTML file then exit so we don't rename snapshorts
