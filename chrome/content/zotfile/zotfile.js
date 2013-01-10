@@ -425,11 +425,25 @@ Zotero.ZotFile = {
     infoWindow: function(main, message, time, callback){
         var pw = new (this.ProgressWindow);
         pw.changeHeadline(main);
-        if (main=="error") pw.changeHeadline(Zotero.getString("general.errorHasOccurred"));  pw.addDescription(message);
+        if (main=="error") pw.changeHeadline(Zotero.getString("general.errorHasOccurred"));
+
+        if (typeof(message) == "object") {
+            if (message.txt!==undefined) pw.addDescription(message.txt);
+            for (i =0;i<message.lines.length;i++)
+                pw.addLines(message.lines[i]);
+        }
+        else
+            pw.addDescription(message);
+
         pw.show();
         pw.startCloseTimer(time);
         // add callback
-        if (callback!==undefined) pw.addCallback(callback)
+        if (callback!==undefined) {
+            pw.addCallback(callback)
+            //pw.addLines("(click here to confirm)")
+        }
+        // return window
+        return(pw);
     },
 
     promptUser: function(message,option1,option2,option3) {
