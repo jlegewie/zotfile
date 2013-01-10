@@ -1829,8 +1829,7 @@ Zotero.ZotFile = {
             if (this.prefs.getBoolPref("tablet.tagParentPull")) item.addTag(this.prefs.getCharPref("tablet.tagParentPull_tag"));
             
             // notification
-            this.infoWindow("ZotFile Report","The attachment \'" + att.getFile().leafName + "\' was removed from the tablet.",8000);
-            
+            this.messages_report.push("'" + att.getFile().leafName + "' (imported)");            
         }
 
         // remove modified tag from attachment
@@ -1866,7 +1865,9 @@ Zotero.ZotFile = {
                 if(attID!==null && attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
             }
         }
-            // restore selection
+        // show messages
+        this.showReportMessages("List of attachments removed from tablet.")
+        // restore selection
         if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
     },
     
