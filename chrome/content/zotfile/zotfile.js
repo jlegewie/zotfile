@@ -1009,7 +1009,8 @@ Zotero.ZotFile = {
         if(this.prefs.getBoolPref("userInput")) filename=this.addUserInput(filename,filename_org);
         
         // add filetype to filename
-        if(filename_org!="") filename = filename + "." + this.getFiletype(filename_org);
+        var filetype = this.getFiletype(filename_org);
+        if(filename_org!="" && filetype!="") filename = filename + "." + filetype;
         
         // return
         filename = Zotero.File.getValidFileName(filename);
