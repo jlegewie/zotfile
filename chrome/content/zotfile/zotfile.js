@@ -269,12 +269,12 @@ Zotero.ZotFile = {
                                 this.keys.push(key);
                                 // ask user
                                 if(auto_rename==2) {                                    
-                                    Zotero.ZotFile.infoWindow("Zotfile",{lines:["New attachment '" + file.leafName + "' added to Zotero item."],txt:"(click here to rename)"},prefs.getIntPref("info_window_duration_clickable"),renameAttachment);
+                                    Zotero.ZotFile.infoWindow("ZotFile: New attachment",{lines:["'" + file.leafName + "'"],txt:"(click here to rename)"},prefs.getIntPref("info_window_duration_clickable"),renameAttachment);
                                 }
                                 // ask user if item has other attachments
                                 if(auto_rename==3) {
                                     if(parent.getAttachments().length>1)
-                                        Zotero.ZotFile.infoWindow("Zotfile",{lines:["New attachment '" + file.leafName + "' added to Zotero item."],txt:"(click here to rename)"},prefs.getIntPref("info_window_duration_clickable"),renameAttachment);
+                                        Zotero.ZotFile.infoWindow("ZotFile: New attachment",{lines:["'" + file.leafName + "'"],txt:"(click here to rename)"},prefs.getIntPref("info_window_duration_clickable"),renameAttachment);
                                     else
                                         renameAttachment();
                                 }
