@@ -225,7 +225,8 @@ Zotero.ZotFile = {
                                 var parent = Zotero.Items.get(id_parent);
                                 // skip if file already has correct filename
                                 var filename = item.getFilename().replace(/\.[^/.]+$/, "");
-                                if(Zotero.ZotFile.getFilename(parent,filename)==filename) continue;
+                                //Zotero.ZotFile.infoWindow("REPORT",{lines:[Zotero.ZotFile.getFilename(parent,filename),filename]});
+                                if(filename.indexOf(Zotero.ZotFile.getFilename(parent,filename))==0) continue;
                                 // flag for notification
                                 var file_renamed=false;
                                 // function to rename attachments
