@@ -30,6 +30,7 @@ pref("extensions.zotfile.subfolderFormat", "/%w/%y");
 pref("extensions.zotfile.userInput", false);
 pref("extensions.zotfile.userInput_Default", "Paper");
 pref("extensions.zotfile.version","");
+pref("extensions.zotfile.info_window_duration_clickable",10000);
 
 pref("extensions.zotfile.tablet", false);
 pref("extensions.zotfile.tablet.dest_dir", "");
