@@ -456,9 +456,9 @@ Zotero.ZotFile = {
         }
     },
 
-    showReportMessages: function(message){
+    showReportMessages: function(title){
         // show report messages
-        if(this.messages_report.length>0) this.infoWindow("ZotFile Report",{lines:this.messages_report,txt:message}, 8000);
+        if(this.messages_report.length>0) this.infoWindow(title,{lines:this.messages_report}, 8000);
         this.messages_report = [];
     },
 
@@ -1672,7 +1672,7 @@ Zotero.ZotFile = {
                 }
             }
             // show messages
-            this.showReportMessages("List of attachments moved to tablet.");
+            this.showReportMessages("ZotFile: Attachments moved to tablet");
             // restore selection
             if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
 
@@ -1866,7 +1866,7 @@ Zotero.ZotFile = {
             }
         }
         // show messages
-        this.showReportMessages("List of attachments removed from tablet.")
+        this.showReportMessages("ZotFile: Attachments removed from tablet")
         // restore selection
         if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
     },
@@ -2003,7 +2003,7 @@ Zotero.ZotFile = {
                 if(this.getTabletStatus(att)) this.infoWindow("Zotfile Error","Attachment could not be renamed because it is on the tablet.",8000);
             }
             // show report messages
-            this.showReportMessages("List of renamed attachments.");
+            this.showReportMessages("ZotFile: Renamed attachments");
             // restore selection
             if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
         }
