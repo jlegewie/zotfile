@@ -9,6 +9,7 @@ Zotero.ZotFile = {
     projectMax:15,
     zotfileURL:"http://www.jlegewie.com/zotfile.html",
     temp:"",
+    messages_warning:[],
 
 
     // ========================= //
@@ -338,7 +339,7 @@ Zotero.ZotFile = {
                 return(true);
             else {
                 // show warning
-                if(warning) this.infoWindow("ZotFile Warning","Zotfile skipped the attachment '" + att.getField("title") + "' (top-level item, snapshot or the file does not exists).", 8000);
+                if(warning) this.messages_warning.push("'" + att.getField("title") + "'");                
                 // return false
                 return(false);
             }
@@ -369,6 +370,9 @@ Zotero.ZotFile = {
         }
         // remove duplicate elements
         if(attIDs.length>0) attIDs=this.removeDuplicates(attIDs);
+        // show warnings
+        if(this.messages_warning.length>0) this.infoWindow("ZotFile Warning",{lines:this.messages_warning,txt:"Attachments skipped because they are top-level items, snapshots or the file does not exists."}, 8000);
+        this.messages_warning = [];
         // return array of attachment IDs
         return(attIDs);
     },
