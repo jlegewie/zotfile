@@ -1304,30 +1304,44 @@ Zotero.ZotFile = {
 
                 // attach them
                 if(file!=-1 && file!=-2) {
-                    for (var i=0; i < file.length; i++) {
+                    for (var i=0; i < file.length; i++) {                        
 
-                        // confirmation from user
-                        var file_oldpath=file[i].leafName;
-                        var confirmed=1;
-                        if (this.prefs.getBoolPref("confirmation")) confirmed=confirm("Do you want to rename and attach/link the file \'" + file_oldpath + "\' to the currently selected Zotero item?");
-                        if(confirmed){
-                            var attID;
+                        var on_confirm = function() {                            
+                            var zz=Zotero.ZotFile,
+                                   attID;
                             // create linked attachment if local library
                             if (!item.libraryID) attID=Zotero.Attachments.linkFromFile(file[i], item.itemID,item.libraryID);
 
                             // import attachment if cloud library
                             if (item.libraryID) {
                                 attID=Zotero.Attachments.importFromFile(file[i], item.itemID,item.libraryID);
-                                this.removeFile(file[i]);
+                                zz.removeFile(file[i]);
                             }
 
                             // Rename and Move Attachment
                             var att = Zotero.Items.get(attID);
-                            var newAttID = this.renameAttachment(item, att,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),false);
+                            var newAttID = zz.renameAttachment(item, att,zz.prefs.getBoolPref("import"),zz.prefs.getCharPref("dest_dir"),zz.prefs.getBoolPref("subfolder"),zz.prefs.getCharPref("subfolderFormat"),false);
                             // show message
                             var new_file_name = Zotero.Items.get(newAttID).getFile().leafName;
-                            this.infoWindow("Zotfile Report","New attachment '" + new_file_name + "' added to Zotero item.",8000);
+                            zz.infoWindow("Zotfile Report","New attachment '" + new_file_name + "' added to Zotero item.",8000);
                         }
+
+                        // get confirmation
+                        var confirmed=true;
+                        var file_oldpath=file[i].leafName;
+                        if (this.prefs.getBoolPref("confirmation")) {
+                            try {
+                                confirmed=confirm("Do you want to rename and attach/link the file \'" + file_oldpath + "\' to the currently selected Zotero item?");
+                            }
+                            catch (err) {
+                                confirmed=false;
+                                this.infoWindow("ZotFile: Attach new file",
+                                    {lines:["Do you want to rename and attach/link the file \'" + file_oldpath + "\' to the currently selected Zotero item?"],txt:"(click here to attach)"},
+                                    this.prefs.getIntPref("info_window_duration_clickable"),on_confirm);
+                            }
+                        }
+                        if(confirmed) on_confirm();
+                        
                     }
 
                 }
