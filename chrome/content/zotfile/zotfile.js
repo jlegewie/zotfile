@@ -1907,7 +1907,6 @@ Zotero.ZotFile = {
             
     // Rename & Move Existing Attachments
     renameAttachment: function(item, att,import_att,dest_dir,subfolder,subfolderFormat,notification) {
-        var file;
         var newAttID=null;
         // get link mode and item ID
         var linkmode = att.attachmentLinkMode;
@@ -1917,69 +1916,47 @@ Zotero.ZotFile = {
         if(att.isImportedAttachment() || linkmode==Zotero.Attachments.LINK_MODE_LINKED_FILE) {
     
             // get object of attached file
-            file = att.getFile();
-
+            var file = att.getFile();
             // create file name using ZotFile rules
             var filename = this.getFilename(item, file.leafName);
             var location = this.getLocation(item,dest_dir,subfolder,subfolderFormat);
 
+            // (a) LINKED ATTACHMENT TO IMPORTED ATTACHMENT
+            if (linkmode==Zotero.Attachments.LINK_MODE_LINKED_FILE  && import_att) {                                                                    
+                // Attach file to selected Zotero item
+                newAttID=Zotero.Attachments.importFromFile(file, itemID,item.libraryID);
+                // remove file from hard-drive
+                file.remove(false);
+                // erase old attachment
+                att.erase();
+                // create new attachment object
+                att = Zotero.Items.get(newAttID);
+                // notification
+                if(notification) this.messages_report.push("'" + filename + "' (imported)");                    
+            }
+            // RENAME ATTACHMENT FILE
             if (import_att || item.libraryID) {
-                                        
                 // rename file associated with attachment
                 att.renameAttachmentFile(filename);
-
                 // change title of attachment item
                 att.setField('title', filename);
                 att.save();
-        
-                // get object of attached file
-                file = att.getFile();
-            
-                // output
+                // notification
                 if (linkmode!=Zotero.Attachments.LINK_MODE_LINKED_FILE && notification) this.messages_report.push("'" + filename + "' (imported)");
-                                
             }
-    
-            // (a) LINKED ATTACHMENT TO IMPORTED ATTACHMENT
-            if (linkmode==Zotero.Attachments.LINK_MODE_LINKED_FILE  && import_att) {
-                                                                    
-                // Attach file to selected Zotero item
-                newAttID=Zotero.Attachments.importFromFile(file, itemID,item.libraryID);
-        
-                // remove file from hard-drive
-                file.remove(false);
-
-                // erase old attachment
-                att.erase();
-        
-                // output
-                if(notification) this.messages_report.push("'" + filename + "' (imported)");                    
-                
-                // return id of attachment
-                return newAttID;
-            }
-        
             // (b) TO LINKED ATTACHMENT (only if library is local and not cloud)
-    //      if (linkmode==Zotero.Attachments.LINK_MODE_IMPORTED_FILE && !import_att) {
             if (!import_att && !item.libraryID) {
                 // move pdf file
                 var newfile_path=this.moveFile(file,location, filename, att.getDisplayTitle());
-            
                 if (newfile_path!="NULL") {
-                                
                     // recreate the outfile nslFile Object
                     file = this.createFile(newfile_path);
-    
                     // create linked attachment
                     newAttID=Zotero.Attachments.linkFromFile(file, itemID,item.libraryID);
-        
                     // erase old attachment
                     att.erase();
-        
-                    if(notification) this.messages_report.push("'" + file.leafName + "' (linked)");                        
-                    
-                    // return id of attachment
-                    return newAttID;
+                    // notification
+                    if(notification) this.messages_report.push("'" + file.leafName + "' (linked)");
                 }
             }
         }
