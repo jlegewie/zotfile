@@ -1530,45 +1530,6 @@ Zotero.ZotFile = {
             //win.ZoteroPane.itemsView.expandAllRows();
         }
     },
-        
-    scanTabletFiles: function() {
-        // get items on tablet
-        var items = this.getModifiedAttachmentsOnTablet();
-        if(items.length===0) this.infoWindow("ZotFile Report","Scan Tablet did not find any updated items in the destination folder.",8000);
-        
-        // iterate through attachment items
-        for (var i=0; i < items.length; i++) {
-            // get attachment item, parent and file
-            var item = items[i];
-            var parent=Zotero.Items.get(item.getSource());
-            var file=this.getTabletFile(item);
-
-            // ask user
-            var userInput=this.promptUser("Attachment \'" + file.leafName + "\' was modified. What do you want to do?","Get Attachment from Tablet","Update Zotero File","Cancel");
-
-            // Pull attachment
-            if(userInput===0) this.getAttachmentFromTablet(parent,item,false);
-
-            // change modification date of attachment and update file
-            if(userInput==1) {
-                if(this.getInfo(item,"mode")==2) this.addInfo(item,"lastmod",file.lastModifiedTime);
-                if(this.getInfo(item,"mode")==1) {
-                        var projectFolder=this.getInfo(item,"projectFolder");
-
-                    // first pull if already on reader
-                    // this.getAttachmentFromTablet(parent,item,true);
-                    var att_mode=this.getInfo(item,"mode");
-                    if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
-                        var itemID=this.getAttachmentFromTablet(parent,item,true);
-                        item = Zotero.Items.get(itemID);
-                    }
-                    // now push
-                    var newAttID=this.sendAttachmentToTablet(parent,item,projectFolder);
-                }
-
-            }
-        }
-    },
                 
     sendAttachmentToTablet: function(item, att, projectFolder, verbose) {
         if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendAttachmentToTablet - sending attachment " + att.getID() + " (mode is " + this.prefs.getIntPref("tablet.mode") + ")");
