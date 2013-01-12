@@ -22,8 +22,8 @@ pref("extensions.zotfile.confirmation", true);
 pref("extensions.zotfile.confirmation_batch_ask", true);
 pref("extensions.zotfile.confirmation_batch", 2);
 pref("extensions.zotfile.import", true);
-pref("extensions.zotfile.autoRename", true);
-pref("extensions.zotfile.autoRenameIfMultipleAttachments", true);
+pref("extensions.zotfile.automatic_renaming", 2);
+pref("extensions.zotfile.disable_renaming", false);
 pref("extensions.zotfile.replace_blanks", false);
 pref("extensions.zotfile.lower_case", false);
 pref("extensions.zotfile.subfolder", false);
@@ -31,6 +31,7 @@ pref("extensions.zotfile.subfolderFormat", "/%w/%y");
 pref("extensions.zotfile.userInput", false);
 pref("extensions.zotfile.userInput_Default", "Paper");
 pref("extensions.zotfile.version","");
+pref("extensions.zotfile.info_window_duration_clickable",10000);
 
 pref("extensions.zotfile.tablet", false);
 pref("extensions.zotfile.tablet.dest_dir", "");

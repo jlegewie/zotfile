@@ -28,9 +28,15 @@ Contributions preferably through pull requests are welcome!
 
 #### Changes in 2.2.5
 
+- revised auto rename with additional options
+  (four options: Never, Always ask, Only ask if item has other atts, Always rename. The 'asking' uses a clickable, non-disruptive window that appears in the bottom right corner - same as previous info window but clickable)
+- revised notifications
 - Zotfile translation to German (thanks to wuffi)
 - Allow periods as delimiter in filenames (thanks to jjatria)
-- "lower case" option for filenames (thanks to jjatria)
+- new option: "lower case" filenames (thanks to jjatria)
+- new option: disable renaming so that attachments are only moved (hidden: disable_renaming)
+- fix preview of renaming rules for unix and Windows
+- fix problem that sending to and getting from tablet deletes note content
 
 #### Changes in 2.2.3
 

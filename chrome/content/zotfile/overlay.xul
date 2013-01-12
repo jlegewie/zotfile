@@ -53,7 +53,6 @@
 	</menupopup>
 	
 	<menupopup id="zotero-tb-actions-popup">
-	<!--<menuitem id="zotreader_tbmenu_scan" insertafter="zotero-tb-actions-rtfScan" label="Scan Tablet Files..." oncommand="Zotero.ZotFile.scanTabletFiles();"/>-->   	
     <menuitem id="zotfile-options" insertafter="zotero-tb-actions-prefs" label="&zotfile-options.label;" oncommand="Zotero.ZotFile.openPreferenceWindow();"/>
 	</menupopup>
 	
