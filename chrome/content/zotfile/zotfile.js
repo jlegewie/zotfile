@@ -738,6 +738,46 @@ Zotero.ZotFile = {
         return {'output': output, 'exclusive': exclusive, 'conditional':conditional};
     },
 
+    findChar: function(rule, chr) {
+        chr = (typeof(chr) === "undefined") ? "|" : chr;
+        var positions = new Array();
+        var last = rule.indexOf(chr);
+        while (last > -1) {
+            positions.push(last);
+            last = rule.indexOf(chr, last + 1);
+        }
+        return positions;
+    },
+
+    /* Iterates through a string or until a mismatch between opening and closing
+     * character is found. Returns the start and end position of the first outer
+     * match or -1 if no match was found.
+     */
+    findOuterPair: function(rule, open, close) {
+        open = (typeof(open) === "undefined") ? "{" : open;
+        close = (typeof(close) === "undefined") ? "}" : close;
+        var matching = new Array();
+        var res = {"start": -1, "end": -1};
+        for (var i = 0; i < rule.length; ++i) {
+            if (rule[i] == open) {
+                matching.push(i);
+                if (res.start < 0) res.start = i;
+            }
+            else if (rule[i] == close) {
+                if (matching.length == 0) {
+                    var msg = "unmatched closing '".concat(close, "' at position ", i, ".");
+                    throw new Error(msg);
+                }
+                matching.pop();
+                if (matching.length == 0 && res.end < 0) res.end = i;
+            }
+        }
+        if (matching.length > 0) {
+            var msg = "unmatched opening '".concat(open, "' at position ", matching[0], ".");
+            throw new Error(msg);
+        }
+        return res;
+    },
 
     // Function replaces wildcard both for filename and subfolder definition
     replaceWildcard: function(zitem, rule){
