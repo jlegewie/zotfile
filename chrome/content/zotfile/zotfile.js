@@ -813,7 +813,7 @@ Zotero.ZotFile = {
             else if (rule[i] === close) {
                 if (matching.length === 0) {
                     var msg = "unmatched closing '".concat(close, "' at position ", i, ".");
-                    throw new Error(msg);
+                    alert(msg);
                 }
                 matching.pop();
                 if (matching.length === 0) {
@@ -825,7 +825,7 @@ Zotero.ZotFile = {
         }
         if (matching.length > 0) {
             var msg = "unmatched opening '".concat(open, "' at position ", matching[0], ".");
-            throw new Error(msg);
+            alert(msg);
         }
         return outer;
     },
@@ -916,12 +916,12 @@ Zotero.ZotFile = {
             // no wildcard between previous and current |
             if (pos - 1 < last || pos === 0) {
                 var msg = "missing left wildcard for exclusive operator '|' at position " + (offset + bars[i]) + ".";
-                throw new Error(msg);
+                alert(msg);
             }
             // no wildcard between current and next | or no more wildcards left
             if (wildcards[pos] > bars[i + 1] || pos === wildcards.length) {
                 var msg = "missing right wildcard for exclusive operator '|' at position " + (offset + bars[i]) + ".";
-                throw new Error(msg);
+                alert(msg);
             }
             if (pos - last > 1) {
                 // all look-ups in an exclusive group failed
