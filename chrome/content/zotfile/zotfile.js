@@ -875,7 +875,8 @@ Zotero.ZotFile = {
         table["%s"] = zitem.getField("journalAbbreviation");
         // publisher
         table["%p"] = zitem.getField("publisher");
-        table["%w"] = (table["%j"] != "") ? table["%j"] : table["%p"];
+        // user can do that on their own: %j|%p
+//        table["%w"] = (table["%j"] != "") ? table["%j"] : table["%p"];
         // patent
         table["%n"] = zitem.getField("patentNumber");
         table["%i"] = zitem.getField("assignee");
@@ -980,7 +981,7 @@ Zotero.ZotFile = {
     /*
      * Replace wildcards both for filename and subfolder definition
      */
-    replaceWildcard: function(rule, zitem, table, offset) {
+    replaceWildcard: function(zitem, rule, table, offset) {
         if (rule === "" || typeof(rule) === "undefined") {
             return;
         }
@@ -995,7 +996,7 @@ Zotero.ZotFile = {
             res = this.fillRule(rule.substring(last + 1, conditional[i].start), table, last + 1);
             complete &= res.complete;
             name.push(res.str);
-            name.push(this.replaceWildcard(rule.substring(conditional[i].start + 1, conditional[i].end), zitem, table, last + 1));
+            name.push(this.replaceWildcard(zitem, rule.substring(conditional[i].start + 1, conditional[i].end), table, conditional[i].start + 1));
             last = conditional[i].end;
         }
         res = this.fillRule(rule.substring(last + 1, rule.length), table, last + 1);
