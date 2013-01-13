@@ -989,12 +989,20 @@ Zotero.ZotFile = {
         var conditional = this.findOuterPairs(rule);
         var name = new Array();
         var last = -1;
+        var res;
+        var complete = true;
         for (var i = 0; i < conditional.length; ++i) {
-            name.push(this.fillRule(rule.substring(last + 1, conditional[i].start), table, last + 1));
+            res = this.fillRule(rule.substring(last + 1, conditional[i].start), table, last + 1);
+            complete &= res.complete;
+            name.push(res.str);
             name.push(this.replaceWildcard(rule.substring(conditional[i].start + 1, conditional[i].end), zitem, table, last + 1));
             last = conditional[i].end;
         }
-        name.push(this.fillRule(rule.substring(last + 1, rule.length), table, last + 1));
+        res = this.fillRule(rule.substring(last + 1, rule.length), table, last + 1);
+        complete &= res.complete;
+        // we're in recursive call and a wildcard was not complete
+        if (offset > 0 && !complete) return "";
+        name.push(res.str);
         return name.join("");
     },
 
