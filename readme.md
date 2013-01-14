@@ -12,8 +12,9 @@ To install the development version on github:
 
 - download .zip file from github
 - extract .zip file
-- recreate .zip file containing all the files 
-(Note: I am not sure why it is necessary to recreate the zip file)
+- recreate .zip file containing all the files at the top level, i.e.,
+  install.rdf and the chrome directory need to be at the root of the zip file
+  and not under zotfile/
 - rename the file to .xpi
 - For zotero firefox: drag & drop on firefox
 - For zotero standalone: In Zotero Standalone go to 'Tools->Add-ons->Tools for all Add-ons (the small, drop-down wheel menu next to the 'Search all Add-ons' box)->Install Add-on From File' and pick the .xpi file.
