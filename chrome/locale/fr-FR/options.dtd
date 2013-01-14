@@ -57,7 +57,7 @@
 <!ENTITY extract-annotations "Extraire les annotations et le texte surligné des fichiers PDF">
 <!ENTITY extract-annotations-and-highlighted-text "ZotFile peut extraire les annotations et le texte surligné/souligné de vos fichiers PDF dans des notes Zotero.">
 <!ENTITY extraction-method "Méthode d'extraction">
-<!ENTITY use-pdf-js "Utilisez pdf.js pour extraire les annotations">
+<!ENTITY use-pdf-js "Utiliser pdf.js pour extraire les annotations">
 <!ENTITY methods-to-extract-annotations "ZotFile prend en charge deux méthodes pour extraire des annotations à partir des fichiers PDF. L'outil basé sur pdf.js fonctionne sur toutes les plateformes et s'exécute directement à partir de zotero. L'outil d'extraction basé sur poppler ne fonctionne que pour Mac OS et nécessite un téléchargement séparé. Actuellement, pdf.js est plus fiable et devrait être choisi dans la plupart des cas. L'outil basé sur poppler, cependant, est plus rapide et peut traiter certaines standards pdf qui ne sont pas encore pris en charge par pdf.js.">
 <!ENTITY use-poppler "Utiliser poppler pour extraire les annotations">
 <!ENTITY add-full-citation "Ajouter, dans la note, après chaque extrait de texte surligné sa référence complète (auteur-date)">
