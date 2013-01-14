@@ -780,6 +780,28 @@ Zotero.ZotFile = {
         return(title);
     },
 
+    /*
+     * Performs a binary search that returns the index of the array before which the
+     * search should be inserted into the array to maintain a sorted order.
+     */
+    // Array.prototype.binaryIndex = function(find) {
+    binaryArrayIndex: function(obj, find) {
+        var low = 0, high = obj.length - 1, i;
+        while (low <= high) {
+            i = Math.floor((low + high) / 2);
+            if (obj[i] < find) {
+                low = i + 1;
+                continue;
+            }
+            if (obj[i] > find) {
+                high = i - 1;
+                continue;
+            }
+            return i;
+        }
+        if (obj[i] < find) return i + 1;
+        else return i;
+    },
 
     /*
      * Collects all positions of a particular substring in an Array.
@@ -813,7 +835,7 @@ Zotero.ZotFile = {
             else if (rule[i] === close) {
                 if (matching.length === 0) {
                     var msg = "unmatched closing '".concat(close, "' at position ", i, ".");
-                    alert(msg);
+                    this.infoWindow("ZotFile: Error in renaming format",msg,8000);
                 }
                 matching.pop();
                 if (matching.length === 0) {
@@ -825,7 +847,7 @@ Zotero.ZotFile = {
         }
         if (matching.length > 0) {
             var msg = "unmatched opening '".concat(open, "' at position ", matching[0], ".");
-            alert(msg);
+            this.infoWindow("ZotFile: Error in renaming format",msg,8000);            
         }
         return outer;
     },
@@ -875,8 +897,8 @@ Zotero.ZotFile = {
         table["%s"] = zitem.getField("journalAbbreviation");
         // publisher
         table["%p"] = zitem.getField("publisher");
-        // user can do that on their own: %j|%p
-//        table["%w"] = (table["%j"] != "") ? table["%j"] : table["%p"];
+        // journal or publisher
+        table["%w"] = (table["%j"] != "") ? table["%j"] : table["%p"];
         // patent
         table["%n"] = zitem.getField("patentNumber");
         table["%i"] = zitem.getField("assignee");
@@ -912,16 +934,16 @@ Zotero.ZotFile = {
         var lookup = "";
         for (var i = 0; i < bars.length; ++i) {
             // position of current | in wildcards
-            pos = wildcards.binaryIndex(bars[i]);
+            pos = this.binaryArrayIndex(wildcards,bars[i]);
             // no wildcard between previous and current |
             if (pos - 1 < last || pos === 0) {
                 var msg = "missing left wildcard for exclusive operator '|' at position " + (offset + bars[i]) + ".";
-                alert(msg);
+                this.infoWindow("ZotFile: Error in renaming format",msg,8000);
             }
             // no wildcard between current and next | or no more wildcards left
             if (wildcards[pos] > bars[i + 1] || pos === wildcards.length) {
                 var msg = "missing right wildcard for exclusive operator '|' at position " + (offset + bars[i]) + ".";
-                alert(msg);
+                this.infoWindow("ZotFile: Error in renaming format",msg,8000);                
             }
             if (pos - last > 1) {
                 // all look-ups in an exclusive group failed
@@ -2474,25 +2496,5 @@ Zotero.ZotFile = {
     }
                 
 };
-/*
- * Performs a binary search that returns the index of the array before which the
- * search should be inserted into the array to maintain a sorted order.
- */
-Array.prototype.binaryIndex = function(find) {
-    var low = 0, high = this.length - 1, i;
-    while (low <= high) {
-        i = Math.floor((low + high) / 2);
-        if (this[i] < find) {
-            low = i + 1;
-            continue;
-        }
-        if (this[i] > find) {
-            high = i - 1;
-            continue;
-        }
-        return i;
-    }
-    if (this[i] < find) return i + 1;
-    else return i;
-};
+
 
