@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
@@ -44,6 +44,13 @@
 	<em:locale>de-DE</em:locale>
 	<em:name>ZotFile</em:name>
           <em:description>Zotero Plug-in zur Verwaltung Ihrer Anhänge: Automatisches Umbennen, Verschieben und Anhängen von PDFs (oder anderen Dateien) zu Zotero Objekten, Synchronisation von PDFs aus Ihrer Zotero Bibliothek mit (mobilen) PDF Lesegeräten (z.B. einem iPad, Android Tablet, etc.), und Herauskopieren von PDF Annotationen.</em:description>
+      </Description>
+    </em:localized>
+	<em:localized>
+      <Description>
+	<em:locale>fr-FR</em:locale>
+	<em:name>ZotFile</em:name>
+          <em:description>Un module complémentaire de Zotero pour gérer vos pièces jointes: renommer automatiquement, déplacer, et joindre des PDFs (ou d'autres fichiers) aux documents Zotero, synchroniser les PDFs depuis votre bibliothèque Zotero vers votre lecteur PDF mobile (par ex.: un iPad, une tablette Android, etc.) et extraire les annotations de vos PDFs.</em:description>
       </Description>
     </em:localized>
     <em:creator>Joscha Legewie</em:creator>
