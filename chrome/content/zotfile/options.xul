@@ -249,13 +249,13 @@
 						   	<separator/> 							   
 			
 							   <label id="id-zotfile-renameFormat-label" value="&format-for-all-types;"/>
-							   <textbox id="id-zotfile-renameFormat" preference="pref-zotfile-renameFormat" onchange="checkRenameFormat('renameFormat'); "/>
+							   <textbox id="id-zotfile-renameFormat" preference="pref-zotfile-renameFormat" onchange="checkRenameFormat('renameFormat');"/>
 							   <label id="id-zotfile-renameFormat_patent-label" value="&format-for-patents;"/>
 							   <textbox id="id-zotfile-renameFormat_patent" preference="pref-zotfile-renameFormat_patent" onchange="checkRenameFormat('renameFormat_patent');"/>
-                               <label id="id-zotfile-renameFormat-des1" style="font-size: 9px" value="%a - author last name; %y - year; %t - title; %j - journal; use {...} for an optional group and | for exclusive matches"/>					   							   
+							   <label id="id-zotfile-renameFormat-des1" style="font-size: 9px" value="&list-of-wildcards;"/>					   							   
 							   <hbox style="margin: 0">					
-								   <label id="id-zotfile-renameFormat-des2" style="font-size: 9px; margin-right:0px" value="For a full list of place holder see the "/>
-								   <label id="id-zotfile-renameFormat-des3" style="font-size: 9px; margin-left:0px; margin-right:0px" class="text-link" href="http://www.jlegewie.com/zotfile.html&#35;rename" value="zotfile website"/>
+								   <label id="id-zotfile-renameFormat-des2" style="font-size: 9px; margin-right:0px" value="&for-a-full-list;"/>
+								   <label id="id-zotfile-renameFormat-des3" style="font-size: 9px; margin-left:0px; margin-right:0px" class="text-link" href="http://www.jlegewie.com/zotfile.html&#35;rename" value="&zotfile-website;"/>
 								   <label id="id-zotfile-renameFormat-des4" style="font-size: 9px; margin-left:0px; margin-right:0px" value="."/>								
 							   </hbox>
 						    			
@@ -267,7 +267,7 @@
 
 							   <caption label="&additional-settings;"/>  
 							   		<hbox style="margin: 0">					
-									   <label control="id-zotfile-label-authors_delimiter" value="Delimiter between multiple authors"/>
+									   <label control="id-zotfile-label-authors_delimiter" value="&delimiter-multiple-authors;"/>
 									   <textbox style="margin: -2px 0px 0px 0px" id="id-zotfile-authors_delimiter" preference="pref-zotfile-authors_delimiter" width="50"/>
 								   </hbox>
 								   
