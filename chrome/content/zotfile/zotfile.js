@@ -1,3 +1,4 @@
+
 Zotero.ZotFile = {
     
     prefs: null,
@@ -778,164 +779,234 @@ Zotero.ZotFile = {
         title = title.replace(/[\?:]/g, ' -');
         return(title);
     },
-    
-    // Function replaces wildcard both for filename and subfolder definition
-    replaceWildcard: function(zitem, rule){
+
+
+    /*
+     * Collects all positions of a particular substring in an Array.
+     */
+    findStrPos: function(rule, str) {
+        var positions = new Array();
+        var last = rule.indexOf(str);
+        while (last > -1) {
+            positions.push(last);
+            last = rule.indexOf(str, last + 1);
+        }
+        return positions;
+    },
+
+    /*
+     * Iterates through a string or until a mismatch between opening and closing
+     * character is found. Returns the start and end position of the first outer
+     * match or -1 if no match was found.
+     */
+    findOuterPairs: function(rule, open, close) {
+        open = (typeof(open) === "undefined") ? "{" : open;
+        close = (typeof(close) === "undefined") ? "}" : close;
+        var matching = new Array();
+        var outer = new Array();
+        var res = {"start": -1, "end": -1};
+        for (var i = 0; i < rule.length; ++i) {
+            if (rule[i] === open) {
+                matching.push(i);
+                if (res.start < 0) res.start = i;
+            }
+            else if (rule[i] === close) {
+                if (matching.length === 0) {
+                    var msg = "unmatched closing '".concat(close, "' at position ", i, ".");
+                    alert(msg);
+                }
+                matching.pop();
+                if (matching.length === 0) {
+                    res.end = i;
+                    outer.push(res);
+                    res = {"start": -1, "end": -1};
+                }
+            }
+        }
+        if (matching.length > 0) {
+            var msg = "unmatched opening '".concat(open, "' at position ", matching[0], ".");
+            alert(msg);
+        }
+        return outer;
+    },
+
+    wildcardTable: function(zitem) {
+        var table = new Object();
         // get item type
         var item_type =  zitem.getType();
         var item_type_string = Zotero.ItemTypes.getLocalizedString(item_type);
-        
-        // get title of selected item
-        var title = zitem.getField('title');
-    
-        //  truncnate title
-        title = this.truncateTitle(title);
-        
-        // get journal
-        var journal = zitem.getField('publicationTitle');
-
-        // get journal abbreviation
-        var journal_abb = zitem.getField('journalAbbreviation');
-
-        // get publisher
-        var publisher = zitem.getField('publisher');
-
-        // get volume and issue
-        var volume = zitem.getField('volume');
-        var issue = zitem.getField('issue');
-
-        // get patent stuff
-        // var inventor
-        var assignee = zitem.getField('assignee');
-        var patentnr = zitem.getField('patentNumber');
-        var priority_date = patentnr.substr(2,4);
-
         // get creator and create authors string
         // creator types: author/editor(1,3) for book(2), inventor(14) for patent(19),programmer(24) for computer prog.(27),presenter(21) for presentation(32)
-        var creatorType=[1];
-        if (item_type==2)  creatorType=[1,3];
-        if (item_type==19) creatorType=[14];
-        if (item_type==32) creatorType=[21];
-        if (item_type==27) creatorType=[24];
-        var add_etal=this.prefs.getBoolPref("add_etal");
+        var creatorType = [1];
+        if (item_type === 2)  creatorType = [1, 3];
+        else if (item_type === 19) creatorType = [14];
+        else if (item_type === 32) creatorType = [21];
+        else if (item_type === 27) creatorType = [24];
+        var add_etal = this.prefs.getBoolPref("add_etal");
         var author = "";
         var creators = zitem.getCreators();
         var numauthors = creators.length;
-        for (var i=0; i < creators.length; i++) {
-            if(creatorType.indexOf(creators[i].creatorTypeID)==-1) numauthors=numauthors-1;
-        }
-        var max_authors=(this.prefs.getBoolPref("truncate_authors")) ? this.prefs.getIntPref("max_authors") : 500;
-        if (numauthors<=max_authors) add_etal=0;
-        if (numauthors>max_authors) numauthors = 1;
-        var delimiter=this.prefs.getCharPref("authors_delimiter");
-        var j=0;
-        for (i=0; i < creators.length; i++) {
-            if (j<numauthors && creatorType.indexOf(creators[i].creatorTypeID)!=-1) {
-                if (author!="") author = author + delimiter + creators[i].ref.lastName;
-                if (author=="") author = creators[i].ref.lastName;
-                j=j+1;
+        for (var i = 0; i < creators.length; ++i) {
+            if (creatorType.indexOf(creators[i].creatorTypeID) === -1) {
+                --numauthors;
             }
         }
-        if (add_etal==1) author = author + this.prefs.getCharPref("etal");
-
+        var max_authors = (this.prefs.getBoolPref("truncate_authors")) ? this.prefs.getIntPref("max_authors") : 500;
+        if (numauthors <= max_authors) add_etal = 0;
+        else numauthors = 1;
+        var delimiter = this.prefs.getCharPref("authors_delimiter");
+        var j = 0;
+        for (i = 0; i < creators.length; ++i) {
+            if (j < numauthors && creatorType.indexOf(creators[i].creatorTypeID) != -1) {
+                if (author !== "") author += delimiter + creators[i].ref.lastName;
+                if (author === "") author = creators[i].ref.lastName;
+                ++j;
+            }
+        }
+        if (add_etal === 1) author += this.prefs.getCharPref("etal");
+        // generate look-up table
+        // author
+        table["%a"] = author;
+        table["%A"] = table["%a"].substr(0, 1).toUpperCase();
+        // title
+        table["%t"] = this.truncateTitle(zitem.getField("title"));
+        // journal
+        table["%j"] = zitem.getField("publicationTitle");
+        table["%s"] = zitem.getField("journalAbbreviation");
+        // publisher
+        table["%p"] = zitem.getField("publisher");
+        // user can do that on their own: %j|%p
+//        table["%w"] = (table["%j"] != "") ? table["%j"] : table["%p"];
+        // patent
+        table["%n"] = zitem.getField("patentNumber");
+        table["%i"] = zitem.getField("assignee");
         // date
-        var year_issue="";
-        var year = zitem.getField('date', true).substr(0,4);
-        if(item_type==19)  {
-            year_issue = zitem.getField('issueDate', true).substr(0,4);
-            year = year_issue;
+        table["%u"] = "";
+        table["%y"] = zitem.getField("date", true).substr(0,4);
+        if (item_type === 19) {
+            table["%u"] = zitem.getField("issueDate", true).substr(0,4);
+            table["%y"] = table["%u"];
         }
-    
-        // create output from rule
-        var field=0;
-        var output='';
-        for (i=0; i<rule.length; i++) {
-            var char=rule.charAt(i);
-            switch (char) {
-                case '%':
-                    field=1;
-                    break;
-
-                case 'a':
-                    if (field==1) output = output + author;
-                    field=0;
-                    break;
-                
-                case 'A':
-                    if (field==1) output = output + author.substr(0,1).toUpperCase();
-                    field=0;
-                    break;
-
-                case 't':
-                    if (field==1) output = output + title;
-                    field=0;
-                    break;
-
-                case 'y':
-                    if (field==1) output = output + year;
-                    field=0;
-                    break;
-
-                case 'j':
-                    if (field==1) output = output + journal;
-                    field=0;
-                    break;
-
-                case 'p':
-                    if (field==1) output = output + publisher;
-                    field=0;
-                    break;
-
-                case 'n':
-                    if (field==1) output = output + patentnr;
-                    field=0;
-                    break;
-
-                case 'i':
-                    if (field==1) output = output + assignee;
-                    field=0;
-                    break;
-
-                case 'u':
-                    if (field==1) output = output + year_issue;
-                    field=0;
-                    break;
-
-                case 'w':
-                    if (field==1) {
-                        output = output + journal;
-                        if(journal=="") output = output + publisher;
-                    }
-                    field=0;
-                break;
-
-                case 's':
-                    if (field==1) output = output + journal_abb;
-                    field=0;
-                    break;
-
-                case 'v':
-                    if (field==1) output = output + volume;
-                    field=0;
-                    break;
-
-                case 'e':
-                    if (field==1) output = output + issue;
-                    field=0;
-                    break;
-        
-                case 'T':
-                    if (field==1) output = output + item_type_string;
-                    field=0;
-                    break;
-
-                default: output = output + char;
-            }
-        }
-    return(output);
-    
+        // volume
+        table["%v"] = zitem.getField("volume");
+        // issue
+        table["%e"] = zitem.getField("issue");
+        // item type
+        table["%T"] = item_type_string;
+        return table;
     },
-    
+
+    /*
+     *
+     */
+    fillRule: function(rule, table, offset) {
+        var wildcards = this.findStrPos(rule, "%");
+        var bars = this.findStrPos(rule, "|");
+        var exclusive = "";
+        var str = new Array();
+        var complete = true;
+        // for first loop excl_complete must be true
+        var excl_complete = true;
+        var pos = 0;
+        var last = -1;
+        var lookup = "";
+        for (var i = 0; i < bars.length; ++i) {
+            // position of current | in wildcards
+            pos = wildcards.binaryIndex(bars[i]);
+            // no wildcard between previous and current |
+            if (pos - 1 < last || pos === 0) {
+                var msg = "missing left wildcard for exclusive operator '|' at position " + (offset + bars[i]) + ".";
+                alert(msg);
+            }
+            // no wildcard between current and next | or no more wildcards left
+            if (wildcards[pos] > bars[i + 1] || pos === wildcards.length) {
+                var msg = "missing right wildcard for exclusive operator '|' at position " + (offset + bars[i]) + ".";
+                alert(msg);
+            }
+            if (pos - last > 1) {
+                // all look-ups in an exclusive group failed
+                if (!excl_complete) complete = false;
+                // reset
+                excl_complete = false;
+                if (exclusive !== "") {
+                    // add content of previous exclusive group
+                    str.push(exclusive);
+                    // reset
+                    exclusive = "";
+                }
+                for (var j = last + 1; j < pos - 1; ++j) {
+                    // add rule content before wildcard
+                    // wildcards[-1] is undefined, undefined + 2 is NaN
+                    // substring(NaN, x) is from the beginning of the string ;-]
+                    str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
+                    // add content of wildcard
+                    lookup = table[rule.substr(wildcards[j], 2)];
+                    if (lookup === "" || typeof(lookup) === "undefined") complete = false;
+                    else str.push(lookup);
+                }
+                // add rule content between last and current wildcard
+                str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
+            }
+            lookup = table[rule.substr(wildcards[pos - 1], 2)];
+            if (lookup === "" || typeof(lookup) === "undefined") excl_complete |= false;
+            else {
+                exclusive = exclusive || lookup;
+                excl_complete |= true;
+            }
+            lookup = table[rule.substr(wildcards[pos], 2)];
+            if (lookup === "" || typeof(lookup) === "undefined") excl_complete |= false;
+            else {
+                exclusive = exclusive || lookup;
+                excl_complete |= true;
+            }
+            last = pos;
+        }
+        if (!excl_complete) complete = false;
+        if (exclusive !== "") {
+            str.push(exclusive);
+        }
+        for (var j = last + 1; j < wildcards.length; ++j) {
+            // add rule content before wildcard
+            str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
+            // add content of wildcard
+            lookup = table[rule.substr(wildcards[j], 2)];
+            if (lookup === "" || typeof(lookup) === "undefined") complete = false;
+            else str.push(lookup);
+        }
+        // add rule content after last wildcard
+        str.push(rule.substring(wildcards[j - 1] + 2));
+        return {"str": str.join(""), "complete": complete};
+    },
+
+    /*
+     * Replace wildcards both for filename and subfolder definition
+     */
+    replaceWildcard: function(zitem, rule, table, offset) {
+        if (rule === "" || typeof(rule) === "undefined") {
+            return;
+        }
+        table = (typeof(table) === "undefined") ? this.wildcardTable(zitem) : table;
+        offset = (typeof(offset) === "undefined") ? 0 : offset;
+        var conditional = this.findOuterPairs(rule);
+        var name = new Array();
+        var last = -1;
+        var res;
+        var complete = true;
+        for (var i = 0; i < conditional.length; ++i) {
+            res = this.fillRule(rule.substring(last + 1, conditional[i].start), table, last + 1);
+            complete &= res.complete;
+            name.push(res.str);
+            name.push(this.replaceWildcard(zitem, rule.substring(conditional[i].start + 1, conditional[i].end), table, conditional[i].start + 1));
+            last = conditional[i].end;
+        }
+        res = this.fillRule(rule.substring(last + 1, rule.length), table, last + 1);
+        complete &= res.complete;
+        // we're in recursive call and a wildcard was not complete
+        if (offset > 0 && !complete) return "";
+        name.push(res.str);
+        return name.join("");
+    },
+
     getFiletype: function(fname){
         var pos = fname.lastIndexOf('.');
         return pos==-1 ? '' : fname.substr(pos+1);
@@ -2403,3 +2474,25 @@ Zotero.ZotFile = {
     }
                 
 };
+/*
+ * Performs a binary search that returns the index of the array before which the
+ * search should be inserted into the array to maintain a sorted order.
+ */
+Array.prototype.binaryIndex = function(find) {
+    var low = 0, high = this.length - 1, i;
+    while (low <= high) {
+        i = Math.floor((low + high) / 2);
+        if (this[i] < find) {
+            low = i + 1;
+            continue;
+        }
+        if (this[i] > find) {
+            high = i - 1;
+            continue;
+        }
+        return i;
+    }
+    if (this[i] < find) return i + 1;
+    else return i;
+};
+
