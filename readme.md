@@ -26,24 +26,32 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
-
-- Enhanced renaming rules: optional `{...}` and exclusive `|` wild-cards (thanks to [Midnighter](https://github.com/Midnighter))
-  Examples (`%j` - journal; `%s` - journal abbreviation):
-  `{%a}{-%y}{-%j (%s)}` - `author-2001-Proceedings of the National Academy of Sciences (PNAS)`
-  (if either `%j` or `%s` is empty, `author-2001`)
-  `{%a-}{%y-}{%s|%j}` - `author-2001-PNAS` or `author-2001-Proceedings...` if `%s` is empty
-  For full description, see [updated zotfile website](http://www.columbia.edu/~jpl2136/zotfile.html#renaming)
 #### Changes in 2.3
+
+- **Enhanced renaming rules** (thanks to [Midnighter](https://github.com/Midnighter))
+  Optional wild-cards: `{-%y}` only includes `-` if  `%y` is defined
+  Exclusive wild-cards: `%s|%j` journal abbr. or if not defined full journal name
+  (for examples see below)
 - additional wild-cards for author initials (`%I`) and pages (`%f`)
-- revised auto rename with additional options
+- **revised auto rename with additional options**
   (four options: Never, Always ask, Only ask if item has other atts, Always rename. The 'asking' uses a clickable, non-disruptive window that appears in the bottom right corner - same as previous info window but clickable)
-- revised notifications
-- Zotfile translation to German (thanks to [wuffi](https://github.com/wuffi)) and to French (thanks to [gracile-fr](https://github.com/gracile-fr))
+- **revised notifications**
+- **Zotfile translation to German** (thanks to [wuffi](https://github.com/wuffi)) **and French** (thanks to [gracile-fr](https://github.com/gracile-fr))
 - Allow periods as delimiter in filenames (thanks to [jjatria](https://github.com/jjatria))
 - new option: "lower case" filenames (thanks to [jjatria](https://github.com/jjatria))
 - new option: disable renaming so that attachments are only moved (hidden: `disable_renaming`)
-- fix preview of renaming rules for unix and Windows
-- fix problem that sending to and getting from tablet deletes note content
+- bug fix: preview of renaming rules for Unix and Windows
+- bug fix: sending to and getting from tablet deleted note content
+
+**Examples for enhanced renaming rules**
+`%j` - journal; `%s` - journal abbreviation
+
+`{%a}{-%y}{-%j (%s)}` - `author-2001-Proceedings of the National Academy of Sciences (PNAS)`
+(if either `%j` or `%s` is empty, `author-2001`)
+
+`{%a-}{%y-}{%s|%j}` - `author-2001-PNAS` or `author-2001-Proceedings...` if `%s` is empty
+
+For full description, see [updated zotfile website](http://www.columbia.edu/~jpl2136/zotfile.html#renaming).
 
 #### Changes in 2.2.3
 
