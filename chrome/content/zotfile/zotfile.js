@@ -780,6 +780,28 @@ Zotero.ZotFile = {
         return(title);
     },
 
+    /*
+     * Performs a binary search that returns the index of the array before which the
+     * search should be inserted into the array to maintain a sorted order.
+     */
+    // Array.prototype.binaryIndex = function(find) {
+    binaryArrayIndex: function(obj, find) {
+        var low = 0, high = obj.length - 1, i;
+        while (low <= high) {
+            i = Math.floor((low + high) / 2);
+            if (obj[i] < find) {
+                low = i + 1;
+                continue;
+            }
+            if (obj[i] > find) {
+                high = i - 1;
+                continue;
+            }
+            return i;
+        }
+        if (obj[i] < find) return i + 1;
+        else return i;
+    },
 
     /*
      * Collects all positions of a particular substring in an Array.
@@ -912,7 +934,7 @@ Zotero.ZotFile = {
         var lookup = "";
         for (var i = 0; i < bars.length; ++i) {
             // position of current | in wildcards
-            pos = wildcards.binaryIndex(bars[i]);
+            pos = this.binaryArrayIndex(wildcards,bars[i]);
             // no wildcard between previous and current |
             if (pos - 1 < last || pos === 0) {
                 var msg = "missing left wildcard for exclusive operator '|' at position " + (offset + bars[i]) + ".";
@@ -2474,25 +2496,5 @@ Zotero.ZotFile = {
     }
                 
 };
-/*
- * Performs a binary search that returns the index of the array before which the
- * search should be inserted into the array to maintain a sorted order.
- */
-Array.prototype.binaryIndex = function(find) {
-    var low = 0, high = this.length - 1, i;
-    while (low <= high) {
-        i = Math.floor((low + high) / 2);
-        if (this[i] < find) {
-            low = i + 1;
-            continue;
-        }
-        if (this[i] > find) {
-            high = i - 1;
-            continue;
-        }
-        return i;
-    }
-    if (this[i] < find) return i + 1;
-    else return i;
-};
+
 
