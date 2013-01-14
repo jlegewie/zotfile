@@ -26,7 +26,6 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
-#### Changes in 2.2.5
 
 - Enhanced renaming rules: optional `{...}` and exclusive `|` wild-cards (thanks to [Midnighter](https://github.com/Midnighter))
   Examples (`%j` - journal; `%s` - journal abbreviation):
@@ -34,6 +33,7 @@ Contributions preferably through pull requests are welcome!
   (if either `%j` or `%s` is empty, `author-2001`)
   `{%a-}{%y-}{%s|%j}` - `author-2001-PNAS` or `author-2001-Proceedings...` if `%s` is empty
   For full description, see [updated zotfile website](http://www.columbia.edu/~jpl2136/zotfile.html#renaming)
+#### Changes in 2.3
 - additional wild-cards for author initials (`%I`) and pages (`%f`)
 - revised auto rename with additional options
   (four options: Never, Always ask, Only ask if item has other atts, Always rename. The 'asking' uses a clickable, non-disruptive window that appears in the bottom right corner - same as previous info window but clickable)
