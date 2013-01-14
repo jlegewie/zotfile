@@ -865,7 +865,7 @@ Zotero.ZotFile = {
         else if (item_type === 32) creatorType = [21];
         else if (item_type === 27) creatorType = [24];
         var add_etal = this.prefs.getBoolPref("add_etal");
-        var author = "";
+        var author = "", author_initials="";
         var creators = zitem.getCreators();
         var numauthors = creators.length;
         for (var i = 0; i < creators.length; ++i) {
@@ -882,6 +882,9 @@ Zotero.ZotFile = {
             if (j < numauthors && creatorType.indexOf(creators[i].creatorTypeID) != -1) {
                 if (author !== "") author += delimiter + creators[i].ref.lastName;
                 if (author === "") author = creators[i].ref.lastName;
+                var initials = creators[i].ref.firstName.substr(0, 1).toUpperCase() + creators[i].ref.lastName.substr(0, 1).toUpperCase()
+                if (author_initials !== "") author_initials += delimiter + initials;
+                if (author_initials === "") author_initials = initials;
                 ++j;
             }
         }
@@ -890,6 +893,7 @@ Zotero.ZotFile = {
         // author
         table["%a"] = author;
         table["%A"] = table["%a"].substr(0, 1).toUpperCase();
+        table["%I"] = author_initials;
         // title
         table["%t"] = this.truncateTitle(zitem.getField("title"));
         // journal
