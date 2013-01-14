@@ -919,6 +919,9 @@ Zotero.ZotFile = {
         table["%e"] = zitem.getField("issue");
         // item type
         table["%T"] = item_type_string;
+        // pages
+        table["%f"] = zitem.getField("pages");
+        // return
         return table;
     },
 
