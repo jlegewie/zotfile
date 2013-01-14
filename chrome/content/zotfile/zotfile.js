@@ -835,7 +835,7 @@ Zotero.ZotFile = {
             else if (rule[i] === close) {
                 if (matching.length === 0) {
                     var msg = "unmatched closing '".concat(close, "' at position ", i, ".");
-                    alert(msg);
+                    this.infoWindow("ZotFile: Error in renaming format",msg,8000);
                 }
                 matching.pop();
                 if (matching.length === 0) {
@@ -847,7 +847,7 @@ Zotero.ZotFile = {
         }
         if (matching.length > 0) {
             var msg = "unmatched opening '".concat(open, "' at position ", matching[0], ".");
-            alert(msg);
+            this.infoWindow("ZotFile: Error in renaming format",msg,8000);            
         }
         return outer;
     },
@@ -938,12 +938,12 @@ Zotero.ZotFile = {
             // no wildcard between previous and current |
             if (pos - 1 < last || pos === 0) {
                 var msg = "missing left wildcard for exclusive operator '|' at position " + (offset + bars[i]) + ".";
-                alert(msg);
+                this.infoWindow("ZotFile: Error in renaming format",msg,8000);
             }
             // no wildcard between current and next | or no more wildcards left
             if (wildcards[pos] > bars[i + 1] || pos === wildcards.length) {
                 var msg = "missing right wildcard for exclusive operator '|' at position " + (offset + bars[i]) + ".";
-                alert(msg);
+                this.infoWindow("ZotFile: Error in renaming format",msg,8000);                
             }
             if (pos - last > 1) {
                 // all look-ups in an exclusive group failed
