@@ -897,8 +897,8 @@ Zotero.ZotFile = {
         table["%s"] = zitem.getField("journalAbbreviation");
         // publisher
         table["%p"] = zitem.getField("publisher");
-        // user can do that on their own: %j|%p
-//        table["%w"] = (table["%j"] != "") ? table["%j"] : table["%p"];
+        // journal or publisher
+        table["%w"] = (table["%j"] != "") ? table["%j"] : table["%p"];
         // patent
         table["%n"] = zitem.getField("patentNumber");
         table["%i"] = zitem.getField("assignee");
