@@ -43,7 +43,7 @@
 <!ENTITY zotero-to-rename "Utilisez Zotero pour renommer">
 <!ENTITY format-for-all-types "Format pour tous les types de document sauf les brevets">
 <!ENTITY format-for-patents "Format pour les brevets">
-<!ENTITY list-of-wildcards "&#37;a = nom de famille de l'auteur ;  &#37;y = année ;  &#37;t = titre;  &#37;w = revue/éditeur;  &#37;v = volume;  &#37;e = numéro;  &#37;T = type de document">
+<!ENTITY list-of-wildcards "&#37;a = nom de famille de l'auteur ;  &#37;y = année ;  &#37;t = titre;  &#37;j = revue;  utilisez {...} pour un groupe optionnel et | pour un &#34;ou exclusif&#34;">
 <!ENTITY for-a-full-list "Pour une liste complète des jokers, consultez le ">
 <!ENTITY additional-settings "Paramètres additionnels">
 <!ENTITY delimiter-multiple-authors "Caractère de séparation entre plusieurs auteurs">

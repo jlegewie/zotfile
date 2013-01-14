@@ -43,7 +43,7 @@
 <!ENTITY zotero-to-rename "Zotero zum Umbennen verwenden">
 <!ENTITY format-for-all-types "Format für alle Eintragsarten außer Patenten">
 <!ENTITY format-for-patents "Format für Patente">
-<!ENTITY list-of-wildcards "&#37;a - author last name; &#37;y - year; &#37;t - title; &#37;w - journal/publisher; &#37;v - volume; &#37;e - issue; &#37;T - item type">
+<!ENTITY list-of-wildcards "&#37;a = author last name; &#37;y = year; &#37;t = title; &#37;j = journal; use {...} for an optional group and | for exclusive matches">
 <!ENTITY for-a-full-list "For a full list of place holder see the ">
 <!ENTITY additional-settings "Weitere Einstellungen">
 <!ENTITY delimiter-multiple-authors "Delimiter between multiple authors">
