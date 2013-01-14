@@ -108,6 +108,22 @@ function updatePreferenceWindow(which) {
     }
 }
 
+function checkRenameFormat(which) {
+    try {
+        // get current item
+        var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser");
+        var items = win.ZoteroPane.getSelectedItems();
+        var item = items.length>0 ? items[0] : Zotero.Items.get(1);
+        // get renaming rules
+        var rename_format = document.getElementById('pref-zotfile-' + which).value;
+        // check whether error in rule
+        var filename;
+        if(item.isRegularItem()) filename=Zotero.ZotFile.getFilename(item, "", rename_format);
+        if(item.getSource()) if(item.isAttachment()) filename=Zotero.ZotFile.getFilename(Zotero.Items.get(item.getSource()), "", rename_format);
+    }
+    catch (err) {}
+}
+
 function updateFolderIcon(which,revert) {
     var setting, icon_clear,icon_ok,icon_error;
     // Source Folder
