@@ -43,7 +43,10 @@
 <!ENTITY zotero-to-rename "Use Zotero to Rename">
 <!ENTITY format-for-all-types "Format for all Item Types except Patents">
 <!ENTITY format-for-patents "Format for Patents">
+<!ENTITY list-of-wildcards "&#37;a = author last name; &#37;y = year; &#37;t = title; &#37;j = journal; use {...} for an optional group and | for exclusive matches">
+<!ENTITY for-a-full-list "For a full list of place holder see the ">
 <!ENTITY additional-settings "Additional Settings">
+<!ENTITY delimiter-multiple-authors "Delimiter between multiple authors">
 <!ENTITY add-user-input-to-filename "Add user input to filename. Default is ">
 <!ENTITY lower-case "Change to lower case">
 <!ENTITY replace-blanks "Replace blanks">
