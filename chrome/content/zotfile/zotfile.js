@@ -1415,10 +1415,9 @@ Zotero.ZotFile = {
     
     // FUNCTION: Attach New File(s) from Download Folder
     attachNewFile: function(){
+        // get selected items
         var win = this.wm.getMostRecentWindow("navigator:browser");
         var items = win.ZoteroPane.getSelectedItems();
-//      var items = ZoteroPane.getSelectedItems();
-
         var item = items[0];
 
         //check whether it really is an bibliographic item (no Attachment, note or collection)
