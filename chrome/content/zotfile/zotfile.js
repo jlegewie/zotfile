@@ -487,6 +487,12 @@ Zotero.ZotFile = {
         return(pw);
     },
 
+    copy2Clipboard: function(txt) {
+        const gClipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
+            .getService(Components.interfaces.nsIClipboardHelper);
+        gClipboardHelper.copyString(txt);
+    },
+
     promptUser: function(message,option1,option2,option3) {
         var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                     .getService(Components.interfaces.nsIPromptService);
