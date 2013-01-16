@@ -549,8 +549,6 @@ Zotero.ZotFile = {
         var button = prompts.confirmEx(null, "ZotFile Dialog", message,
                     flags,  option1,option2,option3, null, check);
 
-//      this.infoWindow("ZotReader Report","button " + button,8000);
-
         return(button);
 
     },
