@@ -475,9 +475,11 @@ Zotero.ZotFile = {
 
     handleErrors: function() {
         var errors = {lines:this.messages_error},
-            on_click = null;
+            on_click = null,
+            duration = 8000;
         // fatal errors
         if(this.messages_fatalError.length>0) {
+            duration = this.prefs.getIntPref("info_window_duration_clickable");
             errors.lines.push("Unknown error!");
             errors.txt = "(Click here to copy details about unknown errors to the clipboard)"
             // prepare error message for clipboard
@@ -491,7 +493,7 @@ Zotero.ZotFile = {
             // remove duplicates
             errors.lines = this.removeDuplicates(errors.lines);
             // show errors
-            this.infoWindow("ZotFile Error",errors,this.prefs.getIntPref("info_window_duration_clickable"),on_click);
+            this.infoWindow("ZotFile Error",errors,duration,on_click);
         }
         // empty error arrays
         this.messages_error = [];
