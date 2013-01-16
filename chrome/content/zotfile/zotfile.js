@@ -883,8 +883,8 @@ Zotero.ZotFile = {
             }
             else if (rule[i] === close) {
                 if (matching.length === 0) {
-                    var msg = "unmatched closing '".concat(close, "' at position ", i, ".");
-                    this.infoWindow("ZotFile: Error in renaming format",msg,8000);
+                    var msg = "unmatched closing '".concat(close, "' at position ", i, ".");                    
+                    this.messages_error.push("Error in renaming format: " + msg);
                 }
                 matching.pop();
                 if (matching.length === 0) {
@@ -896,7 +896,7 @@ Zotero.ZotFile = {
         }
         if (matching.length > 0) {
             var msg = "unmatched opening '".concat(open, "' at position ", matching[0], ".");
-            this.infoWindow("ZotFile: Error in renaming format",msg,8000);            
+            this.messages_error.push("Error in renaming format: " + msg);
         }
         return outer;
     },
