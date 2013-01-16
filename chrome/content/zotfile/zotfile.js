@@ -1655,8 +1655,7 @@ Zotero.ZotFile = {
         }
     },
                 
-    sendAttachmentToTablet: function(item, att, projectFolder, verbose) {
-        if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendAttachmentToTablet - sending attachment " + att.getID() + " (mode is " + this.prefs.getIntPref("tablet.mode") + ")");
+    sendAttachmentToTablet: function(item, att, projectFolder, verbose) {        
         var newFile;
         verbose = (typeof verbose == 'undefined') ? true : verbose;
         var newAttID=null;
@@ -1727,8 +1726,6 @@ Zotero.ZotFile = {
             
             // notification
             if(verbose) this.messages_report.push("'" + newFile.leafName + "'");
-        }
-        if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.sendAttachmentToTablet - attachment send with new ID " + newAttID);
         return(newAttID);
     },
     
