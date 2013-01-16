@@ -1453,8 +1453,12 @@ Zotero.ZotFile = {
                 // attach them
                 if(file!=-1 && file!=-2) {
                     for (var i=0; i < file.length; i++) {                        
-
-                        var on_confirm = function() {                            
+                        // get confirmation
+                        var file_oldpath=file[i].leafName;
+                        var confirmed=true;
+                        if (this.prefs.getBoolPref("confirmation"))
+                            confirmed=confirm("Do you want to rename and attach/link the file \'" + file_oldpath + "\' to the currently selected Zotero item?");
+                        if(confirmed) {
                             var zz=Zotero.ZotFile,
                                    attID;
                             // create linked attachment if local library
@@ -1465,7 +1469,6 @@ Zotero.ZotFile = {
                                 attID=Zotero.Attachments.importFromFile(file[i], item.itemID,item.libraryID);
                                 zz.removeFile(file[i]);
                             }
-
                             // Rename and Move Attachment
                             var att = Zotero.Items.get(attID);
                             var newAttID = zz.renameAttachment(item, att,zz.prefs.getBoolPref("import"),zz.prefs.getCharPref("dest_dir"),zz.prefs.getBoolPref("subfolder"),zz.prefs.getCharPref("subfolderFormat"),false);
@@ -1473,25 +1476,7 @@ Zotero.ZotFile = {
                             var new_file_name = Zotero.Items.get(newAttID).getFile().leafName;                            
                             this.messages_report.push("'" + new_file_name + "'");
                         }
-
-                        // get confirmation
-                        var confirmed=true;
-                        var file_oldpath=file[i].leafName;
-                        if (this.prefs.getBoolPref("confirmation")) {
-                            try {
-                                confirmed=confirm("Do you want to rename and attach/link the file \'" + file_oldpath + "\' to the currently selected Zotero item?");
-                            }
-                            catch (err) {
-                                confirmed=false;
-                                this.infoWindow("ZotFile: Attach new file",
-                                    {lines:["Do you want to rename and attach/link the file \'" + file_oldpath + "\' to the currently selected Zotero item?"],txt:"(click here to attach)"},
-                                    this.prefs.getIntPref("info_window_duration_clickable"),on_confirm);
-                            }
-                        }
-                        if(confirmed) on_confirm();
-                        
                     }
-
                 }
                 else this.messages_error.push("Selected item is either an Attachment, a note, or a collection.");
             }
