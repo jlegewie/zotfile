@@ -473,10 +473,14 @@ Zotero.ZotFile = {
     },
 
     handleErrors: function() {
+        // remove duplicates
+        var this.removeDuplicates(this.messages_error);
+        // prepare error message for clipboard
         var errors_str=this.messages_error.join("\n\n");
         var on_click = function() {
             Zotero.ZotFile.copy2Clipboard(errors_str);
         }
+        // show errors
         this.infoWindow("ZotFile Error",{lines:this.messages_error,txt:"(Click here to copy errors to the clipboard)"},this.prefs.getIntPref("info_window_duration_clickable"),on_click);
         this.messages_error = [];
     },
