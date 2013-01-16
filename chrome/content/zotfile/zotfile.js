@@ -1107,7 +1107,7 @@ Zotero.ZotFile = {
     },
 
     completePath: function(location,filename) {
-            return (location + this.folderSep + filename);
+        return (location + this.folderSep + filename);
     },
 
     addSuffix: function(filename,k) {
@@ -1218,7 +1218,7 @@ Zotero.ZotFile = {
         
         // check whether the file exsists
         try {
-                return(file.exists());
+            return(file.exists());
         }
         catch (err) {
             return(false);
