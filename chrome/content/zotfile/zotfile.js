@@ -1478,14 +1478,14 @@ Zotero.ZotFile = {
                         }
                     }
                 }
-                else this.messages_error.push("Selected item is either an Attachment, a note, or a collection.");
+                else this.messages_error.push("Selected item is either an attachment, a note, or a collection.");
             }
             catch(e) {
                 this.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
             }
 
         }
-        else this.messages_error.push("Selected item is either an Attachment, a note, or a collection.");
+        else this.messages_error.push("Selected item is either an attachment, a note, or a collection.");
 
         // show messages and handle errors
         // this.showWarningMessages("ZotFile Warning: Skipped attachments","Attachments skipped because they are on the tablet, top-level items, snapshots or the file does not exists.");
