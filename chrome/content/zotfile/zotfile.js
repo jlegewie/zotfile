@@ -509,7 +509,10 @@ Zotero.ZotFile = {
     },
 
     infoWindow: function(main, message, time, callback){
+        // default arguments
         callback = typeof callback !== 'undefined' ? callback : null;
+        time = typeof time !== 'undefined' ? time : 8000;
+        // show window
         var pw = new (this.ProgressWindow);
         pw.changeHeadline(main);
         if (main=="error") pw.changeHeadline(Zotero.getString("general.errorHasOccurred"));
