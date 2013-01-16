@@ -1238,16 +1238,14 @@ Zotero.ZotFile = {
             try {
               // create a nslFile Object of the destination folder
               var dir = this.createFile(destination);
-
               // move file to new location
               file.moveTo(dir, filename);
             }
             catch(err) {
                 if(err.name == "NS_ERROR_FILE_IS_LOCKED")
-                    this.infoWindow("ZotFile Error","ZotFile was unable to move the attachment with name '" + att_name + "' because it is locked. " + "Probably it is opened in a program, so please close it.", 8000);
+                    this.messages_error.push("Error when moving the file '" + att_name + "' because it is locked. Probably it is opened in a program, so please close it.");
                 else
-                    this.infoWindow("ZotFile Error","ZotFile gets an untreated error while moving the attachment with name '" + att_name + ". \n\n" + "Error details: " + err,8000);
-            
+                    this.messages_error.push("Error when moving the file '" + att_name + "' (" + err + ").");
                 file.path = "NULL";
             }
         }
