@@ -1424,7 +1424,7 @@ Zotero.ZotFile = {
 
         //check whether it really is an bibliographic item (no Attachment, note or collection)
         if (item.isRegularItem()) {
-
+            try {
                 // check whether valid FF default download folder
                 if(this.prefs.getBoolPref('source_dir_ff') &&  this.getSourceDir(false)==-1) {
                 this.prefs.setBoolPref('source_dir_ff',false);
@@ -1462,8 +1462,8 @@ Zotero.ZotFile = {
                             var att = Zotero.Items.get(attID);
                             var newAttID = zz.renameAttachment(item, att,zz.prefs.getBoolPref("import"),zz.prefs.getCharPref("dest_dir"),zz.prefs.getBoolPref("subfolder"),zz.prefs.getCharPref("subfolderFormat"),false);
                             // show message
-                            var new_file_name = Zotero.Items.get(newAttID).getFile().leafName;
-                            zz.infoWindow("Zotfile Report","New attachment '" + new_file_name + "' added to Zotero item.",8000);
+                            var new_file_name = Zotero.Items.get(newAttID).getFile().leafName;                            
+                            this.messages_report.push("'" + new_file_name + "'");
                         }
 
                         // get confirmation
@@ -1485,12 +1485,19 @@ Zotero.ZotFile = {
                     }
 
                 }
-                else this.infoWindow("Zotfile Error","Unable to find file(s) in " + source_dir,8000);
+                else this.messages_error.push("Selected item is either an Attachment, a note, or a collection.");
+            }
+            catch(e) {
+                this.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
+            }
 
         }
-        else this.infoWindow("Zotfile Error","Selected item is either an Attachment, a note, or a collection.",8000);
-//      else this.infoWindow("Zotfile Error","Selected item is in a Group Library.",8000);
+        else this.messages_error.push("Selected item is either an Attachment, a note, or a collection.");
 
+        // show messages and handle errors
+        // this.showWarningMessages("ZotFile Warning: Skipped attachments","Attachments skipped because they are on the tablet, top-level items, snapshots or the file does not exists.");
+        this.showReportMessages("ZotFile: New attachments added");
+        this.handleErrors();
     },
     
     
