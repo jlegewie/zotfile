@@ -35,7 +35,7 @@ Contributions preferably through pull requests are welcome!
 - additional wild-cards for author initials (`%I`) and pages (`%f`)
 - **revised auto rename with additional options**
   (four options: Never, Always ask, Only ask if item has other atts, Always rename. The 'asking' uses a clickable, non-disruptive window that appears in the bottom right corner - same as previous info window but clickable)
-- **revised notifications**
+- **revised notifications and error handling**
 - **Zotfile translation to German** (thanks to [wuffi](https://github.com/wuffi)) **and French** (thanks to [gracile-fr](https://github.com/gracile-fr))
 - Allow periods as delimiter in filenames (thanks to [jjatria](https://github.com/jjatria))
 - new option: "lower case" filenames (thanks to [jjatria](https://github.com/jjatria))
