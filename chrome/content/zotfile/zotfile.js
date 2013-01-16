@@ -2243,7 +2243,7 @@ Zotero.ZotFile = {
             // get selected attachments if no att ids are passed
             if(attIDs==null) {
                 attIDs=Zotero.ZotFile.getSelectedAttachments();
-                this.showWarningMessages("ZotFile Warning: Skipped attachments","Attachments skipped because they are top-level items, snapshots or the file does not exists.");
+                Zotero.ZotFile.showWarningMessages("ZotFile Warning: Skipped attachments","Attachments skipped because they are top-level items, snapshots or the file does not exists.");
             }
             // iterate through attachment items
             var file;
@@ -2259,7 +2259,7 @@ Zotero.ZotFile = {
                         var file_reader=Zotero.ZotFile.getTabletFile(att);
                         
                         // get times
-                        var time_reader = this.fileExists(file_reader) ? parseInt(file_reader.lastModifiedTime+"",10) : 0;
+                        var time_reader = Zotero.ZotFile.fileExists(file_reader) ? parseInt(file_reader.lastModifiedTime+"",10) : 0;
                         var time_saved  = parseInt(Zotero.ZotFile.getInfo(att,"lastmod"),10);
                         var time_zotero = (file_zotero!=false) ? parseInt(file_zotero.lastModifiedTime+"",10) : 0;
 
@@ -2307,7 +2307,7 @@ Zotero.ZotFile = {
                     }
                 }
                 catch(e) {
-                    this.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
+                    Zotero.ZotFile.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
                 }
             }
             if (this.pdfAttachmentsForExtraction.length > 0 &&
@@ -2324,14 +2324,14 @@ Zotero.ZotFile = {
                         this.pdfHiddenBrowser.loadURI(this.PDF_EXTRACT_URL);
                     }
                     catch(e) {
-                        this.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
+                        Zotero.ZotFile.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
                     }
                 }
                 else Zotero.ZotFile.infoWindow("ZotFile Error","The extraction of pdf annotations with pdf.js is not supported on Firefox 3.6. Install the most recent Firefox version to use this feature. Mac users can also switch to poppler for the extraction of pdf annotations (in 'ZotFile Preferences' under 'Advanced Settings').",8000);
             }
             // show messages and handle errors
             // this.showReportMessages("ZotFile: Attachments moved to tablet");
-            this.handleErrors();
+            Zotero.ZotFile.handleErrors();
         },
 
         popplerExtractorGetAnnotationsFromFile: function(outputFile) {
@@ -2373,7 +2373,7 @@ Zotero.ZotFile = {
 
                 istream.close();
             }
-            else Zotero.ZotFile.infoWindow("ZotFile Error","Annotation extraction failed.",8000);
+            else Zotero.ZotFile.messages_error.push("Annotation extraction failed because file does not exists.");                
             return annotations;
         },
 
