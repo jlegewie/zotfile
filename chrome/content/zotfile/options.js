@@ -122,6 +122,11 @@ function checkRenameFormat(which) {
         if(item.getSource()) if(item.isAttachment()) filename=Zotero.ZotFile.getFilename(Zotero.Items.get(item.getSource()), "", rename_format);
     }
     catch (err) {}
+    // alert user
+    if (Zotero.ZotFile.messages_error.length>0) {
+        alert(Zotero.ZotFile.messages_error.join("\n\n"));
+        Zotero.ZotFile.messages_error=[];
+    }
 }
 
 function updateFolderIcon(which,revert) {
@@ -226,6 +231,10 @@ function previewFilename() {
     }
     catch (err) {
         return("[Please select a zotero item to see a preview of your renaming rules]");
+    }
+    if (Zotero.ZotFile.messages_error.length>0) {
+        alert(Zotero.ZotFile.messages_error.join("\n\n"));
+        Zotero.ZotFile.messages_error=[];
     }
 }
 

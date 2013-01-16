@@ -1489,7 +1489,7 @@ Zotero.ZotFile = {
 
         // show messages and handle errors
         // this.showWarningMessages("ZotFile Warning: Skipped attachments","Attachments skipped because they are on the tablet, top-level items, snapshots or the file does not exists.");
-        this.showReportMessages("ZotFile: New attachments added");
+        this.showReportMessages("ZotFile: New attachment(s) added");
         this.handleErrors();
     },
     
