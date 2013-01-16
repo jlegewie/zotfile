@@ -232,43 +232,51 @@ Zotero.ZotFile = {
                                     var file_renamed=false;
                                     // function to rename attachments
                                     var on_confirm = function() {
-
-                                        // Rename the file (linked attachment)
-                                        if(!prefs.getBoolPref("import")) {
-                                            // rename and move attachment
-                                            var id_item = Zotero.ZotFile.renameAttachment(parent, item,prefs.getBoolPref("import"),prefs.getCharPref("dest_dir"),prefs.getBoolPref("subfolder"),prefs.getCharPref("subfolderFormat"),false);
-                                            // set flag for notification
-                                            file_renamed=true;
-                                            // get new attachment file
-                                            item = Zotero.Items.get(id_item);
-                                        }
-
-                                        // Rename the file (imported attachment)
-                                        if(prefs.getBoolPref("import")) {
-                                            // get filename
-                                            var filename = Zotero.ZotFile.getFilename(parent, file.leafName);
-                                            // check whether attachment already has the correct name
-                                            if (filename!=file.leafName) {
-                                                // rename file associated with attachment
-                                                item.renameAttachmentFile(filename);
-                                                // change title of attachment item
-                                                item.setField('title', filename);
-                                                item.save();
-
+                                        try {
+                                            // Rename the file (linked attachment)
+                                            if(!prefs.getBoolPref("import")) {
+                                                // rename and move attachment
+                                                var id_item = Zotero.ZotFile.renameAttachment(parent, item,prefs.getBoolPref("import"),prefs.getCharPref("dest_dir"),prefs.getBoolPref("subfolder"),prefs.getCharPref("subfolderFormat"),false);
+                                                // set flag for notification
                                                 file_renamed=true;
+                                                // get new attachment file
+                                                item = Zotero.Items.get(id_item);
+                                            }
+
+                                            // Rename the file (imported attachment)
+                                            if(prefs.getBoolPref("import")) {
+                                                // get filename
+                                                var filename = Zotero.ZotFile.getFilename(parent, file.leafName);
+                                                // check whether attachment already has the correct name
+                                                if (filename!=file.leafName) {
+                                                    // rename file associated with attachment
+                                                    item.renameAttachmentFile(filename);
+                                                    // change title of attachment item
+                                                    item.setField('title', filename);
+                                                    item.save();
+
+                                                    file_renamed=true;
+                                                }
+                                            }
+
+                                            // user notification
+                                            if (file_renamed) {
+                                                // get object of attached file
+                                                file = item.getFile();                                
+                                                // show zotfile report                                                
+                                                this.messages_report.push("'" + file.leafName + "'");
+                                                // remove id from in progress array
+                                                // var idx = this.keys.indexOf(id);
+                                                // if(idx!=-1) this.keys.splice(idx,1);
                                             }
                                         }
-
-                                        // user notification
-                                        if (file_renamed) {
-                                            // get object of attached file
-                                            file = item.getFile();                                
-                                            // show zotfile report
-                                            Zotero.ZotFile.infoWindow("Zotfile Report","New attachment file automatically renamed to \'" + file.leafName + "\'.",8000);
-                                            // remove id from in progress array
-                                            // var idx = this.keys.indexOf(id);
-                                            // if(idx!=-1) this.keys.splice(idx,1);
+                                        catch(e) {
+                                            this.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
                                         }
+                                        // show messages and handle errors
+                                        // this.showWarningMessages("ZotFile Warning: Skipped attachments","Attachments skipped because they are top-level items, snapshots or the file does not exists.");
+                                        this.showReportMessages("ZotFile: New attachment file automatically renamed");
+                                        this.handleErrors();                                        
                                     }
                                     
                                     Zotero.ZotFile.excludeAutorenameKeys.push(key);
