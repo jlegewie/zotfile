@@ -1167,15 +1167,22 @@ Zotero.ZotFile = {
     getLocation: function(zitem, dest_dir,subfolder, rule) {
         var subfolderFormat="";
         if(subfolder) {
+            // get subfolder
             subfolderFormat=this.replaceWildcard(zitem, rule);
+            // correct for missing fields
             if (!Zotero.isWin) subfolderFormat=subfolderFormat.replace('//','/undefined/');
             if ( Zotero.isWin) subfolderFormat=subfolderFormat.replace('\\\\','\\undefined\\');
-        }
+            // replace invalid characters
+            subfolderFormat = subfolderFormat.split(this.folderSep);        
+            for (var i = 0; i < subfolderFormat.length; i++) {                
+                subfolderFormat[i] = Zotero.File.getValidFileName(subfolderFormat[i]);
+            }
+            subfolderFormat = subfolderFormat.join(this.folderSep);
 
-//      var journal = zitem.getField('publicationTitle');
+        }
+        // complete folder and return
         var folder = dest_dir + subfolderFormat;
         return(folder);
-        //return(folder.replace(/[\?%\*:|"<>]/g, ''));
     },
 
     // ================ //
