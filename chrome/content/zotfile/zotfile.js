@@ -1140,6 +1140,9 @@ Zotero.ZotFile = {
             // (code line adopted from Zotero, modified to accept periods)
             filename = filename.replace(/[\/\\\?\*:|"<>]/g, '');
 
+            // remove periods
+            if (this.prefs.getBoolPref("removePeriods"))  filename = filename.replace(/\./g, '');
+
             // replace multiple blanks in filename with single blank & remove whitespace
             //var filename = filename.replace(/ {2,}/g, ' ');
             filename = Zotero.Utilities.trimInternal(filename);
