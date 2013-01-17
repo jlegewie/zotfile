@@ -460,12 +460,20 @@ function deleteSubfolder (subfolder) {
             var userInput=Zotero.ZotFile.promptUser("There are " + attInFolder.length + " attachments in the subfolder you want to delete. What do you want to do?","Get from Tablet","Move to Base Folder","Cancel");
     
             // Pull attachment
-            if(userInput==0) {
+            if(userInput===0) {
                 for (var i=0; i < attInFolder.length; i++) {
-                    var att  = attInFolder[i];
-                    var item = Zotero.Items.get(att.getSource());
-                    var attID=Zotero.ZotFile.getAttachmentFromTablet(item,att,false);
+                    try {
+                        var att  = attInFolder[i];
+                        var item = Zotero.Items.get(att.getSource());
+                        var attID=Zotero.ZotFile.getAttachmentFromTablet(item,att,false);
+                    }
+                    catch (e) {
+                        Zotero.ZotFile.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
+                    }
                 }
+                // show messages and handle errors
+                Zotero.ZotFile.showReportMessages("ZotFile: Attachments got from tablet");
+                Zotero.ZotFile.handleErrors();
             }
 
             // move attachments to base folder
