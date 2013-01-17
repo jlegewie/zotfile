@@ -59,6 +59,11 @@ Zotero.ZotFile = {
             if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.zotfileURL); });
             if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.zotfileURL); });
         }
+        // open webpage with changelog
+        if(this.prefs.getCharPref("version")!=="" && currentVersion=="2.3") {
+            if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.zotfileURL + "#changelog"); });
+            if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.zotfileURL + "#changelog"); });
+        }
 
         // add saved search and change tag when upgrading to 2.1
         if(currentVersion=="2.1" && this.prefs.getBoolPref("tablet")) {
