@@ -1445,9 +1445,9 @@ Zotero.ZotFile = {
             try {
                 // check whether valid FF default download folder
                 if(this.prefs.getBoolPref('source_dir_ff') &&  this.getSourceDir(false)==-1) {
-                this.prefs.setBoolPref('source_dir_ff',false);
+                    this.prefs.setBoolPref('source_dir_ff',false);
                     this.prefs.setCharPref('source_dir',prompt("ZotFile Settings\n\nZotfile is not able to determine your default FF download folder. Please enter a custom source dir. The source dir is the directory where ZotFile looks for the most recently modified file when you use the ZotFile function 'Attach New File'."));
-                return;
+                    return;
                 }
 
                 // get source dir
