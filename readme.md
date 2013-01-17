@@ -32,7 +32,7 @@ Contributions preferably through pull requests are welcome!
   Optional wild-cards: `{-%y}` only includes `-` if  `%y` is defined
   Exclusive wild-cards: `%s|%j` journal abbr. or if not defined full journal name
   (for examples see below)
-- additional wild-cards for author initials (`%I`) and pages (`%f`)
+- additional wild-cards for author formating (author initials `%I` and lastnameF `%F`) and pages (`%f`)
 - **revised auto rename with additional options**
   (four options: Never, Always ask, Only ask if item has other atts, Always rename. The 'asking' uses a clickable, non-disruptive window that appears in the bottom right corner - same as previous info window but clickable)
 - **revised notifications and error handling**
