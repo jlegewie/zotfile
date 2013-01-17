@@ -40,6 +40,7 @@ Contributions preferably through pull requests are welcome!
 - Allow periods as delimiter in filenames (thanks to [jjatria](https://github.com/jjatria))
 - new option: "lower case" filenames (thanks to [jjatria](https://github.com/jjatria))
 - new option: disable renaming so that attachments are only moved (hidden: `disable_renaming`)
+- new option: remove periods from filenames (hidden: `removePeriods`)
 - bug fix: preview of renaming rules for Unix and Windows
 - bug fix: sending to and getting from tablet deleted note content
 
