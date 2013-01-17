@@ -915,7 +915,7 @@ Zotero.ZotFile = {
         else if (item_type === 32) creatorType = [21];
         else if (item_type === 27) creatorType = [24];
         var add_etal = this.prefs.getBoolPref("add_etal");
-        var author = "", author_initials="";
+        var author = "", author_lastf="", author_initials="";
         var creators = zitem.getCreators();
         var numauthors = creators.length;
         for (var i = 0; i < creators.length; ++i) {
@@ -932,6 +932,9 @@ Zotero.ZotFile = {
             if (j < numauthors && creatorType.indexOf(creators[i].creatorTypeID) != -1) {
                 if (author !== "") author += delimiter + creators[i].ref.lastName;
                 if (author === "") author = creators[i].ref.lastName;
+                var lastf =  creators[i].ref.lastName + creators[i].ref.firstName.substr(0, 1).toUpperCase();
+                if (author_lastf !== "") author_lastf += delimiter + lastf;
+                if (author_lastf === "") author_lastf = lastf;
                 var initials = creators[i].ref.firstName.substr(0, 1).toUpperCase() + creators[i].ref.lastName.substr(0, 1).toUpperCase()
                 if (author_initials !== "") author_initials += delimiter + initials;
                 if (author_initials === "") author_initials = initials;
@@ -943,6 +946,7 @@ Zotero.ZotFile = {
         // author
         table["%a"] = author;
         table["%A"] = table["%a"].substr(0, 1).toUpperCase();
+        table["%F"] = author_lastf;
         table["%I"] = author_initials;
         // title
         table["%t"] = this.truncateTitle(zitem.getField("title"));
