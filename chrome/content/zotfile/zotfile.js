@@ -9,6 +9,7 @@ Zotero.ZotFile = {
     projectPath: new Array("","","","","","","","","","","","","","",""),
     projectMax:15,
     zotfileURL:"http://www.jlegewie.com/zotfile.html",
+    lastModifiedTime:null,
     temp:"",
     messages_warning:[],
     messages_report:[],
@@ -171,6 +172,8 @@ Zotero.ZotFile = {
         // add event listener for zotfile menu items
         var win = this.wm.getMostRecentWindow("navigator:browser");
         win.document.getElementById('zotero-itemmenu').addEventListener('popupshowing', this.showMenu, false);
+        win.document.getElementById('zotero-items-tree').addEventListener('focus', this.watchFolder, false);
+        //win.document.getElementById('zotero-pane').addEventListener('focus', this.watchFolder, false);
 
         // add event listener for selecting the 'modified tablet attachments' saved search
         if(this.prefs.getBoolPref("tablet")) this.savedSearchEventListener(true);
@@ -191,6 +194,38 @@ Zotero.ZotFile = {
             .loadSubScript("chrome://zotfile/content/ProgressWindow.js", Zotero.ZotFile);
 
         
+    },
+
+    watchFolder: function() {
+        var zz = Zotero.ZotFile;
+        if(!zz.prefs.getBoolPref('watch_folder')) return;
+        // get source dir
+        // JSON.parse('[1, 5, "false"]') JSON.parse(zz.getCharPref('watch_folder_list'))
+        var source_dir=zz.getSourceDir(true);
+        if (source_dir==-1) return;
+        // get last modified file in source folder
+        var file=zz.getLastFileInFolder(source_dir)[0];
+        if(file==-1 || file==-2) return;
+        if (zz.lastModifiedFile===null) zz.lastModifiedFile=file.lastModifiedTime;
+        // compare to last file
+        if (file.lastModifiedTime!=zz.lastModifiedFile) {
+            var on_confirm = function() {
+                // get selected items
+                var win = zz.wm.getMostRecentWindow("navigator:browser");
+                var item = win.ZoteroPane.getSelectedItems()[0];
+                // attach file
+                zz.attachFile(item, file);
+                // show messages
+                zz.showReportMessages("ZotFile: New attachment added");
+                zz.handleErrors();
+                // set lastModifiedFile variable to previous file
+                file=zz.getLastFileInFolder(source_dir)[0];
+                zz.lastModifiedFile=file.lastModifiedTime;
+            };
+            // ask user whether s/he wants to attach and rename the new file
+            zz.infoWindow("ZotFile: New file",{lines:["'" + file.leafName + "'"],txt:"(click here to rename and attach this file to the currently selected Zotero item)"},zz.prefs.getIntPref("info_window_duration_clickable"),on_confirm);
+            zz.lastModifiedFile=file.lastModifiedTime;
+        }
     },
 
     // Callback implementing the notify() method to pass to the Notifier
