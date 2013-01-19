@@ -1477,19 +1477,18 @@ Zotero.ZotFile = {
                         if (this.prefs.getBoolPref("confirmation"))
                             confirmed=confirm("Do you want to rename and attach/link the file \'" + file_oldpath + "\' to the currently selected Zotero item?");
                         if(confirmed) {
-                            var zz=Zotero.ZotFile,
-                                   attID;
+                            var attID;
                             // create linked attachment if local library
                             if (!item.libraryID) attID=Zotero.Attachments.linkFromFile(file[i], item.itemID,item.libraryID);
 
                             // import attachment if cloud library
                             if (item.libraryID) {
                                 attID=Zotero.Attachments.importFromFile(file[i], item.itemID,item.libraryID);
-                                zz.removeFile(file[i]);
+                                this.removeFile(file[i]);
                             }
                             // Rename and Move Attachment
                             var att = Zotero.Items.get(attID);
-                            var newAttID = zz.renameAttachment(item, att,zz.prefs.getBoolPref("import"),zz.prefs.getCharPref("dest_dir"),zz.prefs.getBoolPref("subfolder"),zz.prefs.getCharPref("subfolderFormat"),false);
+                            var newAttID = this.renameAttachment(item, att,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),false);
                             // show message
                             var new_file_name = Zotero.Items.get(newAttID).getFile().leafName;                            
                             this.messages_report.push("'" + new_file_name + "'");
