@@ -9,7 +9,7 @@ Zotero.ZotFile = {
     projectPath: new Array("","","","","","","","","","","","","","",""),
     projectMax:15,
     zotfileURL:"http://www.jlegewie.com/zotfile.html",
-    lastModifiedTime:null,
+    lastModifiedFile:null,
     temp:"",
     messages_warning:[],
     messages_report:[],
