@@ -226,7 +226,7 @@ Zotero.ZotFile = {
                 else zz.infoWindow("ZotFile Error","No regular Zotero item selected.");
             };
             // ask user whether s/he wants to attach and rename the new file
-            zz.infoWindow("ZotFile: New file",{lines:["'" + file.leafName + "'"],txt:"(click here to rename and attach this file to the currently selected Zotero item)"},zz.prefs.getIntPref("info_window_duration_clickable"),on_confirm);
+            zz.infoWindow("ZotFile: New file in source folder",{lines:["'" + file.leafName + "'"],txt:"(click here to rename and attach this file to the currently selected Zotero item)"},zz.prefs.getIntPref("info_window_duration_clickable"),on_confirm);
             zz.lastModifiedFile=file.lastModifiedTime;
         }
     },
