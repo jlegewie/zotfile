@@ -212,15 +212,18 @@ Zotero.ZotFile = {
             var on_confirm = function() {
                 // get selected items
                 var win = zz.wm.getMostRecentWindow("navigator:browser");
-                var item = win.ZoteroPane.getSelectedItems()[0];
-                // attach file
-                zz.attachFile(item, file);
-                // show messages
-                zz.showReportMessages("ZotFile: New attachment added");
-                zz.handleErrors();
-                // set lastModifiedFile variable to previous file
-                file=zz.getLastFileInFolder(source_dir)[0];
-                zz.lastModifiedFile=file.lastModifiedTime;
+                var items = win.ZoteroPane.getSelectedItems();
+                if(items.length>0 && items[0].isRegularItem()) {
+                    // attach file
+                    zz.attachFile(items[0], file);
+                    // show messages
+                    zz.showReportMessages("ZotFile: New attachment added");
+                    zz.handleErrors();
+                    // set lastModifiedFile variable to previous file
+                    file=zz.getLastFileInFolder(source_dir)[0];
+                    zz.lastModifiedFile=file.lastModifiedTime;
+                }
+                else zz.infoWindow("ZotFile Error","No regular Zotero item selected.");
             };
             // ask user whether s/he wants to attach and rename the new file
             zz.infoWindow("ZotFile: New file",{lines:["'" + file.leafName + "'"],txt:"(click here to rename and attach this file to the currently selected Zotero item)"},zz.prefs.getIntPref("info_window_duration_clickable"),on_confirm);
