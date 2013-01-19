@@ -28,11 +28,13 @@ Contributions preferably through pull requests are welcome!
 
 #### Changes in 2.3
 
-- **Enhanced renaming rules** (thanks to [Midnighter](https://github.com/Midnighter))
+- **enhanced renaming rules** (thanks to [Midnighter](https://github.com/Midnighter))
   Optional wild-cards: `{-%y}` only includes `-` if  `%y` is defined
   Exclusive wild-cards: `%s|%j` journal abbr. or if not defined full journal name
   (for examples see below)
 - additional wild-cards for author formating (author initials `%I` and lastnameF `%F`) and pages (`%f`)
+- **watch source folder for new files**
+  When the focus changes to the item list in Zotero, Zotfile checks for new files in the source folder. If a new file was added to the folder, zotfile uses a clickable, non-disruptive window to ask the user whether s/he wants to attach that file to the currently selected Zotero item. 
 - **revised auto rename with additional options**
   (four options: Never, Always ask, Only ask if item has other atts, Always rename. The 'asking' uses a clickable, non-disruptive window that appears in the bottom right corner - same as previous info window but clickable)
 - **revised notifications and error handling**
