@@ -1440,6 +1440,24 @@ Zotero.ZotFile = {
         }
 
     },
+
+    attachFile: function(item, file) {
+        var attID;
+        // create linked attachment if local library
+        if (!item.libraryID) attID=Zotero.Attachments.linkFromFile(file, item.itemID,item.libraryID);
+
+        // import attachment if cloud library
+        if (item.libraryID) {
+            attID=Zotero.Attachments.importFromFile(file, item.itemID,item.libraryID);
+            this.removeFile(file);
+        }
+        // Rename and Move Attachment
+        var att = Zotero.Items.get(attID);
+        var newAttID = this.renameAttachment(item, att,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),false);
+        // show message
+        var new_file_name = Zotero.Items.get(newAttID).getFile().leafName;                            
+        this.messages_report.push("'" + new_file_name + "'");
+    },
     
     // FUNCTION: Attach New File(s) from Download Folder
     attachNewFile: function(){
@@ -1476,23 +1494,7 @@ Zotero.ZotFile = {
                         var confirmed=true;
                         if (this.prefs.getBoolPref("confirmation"))
                             confirmed=confirm("Do you want to rename and attach/link the file \'" + file_oldpath + "\' to the currently selected Zotero item?");
-                        if(confirmed) {
-                            var attID;
-                            // create linked attachment if local library
-                            if (!item.libraryID) attID=Zotero.Attachments.linkFromFile(file[i], item.itemID,item.libraryID);
-
-                            // import attachment if cloud library
-                            if (item.libraryID) {
-                                attID=Zotero.Attachments.importFromFile(file[i], item.itemID,item.libraryID);
-                                this.removeFile(file[i]);
-                            }
-                            // Rename and Move Attachment
-                            var att = Zotero.Items.get(attID);
-                            var newAttID = this.renameAttachment(item, att,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),false);
-                            // show message
-                            var new_file_name = Zotero.Items.get(newAttID).getFile().leafName;                            
-                            this.messages_report.push("'" + new_file_name + "'");
-                        }
+                        if(confirmed) this.attachFile(item, file[i]);
                     }
                 }
                 else this.messages_error.push("Selected item is either an attachment, a note, or a collection.");
