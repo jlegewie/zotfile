@@ -235,6 +235,7 @@ Zotero.ZotFile = {
     autoRename: {
         parent: this,
         notify: function(event, type, ids, extraData) {
+            var zz = Zotero.ZotFile;
             // 'add item' event
             if (type == 'item' && event == 'add') {
                 // get preference object
