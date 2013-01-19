@@ -64,6 +64,9 @@
 <!ENTITY use-article-book-chapter-page "Use actual article/book chapter page for highlighted text snippets">
 <!ENTITY page-number-determination "The article page number is determined by adding the page in the pdf document and the starting page from the 'pages' field in the zotero metadata. This approach fails if the first page in the pdf document is not the first page in the article/book chapter">
 <!ENTITY other-advanced-settings "Other Advanced Settings">
+
+<!ENTITY watch_folder "Watch for new files in source folder">
+
 <!ENTITY automatic_renaming_label "Automatically rename new attachments">
 <!ENTITY automatic_renaming_no "Never">
 <!ENTITY automatic_renaming_ask "Always ask (non-disruptive)">

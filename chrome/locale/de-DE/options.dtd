@@ -65,6 +65,8 @@
 <!ENTITY page-number-determination "Die Seitenzahl im Artikel wird durch Addition der Seitenzahl innerhalb des PDF Dokuments und der ersten Seite aus dem &quot;Seiten&quot; Feld in den zotero Metadaten berechnet. Dieser Ansatz scheitert, falls die erste Seite des PDF Dokuments nicht die erste Seite innerhalb des Artikels/Buchkapitels ist.">
 <!ENTITY other-advanced-settings "Erweiterte Einstellungen">
 
+<!ENTITY watch_folder "Scanne Quellordner nach neuen Dateien">
+
 <!ENTITY automatic_renaming_label "Automatisches umbennen von neuen Anhängen">
 <!ENTITY automatic_renaming_no "Nie">
 <!ENTITY automatic_renaming_ask "Immer nachfragen (non-disruptive)">

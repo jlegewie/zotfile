@@ -64,6 +64,7 @@
 <!ENTITY use-article-book-chapter-page "Utiliser la pagination originale de l'article/chapitre de livre pour les extraits de textes surlignés">
 <!ENTITY page-number-determination "La pagination originale de l'article/chapitre de livre est déterminée à partir du champ 'pages' des métadonnées Zotero. Elle est calculée en additionant le numéro de page du PDF à la première page du champ Zotero. Cette méthode échoue si la première page du document PDF n'est pas la première page de l'article/chapitre de livre.">
 <!ENTITY other-advanced-settings "Autres paramètres avancées">
+<!ENTITY watch_folder "Watch source folder for new files">
 <!ENTITY automatic_renaming_label "Renommer automatiquement les nouvelles pièces jointes">
 <!ENTITY automatic_renaming_no "Jamais">
 <!ENTITY automatic_renaming_ask "Toujours demander (discrètement)">
