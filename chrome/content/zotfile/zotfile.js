@@ -213,6 +213,13 @@ Zotero.ZotFile = {
                 // get selected items
                 var win = zz.wm.getMostRecentWindow("navigator:browser");
                 var items = win.ZoteroPane.getSelectedItems();
+                // get parent if attachment is selected
+                /*if (items[0].isAttachment()) {
+                    var id_parent = items[0].getSource();
+                    if(!id_parent) continue;
+                    var item = Zotero.Items.get(id_parent);
+                }*/
+                // rename and attach if regular item
                 if(items.length>0 && items[0].isRegularItem()) {
                     // attach file
                     zz.attachFile(items[0], file);
