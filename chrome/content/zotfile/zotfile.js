@@ -994,6 +994,7 @@ Zotero.ZotFile = {
         table["%I"] = author_initials;
         // title
         table["%t"] = this.truncateTitle(zitem.getField("title"));
+        table["%h"] = zitem.getField("shortTitle");
         // journal
         table["%j"] = zitem.getField("publicationTitle");
         table["%s"] = zitem.getField("journalAbbreviation");
