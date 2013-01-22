@@ -29,7 +29,9 @@ Contributions preferably through pull requests are welcome!
 #### Changes in 2.3
 
 - **enhanced renaming rules** (thanks to [Midnighter](https://github.com/Midnighter))
+
   Optional wild-cards: `{-%y}` only includes `-` if  `%y` is defined
+  
   Exclusive wild-cards: `%s|%j` journal abbr. or if not defined full journal name
   (for examples see below)
 - additional wild-cards for author formating (author initials `%I` and lastnameF `%F`), pages (`%f`) and short title (`%h`)
