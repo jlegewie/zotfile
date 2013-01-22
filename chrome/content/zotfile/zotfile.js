@@ -969,12 +969,10 @@ Zotero.ZotFile = {
         var creators = zitem.getCreators();
         var numauthors = creators.length;
         for (var i = 0; i < creators.length; ++i) {
-            if (creatorType.indexOf(creators[i].creatorTypeID) === -1) {
-                --numauthors;
-            }
+            if (creatorType.indexOf(creators[i].creatorTypeID) === -1) numauthors=numauthors-1;
         }
         var max_authors = (this.prefs.getBoolPref("truncate_authors")) ? this.prefs.getIntPref("max_authors") : 500;
-        if (numauthors <= max_authors) add_etal = 0;
+        if (numauthors <= max_authors) add_etal = false;
         else numauthors = 1;
         var delimiter = this.prefs.getCharPref("authors_delimiter");
         var j = 0;
@@ -988,10 +986,14 @@ Zotero.ZotFile = {
                 var initials = creators[i].ref.firstName.substr(0, 1).toUpperCase() + creators[i].ref.lastName.substr(0, 1).toUpperCase()
                 if (author_initials !== "") author_initials += delimiter + initials;
                 if (author_initials === "") author_initials = initials;
-                ++j;
+                j=j+1;
             }
         }
-        if (add_etal === 1) author += this.prefs.getCharPref("etal");
+        if (add_etal) {
+            author = author + this.prefs.getCharPref("etal");
+            author_lastf = author_lastf + this.prefs.getCharPref("etal");
+            author_initials = author_initials + this.prefs.getCharPref("etal");
+        }
         // generate look-up table
         // author
         table["%a"] = author;
