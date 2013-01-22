@@ -172,8 +172,7 @@ Zotero.ZotFile = {
         // add event listener for zotfile menu items
         var win = this.wm.getMostRecentWindow("navigator:browser");
         win.document.getElementById('zotero-itemmenu').addEventListener('popupshowing', this.showMenu, false);
-        win.document.getElementById('zotero-items-tree').addEventListener('focus', this.watchFolder, false);
-        //win.document.getElementById('zotero-pane').addEventListener('focus', this.watchFolder, false);
+        // win.document.getElementById('zotero-items-tree').addEventListener('focus', this.watchFolder, false);
 
         // add event listener for selecting the 'modified tablet attachments' saved search
         if(this.prefs.getBoolPref("tablet")) this.savedSearchEventListener(true);

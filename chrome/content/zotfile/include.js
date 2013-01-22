@@ -6,5 +6,9 @@ if (!Zotero.ZotFile) {
 	
 } 
 
-window.addEventListener('load', function(e) { Zotero.ZotFile.init(); }, false);
+window.addEventListener('load', function(e) {
+	Zotero.ZotFile.init();
+	// attach focus handler for 'zotero-items-tree' element to check folder for changes
+	window.ZoteroPane.document.getElementById('zotero-items-tree').addEventListener('focus', Zotero.ZotFile.watchFolder, false);
+}, false);
 
