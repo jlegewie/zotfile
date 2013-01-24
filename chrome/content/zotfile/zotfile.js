@@ -46,7 +46,7 @@ Zotero.ZotFile = {
             aAddon.uninstall();
             
             // prompt for restart
-            if (confirm("ZotFile has transfered most of your preferences from ZotFile Reader to the new version of ZotFile and uninstalled the ZotFile Reader add-on.\n\nPlease restart Firefox now!")) {
+            if (confirm(Zotero.ZotFile.ZFgetString('uninstallZFReader'))) {
                 var boot = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);
                 boot.quit(Components.interfaces.nsIAppStartup.eForceQuit|Components.interfaces.nsIAppStartup.eRestart);
                 
@@ -77,7 +77,7 @@ Zotero.ZotFile = {
                     Zotero.Tags.rename(Zotero.Tags.getID("_READ",0), "_tablet");
 
                     // show message
-                    this.infoWindow("ZotFile Warning","In ZotFile 2.1, the tag for tablet attachments was changed from '_READ' to '_tablet'. Please do not use or change the '_tablet' tag manually!",8000);
+                    this.infoWindow(Zotero.ZotFile.ZFgetString('general.warning'),Zotero.ZotFile.ZFgetString('tablet.oldTagName'),8000);
 
                 } catch (ex) {
                     alert("Warning: ZotFile has changed the tag for attachments on the tablet from '_READ' to '_tablet' but was unable to automatically change the existing tag. Please make the changes manually or ask for help in the zotfile thread on the zotero forum.");
@@ -195,6 +195,29 @@ Zotero.ZotFile = {
         
     },
 
+	//Localization (borrowed from Zotero sourcecode)
+	ZFgetString: function (name, params){
+		this.stringsBundle = Components.classes["@mozilla.org/intl/stringbundle;1"]
+			.getService(Components.interfaces.nsIStringBundleService)
+			.createBundle("chrome://zotfile/locale/zotfile.properties");
+		try {
+			if (params != undefined){
+				if (typeof params != 'object'){
+					params = [params];
+				}
+				var l10n = this.stringsBundle.formatStringFromName(name, params, params.length);
+			}
+			else {
+				var l10n = this.stringsBundle.GetStringFromName(name);
+			}
+		}
+		catch (e){
+			throw ('Localized string not available for ' + name);
+		}
+		return l10n;
+	},
+	
+	
     watchFolder: function() {
         var zz = Zotero.ZotFile;
         if(!zz.prefs.getBoolPref('watch_folder')) return;
@@ -223,16 +246,16 @@ Zotero.ZotFile = {
                     // attach file
                     zz.attachFile(items[0], file);
                     // show messages
-                    zz.showReportMessages("ZotFile: New attachment added");
+                    zz.showReportMessages(zz.ZFgetString('general.newAttachmentAdded'));
                     zz.handleErrors();
                     // set lastModifiedFile variable to previous file
                     file=zz.getLastFileInFolder(source_dir)[0];
                     zz.lastModifiedFile=file.lastModifiedTime;
                 }
-                else zz.infoWindow("ZotFile Error","No regular Zotero item selected.");
+                else zz.infoWindow(zz.ZFgetString('general.error'),zz.ZFgetString('watchFolder.noRegularItem'));
             };
             // ask user whether s/he wants to attach and rename the new file
-            zz.infoWindow("ZotFile: New file in source folder",{lines:["'" + file.leafName + "'"],txt:"(click here to rename and attach this file to the currently selected Zotero item)"},zz.prefs.getIntPref("info_window_duration_clickable"),on_confirm);
+            zz.infoWindow(zz.ZFgetString('watchFolder.newFile'),{lines:["'" + file.leafName + "'"],txt:zz.ZFgetString('watchFolder.clickRename')},zz.prefs.getIntPref("info_window_duration_clickable"),on_confirm);
             zz.lastModifiedFile=file.lastModifiedTime;
         }
     },
@@ -276,7 +299,7 @@ Zotero.ZotFile = {
                                     var parent = Zotero.Items.get(id_parent);
                                     // skip if file already has correct filename
                                     var filename = item.getFilename().replace(/\.[^/.]+$/, "");
-                                    //zz.infoWindow("REPORT",{lines:[zz.getFilename(parent,filename),filename]});
+                                    //zz.infoWindow(zz.ZFgetString('general.report'),{lines:[zz.getFilename(parent,filename),filename]});
                                     if(filename.indexOf(zz.getFilename(parent,filename))==0) continue;
                                     // flag for notification
                                     var file_renamed=false;
@@ -324,20 +347,20 @@ Zotero.ZotFile = {
                                             zz.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
                                         }
                                         // show messages and handle errors
-                                        // zz.showWarningMessages("ZotFile Warning: Skipped attachments","Attachments skipped because they are top-level items, snapshots or the file does not exists.");
-                                        zz.showReportMessages("ZotFile: New attachment file renamed");
+                                        // zz.showWarningMessages(zz.ZFgetString('general.warning.skippedAtt'),zz.ZFgetString('general.warning.skippedAtt.msg'));
+                                        zz.showReportMessages(zz.ZFgetString('general.newAttachmentRenamed'));
                                         zz.handleErrors();                                        
                                     }
                                     
                                     zz.excludeAutorenameKeys.push(key);
                                     // ask user
                                     if(auto_rename==2) {                                    
-                                        zz.infoWindow("ZotFile: New attachment",{lines:["'" + file.leafName + "'"],txt:"(click here to move and rename)"},prefs.getIntPref("info_window_duration_clickable"),on_confirm);
+                                        zz.infoWindow(zz.ZFgetString('general.newAttachment'),{lines:["'" + file.leafName + "'"],txt:zz.ZFgetString('renaming.clickMoveRename')},prefs.getIntPref("info_window_duration_clickable"),on_confirm);
                                     }
                                     // ask user if item has other attachments
                                     if(auto_rename==3) {
                                         if(parent.getAttachments().length>1)
-                                            zz.infoWindow("ZotFile: New attachment",{lines:["'" + file.leafName + "'"],txt:"(click here to move and rename)"},prefs.getIntPref("info_window_duration_clickable"),on_confirm);
+                                            zz.infoWindow(zz.ZFgetString('general.newAttachment'),{lines:["'" + file.leafName + "'"],txt:zz.ZFgetString('renaming.clickMoveRename')},prefs.getIntPref("info_window_duration_clickable"),on_confirm);
                                         else
                                             on_confirm();
                                     }
@@ -346,7 +369,7 @@ Zotero.ZotFile = {
                                 }
                             }
                         } catch (e) {
-                            zz.infoWindow("Zotfile Error","Zotfile failed to automatically rename an attachment.",8000);
+                            zz.infoWindow(zz.ZFgetString('general.error'),zz.ZFgetString('renaming.renamingFailed'),8000);
                         }
                     }
                 },100);
@@ -362,7 +385,7 @@ Zotero.ZotFile = {
     },
 
     /*showMenu: function(event) {
-        Zotero.ZotFile.infoWindow("ZotFile Report","event fired!",8000);
+        Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.report'),"event fired!",8000);
     },*/
     
     
@@ -538,8 +561,8 @@ Zotero.ZotFile = {
         // fatal errors
         if(this.messages_fatalError.length>0) {
             duration = this.prefs.getIntPref("info_window_duration_clickable");
-            errors.lines.push("Unknown error!");
-            errors.txt = "(Click here to copy details about unknown errors to the clipboard)"
+            errors.lines.push(Zotero.ZotFile.ZFgetString('error.unknown'));
+            errors.txt = Zotero.ZotFile.ZFgetString('error.clickToCopy')
             // prepare error message for clipboard
             var errors_str=this.removeDuplicates(this.messages_fatalError).join("\n\n");
             on_click = function() {
@@ -551,7 +574,7 @@ Zotero.ZotFile = {
             // remove duplicates
             errors.lines = this.removeDuplicates(errors.lines);
             // show errors
-            this.infoWindow("ZotFile Error",errors,duration,on_click);
+            this.infoWindow(Zotero.ZotFile.ZFgetString('general.error'),errors,duration,on_click);
         }
         // empty error arrays
         this.messages_error = [];
@@ -694,14 +717,14 @@ Zotero.ZotFile = {
 
         }
 
-        // check whether destitination folder is defined (and valid)
+        // check whether destination folder is defined (and valid)
         var dest_dir_valid=this.fileExists(this.prefs.getCharPref("tablet.dest_dir"));
 //      if(this.prefs.getCharPref("tablet.dest_dir")!="") var dest_dir_valid=1;
 
         // warnings
         if(!oneItem) {
             show.push(m.warning1);
-            menu.childNodes[m.warning1].setAttribute('label',"No item or attachment selected.");
+            menu.childNodes[m.warning1].setAttribute('label',Zotero.ZotFile.ZFgetString('menu.noItemSelected'));
         }
 
 
@@ -716,7 +739,7 @@ Zotero.ZotFile = {
             if(!oneAtt) {
                 disable.push(m.rename, m.extractanno);
                 show.push(m.sep1,m.warning2);
-                menu.childNodes[m.warning2].setAttribute('label',"Selected item(s) have no attachments.");
+                menu.childNodes[m.warning2].setAttribute('label',Zotero.ZotFile.ZFgetString('menu.itemHasNoAtts'));
                             
             }
 
@@ -731,18 +754,18 @@ Zotero.ZotFile = {
                 // warnings
                 if(!dest_dir_valid) {
                     show.push(m.warning2);
-                    menu.childNodes[m.warning2].setAttribute('label',"Location for tablet files is not defined or invalid.");
+                    menu.childNodes[m.warning2].setAttribute('label',Zotero.ZotFile.ZFgetString('menu.invalidTabletLocation'));
                 }
                 if(groupLib) {
                     show.push(m.warning2);
-                    menu.childNodes[m.warning2].setAttribute('label',"Selected item is in group library.");
+                    menu.childNodes[m.warning2].setAttribute('label',Zotero.ZotFile.ZFgetString('menu.itemIsInGroupLibrary'));
                 }
                                                 
                 if(dest_dir_valid && !groupLib) {
                     show.push(m.push2reader,m.pullreader);
 
                     // set tooltip for base folder
-                    menu.childNodes[m.push2reader].setAttribute('tooltiptext',"Send Attachment File to \'" + this.prefs.getCharPref("tablet.dest_dir") + "\'");
+                    menu.childNodes[m.push2reader].setAttribute('tooltiptext',Zotero.ZotFile.ZFgetString('menu.sendAttToBaseFolder',[this.prefs.getCharPref("tablet.dest_dir")]));
 
                     if(!onePushed) disable.push(m.pullreader);
 
@@ -783,7 +806,7 @@ Zotero.ZotFile = {
                             for (i=0;i<folders.length;i++) {
                                 show.push(m.push2readerFolder[i]);
                                 menu.childNodes[m.push2readerFolder[i]].setAttribute('label',folders[i]);
-                                menu.childNodes[m.push2readerFolder[i]].setAttribute('tooltiptext',"Send Attachment File to \'..." + folders[i] + "\'");
+                                menu.childNodes[m.push2readerFolder[i]].setAttribute('tooltiptext',Zotero.ZotFile.ZFgetString('menu.sendAttToSubfolder',[folders[i]]));
                                 this.projectPath[i]=folders[i];
                                 if(i>9) break;
                             }
@@ -797,7 +820,7 @@ Zotero.ZotFile = {
                             if(this.prefs.getBoolPref("tablet.projectFolders" + this.projectNr[i])) {
                                 show.push(m.push2readerFolder[i]);
                                 menu.childNodes[m.push2readerFolder[i]].setAttribute('label', this.prefs.getCharPref("tablet.projectFolders" + this.projectNr[i] +"_label"));
-                                menu.childNodes[m.push2readerFolder[i]].setAttribute('tooltiptext',"Send Attachment File to \'..." + this.prefs.getCharPref("tablet.projectFolders" + this.projectNr[i] +"_folder") + "\'");
+                                menu.childNodes[m.push2readerFolder[i]].setAttribute('tooltiptext',Zotero.ZotFile.ZFgetString('menu.sendAttToSubfolder',[this.prefs.getCharPref("tablet.projectFolders" + this.projectNr[i] +"_folder")]));
                                 projectsSet=1;
                             }
                         }
@@ -807,8 +830,8 @@ Zotero.ZotFile = {
                     if(!projectsSet && this.prefs.getIntPref("tablet.projectFolders")!=0) {
                         var warning;
                         show.push(m.warning3);
-                        if(this.prefs.getIntPref("tablet.projectFolders")==1) warning="Item is in no collection.";
-                        if(this.prefs.getIntPref("tablet.projectFolders")==2) warning="No subfolders defined.";
+                        if(this.prefs.getIntPref("tablet.projectFolders")==1) warning=Zotero.ZotFile.ZFgetString('menu.itemIsInNoCollection');
+                        if(this.prefs.getIntPref("tablet.projectFolders")==2) warning=Zotero.ZotFile.ZFgetString('menu.noSubfoldersDefined');
                         menu.childNodes[m.warning3].setAttribute('label', warning);
                     }
                 }
@@ -835,7 +858,7 @@ Zotero.ZotFile = {
     addUserInput: function(filename, original_filename){
         var default_str = this.prefs.getCharPref("userInput_Default");
         if (default_str=="[original filename]") default_str=original_filename;
-        var filesuffix = prompt("Enter file suffix (press Cancel to add nothing)\n\nOriginal Filename\n"+original_filename+"\n\nNew Filename\n"+filename + " (YOUR INPUT)", default_str);
+        var filesuffix = prompt(Zotero.ZotFile.ZFgetString('renaming.addUserInput.prompt', [original_filename, filename]), default_str);
         if (filesuffix != '' && filesuffix != null) {
             // add file type to the file name
             filename = filename + " (" + filesuffix + ")";
@@ -845,7 +868,7 @@ Zotero.ZotFile = {
     
     truncateTitle: function(title){
         
-        // truncnate title after : . and ?
+        // truncate title after : . and ?
         if(this.prefs.getBoolPref("truncate_title")) {
             var truncate = title.search(/:|\.|\?/);
             if(truncate!=-1) title = title.substr(0,truncate);
@@ -934,8 +957,7 @@ Zotero.ZotFile = {
             }
             else if (rule[i] === close) {
                 if (matching.length === 0) {
-                    var msg = "unmatched closing '".concat(close, "' at position ", i, ".");                    
-                    this.messages_error.push("Error in renaming format: " + msg);
+                    this.messages_error.push(Zotero.ZotFile.ZFgetString('renaming.errorFormat.closing', [close, i]));
                 }
                 matching.pop();
                 if (matching.length === 0) {
@@ -946,8 +968,7 @@ Zotero.ZotFile = {
             }
         }
         if (matching.length > 0) {
-            var msg = "unmatched opening '".concat(open, "' at position ", matching[0], ".");
-            this.messages_error.push("Error in renaming format: " + msg);
+			this.messages_error.push(Zotero.ZotFile.ZFgetString('renaming.errorFormat.opening', [open, matching[0]]));
         }
         return outer;
     },
@@ -1051,13 +1072,11 @@ Zotero.ZotFile = {
             pos = this.binaryArrayIndex(wildcards,bars[i]);
             // no wildcard between previous and current |
             if (pos - 1 < last || pos === 0) {
-                var msg = "missing left wildcard for exclusive operator '|' at position " + (offset + bars[i]) + ".";                
-                this.messages_error.push("Error in renaming format: " + msg);
+				this.messages_error.push(Zotero.ZotFile.ZFgetString('renaming.errorFormat.left', [offset + bars[i]]));
             }
             // no wildcard between current and next | or no more wildcards left
             if (wildcards[pos] > bars[i + 1] || pos === wildcards.length) {
-                var msg = "missing right wildcard for exclusive operator '|' at position " + (offset + bars[i]) + ".";
-                this.messages_error.push("Error in renaming format: " + msg);
+				this.messages_error.push(Zotero.ZotFile.ZFgetString('renaming.errorFormat.right', [offset + bars[i]]));
             }
             if (pos - last > 1) {
                 // all look-ups in an exclusive group failed
@@ -1311,9 +1330,9 @@ Zotero.ZotFile = {
             }
             catch(err) {
                 if(err.name == "NS_ERROR_FILE_IS_LOCKED")
-                    this.messages_error.push("Error when moving the file '" + att_name + "' because it is locked. Probably it is opened in a program, so please close it.");
+                    this.messages_error.push(Zotero.ZotFile.ZFgetString('error.movingFileLocked', [att_name]));
                 else
-                    this.messages_error.push("Error when moving the file '" + att_name + "' (" + err + ").");
+                    this.messages_error.push(Zotero.ZotFile.ZFgetString('error.movingFileGeneral', [att_name, err]));
                 file.path = "NULL";
             }
         }
@@ -1353,7 +1372,7 @@ Zotero.ZotFile = {
                 file.remove(false);
             }
             catch(err){
-                if(file.isDirectory()) this.infoWindow("ZotFile Report","ZotFile was unable delete the old folder probably because other files are in the folder.",8000);
+                if(file.isDirectory()) this.infoWindow(Zotero.ZotFile.ZFgetString('general.report'),Zotero.ZotFile.ZFgetString('file.removeFolderFailed'),8000);
             }
         }
     },
@@ -1483,7 +1502,7 @@ Zotero.ZotFile = {
         if (source_dir!="" && this.fileExists(source_dir)) {
             return (source_dir);
         } else {
-            if(message) this.infoWindow("ZotFile Error","The source folder is not valid. Please change the the source folder under Zotero-Actions-Zotfile Preferences. You might have to use a custom folder.",8000);
+            if(message) this.infoWindow(Zotero.ZotFile.ZFgetString('general.error'),Zotero.ZotFile.ZFgetString('file.invalidSourceFolder'),8000);
             return(-1);
         }
 
@@ -1520,7 +1539,7 @@ Zotero.ZotFile = {
                 // check whether valid FF default download folder
                 if(this.prefs.getBoolPref('source_dir_ff') &&  this.getSourceDir(false)==-1) {
                     this.prefs.setBoolPref('source_dir_ff',false);
-                    this.prefs.setCharPref('source_dir',prompt("ZotFile Settings\n\nZotfile is not able to determine your default FF download folder. Please enter a custom source dir. The source dir is the directory where ZotFile looks for the most recently modified file when you use the ZotFile function 'Attach New File'."));
+                    this.prefs.setCharPref('source_dir',prompt(Zotero.ZotFile.ZFgetString('general.downloadFolder.prompt')));
                     return;
                 }
 
@@ -1541,22 +1560,22 @@ Zotero.ZotFile = {
                         var file_oldpath=file[i].leafName;
                         var confirmed=true;
                         if (this.prefs.getBoolPref("confirmation"))
-                            confirmed=confirm("Do you want to rename and attach/link the file \'" + file_oldpath + "\' to the currently selected Zotero item?");
+                            confirmed=confirm(this.ZFgetString('renaming.renameAttach.confirm', [file_oldpath]));
                         if(confirmed) this.attachFile(item, file[i]);
                     }
                 }
-                else this.messages_error.push("Selected item is either an attachment, a note, or a collection.");
+                else this.messages_error.push(this.ZFgetString('renaming.renameAttach.wrongItem'));
             }
             catch(e) {
                 this.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
             }
 
         }
-        else this.messages_error.push("Selected item is either an attachment, a note, or a collection.");
+        else this.messages_error.push(this.ZFgetString('renaming.renameAttach.wrongItem'));
 
         // show messages and handle errors
-        // this.showWarningMessages("ZotFile Warning: Skipped attachments","Attachments skipped because they are on the tablet, top-level items, snapshots or the file does not exists.");
-        this.showReportMessages("ZotFile: New attachment(s) added");
+        // this.showWarningMessages(Zotero.ZotFile.ZFgetString('general.warning.skippedAtt'),Zotero.ZotFile.ZFgetString('general.warning.skippedAtt.tablet.msg'));
+        this.showReportMessages(this.ZFgetString('general.newAttachmentsAdded'));
         this.handleErrors();
     },
     
@@ -1665,13 +1684,13 @@ Zotero.ZotFile = {
             var item = items[i];
 
             // show warning if regular item with tablet tag
-            if(item.isRegularItem()) this.infoWindow("ZotFile Warning","A regular Zotero item has the \'" + this.prefs.getCharPref("tablet.tag") + "\' tag. This tag should only be used by zotfile and not assigned manually.",8000);
+            if(item.isRegularItem()) this.infoWindow(this.ZFgetString('general.warning'),this.ZFgetString('tablet.regularItemTagged', [this.prefs.getCharPref("tablet.tag")]),8000);
 
             // check whether non-top level attachment
             if(!item.isTopLevelItem() && item.isAttachment()) {
 
                 // show warning if no information in note
-                if(this.getInfo(item,"mode")==="") this.infoWindow("ZotFile Warning","The information stored in attachment notes is missing for an attachment on the tablet. Make sure that you do not delete this information manually.",8000);
+                if(this.getInfo(item,"mode")==="") this.infoWindow(this.ZFgetString('general.warning'),this.ZFgetString('tablet.attachmentNoteMissing'),8000);
                 if(this.getInfo(item,"mode")!="") {
                     if(subfolder===undefined) atts.push(item);
                     if(subfolder!==undefined) if(this.getInfo(item,"projectFolder").toLowerCase()==subfolder.toLowerCase()) atts.push(item);
@@ -1725,8 +1744,8 @@ Zotero.ZotFile = {
             }
         }
         // show messages and handle errors
-        var mess_loc=(projectFolder!=="" && projectFolder!==null) ? ("'..." + projectFolder + "'.") : "the base folder.";        
-        this.showReportMessages("ZotFile: Moved attachments to " + mess_loc);
+        var mess_loc=(projectFolder!=="" && projectFolder!==null) ? ("'..." + projectFolder + "'.") : this.ZFgetString('tablet.baseFolder');        
+        this.showReportMessages(this.ZFgetString('tablet.movedAttachments', [mess_loc]));
         this.handleErrors();
     },
 
@@ -1855,9 +1874,9 @@ Zotero.ZotFile = {
     
         // Push attachments
         var confirmed=1;
-        if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) confirmed=confirm("Do you want to send " + attIDs.length + " attachments to the tablet?");
+        if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) confirmed=confirm(this.ZFgetString('tablet.sendAttachments', [attIDs.length]));
         if(confirmed) {
-            if (!repush && attOnReaderCount>0) repush=confirm(attOnReaderCount + " of the selected attachments are already on the tablet. Do you want to replace these files on the tablet?");
+            if (!repush && attOnReaderCount>0) repush=confirm(this.ZFgetString('tablet.replaceAttachAlready', [attOnReaderCount]));
             for (i=0; i < attIDs.length; i++) {
                 try { 
                     var att = Zotero.Items.get(attIDs[i]);
@@ -1884,8 +1903,8 @@ Zotero.ZotFile = {
             if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
         }
         // show messages and handle errors
-        this.showWarningMessages("ZotFile Warning: Skipped attachments","Attachments skipped because they are top-level items, snapshots or the file does not exists.");
-        this.showReportMessages("ZotFile: Attachments moved to tablet");
+        this.showWarningMessages(Zotero.ZotFile.ZFgetString('general.warning.skippedAtt'),Zotero.ZotFile.ZFgetString('general.warning.skippedAtt.msg'));
+        this.showReportMessages(Zotero.Zotfile.ZFgetString('tablet.AttsMoved'));
         this.handleErrors();
     },
 
@@ -1934,8 +1953,8 @@ Zotero.ZotFile = {
         }
 
         // show messages and handle errors
-        this.showWarningMessages("ZotFile Warning: Skipped attachments","Attachments skipped because they are top-level items, snapshots or the file does not exists.");
-        this.showReportMessages("ZotFile: Attachments synced between Zotero and tablet");
+        this.showWarningMessages(Zotero.ZotFile.ZFgetString('general.warning.skippedAtt'),Zotero.ZotFile.ZFgetString('general.warning.skippedAtt.msg'));
+        this.showReportMessages(Zotero.ZotFile.ZFgetString('tablet.AttsSynced'));
         this.handleErrors();
     },
     
@@ -1966,7 +1985,7 @@ Zotero.ZotFile = {
                 // if attachment gets replaced
                 if (!this.prefs.getBoolPref("tablet.storeCopyOfFile")) {
                     // prompt if both file have been modified
-                    if (option==2) option=this.promptUser("Both copies of the attachment file \'" + file_zotero.leafName + "\'  have been modified. What do you want to do?\n\nRemoving the tablet file discards all changes made to the file on the tablet.","Replace Zotero File","Remove Tablet File","Cancel");
+                    if (option==2) option=this.promptUser(Zotero.ZotFile.ZFgetString('tablet.fileConflict', [file_zotero.leafName]),Zotero.ZotFile.ZFgetString('tablet.fileConflict.replaceZ'),Zotero.ZotFile.ZFgetString('tablet.fileConflict.removeT'),Zotero.ZotFile.ZFgetString('general.cancel'));
 
                     // Replace Zotero file
                     if(option==0) {
@@ -2073,7 +2092,7 @@ Zotero.ZotFile = {
         var tagID=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tag"),0);
         var confirmed=true;
         if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) 
-            confirmed=confirm("Do you want to get the " + attIDs.length + " selected attachments from your tablet?");
+            confirmed=confirm(this.ZFgetString('tablet.getAttachments', [attIDs.length]));
         if(confirmed) {
             for (var i=0; i < attIDs.length; i++) {
                 try {                    
@@ -2092,8 +2111,8 @@ Zotero.ZotFile = {
         // restore selection
         if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
         // show messages and handle errors
-        this.showWarningMessages("ZotFile Warning: Skipped attachments","Attachments skipped because they are top-level items, snapshots or the file does not exists.");
-        this.showReportMessages("ZotFile: Attachments got from tablet");
+        this.showWarningMessages(Zotero.ZotFile.ZFgetString('general.warning.skippedAtt'),Zotero.ZotFile.ZFgetString('general.warning.skippedAtt.msg'));
+        this.showReportMessages(Zotero.ZotFile.ZFgetString('tablet.AttsGot'));
         this.handleErrors();
     },
     
@@ -2129,7 +2148,7 @@ Zotero.ZotFile = {
                 // create new attachment object
                 att = Zotero.Items.get(newAttID);
                 // notification
-                if(notification) this.messages_report.push("'" + filename + "' (imported)");                    
+                if(notification) this.messages_report.push(Zotero.ZotFile.ZFgetString('renaming.imported', [filename]));                    
             }
             // RENAME ATTACHMENT FILE
             if (import_att || item.libraryID) {
@@ -2139,7 +2158,7 @@ Zotero.ZotFile = {
                 att.setField('title', filename);
                 att.save();
                 // notification
-                if (linkmode!=Zotero.Attachments.LINK_MODE_LINKED_FILE && notification) this.messages_report.push("'" + filename + "' (imported)");
+                if (linkmode!=Zotero.Attachments.LINK_MODE_LINKED_FILE && notification) this.messages_report.push(Zotero.ZotFile.ZFgetString('renaming.imported', [filename]));
             }
             // (b) TO LINKED ATTACHMENT (only if library is local and not cloud)
             if (!import_att && !item.libraryID) {
@@ -2153,7 +2172,7 @@ Zotero.ZotFile = {
                     // erase old attachment
                     att.erase();
                     // notification
-                    if(notification) this.messages_report.push("'" + file.leafName + "' (linked)");
+                    if(notification) this.messages_report.push(Zotero.ZotFile.ZFgetString('renaming.linked', [filename]));
                 }
             }
         }
@@ -2172,7 +2191,7 @@ Zotero.ZotFile = {
         
         // Pull attachments
         var confirmed=1;
-        if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) confirmed=confirm("Do you want to move and rename " + attIDs.length + " attachments?");
+        if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) confirmed=confirm(this.ZFgetString('renaming.moveRename', [attIDs.length]));
         if(confirmed) {
             for (var i=0; i < attIDs.length; i++) {
                 try { 
@@ -2215,8 +2234,8 @@ Zotero.ZotFile = {
             if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
         }
         // show messages and handle errors
-        this.showWarningMessages("ZotFile Warning: Skipped attachments","Attachments skipped because they are on the tablet, top-level items, snapshots or the file does not exists.");
-        this.showReportMessages("ZotFile: Renamed attachments");
+        this.showWarningMessages(Zotero.ZotFile.ZFgetString('general.warning.skippedAtt'),Zotero.ZotFile.ZFgetString('general.warning.skippedAtt.tablet.msg'));
+        this.showReportMessages(Zotero.ZotFile.ZFgetString('renaming.renamed'));
         this.handleErrors();
     },
     
@@ -2253,7 +2272,7 @@ Zotero.ZotFile = {
             // extractor filename
             this.popplerExtractorFileName += '-' + Zotero.platform;
             if (Zotero.isWin) this.popplerExtractorFileName+='.exe';
-            //“pdftotext-{platform}”, where {platform} is “Win32”, “MacIntel”, “MacPPC”, “Linux-i686”, etc. (To determine your current platform, type javascript:alert(navigator.platform) in the Firefox URL bar and hit Enter.)
+            //“pdftotext-{platform}�?, where {platform} is “Win32�?, “MacIntel�?, “MacPPC�?, “Linux-i686�?, etc. (To determine your current platform, type javascript:alert(navigator.platform) in the Firefox URL bar and hit Enter.)
 
             // extractor path
             this.popplerExtractorPath = Zotero.getZoteroDirectory().path + "/ExtractPDFAnnotations/" + this.popplerExtractorFileName;
@@ -2314,7 +2333,7 @@ Zotero.ZotFile = {
             // get selected attachments if no att ids are passed
             if(attIDs==null) {
                 attIDs=Zotero.ZotFile.getSelectedAttachments();
-                Zotero.ZotFile.showWarningMessages("ZotFile Warning: Skipped attachments","Attachments skipped because they are top-level items, snapshots or the file does not exists.");
+                Zotero.ZotFile.showWarningMessages(Zotero.ZotFile.ZFgetString('general.warning.skippedAtt'),Zotero.ZotFile.ZFgetString('general.warning.skippedAtt.msg'));
             }
             // iterate through attachment items
             var file;
@@ -2344,7 +2363,7 @@ Zotero.ZotFile = {
                             if (time_reader>time_saved  && time_zotero>time_saved) option=2;
 
                             // prompt if both file have been modified
-                            if(option==2) option =Zotero.ZotFile.promptUser("Both copies of the attachment file \'" + file_zotero.leafName + "\'  have been modified. From which copy do you want to extract annotations?","Use Copy on Tablet","Use Copy in Zotero","Cancel");
+                            if(option==2) option =Zotero.ZotFile.promptUser(Zotero.ZotFile.ZFgetString('extraction.fileConflict', [file_zotero.leafName]),Zotero.ZotFile.ZFgetString('extraction.fileConflict.useT'),Zotero.ZotFile.ZFgetString('extraction.fileConflict.useZ'),Zotero.ZotFile.ZFgetString('general.cancel'));
                             if(option==0) file   =file_reader;
                             if(option==1) file   =file_zotero;
                             if(option==2) return(false);
@@ -2388,7 +2407,7 @@ Zotero.ZotFile = {
                         // setup extraction process
                         this.errorExtractingAnnotations = false;
                         this.numTotalPdfAttachments = this.pdfAttachmentsForExtraction.length;
-                        Zotero.showZoteroPaneProgressMeter("Extract PDF annotations (press ESC to cancel)",true);
+                        Zotero.showZoteroPaneProgressMeter(Zotero.ZotFile.ZFgetString('extraction.progressBar'),true);
                         var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser");
                         win.ZoteroPane.document.addEventListener('keypress', this.cancellationListener,false);
                         this.pdfHiddenBrowser = Zotero.Browser.createHiddenBrowser();
@@ -2398,10 +2417,10 @@ Zotero.ZotFile = {
                         Zotero.ZotFile.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
                     }
                 }
-                else Zotero.ZotFile.infoWindow("ZotFile Error","The extraction of pdf annotations with pdf.js is not supported on Firefox 3.6. Install the most recent Firefox version to use this feature. Mac users can also switch to poppler for the extraction of pdf annotations (in 'ZotFile Preferences' under 'Advanced Settings').",8000);
+                else Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.error'),Zotero.ZotFile.ZFgetString('extraction.outdatedFirefox'),8000);
             }
             // show messages and handle errors
-            // this.showReportMessages("ZotFile: Attachments moved to tablet");
+            // this.showReportMessages(Zotero.ZotFile.ZFgetString('tablet.AttsMoved'));
             Zotero.ZotFile.handleErrors();
         },
 
@@ -2444,7 +2463,7 @@ Zotero.ZotFile = {
 
                 istream.close();
             }
-            else Zotero.ZotFile.messages_error.push("Annotation extraction failed because file does not exists.");                
+            else Zotero.ZotFile.messages_error.push(Zotero.ZotFile.ZFgetString('extraction.failedNoFile'));                
             return annotations;
         },
 
@@ -2457,7 +2476,7 @@ Zotero.ZotFile = {
             note.setSource(item.getID());
             var noteID = note.save();
 
-//          Zotero.ZotFile.infoWindow("ZotFile Report","TAB:" + prefWindow.document.getElementById('zotfile-tabbox').selectedTab,8000);
+//          Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.report'),"TAB:" + prefWindow.document.getElementById('zotfile-tabbox').selectedTab,8000);
         },
 
         getNoteContent: function(annotations, item, method) {
@@ -2592,7 +2611,7 @@ Zotero.ZotFile = {
                     this.extractAnnotationsFromFiles();
                 } else { // we're done
                     if (this.errorExtractingAnnotations) {
-                        Zotero.ZotFile.infoWindow("ZotFile Report","ZotFile was unable to extract all annotations because pdf.js does not support certain PDF standards yet. Please see the JavaScript error console for more details.",8000);
+                        Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.report'),Zotero.ZotFile.ZFgetString('extraction.pdfjsFailed'),8000);
                     }
                     this.errorExtractingAnnotations = false;
                     Zotero.Browser.deleteHiddenBrowser(this.pdfHiddenBrowser);
