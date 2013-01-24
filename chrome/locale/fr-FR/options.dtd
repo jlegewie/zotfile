@@ -21,7 +21,7 @@
 <!ENTITY donation "don">
 <!ENTITY tablet-desc "ZotFile peut simplifier la lecture et l'annotation de vos pièces jointes Zotero sur un iPad ou une tablette Android utilisant une appli d'annotation des PDFs. Il envoie les PDFs et les récupère à partir de la tablette, les renomme et les classe dans des sous-dossiers afin que vous les trouviez, et extrait les annotations et le texte surligné dans une note Zotero.">
 <!ENTITY send-get-from-tablet "Utiliser ZotFile pour envoyer et recevoir les fichiers de la tablette">
-<!ENTITY location-on-tablet "Emplacement des fichiers sur la tablette">
+<!ENTITY location-on-tablet "Emplacement des fichiers de la tablette">
 <!ENTITY base-folder "Dossier de base">
 <!ENTITY show-folder "Localiser le dossier">
 <!ENTITY dropbox "(DropBox ou un dossier autre qui synchronise avec l'application de lecture sur votre tablette)">
@@ -47,7 +47,7 @@
 <!ENTITY for-a-full-list "Pour une liste complète des jokers, consultez le ">
 <!ENTITY additional-settings "Paramètres additionnels">
 <!ENTITY delimiter-multiple-authors "Caractère de séparation entre plusieurs auteurs">
-<!ENTITY add-user-input-to-filename "Ajouter au nom de fichier la saisie de l'utilisateur. La saisie par défaut est ">
+<!ENTITY add-user-input-to-filename "Ajouter au nom de fichier un suffixe saisi par l'utilisateur. La saisie par défaut est ">
 <!ENTITY lower-case "Mettre en bas-de-casse (minuscules)">
 <!ENTITY replace-blanks "Remplacer les blancs">
 <!ENTITY truncate-title "Tronquer le titre après . ou : ou ?">
