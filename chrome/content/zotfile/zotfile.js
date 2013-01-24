@@ -2484,7 +2484,7 @@ Zotero.ZotFile = {
             var date_str=new Date().toUTCString();
 
             // set note title
-            var note="<b>Extracted Annotations (" + date_str;
+            var note="<b>" + Zotero.ZotFile.ZFgetString('extraction.noteTitle') + " (" + date_str;
             if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler")) note += ", " + method;
             note += ")</b><br><br>";
 
