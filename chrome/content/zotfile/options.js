@@ -99,7 +99,7 @@ function updatePreferenceWindow(which) {
         // show alert about the tag used by zotfile
         if(which=="zotfile-tablet") {
             if(!document.getElementById('pref-zotfile-tablet').value) {
-                if(confirm("Zotfile can create saved searches for the attachments on the tablet. Do you want to create these searches now?\n\nWarning: Zotfile uses the tag '" + Zotero.ZotFile.prefs.getCharPref("tablet.tag") + "' to remember files that are on the tablet. Please do not change this tag manually!")) Zotero.ZotFile.createSavedSearch("both");
+                if(confirm(Zotero.ZotFile.ZFgetString('tablet.createSavedSearches', [Zotero.ZotFile.prefs.getCharPref("tablet.tag")]))) Zotero.ZotFile.createSavedSearch("both");
                 Zotero.ZotFile.savedSearchEventListener(true);
             }
             else Zotero.ZotFile.savedSearchEventListener(false);
@@ -230,7 +230,7 @@ function previewFilename() {
         return(filename);
     }
     catch (err) {
-        return("[Please select a zotero item to see a preview of your renaming rules]");
+        return(Zotero.ZotFile.ZFgetString('renaming.preview'));
     }
     if (Zotero.ZotFile.messages_error.length>0) {
         alert(Zotero.ZotFile.messages_error.join("\n\n"));
@@ -250,7 +250,7 @@ function changedBasefolder(dest_dir) {
         
         // change from valid to invalid subfolder
         if(!baseFolderValid) {
-            if(!confirm("You have changed the location for tablet files to an invalid folder (" + atts.length + " files are in the old location).\n\nDo you want to proceed?")) {
+            if(!confirm(Zotero.ZotFile.ZFgetString('tablet.invalidFolder', [atts.length]))) {
                 Zotero.ZotFile.prefs.setCharPref("tablet.dest_dir",baseFolderOld);
                 updateFolderIcon("tablet",false);
             }
@@ -258,11 +258,11 @@ function changedBasefolder(dest_dir) {
         // change from valid to valid
         if(baseFolderValid && atts.length>0) {
             // prompt user
-            if(!confirm("You have changed the location for tablet files. There are " + atts.length + " files in the old location. Zotfile currently does not move these files to the new folder. I recommend that you first get them back from the tablet.\n\nDo you want to proceed and change the tablet folder now?")) {
+            if(!confirm(Zotero.ZotFile.ZFgetString('tablet.baseFolderChanged.prompt', [atts.length]))) {
                 Zotero.ZotFile.prefs.setCharPref("tablet.dest_dir",baseFolderOld);
             }
             
-/*          var userInput=Zotero.ZotFile.promptUser("You have changed the location for tablet files. There are " + atts.length + " files in the old location.\n\nDo you want to move these files to the new location?","Move to new location","Revert change of location","Cancel");
+/*          var userInput=Zotero.ZotFile.promptUser(Zotero.ZotFile.ZFgetString('tablet.baseFolderChanged.newPrompt', [atts.length]),Zotero.ZotFile.ZFgetString('tablet.baseFolderChanged.moveFiles'),Zotero.ZotFile.ZFgetString('tablet.baseFolderChanged.revert'),Zotero.ZotFile.ZFgetString('general.cancel'));
 
             // Move to new location
             if(userInput==0) {
@@ -353,7 +353,7 @@ function editSubfolderSetting (index) {
         updateSubfolderPreferences();
     }
     else {
-        Zotero.ZotFile.infoWindow("ZotFile Error","ZotFile only supports up to " + Zotero.ZotFile.projectMax + " subfolders.",8000);
+        Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.error'),Zotero.ZotFile.ZFgetString('maxSubfolders', [Zotero.ZotFile.projectMax]),8000);
     }
 }
   
@@ -457,7 +457,7 @@ function deleteSubfolder (subfolder) {
         // iterate through attachments in folder
         if (attInFolder.length>0) {
             // ask user
-            var userInput=Zotero.ZotFile.promptUser("There are " + attInFolder.length + " attachments in the subfolder you want to delete. What do you want to do?","Get from Tablet","Move to Base Folder","Cancel");
+            var userInput=Zotero.ZotFile.promptUser(Zotero.ZotFile.ZFgetString('tablet.attsInDeletedSub', [attInFolder.length]),Zotero.ZotFile.ZFgetString('tablet.attsInDeletedSub.getThem'),Zotero.ZotFile.ZFgetString('tablet.attsInDeletedSub.moveThemToBase'),Zotero.ZotFile.ZFgetString('general.cancel'));
     
             // Pull attachment
             if(userInput===0) {
@@ -472,7 +472,7 @@ function deleteSubfolder (subfolder) {
                     }
                 }
                 // show messages and handle errors
-                Zotero.ZotFile.showReportMessages("ZotFile: Attachments got from tablet");
+                Zotero.ZotFile.showReportMessages(Zotero.ZotFile.ZFgetString('tablet.AttsGotFromT'));
                 Zotero.ZotFile.handleErrors();
             }
 
@@ -499,7 +499,7 @@ function changedSubfolder (projectFolderOld,projectFolderNew) {
 
     // move attachments to new subfolder
     var confirmed=0;
-    if(attInFolder.length) confirmed=confirm("There are " + attInFolder.length + " attachments in the subfolder \'" + projectFolderOld + "\'. You changed this folder to \'" + projectFolderNew + "\'. Do you want to move the attachments to the new folder?");
+    if(attInFolder.length) confirmed=confirm(Zotero.ZotFile.ZFgetString('tablet.moveAttsToNewSubfolder', [attInFolder.length, projectFolderOld, projectFolderNew]));
     if (confirmed) {
 //      var path=attInFolder[0].getFile().parent.path;
         Zotero.ZotFile.setTabletFolder(attInFolder,projectFolderNew);
@@ -625,7 +625,7 @@ function updatePDFToolsStatus() {
         // set version text
         var versionText = document.getElementById('pdf-annotations-extractor-version');
         versionText.setAttribute('hidden', false);
-        versionText.setAttribute('value', "(installed v. "+installedVersion +")");
+        versionText.setAttribute('value', Zotero.ZotFile.ZFgetString('extraction.popplerInstalledVersion', [installedVersion]));
     }
     // disable button if poppler tool is not compatible
     if(!toolIsCompatible) updateButton.setAttribute('disabled', true);
@@ -725,7 +725,7 @@ function downloadPDFTool() {
             
         }
         catch(e) {
-            Zotero.ZotFile.infoWindow("ZotFile Error","Unable to download the poppler tool.\n\n" + e.name + "\n" + e.message,8000);
+            Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.error'),Zotero.ZotFile.ZFgetString('extraction.unableToDwnldPoppler', [e.name, e.message]),8000);
         }
 
         // update settings
@@ -735,7 +735,7 @@ function downloadPDFTool() {
     });
     
     document.getElementById('pdf-annotations-extractor-update-button').disabled = true;
-    document.getElementById('pdf-annotations-extractor-update-button').setAttribute('label', "Downloading Poppler Tool...");
+    document.getElementById('pdf-annotations-extractor-update-button').setAttribute('label', Zotero.ZotFile.ZFgetString('extraction.dowwloadingPoppler'));
     
     wbp.progressListener = progressListener;
 //  Zotero.debug("Saving " + uri.spec + " to " + fileURL.spec);
