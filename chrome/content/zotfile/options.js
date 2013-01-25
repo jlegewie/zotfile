@@ -262,7 +262,8 @@ function changedBasefolder(dest_dir) {
                 Zotero.ZotFile.prefs.setCharPref("tablet.dest_dir",baseFolderOld);
             }
             
-/*          var userInput=Zotero.ZotFile.promptUser(Zotero.ZotFile.ZFgetString('tablet.baseFolderChanged.newPrompt', [atts.length]),Zotero.ZotFile.ZFgetString('tablet.baseFolderChanged.moveFiles'),Zotero.ZotFile.ZFgetString('tablet.baseFolderChanged.revert'),Zotero.ZotFile.ZFgetString('general.cancel'));
+/*          // promptUser function has changed! careful when uncomment
+            var userInput=Zotero.ZotFile.promptUser(Zotero.ZotFile.ZFgetString('tablet.baseFolderChanged.newPrompt', [atts.length]),Zotero.ZotFile.ZFgetString('tablet.baseFolderChanged.moveFiles'),Zotero.ZotFile.ZFgetString('tablet.baseFolderChanged.revert'),Zotero.ZotFile.ZFgetString('general.cancel'));
 
             // Move to new location
             if(userInput==0) {
@@ -457,7 +458,11 @@ function deleteSubfolder (subfolder) {
         // iterate through attachments in folder
         if (attInFolder.length>0) {
             // ask user
-            var userInput=Zotero.ZotFile.promptUser(Zotero.ZotFile.ZFgetString('tablet.attsInDeletedSub', [attInFolder.length]),Zotero.ZotFile.ZFgetString('tablet.attsInDeletedSub.getThem'),Zotero.ZotFile.ZFgetString('tablet.attsInDeletedSub.moveThemToBase'),Zotero.ZotFile.ZFgetString('general.cancel'));
+            // promptUser: function(message,but_0,but_1_cancel,but_2) {
+            var userInput=Zotero.ZotFile.promptUser(Zotero.ZotFile.ZFgetString('tablet.attsInDeletedSub', [attInFolder.length]),
+                Zotero.ZotFile.ZFgetString('tablet.attsInDeletedSub.getThem'),
+                Zotero.ZotFile.ZFgetString('general.cancel'),
+                Zotero.ZotFile.ZFgetString('tablet.attsInDeletedSub.moveThemToBase'));
     
             // Pull attachment
             if(userInput===0) {
@@ -477,10 +482,10 @@ function deleteSubfolder (subfolder) {
             }
 
             // move attachments to base folder
-            if(userInput==1) Zotero.ZotFile.setTabletFolder(attInFolder,"");
+            if(userInput==2) Zotero.ZotFile.setTabletFolder(attInFolder,"");
             
             // return false if user canceled
-            if(userInput==2) return(false);
+            if(userInput==1) return(false);
             
         }
         
