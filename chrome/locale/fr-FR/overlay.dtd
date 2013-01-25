@@ -14,5 +14,5 @@
 <!ENTITY get-attachment-file-from-tablet "Récupérer la pièce jointe de la tablette">
 <!ENTITY send-to-subfolder-on-tablet "Envoyer au sous-dossier sur la tablette">
 <!ENTITY change-subfolders "Modifier les sous-dossiers...">
-<!ENTITY add-and-delete-subfolders "Ajouter et supprimer les sous-dossiers au menuAdd and delete subfolders to Menu.">
+<!ENTITY add-and-delete-subfolders "Ajouter et supprimer les sous-dossiers au menu.">
 <!ENTITY zotfile-options.label "Préférences de ZotFile ...">
