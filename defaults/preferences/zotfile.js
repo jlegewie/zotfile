@@ -25,7 +25,7 @@ pref("extensions.zotfile.confirmation_batch", 2);
 pref("extensions.zotfile.import", true);
 pref("extensions.zotfile.watch_folder", true);
 //pref("extensions.zotfile.watch_folder_list", '["source_dir"]');
-pref("extensions.zotfile.automatic_renaming", 2);
+pref("extensions.zotfile.automatic_renaming", 3);
 pref("extensions.zotfile.disable_renaming", false);
 pref("extensions.zotfile.replace_blanks", false);
 pref("extensions.zotfile.lower_case", false);
