@@ -353,7 +353,7 @@ function editSubfolderSetting (index) {
         updateSubfolderPreferences();
     }
     else {
-        Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.error'),Zotero.ZotFile.ZFgetString('maxSubfolders', [Zotero.ZotFile.projectMax]),8000);
+        Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.error'),Zotero.ZotFile.ZFgetString('tablet.maxSubfolders', [Zotero.ZotFile.projectMax]),8000);
     }
 }
   
