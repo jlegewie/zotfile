@@ -43,9 +43,13 @@
 <!ENTITY zotero-to-rename "Use Zotero to Rename">
 <!ENTITY format-for-all-types "Format for all Item Types except Patents">
 <!ENTITY format-for-patents "Format for Patents">
+<!ENTITY list-of-wildcards "&#37;a = author last name; &#37;y = year; &#37;t = title; &#37;j = journal; use {...} for an optional group and | for exclusive matches">
+<!ENTITY for-a-full-list "For a full list of place holder see the ">
 <!ENTITY additional-settings "Additional Settings">
+<!ENTITY delimiter-multiple-authors "Delimiter between multiple authors">
 <!ENTITY add-user-input-to-filename "Add user input to filename. Default is ">
-<!ENTITY replace-blanks "Replace Blanks">
+<!ENTITY lower-case "Change to lower case">
+<!ENTITY replace-blanks "Replace blanks">
 <!ENTITY truncate-title "Truncate title after . or : or ?">
 <!ENTITY zotfile-truncate_title_max "Maximum length of title">
 <!ENTITY zotfile-truncate_authors "Maximum number of authors">
@@ -60,7 +64,15 @@
 <!ENTITY use-article-book-chapter-page "Use actual article/book chapter page for highlighted text snippets">
 <!ENTITY page-number-determination "The article page number is determined by adding the page in the pdf document and the starting page from the 'pages' field in the zotero metadata. This approach fails if the first page in the pdf document is not the first page in the article/book chapter">
 <!ENTITY other-advanced-settings "Other Advanced Settings">
-<!ENTITY automatically-rename-new-attachments "Automatically rename new attachments">
+
+<!ENTITY watch_folder "Watch for new files in source folder">
+
+<!ENTITY automatic_renaming_label "Automatically rename new attachments">
+<!ENTITY automatic_renaming_no "Never">
+<!ENTITY automatic_renaming_ask "Always ask (non-disruptive)">
+<!ENTITY automatic_renaming_ask_mult "Only ask if item has other atts">
+<!ENTITY automatic_renaming_always "Always rename">
+
 <!ENTITY ask-when-attaching-new-files "Ask user when attaching new files">
 <!ENTITY ask-to-batch-rename "Ask user to (batch) rename or move ">
 <!ENTITY or-more-attachments " or more attachments.">

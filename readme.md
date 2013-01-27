@@ -12,8 +12,9 @@ To install the development version on github:
 
 - download .zip file from github
 - extract .zip file
-- recreate .zip file containing all the files 
-(Note: I am not sure why it is necessary to recreate the zip file)
+- recreate .zip file containing all the files at the top level, i.e.,
+  install.rdf and the chrome directory need to be at the root of the zip file
+  and not under zotfile/
 - rename the file to .xpi
 - For zotero firefox: drag & drop on firefox
 - For zotero standalone: In Zotero Standalone go to 'Tools->Add-ons->Tools for all Add-ons (the small, drop-down wheel menu next to the 'Search all Add-ons' box)->Install Add-on From File' and pick the .xpi file.
@@ -24,6 +25,36 @@ The source code is released under GNU General Public License, version 3.0
 Contributions preferably through pull requests are welcome!
 
 ## Changelog
+
+#### Changes in 2.3
+
+- **enhanced renaming rules** (thanks to [Midnighter](https://github.com/Midnighter)): 
+  1) Optional wild-cards: `{-%y}` only includes `-` if  `%y` is defined.
+  2) Exclusive wild-cards: `%s|%j` journal abbr. or if not defined full journal name.
+  (for examples see below)
+- additional wild-cards for author formating (author initials `%I` and lastnameF `%F`), pages (`%f`) and short title (`%h`)
+- **watch source folder for new files:**
+  Whenever the focus changes to the item list in Zotero, Zotfile checks for new files in the source folder. If a new file was added to the folder, zotfile uses a clickable, non-disruptive window to ask the user whether s/he wants to attach that file to the currently selected Zotero item. 
+- **revised auto rename with additional options**
+  (four options: Never, Always ask, Only ask if item has other atts, Always rename. The 'asking' uses a clickable, non-disruptive window that appears in the bottom right corner - same as previous info window but clickable)
+- **revised notifications and error handling**
+- **Zotfile translation to German** (thanks to [wuffi](https://github.com/wuffi)) **and French** (thanks to [gracile-fr](https://github.com/gracile-fr))
+- Allow periods as delimiter in filenames (thanks to [jjatria](https://github.com/jjatria))
+- new option: "lower case" filenames (thanks to [jjatria](https://github.com/jjatria))
+- new option: disable renaming so that attachments are only moved (hidden: `disable_renaming`)
+- new option: remove periods from filenames (hidden: `removePeriods`)
+- bug fix: preview of renaming rules for Unix and Windows
+- bug fix: sending to and getting from tablet deleted note content
+
+**Examples for enhanced renaming rules**
+`%j` - journal; `%s` - journal abbreviation
+
+`{%a}{-%y}{-%j (%s)}` - `author-2001-Proceedings of the National Academy of Sciences (PNAS)`
+(if either `%j` or `%s` is empty, `author-2001`)
+
+`{%a-}{%y-}{%s|%j}` - `author-2001-PNAS` or `author-2001-Proceedings...` if `%s` is empty
+
+For full description, see [updated zotfile website](http://www.columbia.edu/~jpl2136/zotfile.html#renaming).
 
 #### Changes in 2.2.3
 

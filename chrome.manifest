@@ -5,3 +5,4 @@ overlay	chrome://zotero/content/zoteroPane.xul chrome://zotfile/content/overlay.
 
 locale zotfile de-DE chrome/locale/de-DE/
 locale zotfile en-US chrome/locale/en-US/
+locale zotfile fr-FR chrome/locale/fr-FR/
