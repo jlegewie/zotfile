@@ -2032,6 +2032,8 @@ Zotero.ZotFile = {
                 if(option==2) {
                     this.removeFile(file_reader);
                     itemPulled=true;
+					//attsDeleted is true to display a special message when the attachments have been deleted from tablet without being sent back to Zotero
+					var attsDeleted=true;
                 }
             }
         }
@@ -2069,8 +2071,13 @@ Zotero.ZotFile = {
             // add tag to parent item
             if (this.prefs.getBoolPref("tablet.tagParentPull")) item.addTag(this.prefs.getCharPref("tablet.tagParentPull_tag"));
             
-            // notification
-            this.messages_report.push("'" + att.getFile().leafName + "'");            
+            // notification (display a different message when the attachments have been deleted from tablet without being sent back to Zotero)
+			if (attsDeleted === true) {
+				this.messages_report.push("'" + att.getFile().leafName + "' " + this.ZFgetString('tablet.attsDel'));
+			}
+			else {
+				this.messages_report.push("'" + att.getFile().leafName + "'");
+			}            
         }
 
         // remove modified tag from attachment
