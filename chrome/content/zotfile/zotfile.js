@@ -2073,8 +2073,7 @@ Zotero.ZotFile = {
             
             // notification (display a different message when the attachments have been deleted from tablet without being sent back to Zotero)
 			if (attsDeleted === true) {
-				this.messages_report.push("'" + att.getFile().leafName + "'");
-				this.showReportMessages(this.ZFgetString('tablet.attsDel'));
+				this.messages_report.push("'" + att.getFile().leafName + "' " + this.ZFgetString('tablet.attsDel'));
 			}
 			else {
 				this.messages_report.push("'" + att.getFile().leafName + "'");
