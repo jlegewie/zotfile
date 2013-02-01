@@ -2494,7 +2494,7 @@ Zotero.ZotFile = {
 
         getNoteContent: function(annotations, item, method) {
             // get current date
-            var date_str=new Date().toUTCString();
+			var date_str = Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString();
 
             // set note title
             var note="<b>" + Zotero.ZotFile.ZFgetString('extraction.noteTitle') + " (" + date_str;
@@ -2508,6 +2508,8 @@ Zotero.ZotFile = {
             var htmlTagHighlightEnd=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.HighlightHtmlTagEnd");
             var htmlTagUnderlineStart=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.UnderlineHtmlTagStart");
             var htmlTagUnderlineEnd=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.UnderlineHtmlTagEnd");
+			var openingQMarks=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.openingQuotationMarks");
+			var closingQMarks=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.closingQuotationMarks");
 
             // iterature through annotations
             for (var i=0; i < annotations.length; i++) {
@@ -2546,7 +2548,7 @@ Zotero.ZotFile = {
                         tagStart = htmlTagUnderlineStart;
                         tagEnd = htmlTagUnderlineEnd;
                     }
-                    note += "<p>"+tagStart+"\""+markup+"\" (" + cite + page + ")" +tagEnd+"</p>";
+                    note += "<p>"+tagStart+openingQMarks+markup+closingQMarks+" (" + cite + page + ")" +tagEnd+"</p>";
                 }
             }
             return note;
