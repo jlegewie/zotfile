@@ -2501,8 +2501,8 @@ Zotero.ZotFile = {
             var htmlTagHighlightEnd=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.HighlightHtmlTagEnd");
             var htmlTagUnderlineStart=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.UnderlineHtmlTagStart");
             var htmlTagUnderlineEnd=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.UnderlineHtmlTagEnd");
-			var openingQuotationMarks=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.openingQuotationMarks");
-			var closingQuotationMarks=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.closingQuotationMarks");
+			var openingQMarks=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.openingQuotationMarks");
+			var closingQMarks=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.closingQuotationMarks");
 
             // iterature through annotations
             for (var i=0; i < annotations.length; i++) {
@@ -2541,9 +2541,7 @@ Zotero.ZotFile = {
                         tagStart = htmlTagUnderlineStart;
                         tagEnd = htmlTagUnderlineEnd;
                     }
-					var quoteStart = openingQuotationMarks;
-					var quoteEnd = closingQuotationMarks;
-                    note += "<p>"+tagStart+quoteStart+markup+quoteEnd+" (" + cite + page + ")" +tagEnd+"</p>";
+                    note += "<p>"+tagStart+openingQMarks+markup+closingQMarks+" (" + cite + page + ")" +tagEnd+"</p>";
                 }
             }
             return note;
