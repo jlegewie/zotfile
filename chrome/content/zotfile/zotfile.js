@@ -1977,7 +1977,7 @@ Zotero.ZotFile = {
     getAttachmentFromTablet: function (item, att,fakeRemove) {
         var attID=att.getID();
         var option=1;
-        var itemPulled=false;
+        var itemPulled=false, attsDeleted=false;
         var att_mode=this.getInfo(att,"mode");
 
         // get files
@@ -2001,14 +2001,18 @@ Zotero.ZotFile = {
                 // if attachment gets replaced
                 if (!this.prefs.getBoolPref("tablet.storeCopyOfFile")) {
                     // prompt if both file have been modified                    
-                    if (option==1) option=this.promptUser(this.ZFgetString('tablet.fileConflict', [file_zotero.leafName]),
-                        this.ZFgetString('tablet.fileConflict.replaceZ'),
-                        this.ZFgetString('general.cancel'),
-                        this.ZFgetString('tablet.fileConflict.removeT'));
+                    if (option==1) {
+                        option=this.promptUser(this.ZFgetString('tablet.fileConflict', [file_zotero.leafName]),
+                            this.ZFgetString('tablet.fileConflict.replaceZ'),
+                            this.ZFgetString('general.cancel'),
+                            this.ZFgetString('tablet.fileConflict.removeT'));
+                        //attsDeleted is true to display a special message when the attachments have been deleted from tablet without being sent back to Zotero
+                        if (option==2) attsDeleted=true;
+                    }
 
                     // Replace Zotero file
                     if(option==0) {
-                            file_reader.moveTo(file_zotero.parent,file_zotero.leafName);
+                        file_reader.moveTo(file_zotero.parent,file_zotero.leafName);
                         itemPulled=true;
                     }
                 }
@@ -2047,9 +2051,7 @@ Zotero.ZotFile = {
                 // Pull without replacement (i.e. remove file on tablet)
                 if(option==2) {
                     this.removeFile(file_reader);
-                    itemPulled=true;
-					//attsDeleted is true to display a special message when the attachments have been deleted from tablet without being sent back to Zotero
-					var attsDeleted=true;
+                    itemPulled=true;					
                 }
             }
         }
