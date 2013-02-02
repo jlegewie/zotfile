@@ -41,7 +41,8 @@ Contributions preferably through pull requests are welcome!
 - **Zotfile translation to German** (thanks to [wuffi](https://github.com/wuffi)) **and French** (thanks to [gracile-fr](https://github.com/gracile-fr))
 - Allow periods as delimiter in filenames (thanks to [jjatria](https://github.com/jjatria))
 - new option: "lower case" filenames (thanks to [jjatria](https://github.com/jjatria))
-- new option: disable renaming so that attachments are only moved (hidden: `disable_renaming`)
+- new option: disable renaming so that attachments are only moved (hidden: `.disable_renaming`)
+- new option: set opening and closing quotation mark for extracted annotations (hidden: `.openingQuotationMarks`, `.closingQuotationMarks`)
 - new option: remove periods from filenames (hidden: `removePeriods`)
 - bug fix: preview of renaming rules for Unix and Windows
 - bug fix: sending to and getting from tablet deleted note content
