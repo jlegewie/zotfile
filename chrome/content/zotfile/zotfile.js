@@ -62,8 +62,8 @@ Zotero.ZotFile = {
         }
         // open webpage with changelog
         if(this.prefs.getCharPref("version")!=="" && currentVersion=="2.3") {
-            if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.zotfileURL + "#changelog"); });
-            if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.zotfileURL + "#changelog"); });
+            if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
+            if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
         }
 
         // add saved search and change tag when upgrading to 2.1
