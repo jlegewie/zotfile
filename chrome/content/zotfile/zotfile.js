@@ -284,8 +284,6 @@ Zotero.ZotFile = {
                                     // get id and key
                                     var id = item.getID();
                                     var key = item.key;
-                                    // check whether key is excluded                                
-                                    if(zz.excludeAutorenameKeys.indexOf(key)!=-1) continue;
                                     // try to get the file
                                     var file = item.getFile();
                                     // If you can't then it isn't a proper attachment so continue
@@ -297,6 +295,11 @@ Zotero.ZotFile = {
                                     if(!id_parent) continue;
                                     // get parent item
                                     var parent = Zotero.Items.get(id_parent);
+                                    // check whether key is excluded                                
+                                    if(zz.excludeAutorenameKeys.indexOf(key)!=-1 || zz.excludeAutorenameKeys.indexOf(parent.key)!=-1) {                                        
+                                        zz.removeFromArray(zz.excludeAutorenameKeys,parent.key);
+                                        continue;
+                                    }
                                     // skip if file already has correct filename
                                     var filename = item.getFilename().replace(/\.[^/.]+$/, "");
                                     //zz.infoWindow(zz.ZFgetString('general.report'),{lines:[zz.getFilename(parent,filename),filename]});
@@ -924,6 +927,19 @@ Zotero.ZotFile = {
         }
         if (obj[i] < find) return i + 1;
         else return i;
+    },
+    
+    // Array.prototype.remove = function() {
+    removeFromArray: function(arr) {
+        //var args = Array.prototype.slice.call(arguments).splice(1);
+        var what, a = Array.prototype.slice.call(arguments).splice(1), L = a.length, ax;
+        while (L && arr.length) {
+            what = a[--L];
+            while ((ax = arr.indexOf(what)) !== -1) {
+                arr.splice(ax, 1);
+            }
+        }
+        return arr;
     },
 
     /*
@@ -2039,6 +2055,8 @@ Zotero.ZotFile = {
         }
         // foreground mode
         if(att_mode==2) {
+            // add parent key to array for excluded items from auto rename
+            this.excludeAutorenameKeys.push(item.key);
             // get note content
             var note = att.getNote();
             // rename and move attachment
