@@ -1,4 +1,25 @@
 
+/**
+ZotFile: Zotero plugin to manage your attachments
+Joscha Legewie
+
+Zotfile is a Zotero plugin to manage your attachments: 
+automatically rename, move, and attach PDFs (or other files)
+to Zotero items, sync PDFs from your Zotero library to your (mobile)
+PDF reader (e.g. an iPad, Android tablet, etc.) and extract
+annotations from PDF files.
+
+Webpage: http://www.jlegewie.com/zotfile.html
+Github: https://github.com/jlegewie/zotfile
+
+License
+The source code is released under GNU General Public License, version 3.0
+Contributions preferably through pull requests are welcome!
+
+Zotero JavaScript API
+http://www.zotero.org/support/dev/client_coding/javascript_api
+*/
+
 Zotero.ZotFile = {
     
     prefs: null,
@@ -1151,6 +1172,7 @@ Zotero.ZotFile = {
 
     /*
      * Replace wildcards both for filename and subfolder definition
+     * List of field names: https://api.zotero.org/itemFields?pprint=1
      */
     replaceWildcard: function(zitem, rule, table, offset) {
         if (rule === "" || typeof(rule) === "undefined") {
