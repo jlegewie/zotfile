@@ -1,4 +1,25 @@
 
+/**
+ZotFile: Zotero plugin to manage your attachments
+Joscha Legewie
+
+Zotfile is a Zotero plugin to manage your attachments: 
+automatically rename, move, and attach PDFs (or other files)
+to Zotero items, sync PDFs from your Zotero library to your (mobile)
+PDF reader (e.g. an iPad, Android tablet, etc.) and extract
+annotations from PDF files.
+
+Webpage: http://www.jlegewie.com/zotfile.html
+Github: https://github.com/jlegewie/zotfile
+
+License
+The source code is released under GNU General Public License, version 3.0
+Contributions preferably through pull requests are welcome!
+
+Zotero JavaScript API
+http://www.zotero.org/support/dev/client_coding/javascript_api
+*/
+
 Zotero.ZotFile = {
     
     prefs: null,
@@ -62,8 +83,8 @@ Zotero.ZotFile = {
         }
         // open webpage with changelog
         if(this.prefs.getCharPref("version")!=="" && currentVersion=="2.3") {
-            if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.zotfileURL + "#changelog"); });
-            if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.zotfileURL + "#changelog"); });
+            if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
+            if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
         }
 
         // add saved search and change tag when upgrading to 2.1
@@ -284,8 +305,6 @@ Zotero.ZotFile = {
                                     // get id and key
                                     var id = item.getID();
                                     var key = item.key;
-                                    // check whether key is excluded                                
-                                    if(zz.excludeAutorenameKeys.indexOf(key)!=-1) continue;
                                     // try to get the file
                                     var file = item.getFile();
                                     // If you can't then it isn't a proper attachment so continue
@@ -297,6 +316,11 @@ Zotero.ZotFile = {
                                     if(!id_parent) continue;
                                     // get parent item
                                     var parent = Zotero.Items.get(id_parent);
+                                    // check whether key is excluded                                
+                                    if(zz.excludeAutorenameKeys.indexOf(key)!=-1 || zz.excludeAutorenameKeys.indexOf(parent.key)!=-1) {                                        
+                                        zz.removeFromArray(zz.excludeAutorenameKeys,parent.key);
+                                        continue;
+                                    }
                                     // skip if file already has correct filename
                                     var filename = item.getFilename().replace(/\.[^/.]+$/, "");
                                     //zz.infoWindow(zz.ZFgetString('general.report'),{lines:[zz.getFilename(parent,filename),filename]});
@@ -925,6 +949,19 @@ Zotero.ZotFile = {
         if (obj[i] < find) return i + 1;
         else return i;
     },
+    
+    // Array.prototype.remove = function() {
+    removeFromArray: function(arr) {
+        //var args = Array.prototype.slice.call(arguments).splice(1);
+        var what, a = Array.prototype.slice.call(arguments).splice(1), L = a.length, ax;
+        while (L && arr.length) {
+            what = a[--L];
+            while ((ax = arr.indexOf(what)) !== -1) {
+                arr.splice(ax, 1);
+            }
+        }
+        return arr;
+    },
 
     /*
      * Collects all positions of a particular substring in an Array.
@@ -1135,6 +1172,7 @@ Zotero.ZotFile = {
 
     /*
      * Replace wildcards both for filename and subfolder definition
+     * List of field names: https://api.zotero.org/itemFields?pprint=1
      */
     replaceWildcard: function(zitem, rule, table, offset) {
         if (rule === "" || typeof(rule) === "undefined") {
@@ -1961,7 +1999,7 @@ Zotero.ZotFile = {
     getAttachmentFromTablet: function (item, att,fakeRemove) {
         var attID=att.getID();
         var option=1;
-        var itemPulled=false;
+        var itemPulled=false, attsDeleted=false;
         var att_mode=this.getInfo(att,"mode");
 
         // get files
@@ -1985,14 +2023,18 @@ Zotero.ZotFile = {
                 // if attachment gets replaced
                 if (!this.prefs.getBoolPref("tablet.storeCopyOfFile")) {
                     // prompt if both file have been modified                    
-                    if (option==1) option=this.promptUser(this.ZFgetString('tablet.fileConflict', [file_zotero.leafName]),
-                        this.ZFgetString('tablet.fileConflict.replaceZ'),
-                        this.ZFgetString('general.cancel'),
-                        this.ZFgetString('tablet.fileConflict.removeT'));
+                    if (option==1) {
+                        option=this.promptUser(this.ZFgetString('tablet.fileConflict', [file_zotero.leafName]),
+                            this.ZFgetString('tablet.fileConflict.replaceZ'),
+                            this.ZFgetString('general.cancel'),
+                            this.ZFgetString('tablet.fileConflict.removeT'));
+                        //attsDeleted is true to display a special message when the attachments have been deleted from tablet without being sent back to Zotero
+                        if (option==2) attsDeleted=true;
+                    }
 
                     // Replace Zotero file
                     if(option==0) {
-                            file_reader.moveTo(file_zotero.parent,file_zotero.leafName);
+                        file_reader.moveTo(file_zotero.parent,file_zotero.leafName);
                         itemPulled=true;
                     }
                 }
@@ -2031,12 +2073,14 @@ Zotero.ZotFile = {
                 // Pull without replacement (i.e. remove file on tablet)
                 if(option==2) {
                     this.removeFile(file_reader);
-                    itemPulled=true;
+                    itemPulled=true;					
                 }
             }
         }
         // foreground mode
         if(att_mode==2) {
+            // add parent key to array for excluded items from auto rename
+            this.excludeAutorenameKeys.push(item.key);
             // get note content
             var note = att.getNote();
             // rename and move attachment
@@ -2069,8 +2113,13 @@ Zotero.ZotFile = {
             // add tag to parent item
             if (this.prefs.getBoolPref("tablet.tagParentPull")) item.addTag(this.prefs.getCharPref("tablet.tagParentPull_tag"));
             
-            // notification
-            this.messages_report.push("'" + att.getFile().leafName + "'");            
+            // notification (display a different message when the attachments have been deleted from tablet without being sent back to Zotero)
+			if (attsDeleted === true) {
+				this.messages_report.push("'" + att.getFile().leafName + "' " + this.ZFgetString('tablet.attsDel'));
+			}
+			else {
+				this.messages_report.push("'" + att.getFile().leafName + "'");
+			}            
         }
 
         // remove modified tag from attachment
@@ -2256,7 +2305,7 @@ Zotero.ZotFile = {
         pdfExtraction:false,
         popplerExtractorTool:false,
         popplerExtractorSupported:false,
-        popplerExtractorBaseURL:'http://www.jlegewie.com/PDFTools/',
+        popplerExtractorBaseURL:'http://www.columbia.edu/~jpl2136/PDFTools/',
 
         /** The list of PDFs we should extract annotations from.  Each
         element is an object with the following fields:
@@ -2487,7 +2536,7 @@ Zotero.ZotFile = {
 
         getNoteContent: function(annotations, item, method) {
             // get current date
-            var date_str=new Date().toUTCString();
+			var date_str = Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString();
 
             // set note title
             var note="<b>" + Zotero.ZotFile.ZFgetString('extraction.noteTitle') + " (" + date_str;
@@ -2501,6 +2550,8 @@ Zotero.ZotFile = {
             var htmlTagHighlightEnd=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.HighlightHtmlTagEnd");
             var htmlTagUnderlineStart=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.UnderlineHtmlTagStart");
             var htmlTagUnderlineEnd=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.UnderlineHtmlTagEnd");
+			var openingQMarks=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.openingQuotationMarks");
+			var closingQMarks=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.closingQuotationMarks");
 
             // iterature through annotations
             for (var i=0; i < annotations.length; i++) {
@@ -2539,7 +2590,7 @@ Zotero.ZotFile = {
                         tagStart = htmlTagUnderlineStart;
                         tagEnd = htmlTagUnderlineEnd;
                     }
-                    note += "<p>"+tagStart+"\""+markup+"\" (" + cite + page + ")" +tagEnd+"</p>";
+                    note += "<p>"+tagStart+openingQMarks+markup+closingQMarks+" (" + cite + page + ")" +tagEnd+"</p>";
                 }
             }
             return note;

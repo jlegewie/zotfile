@@ -28,20 +28,29 @@ Contributions preferably through pull requests are welcome!
 
 #### Changes in 2.3
 
-- **enhanced renaming rules** (thanks to [Midnighter](https://github.com/Midnighter)): 
-  1) Optional wild-cards: `{-%y}` only includes `-` if  `%y` is defined.
-  2) Exclusive wild-cards: `%s|%j` journal abbr. or if not defined full journal name.
-  (for examples see below)
+- **enhanced renaming rules** (thanks to [Midnighter](https://github.com/Midnighter))
+
+    1) Optional wild-cards: `{-%y}` only includes `-` if  `%y` is defined.
+
+    2) Exclusive wild-cards: `%s|%j` journal abbr. or if not defined full journal name.
+
+    (for examples see below)
+
 - additional wild-cards for author formating (author initials `%I` and lastnameF `%F`), pages (`%f`) and short title (`%h`)
-- **watch source folder for new files:**
-  Whenever the focus changes to the item list in Zotero, Zotfile checks for new files in the source folder. If a new file was added to the folder, zotfile uses a clickable, non-disruptive window to ask the user whether s/he wants to attach that file to the currently selected Zotero item. 
+- **watch source folder for new files**
+
+    Whenever the focus changes to the item list in Zotero, Zotfile checks for new files in the source folder. If a new file was added to the folder, zotfile uses a clickable, non-disruptive window to ask the user whether s/he wants to attach that file to the currently selected Zotero item.
+
 - **revised auto rename with additional options**
-  (four options: Never, Always ask, Only ask if item has other atts, Always rename. The 'asking' uses a clickable, non-disruptive window that appears in the bottom right corner - same as previous info window but clickable)
+
+    Four options: Never, Always ask, Only ask if item has other atts, Always rename. The 'asking' uses a clickable, non-disruptive window that appears in the bottom right corner - same as previous info window but clickable.
+
 - **revised notifications and error handling**
 - **Zotfile translation to German** (thanks to [wuffi](https://github.com/wuffi)) **and French** (thanks to [gracile-fr](https://github.com/gracile-fr))
 - Allow periods as delimiter in filenames (thanks to [jjatria](https://github.com/jjatria))
 - new option: "lower case" filenames (thanks to [jjatria](https://github.com/jjatria))
-- new option: disable renaming so that attachments are only moved (hidden: `disable_renaming`)
+- new option: disable renaming so that attachments are only moved (hidden: `.disable_renaming`)
+- new option: set opening and closing quotation mark for extracted annotations (hidden: `.openingQuotationMarks`, `.closingQuotationMarks`)
 - new option: remove periods from filenames (hidden: `removePeriods`)
 - bug fix: preview of renaming rules for Unix and Windows
 - bug fix: sending to and getting from tablet deleted note content
