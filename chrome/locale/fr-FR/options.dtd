@@ -3,9 +3,9 @@
 <!ENTITY general-settings "Paramètres généraux"> 
 <!ENTITY tablet-settings "Paramètres des tablettes"> 
 <!ENTITY renaming-rules "Règles de renommage"> 
-<!ENTITY advanced-settings "Paramètres avancées"> 
+<!ENTITY advanced-settings "Paramètres avancés"> 
 <!ENTITY attachments-source-folder "Dossier source pour joindre de nouveaux fichiers"> 
-<!ENTITY source-folder-desc "ZotFile peut ajouter comme pièce jointe du document sélectionné dans Zotero le fichier le plus récemment modifié du dossier Téléchargements de Firefox ou de tout autre dossier."> 
+<!ENTITY source-folder-desc "ZotFile peut joindre au document sélectionné dans Zotero le fichier le plus récemment modifié du dossier Téléchargements de Firefox ou de tout autre dossier."> 
 <!ENTITY use-firefox-download-folder "Utiliser le dossier Téléchargements de Firefox"> 
 <!ENTITY custom-source-folder "Personnaliser:"> 
 <!ENTITY choose "Choisir..."> 
@@ -19,7 +19,7 @@
 <!ENTITY zotfile-website "site web de ZotFile"> 
 <!ENTITY consider-donation "Si vous trouvez ZotFile utile, envisagez s'il vous plaît un ">
 <!ENTITY donation "don">
-<!ENTITY tablet-desc "ZotFile peut simplifier la lecture et l'annotation de vos pièces jointes Zotero sur un iPad ou une tablette Android utilisant une appli d'annotation des PDFs. Il envoie les PDFs et les récupère à partir de la tablette, les renomme et les classe dans des sous-dossiers afin que vous les trouviez, et extrait les annotations et le texte surligné dans une note Zotero.">
+<!ENTITY tablet-desc "ZotFile peut simplifier la lecture et l'annotation de vos pièces jointes Zotero sur un iPad ou une tablette Android utilisant une application d'annotation des PDF. Il envoie les PDF et les récupère à partir de la tablette, les renomme et les classe dans des sous-dossiers afin que vous les trouviez, et extrait les annotations et le texte surligné dans une note Zotero.">
 <!ENTITY send-get-from-tablet "Utiliser ZotFile pour envoyer et recevoir les fichiers de la tablette">
 <!ENTITY location-on-tablet "Emplacement des fichiers de la tablette">
 <!ENTITY base-folder "Dossier de base">
@@ -36,7 +36,7 @@
 <!ENTITY rename-when-sent-to-tablet "Renommer les fichiers quand ils sont envoyés vers la tablette">
 <!ENTITY save-annotated-file "Enregistrer une copie du fichier annoté avec le suffixe suivant: ">
 <!ENTITY tablet-copy-information "Par défaut, récupérer une pièce jointe de la tablette remplace le fichier sauvegardé dans Zotero. Quand cette option est activée, zotfile crée plutôt une copie du fichier avec un suffixe personnalisé et ajoute ce fichier comme une pièce jointe supplémentaire dans Zotero.">
-<!ENTITY automatically-extract-annotations "Extraire automatiquement les annotations quand les PDFs sont récupérés de la tablette">
+<!ENTITY automatically-extract-annotations "Extraire automatiquement les annotations quand les PDF sont récupérés de la tablette">
 <!ENTITY preview-renaming-rules "Aperçu des règles actuelles de renommage">
 <!ENTITY update "Mettre à jour">
 <!ENTITY renaming-format "Format de renommage">
@@ -63,8 +63,10 @@
 <!ENTITY add-full-citation "Ajouter, dans la note, après chaque extrait de texte surligné sa référence complète (auteur-date)">
 <!ENTITY use-article-book-chapter-page "Utiliser la pagination originale de l'article/chapitre de livre pour les extraits de textes surlignés">
 <!ENTITY page-number-determination "La pagination originale de l'article/chapitre de livre est déterminée à partir du champ 'pages' des métadonnées Zotero. Elle est calculée en additionant le numéro de page du PDF à la première page du champ Zotero. Cette méthode échoue si la première page du document PDF n'est pas la première page de l'article/chapitre de livre.">
-<!ENTITY other-advanced-settings "Autres paramètres avancées">
-<!ENTITY watch_folder "Proposer automatiquement d'ajouter les nouveaux fichiers du dossier source">
+<!ENTITY other-advanced-settings "Autres paramètres avancés">
+
+<!ENTITY watch_folder "Repérer automatiquement les nouveaux fichiers du dossier source et proposer de les joindre">
+
 <!ENTITY automatic_renaming_label "Renommer automatiquement les nouvelles pièces jointes">
 <!ENTITY automatic_renaming_no "Jamais">
 <!ENTITY automatic_renaming_ask "Toujours demander (discrètement)">
