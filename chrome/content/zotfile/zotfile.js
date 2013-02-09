@@ -1298,7 +1298,8 @@ Zotero.ZotFile = {
 
         }
         // complete folder and return
-        var folder = dest_dir + subfolderFormat;
+        dest_dir = (dest_dir.substr(-1)!=this.folderSep) ? dest_dir : dest_dir.substr(0,dest_dir.length-1);
+        var folder = dest_dir + this.folderSep + subfolderFormat;
         return(folder);
     },
 
