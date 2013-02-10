@@ -52,6 +52,7 @@ Contributions preferably through pull requests are welcome!
 - new option: disable renaming so that attachments are only moved (hidden: `.disable_renaming`)
 - new option: set opening and closing quotation mark for extracted annotations (hidden: `.openingQuotationMarks`, `.closingQuotationMarks`)
 - new option: remove periods from filenames (hidden: `removePeriods`)
+- bug fix: download of poppler tool was broken
 - bug fix: preview of renaming rules for Unix and Windows
 - bug fix: sending to and getting from tablet deleted note content
 
