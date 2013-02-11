@@ -240,7 +240,7 @@ Zotero.ZotFile = {
 	
 	
     watchFolder: function() {
-        var zz = Zotero.ZotFile;
+        var zz = Zotero.ZotFile, item;
         if(!zz.prefs.getBoolPref('watch_folder')) return;
         // get source dir
         // JSON.parse('[1, 5, "false"]') JSON.parse(zz.getCharPref('watch_folder_list'))
@@ -256,16 +256,24 @@ Zotero.ZotFile = {
                 // get selected items
                 var win = zz.wm.getMostRecentWindow("navigator:browser");
                 var items = win.ZoteroPane.getSelectedItems();
-                // get parent if attachment is selected
-                /*if (items[0].isAttachment()) {
+                // continue if nothing is selected
+                if(items.length==0) {
+                    zz.infoWindow(zz.ZFgetString('general.error'),zz.ZFgetString('watchFolder.noRegularItem'));
+                    return(false);
+                }
+                // get parent if attachment is selected                
+                if (items[0].isAttachment()) {
                     var id_parent = items[0].getSource();
-                    if(!id_parent) continue;
-                    var item = Zotero.Items.get(id_parent);
-                }*/
+                    if(!id_parent) return(false);
+                    item = Zotero.Items.get(id_parent);
+                }
+                else {
+                    item = items[0];
+                }
                 // rename and attach if regular item
-                if(items.length>0 && items[0].isRegularItem()) {
+                if(item.isRegularItem()) {
                     // attach file
-                    zz.attachFile(items[0], file);
+                    zz.attachFile(item, file);
                     // show messages
                     zz.showReportMessages(zz.ZFgetString('general.newAttachmentAdded'));
                     zz.handleErrors();
