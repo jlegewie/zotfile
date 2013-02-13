@@ -216,29 +216,28 @@ Zotero.ZotFile = {
         
     },
 
-	//Localization (borrowed from Zotero sourcecode)
-	ZFgetString: function (name, params){
-		this.stringsBundle = Components.classes["@mozilla.org/intl/stringbundle;1"]
-			.getService(Components.interfaces.nsIStringBundleService)
-			.createBundle("chrome://zotfile/locale/zotfile.properties");
-		try {
-			if (params != undefined){
-				if (typeof params != 'object'){
-					params = [params];
-				}
-				var l10n = this.stringsBundle.formatStringFromName(name, params, params.length);
-			}
-			else {
-				var l10n = this.stringsBundle.GetStringFromName(name);
-			}
-		}
-		catch (e){
-			throw ('Localized string not available for ' + name);
-		}
-		return l10n;
-	},
-	
-	
+    //Localization (borrowed from Zotero sourcecode)
+    ZFgetString: function (name, params){
+        this.stringsBundle = Components.classes["@mozilla.org/intl/stringbundle;1"]
+            .getService(Components.interfaces.nsIStringBundleService)
+            .createBundle("chrome://zotfile/locale/zotfile.properties");
+        try {
+            if (params != undefined){
+                if (typeof params != 'object'){
+                    params = [params];
+                }
+                var l10n = this.stringsBundle.formatStringFromName(name, params, params.length);
+            }
+            else {
+                var l10n = this.stringsBundle.GetStringFromName(name);
+            }
+        }
+        catch (e){
+            throw ('Localized string not available for ' + name);
+        }
+        return l10n;
+    },
+
     watchFolder: function() {
         var zz = Zotero.ZotFile, item;
         if(!zz.prefs.getBoolPref('watch_folder')) return;
@@ -1013,7 +1012,7 @@ Zotero.ZotFile = {
             }
         }
         if (matching.length > 0) {
-			this.messages_error.push(this.ZFgetString('renaming.errorFormat.opening', [open, matching[0]]));
+            this.messages_error.push(this.ZFgetString('renaming.errorFormat.opening', [open, matching[0]]));
         }
         return outer;
     },
@@ -1117,11 +1116,11 @@ Zotero.ZotFile = {
             pos = this.binaryArrayIndex(wildcards,bars[i]);
             // no wildcard between previous and current |
             if (pos - 1 < last || pos === 0) {
-				this.messages_error.push(this.ZFgetString('renaming.errorFormat.left', [offset + bars[i]]));
+                this.messages_error.push(this.ZFgetString('renaming.errorFormat.left', [offset + bars[i]]));
             }
             // no wildcard between current and next | or no more wildcards left
             if (wildcards[pos] > bars[i + 1] || pos === wildcards.length) {
-				this.messages_error.push(this.ZFgetString('renaming.errorFormat.right', [offset + bars[i]]));
+                this.messages_error.push(this.ZFgetString('renaming.errorFormat.right', [offset + bars[i]]));
             }
             if (pos - last > 1) {
                 // all look-ups in an exclusive group failed
@@ -2123,12 +2122,12 @@ Zotero.ZotFile = {
             if (this.prefs.getBoolPref("tablet.tagParentPull")) item.addTag(this.prefs.getCharPref("tablet.tagParentPull_tag"));
             
             // notification (display a different message when the attachments have been deleted from tablet without being sent back to Zotero)
-			if (attsDeleted === true) {
-				this.messages_report.push("'" + att.getFile().leafName + "' " + this.ZFgetString('tablet.attsDel'));
-			}
-			else {
-				this.messages_report.push("'" + att.getFile().leafName + "'");
-			}            
+            if (attsDeleted === true) {
+                this.messages_report.push("'" + att.getFile().leafName + "' " + this.ZFgetString('tablet.attsDel'));
+            }
+            else {
+                this.messages_report.push("'" + att.getFile().leafName + "'");
+            }            
         }
 
         // remove modified tag from attachment
@@ -2333,7 +2332,7 @@ Zotero.ZotFile = {
             // extractor filename
             this.popplerExtractorFileName += '-' + Zotero.platform;
             if (Zotero.isWin) this.popplerExtractorFileName+='.exe';
-            //â€œpdftotext-{platform}â€?, where {platform} is â€œWin32â€?, â€œMacIntelâ€?, â€œMacPPCâ€?, â€œLinux-i686â€?, etc. (To determine your current platform, type javascript:alert(navigator.platform) in the Firefox URL bar and hit Enter.)
+            //'pdftotext-{platform}', where {platform} is 'Win32', 'MacIntel', 'MacPPC', 'Linux-i686', etc. (To determine your current platform, type javascript:alert(navigator.platform) in the Firefox URL bar and hit Enter.)
 
             // extractor path
             this.popplerExtractorPath = Zotero.getZoteroDirectory().path + "/ExtractPDFAnnotations/" + this.popplerExtractorFileName;
@@ -2545,7 +2544,7 @@ Zotero.ZotFile = {
 
         getNoteContent: function(annotations, item, method) {
             // get current date
-			var date_str = Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString();
+            var date_str = Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString();
 
             // set note title
             var note="<b>" + Zotero.ZotFile.ZFgetString('extraction.noteTitle') + " (" + date_str;
@@ -2559,8 +2558,8 @@ Zotero.ZotFile = {
             var htmlTagHighlightEnd=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.HighlightHtmlTagEnd");
             var htmlTagUnderlineStart=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.UnderlineHtmlTagStart");
             var htmlTagUnderlineEnd=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.UnderlineHtmlTagEnd");
-			var openingQMarks=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.openingQuotationMarks");
-			var closingQMarks=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.closingQuotationMarks");
+            var openingQMarks=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.openingQuotationMarks");
+            var closingQMarks=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.closingQuotationMarks");
 
             // iterature through annotations
             for (var i=0; i < annotations.length; i++) {
