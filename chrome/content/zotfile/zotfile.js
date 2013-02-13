@@ -399,6 +399,10 @@ Zotero.ZotFile = {
                                     if(auto_rename==4) on_confirm();
                                 }
                             }
+<<<<<<< HEAD
+=======
+                        }
+>>>>>>> 59ad1dd... Complete rewrite of the wildcard expansion mechanism and introduction of
                         } catch (e) {
                             zz.infoWindow(zz.ZFgetString('general.error'),zz.ZFgetString('renaming.renamingFailed'),8000);
                         }
@@ -970,95 +974,90 @@ Zotero.ZotFile = {
         return arr;
     },
 
-    /*
-     * Collects all positions of a particular substring in an Array.
-     */
-    findStrPos: function(rule, str) {
-        var positions = new Array();
-        var last = rule.indexOf(str);
-        while (last > -1) {
-            positions.push(last);
-            last = rule.indexOf(str, last + 1);
-        }
-        return positions;
-    },
-
-    /*
-     * Iterates through a string or until a mismatch between opening and closing
-     * character is found. Returns the start and end position of the first outer
-     * match or -1 if no match was found.
-     */
-    findOuterPairs: function(rule, open, close) {
-        open = (typeof(open) === "undefined") ? "{" : open;
-        close = (typeof(close) === "undefined") ? "}" : close;
-        var matching = new Array();
-        var outer = new Array();
-        var res = {"start": -1, "end": -1};
-        for (var i = 0; i < rule.length; ++i) {
-            if (rule[i] === open) {
-                matching.push(i);
-                if (res.start < 0) res.start = i;
-            }
-            else if (rule[i] === close) {
-                if (matching.length === 0) {
-                    this.messages_error.push(this.ZFgetString('renaming.errorFormat.closing', [close, i]));
-                }
-                matching.pop();
-                if (matching.length === 0) {
-                    res.end = i;
-                    outer.push(res);
-                    res = {"start": -1, "end": -1};
-                }
-            }
-        }
-        if (matching.length > 0) {
-            this.messages_error.push(this.ZFgetString('renaming.errorFormat.opening', [open, matching[0]]));
-        }
-        return outer;
-    },
-
+    //helper function for replaceWildcards()
+    //generates a lookup table with all supported zotfile non-modifier wildcards  
+    //
+    //list of all zotero field names can be found at:
+    //https://api.zotero.org/itemFields?pprint=1  
     wildcardTable: function(zitem) {
         var table = new Object();
         // get item type
-        var item_type =  zitem.getType();
-        var item_type_string = Zotero.ItemTypes.getLocalizedString(item_type);
+        var item_type = Zotero.version[0] < 3 ? zitem.getType() :
+            zitem.itemTypeID; 
+        var item_type_string = Zotero.ItemTypes.getLocalizedString(item_type); 
+
         // get creator and create authors string
-        // creator types: author/editor(1,3) for book(2), inventor(14) for patent(19),programmer(24) for computer prog.(27),presenter(21) for presentation(32)
-        var creatorType = [1];
-        if (item_type === 2)  creatorType = [1, 3];
-        else if (item_type === 19) creatorType = [14];
-        else if (item_type === 32) creatorType = [21];
-        else if (item_type === 27) creatorType = [24];
-        var add_etal = this.prefs.getBoolPref("add_etal");
-        var author = "", author_lastf="", author_initials="";
-        var creators = zitem.getCreators();
-        var numauthors = creators.length;
-        for (var i = 0; i < creators.length; ++i) {
-            if (creatorType.indexOf(creators[i].creatorTypeID) === -1) numauthors=numauthors-1;
+        // creator types: 
+        //  - author/editor(1,3) for book(2)
+        //  - inventor(14) for patent(19)
+        //  - programmer(24) for computer prog.(27)
+        //  - presenter(21) for presentation(32)
+        var creator_type;
+        switch (item_type) {
+        case 2:
+            creator_type = [1,3];
+            break;
+        case 19:
+            creator_type = [14];
+            break;
+        case 32:
+            creator_type = [21];
+            break;
+        case 27:
+            creator_type = [24];
+            break;
+        default:
+            creator_type = [1];    
         }
-        var max_authors = (this.prefs.getBoolPref("truncate_authors")) ? this.prefs.getIntPref("max_authors") : 500;
-        if (numauthors <= max_authors) add_etal = false;
-        else numauthors = 1;
+        
+        var add_etal = this.prefs.getBoolPref("add_etal");
+        var author = new Array();
+        var author_lastf = new Array();
+        var author_initials = new Array();
+        var creators = zitem.getCreators();
+
+        var num_authors = 0;
+        // get number of authors for this item
+        for (var i = 0; i < creators.length; ++i) {
+            if (!(creator_type.indexOf(creators[i].creatorTypeID) === -1))
+                num_authors +=1;
+        }
+
+        var max_authors = (this.prefs.getBoolPref("truncate_authors")) ?
+            this.prefs.getIntPref("max_authors") : 500; 
+
+        num_authors <= max_authors ? add_etal = false : num_authors = 1;
+
         var delimiter = this.prefs.getCharPref("authors_delimiter");
+
+        //populate the author, author_lastf and author_initials variables with
+        //the corresponding strings 
         var j = 0;
         for (i = 0; i < creators.length; ++i) {
-            if (j < numauthors && creatorType.indexOf(creators[i].creatorTypeID) != -1) {
-                if (author !== "") author += delimiter + creators[i].ref.lastName;
-                if (author === "") author = creators[i].ref.lastName;
-                var lastf =  creators[i].ref.lastName + creators[i].ref.firstName.substr(0, 1).toUpperCase();
-                if (author_lastf !== "") author_lastf += delimiter + lastf;
-                if (author_lastf === "") author_lastf = lastf;
-                var initials = creators[i].ref.firstName.substr(0, 1).toUpperCase() + creators[i].ref.lastName.substr(0, 1).toUpperCase()
-                if (author_initials !== "") author_initials += delimiter + initials;
-                if (author_initials === "") author_initials = initials;
-                j=j+1;
+            if (j < num_authors 
+                &&
+                creator_type.indexOf(creators[i].creatorTypeID) != -1) {
+                author.push(creators[i].ref.lastName);
+                author_lastf.push(
+                    creators[i].ref.lastName
+                        +
+                        creators[i].ref.firstName.substr(0,1).toUpperCase());              
+                author_initials.push(
+                    creators[i].ref.firstName.substr(0, 1).toUpperCase() 
+                        + creators[i].ref.lastName.substr(0, 1).toUpperCase());
+                j++;
             }
         }
+        author = author.join(delimiter);
+        author_lastf = author_lastf.join(delimiter);
+        author_initials = author_initials.join(delimiter);
+
         if (add_etal) {
             author = author + this.prefs.getCharPref("etal");
             author_lastf = author_lastf + this.prefs.getCharPref("etal");
             author_initials = author_initials + this.prefs.getCharPref("etal");
         }
+
         // generate look-up table
         // author
         table["%a"] = author;
@@ -1081,6 +1080,7 @@ Zotero.ZotFile = {
         // date
         table["%u"] = "";
         table["%y"] = zitem.getField("date", true).substr(0,4);
+        //special handling for patents
         if (item_type === 19) {
             table["%u"] = zitem.getField("issueDate", true).substr(0,4);
             table["%y"] = table["%u"];
@@ -1097,114 +1097,249 @@ Zotero.ZotFile = {
         return table;
     },
 
-    /*
-     *
-     */
-    fillRule: function(rule, table, offset) {
-        var wildcards = this.findStrPos(rule, "%");
-        var bars = this.findStrPos(rule, "|");
-        var exclusive = "";
-        var str = new Array();
-        var complete = true;
-        // for first loop excl_complete must be true
-        var excl_complete = true;
-        var pos = 0;
-        var last = -1;
-        var lookup = "";
-        for (var i = 0; i < bars.length; ++i) {
-            // position of current | in wildcards
-            pos = this.binaryArrayIndex(wildcards,bars[i]);
-            // no wildcard between previous and current |
-            if (pos - 1 < last || pos === 0) {
-                this.messages_error.push(this.ZFgetString('renaming.errorFormat.left', [offset + bars[i]]));
-            }
-            // no wildcard between current and next | or no more wildcards left
-            if (wildcards[pos] > bars[i + 1] || pos === wildcards.length) {
-                this.messages_error.push(this.ZFgetString('renaming.errorFormat.right', [offset + bars[i]]));
-            }
-            if (pos - last > 1) {
-                // all look-ups in an exclusive group failed
-                if (!excl_complete) complete = false;
-                // reset
-                excl_complete = false;
-                if (exclusive !== "") {
-                    // add content of previous exclusive group
-                    str.push(exclusive);
-                    // reset
-                    exclusive = "";
-                }
-                for (var j = last + 1; j < pos - 1; ++j) {
-                    // add rule content before wildcard
-                    // wildcards[-1] is undefined, undefined + 2 is NaN
-                    // substring(NaN, x) is from the beginning of the string ;-]
-                    str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
-                    // add content of wildcard
-                    lookup = table[rule.substr(wildcards[j], 2)];
-                    if (lookup === "" || typeof(lookup) === "undefined") complete = false;
-                    else str.push(lookup);
-                }
-                // add rule content between last and current wildcard
-                str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
-            }
-            lookup = table[rule.substr(wildcards[pos - 1], 2)];
-            if (lookup === "" || typeof(lookup) === "undefined") excl_complete |= false;
-            else {
-                exclusive = exclusive || lookup;
-                excl_complete |= true;
-            }
-            lookup = table[rule.substr(wildcards[pos], 2)];
-            if (lookup === "" || typeof(lookup) === "undefined") excl_complete |= false;
-            else {
-                exclusive = exclusive || lookup;
-                excl_complete |= true;
-            }
-            last = pos;
+    // helper function for replaceWildcards()
+    inArray: function(string, array) {
+        var length = array.length;
+        for(var i = 0; i < length; i++) {
+            if(array[i] == string) return true;
         }
-        if (!excl_complete) complete = false;
-        if (exclusive !== "") {
-            str.push(exclusive);
-        }
-        for (var j = last + 1; j < wildcards.length; ++j) {
-            // add rule content before wildcard
-            str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
-            // add content of wildcard
-            lookup = table[rule.substr(wildcards[j], 2)];
-            if (lookup === "" || typeof(lookup) === "undefined") complete = false;
-            else str.push(lookup);
-        }
-        // add rule content after last wildcard
-        str.push(rule.substring(wildcards[j - 1] + 2));
-        return {"str": str.join(""), "complete": complete};
+        return false;
     },
 
-    /*
-     * Replace wildcards both for filename and subfolder definition
-     * List of field names: https://api.zotero.org/itemFields?pprint=1
+    /* helper function for replaceWildcards() that 
+     * returns an array with the contents of 'num' blocks (delimited by 'open'/'close')
+     * from string 'st' that start at position 'pos'
      */
-    replaceWildcard: function(zitem, rule, table, offset) {
+    getBlocks: function(st, pos, num, open, close) {
+        open = (typeof(open) === "undefined") ? "{" : open;
+        close = (typeof(close) === "undefined") ? "}" : close;
+        var blocks = new Array();
+        var counter = 0;
+        var pointer = pos;
+        var start;
+
+        // start collecting blocks
+        for (var i = 0; i < num; i++) {
+
+            // if we're already past the string but still need blocks, something went wrong
+            if (pointer >= st.length)
+                this.messages_error.push(this.ZFgetString('renaming.errorFormat.missingBlock', [pos-2]));
+
+            // if no block starts here, user made a syntax error
+            if (st[pointer] != open)
+                this.messages_error.push(this.ZFgetString('renaming.errorFormat.missingOpening', [open, pointer, st[pointer]]));
+  
+            start = pointer;
+
+            // advance pointer until the end of current block
+            counter = 0;
+            while (pointer < st.length) {
+                if (st[pointer] === open)
+                    counter++;
+                else if (st[pointer] === close) {
+                    counter--;
+                    if (counter == 0)
+                        break;
+                }
+                
+                pointer++;
+
+            }
+    
+            // pointer is now either at the closing bracket of block 'i' or at the end of 'st'
+            if (pointer == st.length)
+                this.messages_error.push(this.ZFgetString('renaming.errorFormat.unmatchedOpening', [open, start]));
+
+            blocks.push(st.substring(start+1,pointer));
+            pointer++;
+            // pointer should now point to the opening bracket of the next block
+        }
+        
+        return blocks;
+    },
+
+
+    // recursively expands all wildcards in string "rule" and returns the
+    // expanded string. Two types of wildcards are supported:
+    //
+    // 1. "Plain" wildcards of the form %S, S being a letter, which get replaced
+    // by their value  in 'table' (by default populated with fields from the
+    // passed 'zitem'). 
+    //
+    // 2. wildcard modifiers of the form %*, where * is a symbol from the
+    // array 'wildcard_modifiers, followed by one or more content
+    // blocks enclosed in curly braces (with no whitespace in between). How the
+    // modifiers act on the content blocks can individually be defined in the
+    // switch statement below. 
+    replaceWildcards: function(zitem, rule, table) {
+
         if (rule === "" || typeof(rule) === "undefined") {
-            return;
+            return "";
         }
         table = (typeof(table) === "undefined") ? this.wildcardTable(zitem) : table;
-        offset = (typeof(offset) === "undefined") ? 0 : offset;
-        var conditional = this.findOuterPairs(rule);
-        var name = new Array();
-        var last = -1;
-        var res;
-        var complete = true;
-        for (var i = 0; i < conditional.length; ++i) {
-            res = this.fillRule(rule.substring(last + 1, conditional[i].start), table, last + 1);
-            complete &= res.complete;
-            name.push(res.str);
-            name.push(this.replaceWildcard(zitem, rule.substring(conditional[i].start + 1, conditional[i].end), table, conditional[i].start + 1));
-            last = conditional[i].end;
+        var expanded_rule = new Array();
+        // to add new wildcard modifiers, simply put them into this array
+        // and add a case to the switch statement below
+        var wildcard_modifiers = ["<", ">", "|", "?", "/", "-", "_", "\'", "^" ];
+        var pos=0;
+         
+        while (pos < rule.length) {
+            
+            //if there's no wildcard, just append the character
+            if (rule[pos] != "%") {
+                expanded_rule.push(rule[pos]);
+                pos++;
+                continue;
+            }
+
+            //if a wildcard modifier is the last character in the string, throw
+            //an error
+            if ((rule[pos] == "%") && (pos == rule.length -1))
+                this.messages_error.push(
+                    this.ZFgetString(
+                        "renaming.errorFormat"
+                            + ".wildcardLastChar", []));  
+            
+            //if we have a wildcard modifier, take the appropriate action
+            if ((rule[pos] == "%")
+                && this.inArray(rule[pos+1], wildcard_modifiers)) {
+                
+                var blocks;
+                var result = "";
+                
+                //depending on modifier, take the appropriate action
+                switch (rule[pos+1]) {
+                case "<":
+                    // convert to lowercase
+                    blocks = this.getBlocks(rule, pos+2, 1);
+                    result = this.replaceWildcards(zitem,
+                                                   blocks[0],
+                                                   table).toLowerCase();
+                    break;
+                case ">":
+                    //convert to uppercase
+                    blocks = this.getBlocks(rule, pos+2, 1);
+                    result = this.replaceWildcards(zitem, 
+                                                   blocks[0],
+                                                   table).toUpperCase(); 
+                    break;
+                case "|":
+                    //insert block0 if it expands to something with positive
+                    //length, otherwise insert block1 
+                    blocks = this.getBlocks(rule, pos+2, 2);
+                    result = this.replaceWildcards(zitem, blocks[0], table); 
+                    if (!(result.length > 0)) {
+                        result = this.replaceWildcards(zitem, blocks[1],
+                                                       table);
+                    }
+                    break;
+                case "?":
+                    //insert block1 if block0 expands to something with positive
+                    //length 
+                    blocks = this.getBlocks(rule, pos+2, 2);
+                    result = "";
+                    if (this.replaceWildcards(zitem, 
+                                               blocks[0], 
+                                               table).length > 0) {  
+                         result = this.replaceWildcards(zitem, blocks[1], 
+                                                        table); 
+                    }
+                    break;
+                case "/":
+                    //replace all occurences of block0 in block2 with block1 and
+                    //then insert block2 
+                    blocks = this.getBlocks(rule, pos+2, 3);
+                    var searchstring = this.replaceWildcards(zitem, blocks[0],
+                                                             table); 
+                    var replacestring = this.replaceWildcards(zitem, blocks[1],
+                                                              table);  
+                    var target = this.replaceWildcards(zitem, blocks[2], table);  
+                    var regexp = new RegExp(searchstring, "g"); 
+                    result = target.replace(regexp, replacestring);
+                    break;
+                case "-":
+                    //remove all occurences of block0 in block1 and then insert
+                    //block1
+                    blocks = this.getBlocks(rule, pos+2, 2);
+                    var searchstring = this.replaceWildcards(zitem, blocks[0], 
+                                                             table); 
+                    var target = this.replaceWildcards(zitem, blocks[1], table)
+                    var regexp = new RegExp(searchstring, "g");
+                    result = target.replace(regexp, "");                    
+                    break;
+                case "_":
+                    // replace all spaces with underscores
+                    blocks = this.getBlocks(rule, pos+2, 1);
+                    result = this.replaceWildcards(zitem, 
+                                                   blocks[0],
+                                                   table).replace(/ /g, '_'); 
+                    break;
+                case "\'":
+                    // remove accents and strange characters
+                    if (Zotero.version[0] < 3)
+                        this.messages_error.push(
+                            this.ZFgetString(
+                                "renaming.errorFormat"
+                                    + ".versionMismatchWildcardModifier'"),
+                                [Zotero.version[0], 3]);
+                    blocks = this.getBlocks(rule, pos+2, 1);
+                    result = Zotero.Utilities.removeDiacritics(
+                        this.replaceWildcards(zitem, blocks[0], table), false);
+                    break;
+                case " ":
+                    // trim whitespace
+                    blocks = this.getBlocks(rule, pos+2, 1);
+                    result = Zotero.Utilities.trimInternal(
+                        this.replaceWildcards(zitem, blocks[0], table));
+                    break;
+                case "^":
+                    // capitalize result
+                    blocks = this.getBlocks(rule, pos+2, 1);
+                    result = Zotero.Utilities.capitalizeTitle(
+                        this.replaceWildcards(zitem, blocks[0], table), true); 
+                    break;
+                // default: will never happen as we've already checked in the
+                // enclosing if statement that the  wildcard modifier is
+                // supported 
+                }
+
+                //push the result
+                expanded_rule.push(result);
+
+                //advance the position counter:
+                //First account for wildcard modifier and pairs of braces
+                //separating the subblocks... 
+                pos += 2 + 2 * blocks.length;
+                //then for the length of the processed subblocks (w/o the braces)
+                for (var i = 0; i < blocks.length; i++) {
+                    pos += blocks[i].length;
+                }
+                
+                continue;
+            }
+       
+            //if theres a '%' not followed by a modifier, we have a regular
+            //wildcard; replace it with the corresponding zotero field 
+            if (rule[pos] == "%") { 
+                var lookup = table[rule.substr(pos,2)];
+                if (!(lookup === "" || typeof(lookup) === "undefined"))
+                    expanded_rule.push(lookup);
+                pos += 2;
+                continue;
+            }
+
         }
-        res = this.fillRule(rule.substring(last + 1, rule.length), table, last + 1);
-        complete &= res.complete;
-        // we're in recursive call and a wildcard was not complete
-        if (offset > 0 && !complete) return "";
-        name.push(res.str);
-        return name.join("");
+
+        //rule has now been completely expanded, the expanded string is:
+        expanded_rule = expanded_rule.join("");
+
+        //strip potentially invalid characters that are left over after wildcard
+        // expansion (code line adopted from Zotero, modified to accept periods)
+        // TODO: Should we make this optional and create another wildcard
+        // modifier?
+        expanded_rule = expanded_rule.replace(/[\/\\\?\*:|"<>]/g, '');
+
+        return expanded_rule;
     },
 
     getFiletype: function(fname){
@@ -1249,29 +1384,35 @@ Zotero.ZotFile = {
         // create the new filename from the selected item
         var filename;
         if (!this.prefs.getBoolPref("useZoteroToRename")) {
+
+            //TODO: the following if-statements are here for backwards compatibility
+            //should we remove all/some of these options entirely as
+            //functionality is now also available via wildcard modifiers?
             
-            filename=this.replaceWildcard(item, rename_format);
-            //var filename =  author + "_" + year + "_" + title;
+            // remove periods if option selected
+            if (this.prefs.getBoolPref("removePeriods"))  
+                rename_format = "%/{\\.}{\'\'}{" + rename_format + "}";
+
+            // replace blanks with '_' if option selected
+            if (this.prefs.getBoolPref("replace_blanks"))
+                rename_format = "%_{" + rename_format + "}";
+
+            // set to lower case if option selected
+            if (this.prefs.getBoolPref("lower_case"))
+                rename_format = "%<{" + rename_format + "}";
+
+            // remove all the accents and other strange characters if option
+            // selected
+            // TODO: This is not user selectable and enabled by default
+            if (Zotero.version[0]>=3 &&
+            this.prefs.getBoolPref("removeDiacritics")) 
+                rename_format = "%\'{" + rename_format + "}";
+
+            filename = this.replaceWildcards(item, rename_format);
 
             // Strip potentially invalid characters
             // (code line adopted from Zotero, modified to accept periods)
             filename = filename.replace(/[\/\\\?\*:|"<>]/g, '');
-
-            // remove periods
-            if (this.prefs.getBoolPref("removePeriods"))  filename = filename.replace(/\./g, '');
-
-            // replace multiple blanks in filename with single blank & remove whitespace
-            //var filename = filename.replace(/ {2,}/g, ' ');
-            filename = Zotero.Utilities.trimInternal(filename);
-
-            // replace blanks with '_' if option selected
-            if (this.prefs.getBoolPref("replace_blanks"))  filename = filename.replace(/ /g, '_');
-            
-            // set to lower case
-            if (this.prefs.getBoolPref("lower_case"))  filename = filename.toLowerCase();
-
-            // remove all the accents and other strange characters from filename
-            if (Zotero.version[0]>=3 && this.prefs.getBoolPref("removeDiacritics")) filename = Zotero.Utilities.removeDiacritics(filename);
         
         }
         if (this.prefs.getBoolPref("useZoteroToRename")) filename=Zotero.Attachments.getFileBaseNameFromItem(item.itemID);
@@ -1292,7 +1433,7 @@ Zotero.ZotFile = {
         var subfolderFormat="";
         if(subfolder) {
             // get subfolder
-            subfolderFormat=this.replaceWildcard(zitem, rule);
+            subfolderFormat=this.replaceWildcards(zitem, rule);
             // correct for missing fields
             if (!Zotero.isWin) subfolderFormat=subfolderFormat.replace('//','/undefined/');
             if ( Zotero.isWin) subfolderFormat=subfolderFormat.replace('\\\\','\\undefined\\');
@@ -2577,7 +2718,7 @@ Zotero.ZotFile = {
 
                 // get citation
                 var cite="p. ";
-                if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteFullCite")) cite=Zotero.ZotFile.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ");
+                if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteFullCite")) cite=Zotero.ZotFile.replaceWildcards(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ");
 
                 // add to note text pdfExtractionNoteRemoveHtmlNote
                 if(anno.content && anno.content != "" &&
