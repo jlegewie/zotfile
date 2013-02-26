@@ -1300,10 +1300,9 @@ Zotero.ZotFile = {
             // replace invalid characters
             subfolderFormat = subfolderFormat.split(this.folderSep);        
             for (var i = 0; i < subfolderFormat.length; i++) {                
-                subfolderFormat[i] = Zotero.File.getValidFileName(subfolderFormat[i]);
+                if(subfolderFormat[i]!=="") subfolderFormat[i] = Zotero.File.getValidFileName(subfolderFormat[i]);
             }
             subfolderFormat = subfolderFormat.join(this.folderSep);
-
         }
         // complete folder and return
         dest_dir = (dest_dir.substr(-1)!=this.folderSep) ? dest_dir : dest_dir.substr(0,dest_dir.length-1);
