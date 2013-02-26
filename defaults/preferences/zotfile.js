@@ -117,4 +117,4 @@ pref("extensions.zotfile.pdfExtraction.UnderlineHtmlTagStart", "<u>");
 pref("extensions.zotfile.pdfExtraction.UnderlineHtmlTagEnd", "</u>");
 pref("extensions.zotfile.pdfExtraction.openingQuotationMarks", "\"");
 pref("extensions.zotfile.pdfExtraction.closingQuotationMarks", "\"");
-pref("extensions.zotfile.pdfExtraction.localeDateInNote", true);
+pref("extensions.zotfile.pdfExtraction.localeDateInNote", true);//pref("extensions.zotfile.pdfExtraction.format", '"<p>%(markup)s" %(cite)s</p><br><p>%(note)s</p><br>');
