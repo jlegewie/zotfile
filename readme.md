@@ -26,12 +26,15 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 2.3.2
+
+- compatible with Zotero 4.0
+
 #### Changes in 2.3.1
 
 - adding attachments from watched folder now works when child item is selected
 - language improvements for French and German
 - bug fix for subfolders based on wildcards
-
 
 #### Changes in 2.3
 

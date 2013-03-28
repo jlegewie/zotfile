@@ -270,7 +270,7 @@ Zotero.ZotFile = {
                 else {
                     item = items[0];
                 }
-                // rename and attach if regular item
+                // rename and attach if regular item or child attachment
                 if(item.isRegularItem()) {
                     // attach file
                     zz.attachFile(item, file);

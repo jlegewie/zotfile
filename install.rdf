@@ -5,7 +5,7 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>zotfile@columbia.edu</em:id>
     <em:name>ZotFile</em:name>
-    <em:version>2.3.1</em:version>
+    <em:version>2.3.2</em:version>
     <em:type>2</em:type>
    
     <!-- Target Application this extension can install into, 
@@ -20,15 +20,15 @@
 	<em:targetApplication>
 		<Description>
 			<em:id>zotero@chnm.gmu.edu</em:id>
-			<em:minVersion>3.0b1</em:minVersion>
-			<em:maxVersion>3.0.*</em:maxVersion>
+			<em:minVersion>3.*</em:minVersion>
+			<em:maxVersion>4.*</em:maxVersion>
 		</Description>
 	</em:targetApplication> 
 	<em:requires>
 	   <Description>
 	     <em:id>zotero@chnm.gmu.edu</em:id>
 	     <em:minVersion>1.*</em:minVersion>
-	     <em:maxVersion>3.*</em:maxVersion>
+	     <em:maxVersion>4.*</em:maxVersion>
 	   </Description>
 	 </em:requires>	
     <!-- Front End MetaData -->
