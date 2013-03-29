@@ -26,7 +26,7 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
-#### Changes in 2.3.2
+#### Changes in 2.3.3
 
 - compatible with Zotero 4.0
 
