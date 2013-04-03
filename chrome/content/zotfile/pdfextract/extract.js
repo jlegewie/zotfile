@@ -57,7 +57,9 @@ Zotero.ZotFile.PdfExtractor = {
             logError('error while reading annotations of page '+pageNum+' of '+args.url+' '+err);
             return false;
           }
-          for each (var annot in annots) {
+          // for each (var annot in annots) {
+          for (var i=0;i<annots.length;i++) {
+            var annot = annots[i]
             if (annot.type && 
                 (annot.type == "Highlight" || annot.type == "Underline")) {
               return true;
@@ -75,7 +77,10 @@ Zotero.ZotFile.PdfExtractor = {
           }
 
           const SUPPORTED_ANNOTS = ["Text", "Highlight", "Underline"];
-          for each (var annot in currentPage.getAnnotations()) {
+          // for each (var annot in currentPage.getAnnotations()) {
+          var annots = currentPage.getAnnotations();
+          for (var i=0;i<annots.length;i++) {          
+            var annot = annots[i];
             var at = annot.type;
             if (at && SUPPORTED_ANNOTS.indexOf(at) >= 0) {
               var a = {};
