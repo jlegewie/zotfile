@@ -26,6 +26,10 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 2.4
+- Fix automatic renaming option "Only ask if..."
+- Fix alert window (headline was missing in Zotero 4)
+
 #### Changes in 2.3.4
 
 - compatible with Zotero 4.0
