@@ -86,6 +86,23 @@ Zotero.ZotFile = {
             if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
             if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
         }
+        // tag parent items for attachments on tablet
+        if(this.prefs.getCharPref("version")!=="" && currentVersion=="2.4") {
+            var atts = this.getAttachmentsOnTablet(),
+                tag = this.prefs.getCharPref("tablet.tag"),
+                tagMod = this.prefs.getCharPref("tablet.tagModified"),
+                tagID = Zotero.Tags.getID(tag,0),
+                tagModID = Zotero.Tags.getID(tagMod,0),
+                att, parent;
+            for(var i=0; i<atts.length;i++ ) {
+                att = atts[i];
+                // get parent item
+                parent = Zotero.Items.get(att.getSource());
+                // add tags to parent
+                if(att.hasTag(tagID) && !parent.hasTag(tagID)) parent.addTag(tag);
+                if(att.hasTag(tagModID) && !parent.hasTag(tagModID)) parent.addTag(tagMod);
+            }            
+        }
 
         // add saved search and change tag when upgrading to 2.1
         if(currentVersion=="2.1" && this.prefs.getBoolPref("tablet")) {
