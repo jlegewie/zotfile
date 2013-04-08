@@ -391,7 +391,13 @@ Zotero.ZotFile = {
                                     }
                                     // ask user if item has other attachments
                                     if(auto_rename==3) {
-                                        if(parent.getAttachments().length>1)
+                                        function checkAtt (id) {
+                                            var att = Zotero.Items.get(id);
+                                            return !(att._attachmentLinkMode == Zotero.Attachments.LINK_MODE_IMPORTED_URL && att._attachmentMIMEType != 'application/pdf');
+                                        }
+                                        var atts = parent.getAttachments().filter(checkAtt);
+                                        
+                                        if (atts.length>1)
                                             zz.infoWindow(zz.ZFgetString('general.newAttachment'),{lines:["'" + file.leafName + "'"],txt:zz.ZFgetString('renaming.clickMoveRename')},prefs.getIntPref("info_window_duration_clickable"),on_confirm);
                                         else
                                             on_confirm();
