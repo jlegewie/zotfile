@@ -2338,7 +2338,7 @@ Zotero.ZotFile = {
             // extractor filename
             this.popplerExtractorFileName += '-' + Zotero.platform;
             if (Zotero.isWin) this.popplerExtractorFileName+='.exe';
-            //“pdftotext-{platform}�?, where {platform} is “Win32�?, “MacIntel�?, “MacPPC�?, “Linux-i686�?, etc. (To determine your current platform, type javascript:alert(navigator.platform) in the Firefox URL bar and hit Enter.)
+            //â€œpdftotext-{platform}â€?, where {platform} is â€œWin32â€?, â€œMacIntelâ€?, â€œMacPPCâ€?, â€œLinux-i686â€?, etc. (To determine your current platform, type javascript:alert(navigator.platform) in the Firefox URL bar and hit Enter.)
 
             // extractor path
             this.popplerExtractorPath = Zotero.getZoteroDirectory().path + "/ExtractPDFAnnotations/" + this.popplerExtractorFileName;
@@ -2593,7 +2593,7 @@ Zotero.ZotFile = {
                 }
 
                 if(anno.markup && anno.markup != "") {
-                    var markup = this.trim(anno.markup);
+                    var markup = this.trim(anno.markup).replace('ﬁ', 'fi');
                     if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteRemoveHyphens")) markup = this.removeHyphens(markup);
                     var tagStart = htmlTagHighlightStart;
                     var tagEnd = htmlTagHighlightEnd;
