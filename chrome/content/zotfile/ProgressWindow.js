@@ -95,11 +95,21 @@ Zotero.ZotFile.ProgressWindow = function(_window){
         return true;
     }
     
-    function changeHeadline(headline) {
+    function changeHeadline(text) {
+
         if(_windowLoaded) {
-            _progressWindow.document.getElementById("zotero-progress-text-headline").value = headline;
+            //_progressWindow.document.getElementById("zotero-progress-text-headline").value = headline;
+            var doc = _progressWindow.document,
+                headline = doc.getElementById("zotero-progress-text-headline");
+            while(headline.hasChildNodes()) headline.removeChild(headline.firstChild);
+            
+            var preNode = doc.createElement("label");
+            preNode.setAttribute("value", text);
+            preNode.setAttribute("crop", "end");
+            headline.appendChild(preNode);
+
         } else {
-            _loadHeadline = headline;
+            _loadHeadline = text;
         }
     }
     
