@@ -26,9 +26,10 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
-#### Changes in 2.3.3
+#### Changes in 2.3.4
 
 - compatible with Zotero 4.0
+- Annotation extraction compatible with FF 20
 
 #### Changes in 2.3.1
 
