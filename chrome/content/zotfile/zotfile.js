@@ -1343,7 +1343,7 @@ Zotero.ZotFile = {
     createFile: function(path) {
         try {
             var file = Components.classes["@mozilla.org/file/local;1"].
-                createInstance(Components.interfaces.nsILocalFile);
+                createInstance(Components.interfaces.nsIFile);
                 file.initWithPath(path);
             return(file);
         }
@@ -1454,12 +1454,12 @@ Zotero.ZotFile = {
         Zotero.File.createDirectoryIfMissing(folderFile);
 
         // open folder in file system
-        folderFile.QueryInterface(Components.interfaces.nsILocalFile);
+        folderFile.QueryInterface(Components.interfaces.nsIFile);
         try {
             folderFile.reveal();
         }
         catch (e) {
-            // On platforms that don't support nsILocalFile.reveal() (e.g. Linux), we
+            // On platforms that don't support nsIFile.reveal() (e.g. Linux), we
             // open a small window with a selected read-only textbox containing the
             // file path, so the user can open it, Control-c, Control-w, Alt-Tab, and
             // Control-v the path into another app
