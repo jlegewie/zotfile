@@ -697,7 +697,8 @@ Zotero.ZotFile = {
         subfolders.forEach(function(folder, i) {                
             // set attributes of menu item
             nodes[i].setAttribute('label', folder.label);
-            nodes[i].setAttribute('tooltiptext', this.ZFgetString('menu.sendAttToSubfolder',[folder.path]));
+            nodes[i].setAttribute('tooltiptext', "Show items in '" + folder.path + "'");
+            // this.ZFgetString('menu.sendAttToSubfolder',[folder.path])
             // show menu item
             nodes[i].setAttribute('hidden', false);
         },Zotero.ZotFile);
