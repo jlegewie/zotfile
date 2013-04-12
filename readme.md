@@ -27,12 +27,19 @@ Contributions preferably through pull requests are welcome!
 ## Changelog
 
 #### Changes in 2.4
+- **Tablet feature: Restrict saved search for tablet files to sub-folders**
+
+    Right-click on saved search for tablet files and restrict it to your custom sub-folders. This is very helpful to quickly see which files are in which folder.
+
+- **Tablet feature: Support of colored tags in Zotero 4**
+
+    The new version includes two major changes that allow you to work with colored tags. First, zotfile now also tags the parent item when an attachment is send to the tablet. As a result, you can easily see which items are on the tablet and also which items have been modified. Second, zotfile sends and gets attachment to and from the tablet when you assign tags to items. Accordingly, you can just press the key assigned to a tag and zotfile sends the item to the tablet (or gets it back). To use these features, simply assign colors to zotfile's tags (`_tablet` and `_tablet_modified`).
+
 - Fix automatic renaming option "Only ask if..."
 - Fix alert window (headline was missing in Zotero 4)
 - Fix for zotfile item menu on Zotero as a tab
 
 #### Changes in 2.3.4
-
 - compatible with Zotero 4.0
 - Annotation extraction compatible with FF 20
 
