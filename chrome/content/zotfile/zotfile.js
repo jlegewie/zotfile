@@ -46,38 +46,6 @@ Zotero.ZotFile = {
     // FUNCTIONS: INIT FUNCTIONS //
     // ========================= //
     
-    firstRun: function() {
-        
-        // transfer preferences and uninstall zotreader
-        if(!Zotero.isFx36) AddonManager.getAddonByID("zotreader@columbia.edu",function(aAddon) {
-            
-            // transfer preferences
-            Zotero.ZotFile.prefs.setCharPref("tablet.dest_dir",Zotero.ZotReader.prefs.getCharPref("dest_dir"));
-            Zotero.ZotFile.prefs.setCharPref("tablet.subfolderFormat",Zotero.ZotReader.prefs.getCharPref("subfolderFormat"));
-            Zotero.ZotFile.prefs.setBoolPref("tablet.subfolder",Zotero.ZotReader.prefs.getBoolPref("subfolder"));
-            Zotero.ZotFile.prefs.setIntPref("tablet.mode",Zotero.ZotReader.prefs.getIntPref("mode"));
-            Zotero.ZotFile.prefs.setIntPref("tablet.projectFolders",Zotero.ZotReader.prefs.getIntPref("projectFolders"));
-            Zotero.ZotFile.prefs.setIntPref("tablet.mode",Zotero.ZotReader.prefs.getIntPref("mode"));
-
-            for (i=0;i<Zotero.ZotFile.projectMax;i++) {
-                Zotero.ZotFile.prefs.setBoolPref("tablet.projectFolders"+Zotero.ZotFile.projectNr[i],Zotero.ZotReader.prefs.getBoolPref("projectFolders"+Zotero.ZotFile.projectNr[i]));
-                Zotero.ZotFile.prefs.setCharPref("tablet.projectFolders"+Zotero.ZotFile.projectNr[i]+"_folder",Zotero.ZotReader.prefs.getCharPref("projectFolders"+Zotero.ZotFile.projectNr[i]+"_folder"));
-                Zotero.ZotFile.prefs.setCharPref("tablet.projectFolders"+Zotero.ZotFile.projectNr[i]+"_label",Zotero.ZotReader.prefs.getCharPref("projectFolders"+Zotero.ZotFile.projectNr[i]+"_label"));
-            }
-            Zotero.ZotFile.prefs.setBoolPref("tablet",true);
-            
-            //uninstall zotreader
-            aAddon.uninstall();
-            
-            // prompt for restart
-            if (confirm(Zotero.ZotFile.ZFgetString('uninstallZFReader'))) {
-                var boot = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);
-                boot.quit(Components.interfaces.nsIAppStartup.eForceQuit|Components.interfaces.nsIAppStartup.eRestart);
-                
-            }
-        });
-    },
-
     versionChanges: function (currentVersion) {
         // open webpage
         if(this.prefs.getCharPref("version")==="" || currentVersion=="2.0") {
@@ -198,9 +166,6 @@ Zotero.ZotFile = {
             var oldVersion=this.prefs.getCharPref("version");
             if(!Zotero.isFx36) Components.utils.import("resource://gre/modules/AddonManager.jsm");
             
-            // if first run, check for zotfile reader and transfer preferences
-            if (oldVersion=="") this.firstRun();
-
             // update current version
             if(!Zotero.isFx36) AddonManager.getAddonByID("zotfile@columbia.edu",function(aAddon) {
                 var currentVersion=aAddon.version;
