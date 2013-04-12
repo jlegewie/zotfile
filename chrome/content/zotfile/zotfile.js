@@ -872,9 +872,9 @@ Zotero.ZotFile = {
                         subfolders.forEach(function(folder, i) {
                             show.push(m.subfolders[i]);
                             menu.childNodes[m.subfolders[i]].setAttribute('label', folder.label);
-                            menu.childNodes[m.subfolders[i]].setAttribute('tooltiptext', this.ZFgetString('menu.sendAttToSubfolder',[folder.path]));
-                            projectsSet=1;
+                            menu.childNodes[m.subfolders[i]].setAttribute('tooltiptext', this.ZFgetString('menu.sendAttToSubfolder',[folder.path]));                            
                         },Zotero.ZotFile);
+                        if(subfolders.length>0) projectsSet=1;
                     }
 
                     // message that no folders are defined
@@ -1927,10 +1927,10 @@ Zotero.ZotFile = {
         return(newAttID);
     },
     
-    sendSelectedAttachmentsToTablet: function(project) {
+    sendSelectedAttachmentsToTablet: function(idx_subfolder) {
         // save current selection
         var win = this.wm.getMostRecentWindow("navigator:browser");
-        var selection=win.ZoteroPane.itemsView.saveSelection();
+        var selection = win.ZoteroPane.itemsView.saveSelection();
         
         // get selected attachments
         var attIDs=this.getSelectedAttachments();
@@ -1938,9 +1938,10 @@ Zotero.ZotFile = {
             
         // get projectFolder
         var projectFolder="";
-        if (project!='') {
-            if(this.prefs.getIntPref("tablet.projectFolders")==1) projectFolder=this.projectPath[parseInt(project,10)-1];
-            if(this.prefs.getIntPref("tablet.projectFolders")==2) projectFolder=this.prefs.getCharPref("tablet.projectFolders" + project + "_folder");
+        if (idx_subfolder!=-1) {
+            var subfolders = JSON.parse(this.prefs.getCharPref("tablet.subfolders"));
+            if(this.prefs.getIntPref("tablet.projectFolders")==1) projectFolder = this.projectPath[parseInt(idx_subfolder,10)-1];
+            if(this.prefs.getIntPref("tablet.projectFolders")==2) projectFolder = subfolders[idx_subfolder].path;
         }
         
         // Check which attachments are already on the reader
