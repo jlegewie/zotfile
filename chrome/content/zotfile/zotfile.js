@@ -676,7 +676,31 @@ Zotero.ZotFile = {
     // ======================= //
 
     showCollectionMenu: function() {
-        //Zotero.ZotFile.infoWindow('TATA','collection');
+        // ZoteroPane object
+        var doc = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser").ZoteroPane.document;
+        // check regular item or attachment selected & custom subfolders
+        var showCollectionMenu = Zotero.ZotFile.checkSelectedSearch() && Zotero.ZotFile.prefs.getIntPref("tablet.projectFolders")==2;
+        // show or hide zotfile menu items
+        doc.getElementById("id-zotfile-collection-separator").hidden = !showCollectionMenu;
+        doc.getElementById("id-zotfile-collection-showall").hidden = !showCollectionMenu;
+        doc.getElementById("id-zotfile-collection-restrict").hidden = !showCollectionMenu;
+    },
+
+    buildZotFileCollectionMenu: function () {
+        var win = this.wm.getMostRecentWindow("navigator:browser");
+        var nodes = win.ZoteroPane.document.getElementById('id-zotfile-collection-menu').childNodes;
+        // Hide all items by default
+        for (i=0;i<nodes.length;i++) nodes[i].setAttribute('hidden', true);
+        // get subfolders
+        var subfolders = JSON.parse(this.prefs.getCharPref("tablet.subfolders"));
+        // show subfolders
+        subfolders.forEach(function(folder, i) {                
+            // set attributes of menu item
+            nodes[i].setAttribute('label', folder.label);
+            nodes[i].setAttribute('tooltiptext', this.ZFgetString('menu.sendAttToSubfolder',[folder.path]));
+            // show menu item
+            nodes[i].setAttribute('hidden', false);
+        },Zotero.ZotFile);
     },
 
     showMenu: function() {
