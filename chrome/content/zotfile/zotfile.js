@@ -1836,7 +1836,7 @@ Zotero.ZotFile = {
                 // parent item
                 var item=Zotero.Items.get(att.getSource());
                 if(!item.hasTag(tagIDMod)) item.addTag(zz.tagMod);
-                // if(item.hasTag(tagID)) item.removeTag(tagID);
+                if(item.hasTag(tagID)) zz.removeItemTag(item, tagID);
             }
 
             // expand all rows in when search is selected
