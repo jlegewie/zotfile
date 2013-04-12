@@ -190,7 +190,7 @@ Zotero.ZotFile = {
             this.tagMod = this.prefs.getCharPref("tablet.tagModified");
             
             this.wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
-                
+
             // set source dir to custom folder if zotero standalone
             if(Zotero.isStandalone && this.prefs.getBoolPref('source_dir_ff')) this.prefs.setBoolPref('source_dir_ff',false);
 
@@ -241,25 +241,10 @@ Zotero.ZotFile = {
             });
         }
 
-        // add event listener for zotfile menu items
-        var win = this.wm.getMostRecentWindow("navigator:browser");
-        win.document.getElementById('zotero-itemmenu').addEventListener('popupshowing', this.showMenu, false);
-        // win.document.getElementById('zotero-items-tree').addEventListener('focus', this.watchFolder, false);
-
-        // add event listener for selecting the 'modified tablet attachments' saved search
-        if(this.prefs.getBoolPref("tablet")) this.savedSearchEventListener(true);
-        
-        // show items in right-click menu conditional on options using an event listener
-        // CODE NOT IMPLEMENTED (just to remember how it works if needed)
-        /*var cm = document.getElementById('zotero-itemmenu');
-        cm.addEventListener("popupshowing", this.showMenu, false);
-        // Register the callback in Zotero as an item observer
-        var notifierID = Zotero.Notifier.registerObserver(this.notifierCallback, ['item']);*/
-
         // add event listener for automatically renaming attachments
         var notifierID = Zotero.Notifier.registerObserver(this.autoRename, ['item']);
 
-            // Load zotero.js first
+        // Load zotero.js first
         Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
             .getService(Components.interfaces.mozIJSSubScriptLoader)
             .loadSubScript("chrome://zotfile/content/ProgressWindow.js", Zotero.ZotFile);
