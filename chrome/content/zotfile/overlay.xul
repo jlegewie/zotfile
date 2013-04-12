@@ -9,8 +9,8 @@
 	
 	
 	<!-- ZotReader context menus -->	
-	<menupopup id="zotero-itemmenu">  
-		<menuseparator id="id-zotfile-separator"/>		
+	<menupopup id="zotero-itemmenu">
+		<menuseparator id="id-zotfile-separator"/>
 		<!-- Make sure the menu separator for utilities is visible -->
        	<!--insertafter="id-zotfile-menu" -->
        	<menuitem id="id-zotfile-attach-file" label="&zotfile-attach-file.label;" tooltiptext="&zotfile-attach-file.tooltiptext;" oncommand="Zotero.ZotFile.attachNewFile();"/>
@@ -45,11 +45,8 @@
 
 				<menuseparator/>								
 				<menuitem id="id-push2reader-configure" label="&change-subfolders;" tooltiptext="&add-and-delete-subfolders;" oncommand="Zotero.ZotFile.openSubfolderWindow();"/>
-
 			</menupopup>
-		</menu>       
-
-
+		</menu>
 	</menupopup>
 	
 	<menupopup id="zotero-tb-actions-popup">
