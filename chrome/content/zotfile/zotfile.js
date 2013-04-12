@@ -1729,8 +1729,7 @@ Zotero.ZotFile = {
     getTabletStatus: function(att) {        
         if(att!=false) {
             var tagIDs = [Zotero.Tags.getID(this.tag,0), Zotero.Tags.getID(this.tagMod,0)];
-            var out = att.isAttachment() && att.hasTags(tagIDs);
-            return(out);
+            return(att.isAttachment() && att.hasTags(tagIDs));
         }
         return(false);
     },
@@ -2238,23 +2237,26 @@ Zotero.ZotFile = {
         var win = this.wm.getMostRecentWindow("navigator:browser");
         var selection=win.ZoteroPane.itemsView.saveSelection();
 
-        // get selected attachments
-        var attIDs=this.getSelectedAttachments();
-        var tagID = Zotero.Tags.getID(this.tag,0);;
-        
+        // get selected attachments, filter for tablet        
+        var atts = Zotero.Items.get(this.getSelectedAttachments()).filter(this.getTabletStatus, Zotero.ZotFile),
+            attIDs = atts.map(function(att) {return att.id;});
+        var tagID = Zotero.Tags.getID(this.tag,0);
+
         // confirm        
         var confirmed=true;
-        if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) 
-            confirmed=confirm(this.ZFgetString('tablet.getAttachments', [attIDs.length]));
+        if (this.prefs.getBoolPref("confirmation_batch_ask") && atts.length>=this.prefs.getIntPref("confirmation_batch")) 
+            confirmed=confirm(this.ZFgetString('tablet.getAttachments', [atts.length]));
         if(confirmed) {
-            for (var i=0; i < attIDs.length; i++) {
-                try {                    
-                    var att = Zotero.Items.get(attIDs[i]);
+            for (var i=0; i < atts.length; i++) {
+                try {
+                    // get attachment and item object
+                    // var att = Zotero.Items.get(atts[i]);
+                    var att = atts[i];
                     var item= Zotero.Items.get(att.getSource());
-                    if(att.hasTag(tagID)) {
-                        var attID=Zotero.ZotFile.getAttachmentFromTablet(item,att,false);
-                        if(attID!==null && attIDs[i]!=attID) selection=Zotero.ZotFile.arrayReplace(selection,attIDs[i],attID);
-                    }
+                    // get attachment from tablet
+                    var attID=Zotero.ZotFile.getAttachmentFromTablet(item,att,false);
+                    // save message
+                    if(attID!==null && attIDs[i]!=attID) selection=Zotero.ZotFile.arrayReplace(selection,attIDs[i],attID);
                 }
                 catch(e) {
                     this.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
