@@ -14,6 +14,8 @@ window.addEventListener('load', function(e) {
 		window.ZoteroPane.document.getElementById('zotero-itemmenu').addEventListener('popupshowing', Zotero.ZotFile.showMenu, false);
 		// add event listener for zotfile collection menu
 		window.ZoteroPane.document.getElementById('zotero-collectionmenu').addEventListener('popupshowing', Zotero.ZotFile.showCollectionMenu, false);
+		// add event listener to update saved search for modified tablet attachments
+		window.ZoteroPane.document.getElementById('zotero-collections-tree').addEventListener('click', Zotero.ZotFile.updateModifiedAttachmentsSearch, false);
 	}
 }, false);
 

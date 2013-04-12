@@ -427,18 +427,6 @@ Zotero.ZotFile = {
             }
         }
     },
-
-    savedSearchEventListener: function(activate) {
-        var win = this.wm.getMostRecentWindow("navigator:browser");
-        if(activate)  win.document.getElementById('zotero-collections-tree').addEventListener('click', this.updateModifiedAttachmentsSearch, false);
-        if(!activate) win.document.getElementById('zotero-collections-tree').removeEventListener('click', this.updateModifiedAttachmentsSearch, false);
-
-    },
-
-    /*showMenu: function(event) {
-        Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.report'),"event fired!",8000);
-    },*/
-    
     
     // ============================ //
     // FUNCTIONS: HELPER FUNCTIONS //
@@ -1832,7 +1820,7 @@ Zotero.ZotFile = {
     },
 
     updateModifiedAttachmentsSearch: function(event) {
-        var zz = Zotero.ZotFile;        
+        var zz = Zotero.ZotFile;
         // update saved search only if 'tablet files (modified)' saved search is selected
         if(zz.checkSelectedSearch()) {
             var atts = zz.getModifiedAttachmentsOnTablet(),               

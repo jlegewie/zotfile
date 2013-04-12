@@ -100,9 +100,7 @@ function updatePreferenceWindow(which) {
         if(which=="zotfile-tablet") {
             if(!document.getElementById('pref-zotfile-tablet').value) {
                 if(confirm(Zotero.ZotFile.ZFgetString('tablet.createSavedSearches', [Zotero.ZotFile.prefs.getCharPref("tablet.tag")]))) Zotero.ZotFile.createSavedSearch("both");
-                Zotero.ZotFile.savedSearchEventListener(true);
             }
-            else Zotero.ZotFile.savedSearchEventListener(false);
         }
 
     }
