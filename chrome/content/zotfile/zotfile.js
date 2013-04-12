@@ -113,7 +113,6 @@ Zotero.ZotFile = {
                 if(used) subfolders.push({'label':label,'path':folder,pos:n++});
             }
             this.prefs.setCharPref("tablet.subfolders",JSON.stringify(subfolders));
-
         }
 
         // add saved search and change tag when upgrading to 2.1
@@ -724,16 +723,16 @@ Zotero.ZotFile = {
             updatefile: 6,
             pullreader: 7,
             sep2: 8,
-            subfolders: 9,
+            tablet: 9,
             warning3: 10,
-            push2readerFolder:new Array(11,12,13,14,15,16,17,18,19,20,21,22,23,24,25),
+            subfolders:new Array(11,12,13,14,15,16,17,18,19,20,21,22,23,24,25),
             sep3: 26,
             menuConfigure: 27,
             length:28
         };
 
         // list of disabled and show menu-items
-        var disable = [m.subfolders,m.warning1,m.warning2,m.warning3], show = [];
+        var disable = [m.tablet,m.warning1,m.warning2,m.warning3], show = [];
 
         // check selected items
         var groupLib=1,        
@@ -831,7 +830,7 @@ Zotero.ZotFile = {
                     // Collection based project folders
                     var projectsSet=0;
                     if(this.prefs.getIntPref("tablet.projectFolders")==1) {
-                        show.push(m.sep2,m.subfolders);
+                        show.push(m.sep2,m.tablet);
 
                         // get first selected item
                         item=items[0];
@@ -857,9 +856,9 @@ Zotero.ZotFile = {
                             projectsSet=1;
                             folders=folders.sort();
                             for (i=0;i<folders.length;i++) {
-                                show.push(m.push2readerFolder[i]);
-                                menu.childNodes[m.push2readerFolder[i]].setAttribute('label',folders[i]);
-                                menu.childNodes[m.push2readerFolder[i]].setAttribute('tooltiptext',this.ZFgetString('menu.sendAttToSubfolder',[folders[i]]));
+                                show.push(m.subfolders[i]);
+                                menu.childNodes[m.subfolders[i]].setAttribute('label',folders[i]);
+                                menu.childNodes[m.subfolders[i]].setAttribute('tooltiptext',this.ZFgetString('menu.sendAttToSubfolder',[folders[i]]));
                                 this.projectPath[i]=folders[i];
                                 if(i>9) break;
                             }
@@ -868,15 +867,14 @@ Zotero.ZotFile = {
 
                     // User defined project folders
                     if(this.prefs.getIntPref("tablet.projectFolders")==2) {
-                        show.push(m.sep2,m.subfolders,m.sep3,m.menuConfigure);
-                        for (i=0;i<this.projectMax;i++) {
-                            if(this.prefs.getBoolPref("tablet.projectFolders" + this.projectNr[i])) {
-                                show.push(m.push2readerFolder[i]);
-                                menu.childNodes[m.push2readerFolder[i]].setAttribute('label', this.prefs.getCharPref("tablet.projectFolders" + this.projectNr[i] +"_label"));
-                                menu.childNodes[m.push2readerFolder[i]].setAttribute('tooltiptext',this.ZFgetString('menu.sendAttToSubfolder',[this.prefs.getCharPref("tablet.projectFolders" + this.projectNr[i] +"_folder")]));
-                                projectsSet=1;
-                            }
-                        }
+                        show.push(m.sep2,m.tablet,m.sep3,m.menuConfigure);
+                        var subfolders = JSON.parse(this.prefs.getCharPref("tablet.subfolders"));
+                        subfolders.forEach(function(folder, i) {
+                            show.push(m.subfolders[i]);
+                            menu.childNodes[m.subfolders[i]].setAttribute('label', folder.label);
+                            menu.childNodes[m.subfolders[i]].setAttribute('tooltiptext', this.ZFgetString('menu.sendAttToSubfolder',[folder.path]));
+                            projectsSet=1;
+                        },Zotero.ZotFile);
                     }
 
                     // message that no folders are defined
