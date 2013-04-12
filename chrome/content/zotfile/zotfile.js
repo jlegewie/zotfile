@@ -104,13 +104,13 @@ Zotero.ZotFile = {
             }
 
             // transfer project folder preferences to JSON format
-            var subfolders = {};
-            var projectNr= new Array("01","02","03","04","05","06","07","08","09","10","11","12","13","14","15");
+            var subfolders = [], n=0,
+                projectNr= new Array("01","02","03","04","05","06","07","08","09","10","11","12","13","14","15");
             for (i=0;i<this.projectMax;i++) {
                 var used = this.prefs.getBoolPref("tablet.projectFolders"+projectNr[i]);
                 var folder = this.prefs.getCharPref("tablet.projectFolders"+projectNr[i]+"_folder");
                 var label = this.prefs.getCharPref("tablet.projectFolders"+projectNr[i]+"_label");
-                if(used) subfolders[label]=folder;
+                if(used) subfolders.push({'label':label,'path':folder,pos:n++});
             }
             this.prefs.setCharPref("tablet.subfolders",JSON.stringify(subfolders));
 
