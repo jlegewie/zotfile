@@ -29,6 +29,7 @@ Contributions preferably through pull requests are welcome!
 #### Changes in 2.4
 - Fix automatic renaming option "Only ask if..."
 - Fix alert window (headline was missing in Zotero 4)
+- Fix for zotfile item menu on Zotero as a tab
 
 #### Changes in 2.3.4
 
