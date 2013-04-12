@@ -91,18 +91,35 @@ Zotero.ZotFile = {
         }
         // add tags to parent items for attachments on tablet
         if(this.prefs.getCharPref("version")!=="" && currentVersion=="2.4") {
-            var atts = this.getAttachmentsOnTablet(),
-                att, parent;
-            for(var i=0; i<atts.length;i++ ) {
-                att = atts[i];
-                // get parent item
-                parent = Zotero.Items.get(att.getSource());
-                // add tags to parent
-                var tagID = Zotero.Tags.getID(this.tag,0);
-                var tagModID = Zotero.Tags.getID(this.tag,0);
-                if(att.hasTag(tagID) && !parent.hasTag(tagID)) parent.addTag(this.tag);
-                if(att.hasTag(tagModID) && !parent.hasTag(tagModID)) parent.addTag(this.tagMod);
-            }            
+            // change tablet tags
+            var atts = zz.getModifiedAttachmentsOnTablet(),               
+                att,
+                tagID = Zotero.Tags.getID(zz.tag,0),
+                tagIDMod = Zotero.Tags.getID(zz.tagMod,0);
+
+            for (var j=0; j < atts.length; j++) {
+                att = atts[j];
+                // add tag for modified tablet item and remove tablet tag
+                if(!att.hasTag(tagIDMod)) att.addTag(zz.tagMod);
+                if(att.hasTag(tagID)) att.removeTag(tagID);
+                // parent item
+                var item=Zotero.Items.get(att.getSource());
+                if(!item.hasTag(tagIDMod)) item.addTag(zz.tagMod);
+                if(item.hasTag(tagID)) item.removeTag(tagID);
+            }
+
+            // change saved searches
+            var searches=Zotero.Searches.getAll();
+            for(var i=0; i<searches.length;i++ ) {
+                var conditions=searches[i].getSearchConditions();
+                for(var j=1; j<conditions.length;j++ ) {
+                    if(conditions[j].condition=="tag" && conditions[j].value=="_tablet") {
+                        searches[i].updateCondition(conditions[j].id,'tag','contains','_tablet');
+                        searches[i].save();
+                    }
+                }
+            }
+        
         }
 
         // add saved search and change tag when upgrading to 2.1
@@ -1790,7 +1807,6 @@ Zotero.ZotFile = {
         for (var i=0; i < items.length; i++) {
             // get attachment item, parent and file
             var item = items[i];
-
             if(this.getTabletStatusModified(item)) atts.push(item);
         }
         // return attachments
@@ -1841,7 +1857,7 @@ Zotero.ZotFile = {
         if(savedSearch!==false) {
             var savedSearchConditions=savedSearch.getSearchConditions();
             for (var i=1; i < savedSearchConditions.length; i++) {
-                if(savedSearchConditions[i].condition=="tag" && savedSearchConditions[i].value.indexOf(this.tagMod) !== -1) searchModifiedTabletFiles=true;
+                if(savedSearchConditions[i].condition=="tag" && savedSearchConditions[i].value.indexOf(this.tag) !== -1) searchModifiedTabletFiles=true;
             }
         }
         return searchModifiedTabletFiles;
