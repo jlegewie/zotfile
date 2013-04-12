@@ -57,7 +57,9 @@ Zotero.ZotFile = {
             if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
             if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
         }
-        // add tags to parent items for attachments on tablet
+        // version 2.4
+        // - add tags to parent items for attachments on tablet
+        // - transfer project folder preferences to JSON format
         if(this.prefs.getCharPref("version")!=="" && currentVersion=="2.4") {
             this.infoWindow('Warning!', 'Zotero might be unresponsive for a moment because zotfile is updating some stuff.');
             // change tablet tags
@@ -100,7 +102,18 @@ Zotero.ZotFile = {
                     }
                 }
             }
-        
+
+            // transfer project folder preferences to JSON format
+            var subfolders = {};
+            var projectNr= new Array("01","02","03","04","05","06","07","08","09","10","11","12","13","14","15");
+            for (i=0;i<this.projectMax;i++) {
+                var used = this.prefs.getBoolPref("tablet.projectFolders"+projectNr[i]);
+                var folder = this.prefs.getCharPref("tablet.projectFolders"+projectNr[i]+"_folder");
+                var label = this.prefs.getCharPref("tablet.projectFolders"+projectNr[i]+"_label");
+                if(used) subfolders[label]=folder;
+            }
+            this.prefs.setCharPref("tablet.subfolders",JSON.stringify(subfolders));
+
         }
 
         // add saved search and change tag when upgrading to 2.1

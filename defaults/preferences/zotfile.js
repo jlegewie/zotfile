@@ -51,6 +51,7 @@ pref("extensions.zotfile.tablet.tagParentPull_tag", "_ANNOTATED");
 pref("extensions.zotfile.tablet.confirmRepush", true);
 pref("extensions.zotfile.tablet.storeCopyOfFile", false);
 pref("extensions.zotfile.tablet.storeCopyOfFile_suffix", "_annotated");
+pref("extensions.zotfile.tablet.subfolders", "");
 pref("extensions.zotfile.tablet.projectFolders", 0);
 pref("extensions.zotfile.tablet.projectFolders01", false);
 pref("extensions.zotfile.tablet.projectFolders01_folder", "");
