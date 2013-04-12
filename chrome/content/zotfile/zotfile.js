@@ -710,6 +710,9 @@ Zotero.ZotFile = {
     // FUNCTIONS: ZOTFILE MENU //
     // ======================= //
 
+    showCollectionMenu: function() {
+        //Zotero.ZotFile.infoWindow('TATA','collection');
+    },
 
     showMenu: function() {
         // get selected items
