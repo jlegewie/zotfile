@@ -104,8 +104,7 @@ Zotero.ZotFile = {
                 if(att.hasTag(tagID)) att.removeTag(tagID);
                 // parent item
                 var item=Zotero.Items.get(att.getSource());
-                if(!item.hasTag(tagIDMod)) item.addTag(zz.tagMod);
-                if(item.hasTag(tagID)) item.removeTag(tagID);
+                if(!item.hasTag(tagIDMod)) item.addTag(zz.tagMod);                
             }
 
             // change saved searches
@@ -1879,7 +1878,7 @@ Zotero.ZotFile = {
                 // parent item
                 var item=Zotero.Items.get(att.getSource());
                 if(!item.hasTag(tagIDMod)) item.addTag(zz.tagMod);
-                if(item.hasTag(tagID)) item.removeTag(tagID);
+                // if(item.hasTag(tagID)) item.removeTag(tagID);
             }
 
             // expand all rows in when search is selected
@@ -2250,7 +2249,6 @@ Zotero.ZotFile = {
             for (var i=0; i < atts.length; i++) {
                 try {
                     // get attachment and item object
-                    // var att = Zotero.Items.get(atts[i]);
                     var att = atts[i];
                     var item= Zotero.Items.get(att.getSource());
                     // get attachment from tablet
