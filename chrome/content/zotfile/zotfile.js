@@ -1869,6 +1869,30 @@ Zotero.ZotFile = {
             //win.ZoteroPane.itemsView.expandAllRows();
         }
     },
+
+    restrictTabletSearch: function(which) {
+        // get selected saved search
+        var win = this.wm.getMostRecentWindow("navigator:browser");
+        var savedSearch = win.ZoteroPane.getSelectedSavedSearch();
+        // get subfolders
+        var subfolders = JSON.parse(this.prefs.getCharPref("tablet.subfolders"));
+        // get tablet searches
+        var searches=Zotero.Searches.getAll().filter(function(search) {
+            return search.getSearchConditions().some(function(cond) {return cond.condition=="tag" && cond.value.indexOf(Zotero.ZotFile.tag) !== -1; });
+        });
+        // remove all note related conditions
+        searches.forEach(function(search) {
+            search.getSearchConditions()
+                .filter(function(cond) {return cond.condition == "note" && cond.operator == "contains"; })
+                .forEach(function(cond) {search.removeCondition(cond.id); });
+            search.save();
+        });
+        // add note condition for selected subfolder
+        if(which!=-1) searches.forEach(function(search) {
+            search.addCondition('note', 'contains', subfolders[which].path);
+            search.save();
+        });
+    },
                 
     sendAttachmentToTablet: function(item, att, projectFolder, verbose) {
         verbose = (typeof verbose == 'undefined') ? true : verbose;
