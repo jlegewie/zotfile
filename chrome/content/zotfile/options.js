@@ -357,18 +357,14 @@ function editSubfolderSetting (index) {
 }
   
 function buildFolderList () {
+    var zz = Zotero.ZotFile;
     // clear tree
     var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
     while (treechildren.hasChildNodes()) treechildren.removeChild(treechildren.firstChild);
-
     // get list of subfolders (labels and folders)
-    var label = [],folder = [];
-    for (i=0;i<Zotero.ZotFile.projectMax;i++) {
-        if(Zotero.ZotFile.prefs.getBoolPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i])) {
-            label.push(Zotero.ZotFile.prefs.getCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_label"));
-            folder.push(Zotero.ZotFile.prefs.getCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_folder"));
-        }
-    }
+    var subfolders = JSON.parse(zz.prefs.getCharPref("tablet.subfolders"));
+    var label = subfolders.map(function(obj) {return obj.label;});
+    var folder = subfolders.map(function(obj) {return obj.path;});
    
     // populate tree with preferences
     for (var i=0; i<folder.length; i++) {
@@ -390,27 +386,15 @@ function buildFolderList () {
           
 function updateSubfolderPreferences () {
     var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
-
-    // clear current preferences
-    for (var i=0;i<Zotero.ZotFile.projectMax;i++) {
-        Zotero.ZotFile.prefs.setBoolPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i],false);
-        Zotero.ZotFile.prefs.setCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_label","");
-        Zotero.ZotFile.prefs.setCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_folder","");
-    }
-
     // populate preferences with tree items
+    var subfolders = [];
     for (var i=0;i<treechildren.childNodes.length;i++) {
         var treerow = treechildren.childNodes[i].firstChild;
         var label = treerow.childNodes[0].getAttribute('label');
         var folder = treerow.childNodes[1].getAttribute('label');
-        if (label!="" && folder!="") {
-            Zotero.ZotFile.prefs.setBoolPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i],true);
-            Zotero.ZotFile.prefs.setCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_label",label);
-            Zotero.ZotFile.prefs.setCharPref("tablet.projectFolders" + Zotero.ZotFile.projectNr[i] + "_folder",folder);
-        }
-
+        if (label!="" && folder!="") subfolders.push({'label':label,'path':folder});
     }
-
+    Zotero.ZotFile.prefs.setCharPref("tablet.subfolders", JSON.stringify(subfolders));
 }
 
 function deleteSelectedSubfolder () {
