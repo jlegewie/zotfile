@@ -86,7 +86,7 @@ Zotero.ZotFile = {
             if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
             if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
         }
-        // tag parent items for attachments on tablet
+        // add tags to parent items for attachments on tablet
         if(this.prefs.getCharPref("version")!=="" && currentVersion=="2.4") {
             var atts = this.getAttachmentsOnTablet(),
                 tag = this.prefs.getCharPref("tablet.tag"),
@@ -1837,9 +1837,6 @@ Zotero.ZotFile = {
     },
 
     updateModifiedAttachmentsSearch: function(event) {
-        // debug output
-        if(Zotero.ZotFile.prefs.getBoolPref("debug")) Zotero.debug("zotfile.updateModifiedAttachmentsSearch - event fired");
-        
         // update saved search only if 'tablet files (modified)' saved search is selected
         if(Zotero.ZotFile.checkSelectedSearch()) {
             var items = Zotero.ZotFile.getModifiedAttachmentsOnTablet(),
@@ -2151,7 +2148,6 @@ Zotero.ZotFile = {
         
         // post-processing if attachment has been removed & it's not a fake-pull
         if (itemPulled && !fakeRemove) {
-            if(this.prefs.getBoolPref("debug")) Zotero.debug("zotfile.getAttachmentFromTablet - post-processing after attachment was removed");
             // remove tag from attachment
             var tag = this.prefs.getCharPref("tablet.tag");
             var tagID = Zotero.Tags.getID(tag,0);
@@ -2649,6 +2645,18 @@ Zotero.ZotFile = {
                 }
 
                 if(anno.markup && anno.markup != "") {
+                    // translate ligatures
+                    var replacements = [['\ufb00','ff'],
+                                        ['\ufb01','fi'],
+                                        ['\ufb02','fl'],
+                                        ['\ufb03','ffi'],
+                                        ['\ufb04','ffl'],
+                                        ['\ufb05','ft'],
+                                        ['\ufb06','st']];
+                    for (var i = 0; i < replacements.length; i++) {
+                      a.markup = a.markup.replace(replacements[i][0],replacements[i][1]);
+                    }
+                    
                     var markup = this.trim(anno.markup).replace('ﬁ', 'fi');
                     if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteRemoveHyphens")) markup = this.removeHyphens(markup);
                     var tagStart = htmlTagHighlightStart;

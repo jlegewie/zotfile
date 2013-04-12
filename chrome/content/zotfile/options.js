@@ -743,14 +743,7 @@ function downloadPDFTool() {
     document.getElementById('pdf-annotations-extractor-update-button').setAttribute('label', Zotero.ZotFile.ZFgetString('extraction.dowwloadingPoppler'));
     
     wbp.progressListener = progressListener;
-//  Zotero.debug("Saving " + uri.spec + " to " + fileURL.spec);
     wbp.saveURI(uri, null, null, null, null, fileURL, null);
-    /*try {
-        wbp.saveURI(uri, null, null, null, null, fileURL);
-    } catch(e if e.name === "NS_ERROR_XPC_NOT_ENOUGH_ARGS") {
-        // https://bugzilla.mozilla.org/show_bug.cgi?id=794602
-        wbp.saveURI(uri, null, null, null, null, fileURL, null);
-    }*/
             
 }
       
