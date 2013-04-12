@@ -56,6 +56,7 @@
        	<menuitem id="id-zotfile-collection-showall" label="Show Attachments from all Subfolders" oncommand="Zotero.ZotFile.restrictTabletSearch(-1);"/>
  		<menu id="id-zotfile-collection-restrict" label="Restrict Saved Search to Subfolder" > 
 			<menupopup id="id-zotfile-collection-menu" onpopupshowing="Zotero.ZotFile.buildZotFileCollectionMenu();">
+				<!-- <menuitem label="Restrict Tablet Search to..." disabled="true" style="font-size: 80%; background: none; -moz-appearance: none;"/> -->
 				<menuitem id="id-zotfile-collection-subfolder-01" hidden="true" label="menu1" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(0);"/>
 				<menuitem id="id-zotfile-collection-subfolder-02" hidden="true" label="menu2" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(1);"/>
 				<menuitem id="id-zotfile-collection-subfolder-03" hidden="true" label="menu3" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(2);"/>
