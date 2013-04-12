@@ -725,25 +725,17 @@ Zotero.ZotFile = {
     // FUNCTIONS: ZOTFILE MENU //
     // ======================= //
 
+
     showMenu: function() {
-        var showMenu=false;
-
         // get selected items
-        var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser");
-        var items = win.ZoteroPane.getSelectedItems();
-
-        //iterate through selected items
-        for (var i=0; i < items.length; i++) {
-            if(items[i].isAttachment() || items[i].isRegularItem()) {
-                showMenu=true;
-                break;
-            }
-        }
-
+        var ZP = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser").ZoteroPane;
+        var items = ZP.getSelectedItems();
+        // check regular item or attachment selected
+        var showMenu = items.some(function(item) { return item.isAttachment() || item.isRegularItem();});
         // show or hide zotfile menu items
-        win.document.getElementById("id-zotfile-separator").hidden = !showMenu;
-        win.document.getElementById("id-zotfile-attach-file").hidden = !showMenu;
-        win.document.getElementById("id-zotfile-manage-attachments").hidden = !showMenu;
+        ZP.document.getElementById("id-zotfile-separator").hidden = !showMenu;
+        ZP.document.getElementById("id-zotfile-attach-file").hidden = !showMenu;
+        ZP.document.getElementById("id-zotfile-manage-attachments").hidden = !showMenu;
     },
 
     buildZotFileMenu: function () {
