@@ -1877,9 +1877,10 @@ Zotero.ZotFile = {
         // get subfolders
         var subfolders = JSON.parse(this.prefs.getCharPref("tablet.subfolders"));
         // get tablet searches
-        var searches=Zotero.Searches.getAll().filter(function(search) {
+        var search_filter = function(search) {
             return search.getSearchConditions().some(function(cond) {return cond.condition=="tag" && cond.value.indexOf(Zotero.ZotFile.tag) !== -1; });
-        });
+        };
+        var searches=Zotero.Searches.getAll().filter(search_filter);
         // remove all note related conditions
         searches.forEach(function(search) {
             search.getSearchConditions()
@@ -1888,6 +1889,7 @@ Zotero.ZotFile = {
             search.save();
         });
         // add note condition for selected subfolder
+        var searches=Zotero.Searches.getAll().filter(search_filter);
         if(which!=-1) searches.forEach(function(search) {
             search.addCondition('note', 'contains', subfolders[which].path);
             search.save();
