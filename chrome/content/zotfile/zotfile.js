@@ -220,6 +220,8 @@ Zotero.ZotFile = {
 
         // add event listener for automatically renaming attachments
         var notifierID = Zotero.Notifier.registerObserver(this.autoRename, ['item']);
+        // add event listener for tablet tags 
+        var notifierID = Zotero.Notifier.registerObserver(this.autoTablet, ['item-tag']);
 
         // Load zotero.js first
         Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
@@ -425,6 +427,49 @@ Zotero.ZotFile = {
                     }
                 },100);
             }
+        }
+    },
+    
+    // Callback implementing the notify() method to pass to the Notifier
+    autoTablet: {
+        notify: function(event, type, ids, extraData) {
+            var zz = Zotero.ZotFile;
+            // var prefs = Zotero.ZotFile.prefs;
+            // exit if tablet features are not enabled
+            if(!zz.prefs.getBoolPref("tablet")) return;
+            // get item and tag id
+            var itemIDs = ids.map(function(id) {return id.split('-')[0];}),
+                tagIDs = ids.map(function(id) {return id.split('-')[1];}),
+                tags = tagIDs.map(function(id) {return Zotero.Tags.getName(id);});
+            // exit if no tablet tag
+            if(tags.every(function(tag) {return tag.indexOf(zz.tag)==-1;})) return;
+            // iterate through changes
+            for (var i = 0; i < itemIDs.length; i++) {
+                // adding tags
+                if (tags[i].indexOf(zz.tag)!=-1 & type == 'item-tag' && event == 'add') {
+                    zz.infoWindow('tag event','{lines:obj}', 8000);
+                    // if regular
+                    // if att
+                    // var item = Zotero.Items.get(itemIDs[i]);
+                    // check whether on tablet
+                    // problem: if regular item, I don't know whether zotfile assigned it or user...
+
+                }
+                // removing tags
+                if (tags[i].indexOf(zz.tag)!=-1 & type == 'item-tag' && event == 'remove') {
+                    // zz.infoWindow('tag event','{lines:obj}', 8000);
+                }
+            }
+
+            //Zotero.Tags.getID(zz.tag,0)
+
+            var obj = ['event: ' + event, 'type: ' + type, 'ids: ' + ids, 'extraData: ' + extraData];
+
+
+            
+            // item-tag
+            // add|remove
+            // ids: 63-4
         }
     },
     
