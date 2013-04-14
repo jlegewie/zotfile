@@ -679,7 +679,7 @@ Zotero.ZotFile = {
         // ZoteroPane object
         var doc = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser").ZoteroPane.document;
         // check regular item or attachment selected & custom subfolders
-        var showCollectionMenu = Zotero.ZotFile.checkSelectedSearch() && Zotero.ZotFile.prefs.getIntPref("tablet.projectFolders")==2;
+        var showCollectionMenu = Zotero.ZotFile.prefs.getBoolPref("tablet") && Zotero.ZotFile.checkSelectedSearch() && Zotero.ZotFile.prefs.getIntPref("tablet.projectFolders")==2;
         // show or hide zotfile menu items
         doc.getElementById("id-zotfile-collection-separator").hidden = !showCollectionMenu;
         doc.getElementById("id-zotfile-collection-showall").hidden = !showCollectionMenu;
