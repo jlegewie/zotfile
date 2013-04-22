@@ -2825,19 +2825,16 @@ Zotero.ZotFile = {
                 }
 
                 if(anno.markup && anno.markup != "") {
-                    var markup = this.trim(anno.markup);
-                    // .replace('ﬁ', 'fi')
-                    // translate ligatures
-                    var replacements = [['\ufb00','ff'],
-                                        ['\ufb01','fi'],
-                                        ['\ufb02','fl'],
-                                        ['\ufb03','ffi'],
-                                        ['\ufb04','ffl'],
-                                        ['\ufb05','ft'],
-                                        ['\ufb06','st']];
-                    for (var i = 0; i < replacements.length; i++) {
-                      markup = markup.replace(replacements[i][0],replacements[i][1]);
-                    }
+                    var markup = this.trim(anno.markup)
+                    // translate ligatures (e.g. 'ﬁ')
+                        .replace('\ufb00','ff')
+                        .replace('\ufb01','fi')
+                        .replace('\ufb02','fl')
+                        .replace('\ufb03','ffi')
+                        .replace('\ufb04','ffl')
+                        .replace('\ufb05','ft')
+                        .replace('\ufb06','st');
+
                     // create formated markup
                     if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteRemoveHyphens")) markup = this.removeHyphens(markup);
                     var tagStart = htmlTagHighlightStart;
