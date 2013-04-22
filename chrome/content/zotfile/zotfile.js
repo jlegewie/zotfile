@@ -37,6 +37,8 @@ Zotero.ZotFile = {
     messages_error:[],
     messages_fatalError:[],
     excludeAutorenameKeys: [],
+    blacklistTagAdd: [],
+    blacklistTagRemove: [],
     // tablet tags
     tag:null,
     tagMod:null,
@@ -63,31 +65,12 @@ Zotero.ZotFile = {
         if(this.prefs.getCharPref("version")!=="" && currentVersion=="2.4") {
             this.infoWindow('Warning!', 'Zotero might be unresponsive for a moment because zotfile is updating some stuff.');
             // change tablet tags
-            var atts = this.getAttachmentsOnTablet(),
-                att, item,
-                tagID = Zotero.Tags.getID(this.tag,0),
-                tagIDMod = Zotero.Tags.getID(this.tagMod,0);
-
-            for (var j=0; j < atts.length; j++) {
-                att = atts[j];
-                item = Zotero.Items.get(att.getSource());
-                // attachment on tablet
-                if(!this.getTabletStatusModified(att)) {
-                    // add tag for modified tablet item and remove tablet tag
-                    if(!att.hasTag(tagID)) att.addTag(this.tag);
-                    if(att.hasTag(tagIDMod)) att.removeTag(tagIDMod);
-                    // parent item
-                    if(!item.hasTag(tagID)) item.addTag(this.tag);                  
-                    this.removeItemTag(item, tagIDMod);                 
-                }
+            var atts = this.getAttachmentsOnTablet();
+            for (var j=0; j < atts.length; j++) {     
+                // if attachment on tablet, add tag for modified tablet item and remove tablet tag
+                if(!this.getTabletStatusModified(att)) { this.addTabletTag(atts[j], this.tag); }
                 // attachment on tablet (modified)
-                else {
-                    // add tag for modified tablet item and remove tablet tag
-                    if(!att.hasTag(tagIDMod)) att.addTag(this.tagMod);
-                    if(att.hasTag(tagID)) att.removeTag(tagID);
-                    // parent item
-                    if(!item.hasTag(tagIDMod)) item.addTag(this.tagMod);
-                    this.removeItemTag(item, tagID);
+                else { this.addTabletTag(atts[j], this.tagMod);
                 }
             }
 
@@ -104,15 +87,17 @@ Zotero.ZotFile = {
             }
 
             // transfer project folder preferences to JSON format
-            var subfolders = [],
-                projectNr= new Array("01","02","03","04","05","06","07","08","09","10","11","12","13","14","15");
-            for (i=0;i<this.projectMax;i++) {
-                var used = this.prefs.getBoolPref("tablet.projectFolders"+projectNr[i]);
-                var folder = this.prefs.getCharPref("tablet.projectFolders"+projectNr[i]+"_folder");
-                var label = this.prefs.getCharPref("tablet.projectFolders"+projectNr[i]+"_label");
-                if(used) subfolders.push({'label':label,'path':folder});
+            if(this.prefs.getCharPref("tablet.subfolders")=="[]") {
+                var subfolders = [],
+                    projectNr= new Array("01","02","03","04","05","06","07","08","09","10","11","12","13","14","15");
+                for (i=0;i<this.projectMax;i++) {
+                    var used = this.prefs.getBoolPref("tablet.projectFolders"+projectNr[i]);
+                    var folder = this.prefs.getCharPref("tablet.projectFolders"+projectNr[i]+"_folder");
+                    var label = this.prefs.getCharPref("tablet.projectFolders"+projectNr[i]+"_label");
+                    if(used) subfolders.push({'label':label,'path':folder});
+                }
+                this.prefs.setCharPref("tablet.subfolders",JSON.stringify(subfolders));
             }
-            this.prefs.setCharPref("tablet.subfolders",JSON.stringify(subfolders));
         }
 
         // add saved search and change tag when upgrading to 2.1
@@ -153,7 +138,7 @@ Zotero.ZotFile = {
 //      if(currentVersion=="2.1" && oldVersion!="2.1")
 
     },
-    
+
     init: function () {
 
         // only do this stuff for the first run
@@ -436,36 +421,130 @@ Zotero.ZotFile = {
             var zz = Zotero.ZotFile;
             // var prefs = Zotero.ZotFile.prefs;
             // exit if tablet features are not enabled
-            if(!zz.prefs.getBoolPref("tablet")) return;
+            if(!zz.prefs.getBoolPref("tablet")) return;            
             // get item and tag id
+            var changes = ids.map(function(id) {
+                var id = id.split('-');
+                return {
+                    'itemID': id[0],
+                    'tagID': id[1],
+                    'item': Zotero.Items.get(id[0]),
+                    'tag': Zotero.Tags.getName(id[1])
+                };
+            // filter list of changes
+            }).filter(function(obj) {
+                var not_excluded = true;
+                if(event == 'add') {
+                    not_excluded = zz.blacklistTagAdd.indexOf(obj.item.key)==-1;
+                    if (!not_excluded) zz.removeFromArray(zz.blacklistTagAdd, obj.item.key);
+                }
+                if(event == 'remove') {
+                    not_excluded = zz.blacklistTagRemove.indexOf(obj.item.key)==-1;
+                    if (!not_excluded) zz.removeFromArray(zz.blacklistTagRemove, obj.item.key);
+                }
+                return not_excluded &&
+                    obj.tag.indexOf(zz.tag)!=-1 && 
+                    (obj.item.isRegularItem() || obj.item.isAttachment());
+            });
+            // exit if no changes left...
+            if(changes.length==0) return;
+            // tag was added
+            var tagModID = Zotero.Tags.getID(zz.tagMod, 0);
+            if(type == 'item-tag' && event == 'add')
+                // iterate through changes
+                for (var i = 0; i < changes.length; i++) {
+                    // tablet tag
+                    if (changes[i].tag==zz.tag && changes[i].item.isRegularItem()) {
+                        if(!changes[i].item.hasTag(tagModID)) {
+                            zz.infoWindow('event','send all attachments to tablet', 8000);
+                        }
+                        else {
+                            zz.infoWindow('event','remove attachments from tablet', 8000);
+                        }                        
+                    }
+                    if (changes[i].tag==zz.tag && changes[i].item.isAttachment()) {
+                        if(!changes[i].item.hasTag(tagModID)) {
+                            zz.infoWindow('event','send attachment to tablet', 8000);
+                        }
+                        else {
+                            zz.infoWindow('event','remove attachment from tablet', 8000);
+                        }
+                    }
+                    // tablet modified tag
+                }
+            // tag was removed
+            if (type == 'item-tag' && event == 'remove') 
+                // iterate through changes
+                for (var i = 0; i < changes.length; i++) {
+                    // tablet tag
+                    if (changes[i].tag==zz.tag && changes[i].item.isRegularItem()) {
+                        zz.infoWindow('event','remove attachments from tablet', 8000);
+                    }
+                    if (changes[i].tag==zz.tag && changes[i].item.isAttachment()) {
+                        zz.infoWindow('event','remove attachment from tablet', 8000);                        
+                    }
+                    // tablet modified tag
+                    // zz.infoWindow('tag removed from attachment','{lines:obj}', 8000);
+                }
+/*
+            // blacklistTagAdd
+            // tag, parent item, not exclude list
             var itemIDs = ids.map(function(id) {return id.split('-')[0];}),
                 tagIDs = ids.map(function(id) {return id.split('-')[1];}),
                 tags = tagIDs.map(function(id) {return Zotero.Tags.getName(id);});
             // exit if no tablet tag
             if(tags.every(function(tag) {return tag.indexOf(zz.tag)==-1;})) return;
             // iterate through changes
+            var obj = ['event: ' + event, 'type: ' + type, 'ids: ' + ids, 'extraData: ' + extraData];
             for (var i = 0; i < itemIDs.length; i++) {
                 // adding tags
                 if (tags[i].indexOf(zz.tag)!=-1 & type == 'item-tag' && event == 'add') {
-                    zz.infoWindow('tag event','{lines:obj}', 8000);
-                    // if regular
-                    // if att
-                    // var item = Zotero.Items.get(itemIDs[i]);
-                    // check whether on tablet
-                    // problem: if regular item, I don't know whether zotfile assigned it or user...
+                    var item = Zotero.Items.get(itemIDs[i]);
+                    // regular item tagged
+                    if (item.isRegularItem()) {
+                        // check whether any attachment has tablet status
+                        if(!Zotero.Items.get(item.getAttachments())
+                            .some(function(att) {return zz.getTabletStatus(att);}))
+                            zz.infoWindow('Tag all attachments',{lines:obj}, 8000);
+                            // if not, send all attachments to tablet
 
+                    }
+                    if (item.isAttachment()) {
+                        // get parent
+                        var id_parent = item.getSource();
+                        if(!id_parent) return;
+                        var parent = Zotero.Items.get(id_parent);
+                        // check whether on tablet
+                        if(zz.getInfo(item, 'lastmod')=='')
+                            zz.infoWindow('Tag this attachments',{lines:obj}, 8000);
+                    }
+                    // distunish between _tablet and _tablet_modified tag
                 }
                 // removing tags
                 if (tags[i].indexOf(zz.tag)!=-1 & type == 'item-tag' && event == 'remove') {
-                    // zz.infoWindow('tag event','{lines:obj}', 8000);
+                    var item = Zotero.Items.get(itemIDs[i]);
+                    // regular item tagged
+                    if (item.isRegularItem()) {
+                        // check whether any attachment has tablet status
+                        if(Zotero.Items.get(item.getAttachments())
+                            .some(function(att) {return zz.getTabletStatus(att);}))
+                            zz.infoWindow('remove all attachments',{lines:obj}, 8000);
+                            // if not, send all attachments to tablet
+
+                    }
+                    if (item.isAttachment()) {
+                        // get parent
+                        var id_parent = item.getSource();
+                        if(!id_parent) return;
+                        var parent = Zotero.Items.get(id_parent);
+                        // check whether on tablet
+                        if(zz.getInfo(item, 'lastmod')!='')
+                            zz.infoWindow('remove this attachments',{lines:obj}, 8000);
+                    }                    
                 }
             }
-
+*/
             //Zotero.Tags.getID(zz.tag,0)
-
-            var obj = ['event: ' + event, 'type: ' + type, 'ids: ' + ids, 'extraData: ' + extraData];
-
-
             
             // item-tag
             // add|remove
@@ -1893,25 +1972,9 @@ Zotero.ZotFile = {
         var zz = Zotero.ZotFile;
         // update saved search only if 'tablet files (modified)' saved search is selected
         if(zz.checkSelectedSearch()) {
-            var atts = zz.getModifiedAttachmentsOnTablet(),               
-                att,
-                tagID = Zotero.Tags.getID(zz.tag,0),
-                tagIDMod = Zotero.Tags.getID(zz.tagMod,0);
-
-            for (var j=0; j < atts.length; j++) {
-                att = atts[j];
-                // add tag for modified tablet item and remove tablet tag
-                if(!att.hasTag(tagIDMod)) att.addTag(zz.tagMod);
-                if(att.hasTag(tagID)) att.removeTag(tagID);
-                // parent item
-                var item=Zotero.Items.get(att.getSource());
-                if(!item.hasTag(tagIDMod)) item.addTag(zz.tagMod);
-                if(item.hasTag(tagID)) zz.removeItemTag(item, tagID);
-            }
-
-            // expand all rows in when search is selected
-            //var win = this.wm.getMostRecentWindow("navigator:browser");
-            //win.ZoteroPane.itemsView.expandAllRows();
+            var atts = zz.getModifiedAttachmentsOnTablet();
+            // add tag for modified tablet item and remove tablet tag
+            for (var j=0; j < atts.length; j++) zz.addTabletTag(atts[j], zz.tagMod);
         }
     },
 
@@ -1993,18 +2056,8 @@ Zotero.ZotFile = {
             this.addInfo(att,"location",newFile.path);
             this.addInfo(att,"projectFolder",projectFolder);
             // add tags
-            if(!att.hasTag(tagID)) att.addTag(this.tag);                
-            if(!item.hasTag(tagID)) item.addTag(this.tag);
-            if (this.prefs.getBoolPref("tablet.tagParentPush")) item.addTag(this.prefs.getCharPref("tablet.tagParentPush_tag"));
-            // remove modified tag
-            if(att.hasTag(tagIDMod)) att.removeTag(tagIDMod);
-            if(item.hasTag(tagIDMod)) {
-                if(!item.getAttachments()
-                    .map(function(id) {return Zotero.Items.get(id);})
-                    .some(function(att) {return att.hasTag(tagIDMod);}))
-                        item.removeTag(tagIDMod);
-            }
-            
+            this.addTabletTag(att, this.tag);
+            if (this.prefs.getBoolPref("tablet.tagParentPush")) item.addTag(this.prefs.getCharPref("tablet.tagParentPush_tag"));            
             // notification
             if(verbose) this.messages_report.push("'" + newFile.leafName + "'");
         }        
@@ -2080,8 +2133,7 @@ Zotero.ZotFile = {
     updateSelectedTabletAttachments: function () {
         // get selected attachments
         var itemIDs=this.getSelectedAttachments();
-        var attID, newAttID,
-            tagIDMod = Zotero.Tags.getID(this.tagMod,0);
+        var attID, newAttID;
 
         // iterate through selected attachments
         for (i=0; i < itemIDs.length; i++) {
@@ -2096,15 +2148,8 @@ Zotero.ZotFile = {
 
                     var att_mode=this.getInfo(item,"mode");
                     if(att_mode==2) {
-                        this.addInfo(item,"lastmod",file.lastModifiedTime);                        
-                        if(item.hasTag(tagIDMod)) item.removeTag(tagIDMod);
-                        // remove tag from parent item
-                        if(parent.hasTag(tagIDMod)) {
-                            if(!parent.getAttachments()
-                                .map(function(id) {return Zotero.Items.get(id);})
-                                .some(function(att) {return att.hasTag(tagIDMod);}))
-                                    parent.removeTag(tagIDMod);
-                        }
+                        this.addInfo(item,"lastmod",file.lastModifiedTime);
+                        this.addTabletTag(item, this.tag);
                         // new attachment ID
                         newAttID=item.getID();
                     }
@@ -2237,24 +2282,18 @@ Zotero.ZotFile = {
         }
         
         // post-processing if attachment has been removed & it's not a fake-pull
-        if (itemPulled && !fakeRemove) {            
-            if(att.hasTag(tagID)) att.removeTag(tagID);
-            // remove tag from parent item
-            this.removeItemTag(item, tagID);
-
+        if (itemPulled && !fakeRemove) {
+            // remove tag from attachment and parent item
+            this.removeTabletTag(att, this.tag);
             // clear attachment note
             this.clearInfo(att);
-        
             // extract annotations from attachment and add note
             if (this.prefs.getBoolPref("pdfExtraction.Pull") && option!=2) this.pdfAnnotations.getAnnotations([attID]);
-        
             // remove tag from parent item
             var tagParent=Zotero.Tags.getID(this.prefs.getCharPref("tablet.tagParentPush_tag"),0);
             if(item.hasTag(tagParent)) item.removeTag(tagParent);
-        
             // add tag to parent item
             if (this.prefs.getBoolPref("tablet.tagParentPull")) item.addTag(this.prefs.getCharPref("tablet.tagParentPull_tag"));
-            
             // notification (display a different message when the attachments have been deleted from tablet without being sent back to Zotero)
 			if (attsDeleted === true) {
 				this.messages_report.push("'" + att.getFile().leafName + "' " + this.ZFgetString('tablet.attsDel'));
@@ -2263,14 +2302,8 @@ Zotero.ZotFile = {
 				this.messages_report.push("'" + att.getFile().leafName + "'");
 			}            
         }
-
         // remove modified tag from attachment
-        if (itemPulled) {
-            tagIDMod = Zotero.Tags.getID(this.tagMod,0);
-            if(att.hasTag(tagIDMod)) att.removeTag(tagIDMod);
-            // remove tag from parent item
-            this.removeItemTag(item, tagIDMod);
-        }
+        if (itemPulled) this.removeTabletTag(att, this.tagMod);
         
         // return new id
         return(attID);
@@ -2282,6 +2315,64 @@ Zotero.ZotFile = {
             if(!Zotero.Items.get(item.getAttachments())
                 .some(function(att) {return att.hasTag(tag);}))
                     item.removeTag(tag);
+        }
+    },
+
+    // add tag to item and add item blacklist for event
+    /*addTabletTag: function(item, tag) {
+        var tagID = Zotero.Tags.getID(tag,0);
+        if(item.hasTag(tagID)) return;
+        this.blacklistTagAdd.push(item.id);
+        item.addTag(tag);
+    },*/
+
+    addTabletTag: function(att, tag) {
+        // get parent item
+        var item = Zotero.Items.get(att.getSource());
+        // get tag IDs
+        var tagRemove = (tag == this.tag) ? this.tagMod : this.tag,
+            tagID = Zotero.Tags.getID(tag, 0),
+            tagIDRemove = Zotero.Tags.getID(tagRemove, 0);
+        // add tag to attachment
+        if(!att.hasTag(tagID)) {
+            this.blacklistTagAdd.push(att.key);
+            att.addTag(tag);
+        }
+        // remove other tag from attachment
+        if(att.hasTag(tagIDRemove)) {
+            this.blacklistTagRemove.push(att.key);
+            att.removeTag(tagIDRemove);
+        }
+        // add tag to parent item
+        if(!item.hasTag(tagID)) {
+            this.blacklistTagAdd.push(item.key);
+            item.addTag(tag);
+        }
+        // remove other tag from item
+        if(item.hasTag(tagIDRemove)) {            
+            if(!Zotero.Items.get(item.getAttachments())
+                .some(function(att) {return att.hasTag(tagIDRemove);})) {
+                    this.blacklistTagRemove.push(item.key);
+                    item.removeTag(tagIDRemove);
+                }
+        }
+    },
+
+    removeTabletTag: function(att, tag) {
+        var tagID = Zotero.Tags.getID(tag,0);
+        // remove from attachment
+        if(att.hasTag(tagID)) {
+            this.blacklistTagRemove.push(att.key);
+            att.removeTag(tagID);
+        }
+        // remove from parent item
+        var item = Zotero.Items.get(att.getSource());
+        if(item.hasTag(tagID)) {
+            if(!Zotero.Items.get(item.getAttachments())
+                .some(function(att) {return att.hasTag(tagID);})) {
+                    this.blacklistTagRemove.push(item.key);
+                    item.removeTag(tagID);
+                }
         }
     },
     
