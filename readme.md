@@ -26,7 +26,11 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
-#### Changes in 2.4
+#### Changes in 3
+- **Improved annotation extraction**
+
+    The extraction of pdf annotations using pdf.js works much better now! Zotfile uses a modified version of the most recent version of the [pdf.js](https://github.com/mozilla/pdf.js) library, which supports more pdf standards compared to the version used in zotfile 2.x. The detection of correct spaces between words has also been approved. The fork of the pdf.js library is [here](https://github.com/jlegewie/pdf.js). Updates to future versions of pdf.js are also much easier. Zotfile still isn't magic. There are many pdf that won't work! If you can not copy & paste text from the pdf file using your pdf viewer (e.g. Preview), it's unlikely that zotfile can help.
+
 - **Tablet feature: Restrict saved search for tablet files to sub-folders**
 
     Right-click on saved search for tablet files and restrict it to your custom sub-folders. This is very helpful to quickly see which files are in which folder.
