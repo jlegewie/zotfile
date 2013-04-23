@@ -29,8 +29,6 @@ Zotero.ZotFile.PdfExtractor = {
           /** @see Zotero.ZotFile.pdfAnnotations.extractionComplete()
            * (zotfile.js) for documentation on annotations array. */
           var extracted_annotations = [],
-              numPages = pdf.numPages,
-              pageNum = 1,
               scale = 1.0;
 
           // function to handle page (render and extract annotations)
@@ -54,7 +52,17 @@ Zotero.ZotFile.PdfExtractor = {
                 // filter for supported annotations
                 annots = annos.filter(function(anno) {return SUPPORTED_ANNOTS.indexOf(anno.type) >= 0;});
                 // skip page if there is nothing interesting
-                if (annots.length==0) return;
+                if (annots.length==0) {
+                  // update progress bar
+                  Zotero.ZotFile.pdfAnnotations.pageExtractionComplete(page.pageNumber, pdf.numPages);
+                  // render next page or finish
+                  if(pdf.numPages>page.pageNumber) pdf.getPage(page.pageNumber+1).then(extract);
+                  // finished...
+                  else {
+                    args.callback.call(args.callbackObj, extracted_annotations, args.item);
+                  }
+                  return;
+                }
                 // render page
                 page.render(renderContext).then(function() {
                   // handle annotations
@@ -64,7 +72,7 @@ Zotero.ZotFile.PdfExtractor = {
                     if (at && SUPPORTED_ANNOTS.indexOf(at) >= 0) {
                       var a = {};
                       a.filename = args.url; // TODO: basename instead?
-                      a.page = pageNum;
+                      a.page = page.pageNumber;
                       a.type = annot.type;
                       a.content = annot.content;
 
@@ -73,17 +81,41 @@ Zotero.ZotFile.PdfExtractor = {
                       extracted_annotations.push(a);                  
                     }
                   }
-                  // render next page
-                  // Zotero.ZotFile.pdfAnnotations.pageExtractionComplete(pageNum, pdf.numPages);
-                  // if(numPages>page.pageNumber) pdf.getPage(page.pageNumber+1).then(extract);
-                  args.callback.call(args.callbackObj, extracted_annotations, args.item);
+                  // update progress bar
+                  Zotero.ZotFile.pdfAnnotations.pageExtractionComplete(page.pageNumber, pdf.numPages);
+                  // render next page or finish
+                  if(pdf.numPages>page.pageNumber) pdf.getPage(page.pageNumber+1).then(extract);
+                  // finished...
+                  else {
+                    args.callback.call(args.callbackObj, extracted_annotations, args.item);
+                  }
                 },
                 // error handler for page
-                function(error) {
-                  // continue with next page
-                  // if(numPages>page.pageNumber) pdf.getPage(page.pageNumber+1).then(extract);
+                function(e) {
+                  // log error message
+                  logError('error rendering page: ' + e);
+                  // update progress bar
+                  Zotero.ZotFile.pdfAnnotations.pageExtractionComplete(page.pageNumber, pdf.numPages);
+                  // render next page or finish
+                  if(pdf.numPages>page.pageNumber) pdf.getPage(page.pageNumber+1).then(extract);
+                  // finished...
+                  else {
+                    args.callback.call(args.callbackObj, extracted_annotations, args.item);
+                  }
                 });
-
+              },
+              // error handler for annotations
+              function(e) {
+                // log error message
+                logError('error getting annotations from page: ' + e);
+                // update progress bar
+                Zotero.ZotFile.pdfAnnotations.pageExtractionComplete(page.pageNumber, pdf.numPages);
+                // render next page or finish
+                if(pdf.numPages>page.pageNumber) pdf.getPage(page.pageNumber+1).then(extract);
+                // finished...
+                else {
+                  args.callback.call(args.callbackObj, extracted_annotations, args.item);
+                }
               });
           };
 
@@ -96,6 +128,10 @@ Zotero.ZotFile.PdfExtractor = {
               args.callback.call(args.callbackObj, [], args.item);
         });  // PDFJS.getDocument
 
+    // error handler for file promise
+    }, function onFileError(msg) {
+      logError('error opening PDF: ' + args.url + ' ' + e);
+      args.callback.call(args.callbackObj, [], args.item);
     });  // file promise
 
   } // extractAnnotations()
