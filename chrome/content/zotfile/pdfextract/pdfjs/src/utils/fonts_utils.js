@@ -1,5 +1,23 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set shiftwidth=2 tabstop=2 autoindent cindent expandtab: */
+/* Copyright 2012 Mozilla Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* globals CFFDictDataMap, CFFDictPrivateDataMap, CFFEncodingMap, CFFStrings,
+           Components, Dict, dump, error, isNum, log, netscape, Stream, warn */
+
+'use strict';
 
 /*
  * The Type2 reader code below is only used for debugging purpose since Type2
@@ -19,7 +37,7 @@ function readCharset(aStream, aCharstrings) {
 
   var format = aStream.getByte();
   var count = aCharstrings.length - 1;
-  if (format == 0) {
+  if (format === 0) {
     charset['.notdef'] = readCharstringEncoding(aCharstrings[0]);
 
     for (var i = 1; i < count + 1; i++) {
@@ -122,9 +140,9 @@ function readFontDictData(aString, aMap) {
       token = '';
       var parsed = false;
       while (!parsed) {
-        var byte = aString[i++];
+        var octet = aString[i++];
 
-        var nibbles = [parseInt(byte / 16, 10), parseInt(byte % 16, 10)];
+        var nibbles = [parseInt(octet / 16, 10), parseInt(octet % 16, 10)];
         for (var j = 0; j < nibbles.length; j++) {
           var nibble = nibbles[j];
           switch (nibble) {
@@ -236,7 +254,7 @@ var Type2Parser = function type2Parser(aFilePath) {
   var xhr = new XMLHttpRequest();
   xhr.open('GET', aFilePath, false);
   xhr.mozResponseType = xhr.responseType = 'arraybuffer';
-  xhr.expected = (document.URL.indexOf('file:') == 0) ? 0 : 200;
+  xhr.expected = (document.URL.indexOf('file:') === 0) ? 0 : 200;
   xhr.send(null);
   this.data = new Stream(xhr.mozResponseArrayBuffer || xhr.mozResponse ||
                          xhr.responseArrayBuffer || xhr.response);
@@ -336,7 +354,7 @@ var Type2Parser = function type2Parser(aFilePath) {
     var privateDict = [];
     for (var i = 0; i < priv.size; i++)
       privateDict.push(aStream.getByte());
-    dump('private:' + privateDict);
+    dump('privateData:' + privateDict);
     parseAsToken(privateDict, CFFDictPrivateDataMap);
 
     for (var p in font.map)
@@ -351,7 +369,7 @@ var Type2Parser = function type2Parser(aFilePath) {
     // Read Charset
     dump('Read Charset for ' + charStrings.length + ' glyphs');
     var charsetEntry = font.get('charset');
-    if (charsetEntry == 0) {
+    if (charsetEntry === 0) {
       error('Need to support CFFISOAdobeCharset');
     } else if (charsetEntry == 1) {
       error('Need to support CFFExpert');
@@ -392,7 +410,7 @@ function writeToFile(aBytes, aFilePath) {
   netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
   var Cc = Components.classes,
       Ci = Components.interfaces;
-  var file = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsIFile);
+  var file = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsILocalFile);
   file.initWithPath(aFilePath);
 
   var stream = Cc['@mozilla.org/network/file-output-stream;1']

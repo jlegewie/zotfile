@@ -1,5 +1,20 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- /
 /* vim: set shiftwidth=2 tabstop=2 autoindent cindent expandtab: */
+/*
+   Copyright 2011 notmasteryet
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 
 // - The JPEG specification can be found in the ITU CCITT Recommendation T.81
 //   (www.w3.org/Graphics/JPEG/itu-t81.pdf)
@@ -501,6 +516,10 @@ var JpegImage = (function jpegImage() {
     return lines;
   }
 
+  function clampTo8bit(a) {
+    return a < 0 ? 0 : a > 255 ? 255 : a;
+  }
+
   constructor.prototype = {
     load: function load(path) {
       var xhr = new XMLHttpRequest();
@@ -627,8 +646,9 @@ var JpegImage = (function jpegImage() {
             break;
 
           case 0xFFDB: // DQT (Define Quantization Tables)
-            var quantizationTableCount = Math.floor((readUint16() - 2) / 65);
-            for (i = 0; i < quantizationTableCount; i++) {
+            var quantizationTablesLength = readUint16();
+            var quantizationTablesEnd = quantizationTablesLength + offset - 2;
+            while (offset < quantizationTablesEnd) {
               var quantizationTableSpec = data[offset++];
               var tableData = new Int32Array(64);
               if ((quantizationTableSpec >> 4) === 0) { // 8 bit values
@@ -637,7 +657,10 @@ var JpegImage = (function jpegImage() {
                   tableData[z] = data[offset++];
                 }
               } else if ((quantizationTableSpec >> 4) === 1) { //16 bit
-                  tableData[j] = readUint16();
+                for (j = 0; j < 64; j++) {
+                  var z = dctZigZag[j];
+                  tableData[z] = readUint16();
+                }
               } else
                 throw "DQT: invalid table spec";
               quantizationTables[quantizationTableSpec & 15] = tableData;
@@ -652,7 +675,8 @@ var JpegImage = (function jpegImage() {
             frame.precision = data[offset++];
             frame.scanLines = readUint16();
             frame.samplesPerLine = readUint16();
-            frame.components = [];
+            frame.components = {};
+            frame.componentsOrder = [];
             var componentsCount = data[offset++], componentId;
             var maxH = 0, maxV = 0;
             for (i = 0; i < componentsCount; i++) {
@@ -660,6 +684,7 @@ var JpegImage = (function jpegImage() {
               var h = data[offset + 1] >> 4;
               var v = data[offset + 1] & 15;
               var qId = data[offset + 2];
+              frame.componentsOrder.push(componentId);
               frame.components[componentId] = {
                 h: h,
                 v: v,
@@ -716,6 +741,13 @@ var JpegImage = (function jpegImage() {
             offset += processed;
             break;
           default:
+            if (data[offset - 3] == 0xFF &&
+                data[offset - 2] >= 0xC0 && data[offset - 2] <= 0xFE) {
+              // could be incorrect encoding -- last 0xFF byte of the previous
+              // block was eaten by the encoder
+              offset -= 3;
+              break;
+            }
             throw "unknown JPEG marker " + fileMarker.toString(16);
         }
         fileMarker = readUint16();
@@ -728,20 +760,16 @@ var JpegImage = (function jpegImage() {
       this.jfif = jfif;
       this.adobe = adobe;
       this.components = [];
-      for (var id in frame.components) {
-        if (frame.components.hasOwnProperty(id)) {
-          this.components.push({
-            lines: buildComponentData(frame, frame.components[id]),
-            scaleX: frame.components[id].h / frame.maxH,
-            scaleY: frame.components[id].v / frame.maxV
-          });
-        }
+      for (var i = 0; i < frame.componentsOrder.length; i++) {
+        var component = frame.components[frame.componentsOrder[i]];
+        this.components.push({
+          lines: buildComponentData(frame, component),
+          scaleX: component.h / frame.maxH,
+          scaleY: component.v / frame.maxV
+        });
       }
     },
     getData: function getData(width, height) {
-      function clampTo8bit(a) {
-        return a < 0 ? 0 : a > 255 ? 255 : a;
-      }
       var scaleX = this.width / width, scaleY = this.height / height;
 
       var component1, component2, component3, component4;

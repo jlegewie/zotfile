@@ -2,6 +2,7 @@
 /* vim: set shiftwidth=2 tabstop=2 autoindent cindent expandtab: */
 
 'use strict';
+const SUPPORTED_ANNOTS = ["Text", "Highlight", "Underline"]
 
 Zotero.ZotFile.PdfExtractor = {
 
@@ -9,149 +10,86 @@ Zotero.ZotFile.PdfExtractor = {
    * @see Zotero.ZotFile.pdfAnnotations.pdfAttachmentsForExtraction (zotfile.js)
    * for documentation on args object.
    */
+
   extractAnnotations: function(args) {
     function logError(msg) {
       Components.utils.reportError(msg);
       Zotero.ZotFile.pdfAnnotations.errorExtractingAnnotations = true;
     }
 
-    PDFJS.getPdf(
-      {
-        url: args.url,
-        progress: function getPdfProgress(evt) {
-          //if (evt.lengthComputable) alert('progress: ' + (evt.loaded / evt.total));
-        },
-        error: function getPdfError(e) {
-          logError('error opening PDF: ' + args.url + ' ' + e.target + ' ' + e.target.status);
-          args.callback.call(args.callbackObj, [], args.item);
-        }
-      },
-      function getPdfLoad(data) {
-        var pdf = null;
-        var pageOne = null;
-        try {
-          pdf = new PDFJS.PDFDoc(data);
-          pageOne = pdf.getPage(1);
-        } catch (err) {
-          logError('error loading pdf '+args.url + ': '+err);
-          args.callback.call(args.callbackObj, [], args.item);
-          return;
-        }
-        
-        // Prepare canvas using PDF page dimensions
-        var canvas = document.createElement('canvas');
-        var context = canvas.getContext('2d');
+    PDFJS.getDocument('http://www.columbia.edu/~jpl2136/zotfile-test.pdf').then(function(pdf) {
+    // PDFJS.getDocument(args.url).then(function(pdf) {
 
-        /** @see Zotero.ZotFile.pdfAnnotations.extractionComplete()
-         * (zotfile.js) for documentation on annotations array. */
-        var annotations = [];
-        var pageNum = 1;
-        var currentPage = pageOne;
-        var scale = 1.0;
+      /** @see Zotero.ZotFile.pdfAnnotations.extractionComplete()
+       * (zotfile.js) for documentation on annotations array. */
+      var extracted_annotations = [],
+          numPages = pdf.numPages,
+          pageNum = 1,
+          scale = 1.0;
 
-        function pageRequiresRendering(_page) {
-          var annots = null;
-          try {
-            annots = _page.getAnnotations();
-          } catch (err) {
-            logError('error while reading annotations of page '+pageNum+' of '+args.url+' '+err);
-            return false;
-          }
-          // for each (var annot in annots) {
-          for (var i=0;i<annots.length;i++) {
-            var annot = annots[i]
-            if (annot.type && 
-                (annot.type == "Highlight" || annot.type == "Underline")) {
-              return true;
-            }
-          }
-          return false;
-        }
+      // function to handle page (render and extract annotations)
+      var extract = function(page) {
+          var viewport = page.getViewport(scale);
 
-        var renderingDone = function(err) {
-          Zotero.ZotFile.pdfAnnotations.pageExtractionComplete(pageNum, pdf.numPages);
+          // Prepare canvas using PDF page dimensions
+          var canvas = document.createElement('canvas');
+          var context = canvas.getContext('2d');
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+          // Render PDF page into canvas context
+          var renderContext = {
+            canvasContext: context,
+            viewport: viewport
+          };          
 
-          if (err || !currentPage.getAnnotations()) {
-            logError('An error occurred while rendering page '+pageNum+' of '+args.url+' '+err);
-            // try to scavenge some annotations anyway
-          }
+          // get annotations
+          var annots;
+          page.getAnnotations().then(function extractAnno(annos) {
+            // filter for supported annotations
+            annots = annos.filter(function(anno) {return SUPPORTED_ANNOTS.indexOf(anno.type) >= 0;});
+            // skip page if there is nothing interesting
+            if (annots.length==0) return;
+            // render page
+            page.render(renderContext).then(function() {
+              // handle annotations
+              for (var i=0;i<annots.length;i++) {
+                var annot = annots[i];
+                var at = annot.type;
+                if (at && SUPPORTED_ANNOTS.indexOf(at) >= 0) {
+                  var a = {};
+                  a.filename = args.url; // TODO: basename instead?
+                  a.page = pageNum;
+                  a.type = annot.type;
+                  a.content = annot.content;
 
-          const SUPPORTED_ANNOTS = ["Text", "Highlight", "Underline"];
-          // for each (var annot in currentPage.getAnnotations()) {
-          var annots = currentPage.getAnnotations();
-          for (var i=0;i<annots.length;i++) {          
-            var annot = annots[i];
-            var at = annot.type;
-            if (at && SUPPORTED_ANNOTS.indexOf(at) >= 0) {
-              var a = {};
-              a.filename = args.url; // TODO: basename instead?
-              a.page = pageNum;
-              a.type = annot.type;
-              a.content = annot.content;
-
-              a.markup = annot.markup ? annot.markup.join(' ') : null;
-              if (a.markup != null) {
-                // translate ligatures
-                var replacements = [['\ufb00','ff'],
-                                    ['\ufb01','fi'],
-                                    ['\ufb02','fl'],
-                                    ['\ufb03','ffi'],
-                                    ['\ufb04','ffl'],
-                                    ['\ufb05','ft'],
-                                    ['\ufb06','st']];
-                for (var i = 0; i < replacements.length; i++) {
-                  a.markup = a.markup.replace(replacements[i][0],replacements[i][1]);
+                  a.markup = annot.markup ? annot.markup.join(' ') : null;                  
+                  // push annotation to array
+                  extracted_annotations.push(a);                  
                 }
               }
+              // render next page
+              // Zotero.ZotFile.pdfAnnotations.pageExtractionComplete(pageNum, pdf.numPages);
+              // if(numPages>page.pageNumber) pdf.getPage(page.pageNumber+1).then(extract);
+              args.callback.call(args.callbackObj, extracted_annotations, args.item);
+            },
+            // error handler for page
+            function(error) {
+              // continue with next page
+              // if(numPages>page.pageNumber) pdf.getPage(page.pageNumber+1).then(extract);
+            });
 
-              annotations.push(a);
-            }
-          }
-          
-          pageNum++;
-          if (pageNum > pdf.numPages) {
-            args.callback.call(args.callbackObj, annotations, args.item);
-          } else {
-            currentPage = pdf.getPage(pageNum);
-            canvas.height = currentPage.height * scale;
-            canvas.width = currentPage.width * scale;
+          });
+      };
 
-            if (pageRequiresRendering(currentPage)) {
-              currentPage.startRendering(context, renderingDone);
-            } else {
-              try {
-                var foo = currentPage.getAnnotations();
-              } catch (err) {
-                logError('error while reading annotations of page '+pageNum+' of '+args.url+' '+err);
-              } finally {
-                renderingDone(false);
-              }
-            }
-          }
-        };
+      // Using promise to fetch the page
+      pdf.getPage(1).then(extract);
 
-        canvas.height = pageOne.height * scale;
-        canvas.width = pageOne.width * scale;
-
-        try {
-          if (pageRequiresRendering(currentPage)) {
-            currentPage.startRendering(context, renderingDone);
-          } else {
-            try {
-              var foo = currentPage.getAnnotations();
-            } catch (err) {
-              logError('error while reading annotations of page '+pageNum+' of '+args.url+' '+err);
-            } finally {
-              renderingDone(false);
-            }
-          }
-        } catch (err) {
-          logError('An error occurred while starting rendering of page '+pageNum+' of '+args.url+' '+err);
+    },function getPdfError(e) {
+          // logError('error opening PDF: ' + args.url + ' ' + e.target + ' ' + e.target.status);
+          logError('error opening PDF: ' + args.url + ' ' + e);
           args.callback.call(args.callbackObj, [], args.item);
-          return;
-        }
+    });  // PDFJS.getDocument
 
-      });
   } // extractAnnotations()
 
 }; // Zotero.ZotFile.PdfExtractor

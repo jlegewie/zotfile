@@ -1,5 +1,23 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set shiftwidth=2 tabstop=2 autoindent cindent expandtab: */
+/* Copyright 2012 Mozilla Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* globals Ascii85Stream, AsciiHexStream, CCITTFaxStream, Cmd, Dict, error,
+           FlateStream, isArray, isCmd, isDict, isInt, isName, isNum, isRef,
+           isString, Jbig2Stream, JpegStream, JpxStream, LZWStream, Name,
+           NullStream, PredictorStream, Ref, RunLengthStream, warn */
 
 'use strict';
 
@@ -14,16 +32,30 @@ var Parser = (function ParserClosure() {
     this.lexer = lexer;
     this.allowStreams = allowStreams;
     this.xref = xref;
-    this.inlineImg = 0;
     this.refill();
   }
 
   Parser.prototype = {
-    refill: function parserRefill() {
+    saveState: function Parser_saveState() {
+      this.state = {
+        buf1: this.buf1,
+        buf2: this.buf2,
+        streamPos: this.lexer.stream.pos
+      };
+    },
+
+    restoreState: function Parser_restoreState() {
+      var state = this.state;
+      this.buf1 = state.buf1;
+      this.buf2 = state.buf2;
+      this.lexer.stream.pos = state.streamPos;
+    },
+
+    refill: function Parser_refill() {
       this.buf1 = this.lexer.getObj();
       this.buf2 = this.lexer.getObj();
     },
-    shift: function parserShift() {
+    shift: function Parser_shift() {
       if (isCmd(this.buf2, 'ID')) {
         this.buf1 = this.buf2;
         this.buf2 = null;
@@ -34,7 +66,7 @@ var Parser = (function ParserClosure() {
         this.buf2 = this.lexer.getObj();
       }
     },
-    getObj: function parserGetObj(cipherTransform) {
+    getObj: function Parser_getObj(cipherTransform) {
       if (isCmd(this.buf1, 'BI')) { // inline image
         this.shift();
         return this.makeInlineImage(cipherTransform);
@@ -43,7 +75,7 @@ var Parser = (function ParserClosure() {
         this.shift();
         var array = [];
         while (!isCmd(this.buf1, ']') && !isEOF(this.buf1))
-          array.push(this.getObj());
+          array.push(this.getObj(cipherTransform));
         if (isEOF(this.buf1))
           error('End of file inside array');
         this.shift();
@@ -51,17 +83,16 @@ var Parser = (function ParserClosure() {
       }
       if (isCmd(this.buf1, '<<')) { // dictionary or stream
         this.shift();
-        var dict = new Dict();
+        var dict = new Dict(this.xref);
         while (!isCmd(this.buf1, '>>') && !isEOF(this.buf1)) {
-          if (!isName(this.buf1)) {
+          if (!isName(this.buf1))
             error('Dictionary key must be a name object');
-          } else {
-            var key = this.buf1.name;
-            this.shift();
-            if (isEOF(this.buf1))
-              break;
-            dict.set(key, this.getObj(cipherTransform));
-          }
+
+          var key = this.buf1.name;
+          this.shift();
+          if (isEOF(this.buf1))
+            break;
+          dict.set(key, this.getObj(cipherTransform));
         }
         if (isEOF(this.buf1))
           error('End of file inside dictionary');
@@ -99,38 +130,38 @@ var Parser = (function ParserClosure() {
       this.shift();
       return obj;
     },
-    makeInlineImage: function parserMakeInlineImage(cipherTransform) {
+    makeInlineImage: function Parser_makeInlineImage(cipherTransform) {
       var lexer = this.lexer;
       var stream = lexer.stream;
 
       // parse dictionary
       var dict = new Dict();
       while (!isCmd(this.buf1, 'ID') && !isEOF(this.buf1)) {
-        if (!isName(this.buf1)) {
+        if (!isName(this.buf1))
           error('Dictionary key must be a name object');
-        } else {
-          var key = this.buf1.name;
-          this.shift();
-          if (isEOF(this.buf1))
-            break;
-          dict.set(key, this.getObj(cipherTransform));
-        }
+
+        var key = this.buf1.name;
+        this.shift();
+        if (isEOF(this.buf1))
+          break;
+        dict.set(key, this.getObj(cipherTransform));
       }
 
       // parse image stream
       var startPos = stream.pos;
 
-      // searching for the /\sEI\s/
+      // searching for the /EI\s/
       var state = 0, ch;
-      while (state != 4 && (ch = stream.getByte()) != null) {
+      while (state != 4 &&
+             (ch = stream.getByte()) !== null && ch !== undefined) {
         switch (ch) {
           case 0x20:
           case 0x0D:
           case 0x0A:
-            state = state === 3 ? 4 : 1;
+            state = state === 3 ? 4 : 0;
             break;
           case 0x45:
-            state = state === 1 ? 2 : 0;
+            state = 2;
             break;
           case 0x49:
             state = state === 2 ? 3 : 0;
@@ -139,15 +170,6 @@ var Parser = (function ParserClosure() {
             state = 0;
             break;
         }
-      }
-
-      // TODO improve the small images performance to remove the limit
-      var inlineImgLimit = 500;
-      if (++this.inlineImg >= inlineImgLimit) {
-        if (this.inlineImg === inlineImgLimit)
-          warn('Too many inline images');
-        this.shift();
-        return null;
       }
 
       var length = (stream.pos - 4) - startPos;
@@ -162,7 +184,11 @@ var Parser = (function ParserClosure() {
 
       return imageStream;
     },
-    makeStream: function parserMakeStream(dict, cipherTransform) {
+    fetchIfRef: function Parser_fetchIfRef(obj) {
+      // not relying on the xref.fetchIfRef -- xref might not be set
+      return isRef(obj) ? this.xref.fetch(obj) : obj;
+    },
+    makeStream: function Parser_makeStream(dict, cipherTransform) {
       var lexer = this.lexer;
       var stream = lexer.stream;
 
@@ -171,14 +197,9 @@ var Parser = (function ParserClosure() {
       var pos = stream.pos;
 
       // get length
-      var length = dict.get('Length');
-      var xref = this.xref;
-      if (xref)
-        length = xref.fetchIfRef(length);
-      if (!isInt(length)) {
+      var length = this.fetchIfRef(dict.get('Length'));
+      if (!isInt(length))
         error('Bad ' + length + ' attribute in stream');
-        length = 0;
-      }
 
       // skip over the stream data
       stream.pos = pos + length;
@@ -195,9 +216,9 @@ var Parser = (function ParserClosure() {
       stream.parameters = dict;
       return stream;
     },
-    filter: function parserFilter(stream, dict, length) {
-      var filter = dict.get('Filter', 'F');
-      var params = dict.get('DecodeParms', 'DP');
+    filter: function Parser_filter(stream, dict, length) {
+      var filter = this.fetchIfRef(dict.get('Filter', 'F'));
+      var params = this.fetchIfRef(dict.get('DecodeParms', 'DP'));
       if (isName(filter))
         return this.makeFilter(stream, filter.name, length, params);
       if (isArray(filter)) {
@@ -207,19 +228,21 @@ var Parser = (function ParserClosure() {
           filter = filterArray[i];
           if (!isName(filter))
             error('Bad filter name: ' + filter);
-          else {
-            params = null;
-            if (isArray(paramsArray) && (i in paramsArray))
-              params = paramsArray[i];
-            stream = this.makeFilter(stream, filter.name, length, params);
-            // after the first stream the length variable is invalid
-            length = null;
-          }
+
+          params = null;
+          if (isArray(paramsArray) && (i in paramsArray))
+            params = paramsArray[i];
+          stream = this.makeFilter(stream, filter.name, length, params);
+          // after the first stream the length variable is invalid
+          length = null;
         }
       }
       return stream;
     },
-    makeFilter: function parserMakeFilter(stream, name, length, params) {
+    makeFilter: function Parser_makeFilter(stream, name, length, params) {
+      if (stream.dict.get('Length') === 0) {
+        return new NullStream(stream);
+      }
       if (name == 'FlateDecode' || name == 'Fl') {
         if (params) {
           return new PredictorStream(new FlateStream(stream), params);
@@ -253,8 +276,12 @@ var Parser = (function ParserClosure() {
       if (name == 'CCITTFaxDecode' || name == 'CCF') {
         return new CCITTFaxStream(stream, params);
       }
-      if (name == 'RunLengthDecode') {
+      if (name == 'RunLengthDecode' || name == 'RL') {
         return new RunLengthStream(stream);
+      }
+      if (name == 'JBIG2Decode') {
+        var bytes = stream.getBytes(length);
+        return new Jbig2Stream(bytes, stream.dict);
       }
       warn('filter "' + name + '" not supported yet');
       return stream;
@@ -265,11 +292,19 @@ var Parser = (function ParserClosure() {
 })();
 
 var Lexer = (function LexerClosure() {
-  function Lexer(stream) {
+  function Lexer(stream, knownCommands) {
     this.stream = stream;
+    // The PDFs might have "glued" commands with other commands, operands or
+    // literals, e.g. "q1". The knownCommands is a dictionary of the valid
+    // commands and their prefixes. The prefixes are built the following way:
+    // if there a command that is a prefix of the other valid command or
+    // literal (e.g. 'f' and 'false') the following prefixes must be included,
+    // 'fa', 'fal', 'fals'. The prefixes are not needed, if the command has no
+    // other commands or literals as a prefix. The knowCommands is optional.
+    this.knownCommands = knownCommands;
   }
 
-  Lexer.isSpace = function lexerIsSpace(ch) {
+  Lexer.isSpace = function Lexer_isSpace(ch) {
     return ch == ' ' || ch == '\t' || ch == '\x0d' || ch == '\x0a';
   };
 
@@ -304,12 +339,11 @@ var Lexer = (function LexerClosure() {
   }
 
   Lexer.prototype = {
-    getNumber: function lexerGetNumber(ch) {
+    getNumber: function Lexer_getNumber(ch) {
       var floating = false;
       var str = ch;
       var stream = this.stream;
-      for (;;) {
-        ch = stream.lookChar();
+      while ((ch = stream.lookChar())) {
         if (ch == '.' && !floating) {
           str += ch;
           floating = true;
@@ -332,7 +366,7 @@ var Lexer = (function LexerClosure() {
         error('Invalid floating point number: ' + value);
       return value;
     },
-    getString: function lexerGetString() {
+    getString: function Lexer_getString() {
       var numParen = 1;
       var done = false;
       var str = '';
@@ -341,6 +375,7 @@ var Lexer = (function LexerClosure() {
       do {
         ch = stream.getChar();
         switch (ch) {
+          case null:
           case undefined:
             warn('Unterminated string');
             done = true;
@@ -350,7 +385,7 @@ var Lexer = (function LexerClosure() {
             str += ch;
             break;
           case ')':
-            if (--numParen == 0) {
+            if (--numParen === 0) {
               done = true;
             } else {
               str += ch;
@@ -359,6 +394,7 @@ var Lexer = (function LexerClosure() {
           case '\\':
             ch = stream.getChar();
             switch (ch) {
+              case null:
               case undefined:
                 warn('Unterminated string');
                 done = true;
@@ -408,15 +444,17 @@ var Lexer = (function LexerClosure() {
                 break;
               default:
                 str += ch;
+                break;
             }
             break;
           default:
             str += ch;
+            break;
         }
       } while (!done);
       return str;
     },
-    getName: function lexerGetName(ch) {
+    getName: function Lexer_getName(ch) {
       var str = '';
       var stream = this.stream;
       while (!!(ch = stream.lookChar()) && !specialChars[ch.charCodeAt(0)]) {
@@ -443,36 +481,42 @@ var Lexer = (function LexerClosure() {
               str.length);
       return new Name(str);
     },
-    getHexString: function lexerGetHexString(ch) {
+    getHexString: function Lexer_getHexString(ch) {
       var str = '';
       var stream = this.stream;
-      for (;;) {
+      var isFirstHex = true;
+      var firstDigit;
+      var secondDigit;
+      while (true) {
         ch = stream.getChar();
-        if (ch == '>') {
-          break;
-        }
         if (!ch) {
           warn('Unterminated hex string');
           break;
-        }
-        if (specialChars[ch.charCodeAt(0)] != 1) {
-          var x, x2;
-          if ((x = toHexDigit(ch)) == -1)
-            error('Illegal character in hex string: ' + ch);
-
-          ch = stream.getChar();
-          while (specialChars[ch.charCodeAt(0)] == 1)
-            ch = stream.getChar();
-
-          if ((x2 = toHexDigit(ch)) == -1)
-            error('Illegal character in hex string: ' + ch);
-
-          str += String.fromCharCode((x << 4) | x2);
+        } else if (ch === '>') {
+          break;
+        } else if (specialChars[ch.charCodeAt(0)] === 1) {
+          continue;
+        } else {
+          if (isFirstHex) {
+            firstDigit = toHexDigit(ch);
+            if (firstDigit === -1) {
+              warn('Ignoring invalid character "' + ch + '" in hex string');
+              continue;
+            }
+          } else {
+            secondDigit = toHexDigit(ch);
+            if (secondDigit === -1) {
+              warn('Ignoring invalid character "' + ch + '" in hex string');
+              continue;
+            }
+            str += String.fromCharCode((firstDigit << 4) | secondDigit);
+          }
+          isFirstHex = !isFirstHex;
         }
       }
       return str;
     },
-    getObj: function lexerGetObj() {
+    getObj: function Lexer_getObj() {
       // skip whitespace and comments
       var comment = false;
       var stream = this.stream;
@@ -520,24 +564,29 @@ var Lexer = (function LexerClosure() {
             stream.skip();
             return Cmd.get('>>');
           }
+          return Cmd.get(ch);
         case '{':
         case '}':
           return Cmd.get(ch);
         // fall through
         case ')':
           error('Illegal character: ' + ch);
-          return Error;
       }
 
       // command
       var str = ch;
+      var knownCommands = this.knownCommands;
+      var knownCommandFound = knownCommands && (str in knownCommands);
       while (!!(ch = stream.lookChar()) && !specialChars[ch.charCodeAt(0)]) {
-        stream.skip();
-        if (str.length == 128) {
-          error('Command token too long: ' + str.length);
+        // stop if known command is found and next character does not make
+        // the str a command
+        if (knownCommandFound && !((str + ch) in knownCommands))
           break;
-        }
+        stream.skip();
+        if (str.length == 128)
+          error('Command token too long: ' + str.length);
         str += ch;
+        knownCommandFound = knownCommands && (str in knownCommands);
       }
       if (str == 'true')
         return true;
@@ -547,7 +596,7 @@ var Lexer = (function LexerClosure() {
         return null;
       return Cmd.get(str);
     },
-    skipToNextLine: function lexerSkipToNextLine() {
+    skipToNextLine: function Lexer_skipToNextLine() {
       var stream = this.stream;
       while (true) {
         var ch = stream.getChar();
@@ -560,7 +609,7 @@ var Lexer = (function LexerClosure() {
         }
       }
     },
-    skip: function lexerSkip() {
+    skip: function Lexer_skip() {
       this.stream.skip();
     }
   };
@@ -570,7 +619,7 @@ var Lexer = (function LexerClosure() {
 
 var Linearization = (function LinearizationClosure() {
   function Linearization(stream) {
-    this.parser = new Parser(new Lexer(stream), false);
+    this.parser = new Parser(new Lexer(stream), false, null);
     var obj1 = this.parser.getObj();
     var obj2 = this.parser.getObj();
     var obj3 = this.parser.getObj();
@@ -584,7 +633,7 @@ var Linearization = (function LinearizationClosure() {
   }
 
   Linearization.prototype = {
-    getInt: function linearizationGetInt(name) {
+    getInt: function Linearization_getInt(name) {
       var linDict = this.linDict;
       var obj;
       if (isDict(linDict) &&
@@ -593,9 +642,8 @@ var Linearization = (function LinearizationClosure() {
         return obj;
       }
       error('"' + name + '" field in linearization table is invalid');
-      return 0;
     },
-    getHint: function linearizationGetHint(index) {
+    getHint: function Linearization_getHint(index) {
       var linDict = this.linDict;
       var obj1, obj2;
       if (isDict(linDict) &&
@@ -606,7 +654,6 @@ var Linearization = (function LinearizationClosure() {
         return obj2;
       }
       error('Hints table in linearization table is invalid: ' + index);
-      return 0;
     },
     get length() {
       if (!isDict(this.linDict))
