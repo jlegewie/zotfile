@@ -2879,7 +2879,7 @@ Zotero.ZotFile = {
             extractAnnotationsFromFiles: function() {
                 var attachment = this.pdfAttachmentsForExtraction.shift();
                 var args = {};
-                args.url = 'file://'+attachment.path;
+                args.url = attachment.path;
                 args.item = attachment.item;
                 args.callbackObj = this;
                 args.callback = this.extractionComplete;
