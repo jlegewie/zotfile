@@ -1482,6 +1482,22 @@ Zotero.ZotFile = {
         }
     },
 
+    runProcess: function(command, args) {
+        // set up process
+        var cmd = this.createFile(command);
+        var proc = Components.classes["@mozilla.org/process/util;1"].
+                    createInstance(Components.interfaces.nsIProcess);
+        proc.init(cmd);
+
+        // run process
+        if (!Zotero.isFx36) {
+            proc.runw(true, args, args.length);
+        }
+        else {
+            proc.run(true, args, args.length);
+        }
+    },
+
     // function to check whether a file exists
     // argument: path as string (with optional filename), zotero att, or file obj
     fileExists: function  (arg, filename) {
@@ -2605,27 +2621,7 @@ Zotero.ZotFile = {
             is.QueryInterface(Components.interfaces.nsIUnicharLineInputStream);
 
             return(is);
-        },
-
-        popplerExtractorCall: function (pdfFilePath,outputFile) {
-            // set up process
-            var extractorFile=Zotero.ZotFile.createFile(this.popplerExtractorPath);
-            var proc = Components.classes["@mozilla.org/process/util;1"].
-                        createInstance(Components.interfaces.nsIProcess);
-            proc.init(extractorFile);
-
-            // define arguments
-            var args = [pdfFilePath,outputFile];
-
-            // run process
-            if (!Zotero.isFx36) {
-                proc.runw(true, args, args.length);
-            }
-            else {
-                proc.run(true, args, args.length);
-            }
-
-        },
+        },        
 
         getAnnotations: function(attIDs) {        
             // get selected attachments if no att ids are passed
@@ -2688,7 +2684,7 @@ Zotero.ZotFile = {
                             Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler"))) {
                                 
                             var outputFile=file.path.replace(".pdf",".txt");
-                            this.popplerExtractorCall(file.path,outputFile);
+                            Zotero.ZotFile.runProcess(this.popplerExtractorPath, [file.path, outputFile]);
                             var annotations = this.popplerExtractorGetAnnotationsFromFile(outputFile);
                             if(annotations.length!=0) this.createNote(annotations, item, "poppler");
 
