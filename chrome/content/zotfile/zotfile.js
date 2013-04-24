@@ -1482,19 +1482,27 @@ Zotero.ZotFile = {
         }
     },
 
-    runProcess: function(command, args) {
-        // set up process
-        var cmd = this.createFile(command);
-        var proc = Components.classes["@mozilla.org/process/util;1"].
-                    createInstance(Components.interfaces.nsIProcess);
-        proc.init(cmd);
+    runProcess: function(command, args, blocking) {
+        // default arguments
+        blocking = typeof blocking !== 'undefined' ? blocking : true;
+        try {
+            // set up process
+            var cmd = this.createFile(command);
+            var proc = Components.classes["@mozilla.org/process/util;1"].
+                        createInstance(Components.interfaces.nsIProcess);
+            proc.init(cmd);
 
-        // run process
-        if (!Zotero.isFx36) {
-            proc.runw(true, args, args.length);
+            // run process
+            if (!Zotero.isFx36) {
+                proc.runw(blocking, args, args.length);
+            }
+            else {
+                proc.run(blocking, args, args.length);
+            }
         }
-        else {
-            proc.run(true, args, args.length);
+        catch(err) {
+            Components.utils.reportError(err);
+            return (-1);
         }
     },
 
@@ -1644,10 +1652,9 @@ Zotero.ZotFile = {
             else return(-1);
 
         } catch (e) {
-                Components.utils.reportError(e);
-                return (-2);
+            Components.utils.reportError(e);
+            return (-2);
         }
-
     },
 
     getLastFileInFolder: function(dir_path){
@@ -1686,8 +1693,8 @@ Zotero.ZotFile = {
             if (success==1) return(return_files);
             else return(-1);
         } catch (e) {
-                Components.utils.reportError(e);
-                return (-2);
+            Components.utils.reportError(e);
+            return (-2);
         }
 
     },
