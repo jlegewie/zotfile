@@ -59,21 +59,24 @@ Zotero.ZotFile = {
             if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
             if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
         }
-        // version 2.4
+        // version 3
         // - add tags to parent items for attachments on tablet
         // - transfer project folder preferences to JSON format
-        if(this.prefs.getCharPref("version")!=="" && currentVersion=="2.4") {
-            this.infoWindow('Warning!', 'Zotero might be unresponsive for a moment because zotfile is updating some stuff.');
+        if(this.prefs.getCharPref("version")!=="" && currentVersion.indexOf('3')==0 &&
+            !this.prefs.getBoolPref("zotfile3update")) {
+            
             // change tablet tags
             var atts = this.getAttachmentsOnTablet();
             for (var j=0; j < atts.length; j++) {     
                 // if attachment on tablet, add tag for modified tablet item and remove tablet tag
-                if(!this.getTabletStatusModified(att)) { this.addTabletTag(atts[j], this.tag); }
+                if(!this.getTabletStatusModified(atts[j])) { 
+                    this.addTabletTag(atts[j], this.tag); 
+                }
                 // attachment on tablet (modified)
-                else { this.addTabletTag(atts[j], this.tagMod);
+                else { 
+                    this.addTabletTag(atts[j], this.tagMod);
                 }
             }
-
             // change saved searches
             var searches=Zotero.Searches.getAll();
             for(var i=0; i<searches.length;i++ ) {
@@ -85,7 +88,6 @@ Zotero.ZotFile = {
                     }
                 }
             }
-
             // transfer project folder preferences to JSON format
             if(this.prefs.getCharPref("tablet.subfolders")=="[]") {
                 var subfolders = [],
@@ -98,6 +100,8 @@ Zotero.ZotFile = {
                 }
                 this.prefs.setCharPref("tablet.subfolders",JSON.stringify(subfolders));
             }
+            // updated to version 3
+            this.prefs.setBoolPref("zotfile3update", true);            
         }
 
         // add saved search and change tag when upgrading to 2.1
@@ -1896,7 +1900,7 @@ Zotero.ZotFile = {
         if(subfolder==null) subfolder="";
         return(this.createFile(this.prefs.getCharPref("tablet.dest_dir")+subfolder));
     },
-    // PROBLEM: ANY CONDITIONS SELECTS ALL ATTACHMENTS!!!
+
     getAttachmentsOnTablet: function(subfolder) {
         // search for attachments with tag
         var search = new Zotero.Search();
