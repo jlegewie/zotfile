@@ -3,6 +3,9 @@ skin	zotfile	default				chrome/skin/default/zotfile/
 
 overlay	chrome://zotero/content/zoteroPane.xul chrome://zotfile/content/overlay.xul
 
+component	{1c32a2c0-ac5e-11e2-9e96-0800200c9a66}			components/attachmentService.js
+contract @mozilla.org/network/protocol;1?name=zotfile {1c32a2c0-ac5e-11e2-9e96-0800200c9a66}
+
 locale zotfile de-DE chrome/locale/de-DE/
 locale zotfile en-US chrome/locale/en-US/
 locale zotfile fr-FR chrome/locale/fr-FR/
