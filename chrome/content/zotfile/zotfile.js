@@ -580,6 +580,14 @@ Zotero.ZotFile = {
         return(x);
     },
 
+    // format array using named placeholders such as '%(test)'
+    str_format: function() {
+        var args = arguments;
+        return args['0'].replace(/%\((\w+)\)/g, function(match, name) { 
+          return args['1'][name];
+       });
+    },
+
     // check whether valid attachment
     // argument: zotero item, or item ID
     validAttachment: function (att, warning) {
