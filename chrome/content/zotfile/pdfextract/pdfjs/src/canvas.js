@@ -992,7 +992,9 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       charInfo.fontChar = glyph.fontChar;
       charInfo.unicode = glyph.unicode;
       charInfo.charDims = charDims;
+      charInfo.isSpace = isSpace;
       ['x','y','width','spaceWidth'].forEach(function(x) { charInfo.charDims[x]=Math.round(charInfo.charDims[x]*10000)/10000;})
+      // console.log(JSON.stringify(charInfo));
       // add to annotation object
       if (!annot.markup) {
         annot.markup = [];
@@ -1020,13 +1022,12 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         }
         if (isSpace) {
           // do not add 'mini' spaces that are between to characters of one word
-          if((charDims.width/annot.chars.slice(-1)[0].width)<0.2) return; 
+          if((charDims.width/annot.chars.slice(-1)[0].charDims.width)<0.2) return; 
           annot.markupGeom[quad].brx = charDims.x + charDims.width;
           annot.markup[quad] += glyph.fontChar;
           annot.chars.push(charInfo);
         }
       }
-
     },
 
     showText: function CanvasGraphics_showText(str, skipTextSelection) {
