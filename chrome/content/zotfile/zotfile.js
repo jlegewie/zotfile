@@ -2791,8 +2791,20 @@ Zotero.ZotFile = {
             note.setNote(note_content);
             note.setSource(item.getID());
             var noteID = note.save();
+            if (method=="pdf.js" && Zotero.ZotFile.prefs.getBoolPref('pdfExtraction.debug')) 
+                this.debugExtraction(item, annotations);
+        },
 
-//          Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.report'),"TAB:" + prefWindow.document.getElementById('zotfile-tabbox').selectedTab,8000);
+        debugExtraction: function(item, annotations) {
+            var note = new Zotero.Item("note");
+            note.libraryID = item._libraryID;
+            var note_content = annotations
+            .map(function(anno){
+                return "<p>"+anno.chars.map(function(char) {return JSON.stringify(char);}).join('<br>') +"</p>"
+            }).join('');
+            note.setNote(note_content);
+            note.setSource(item.getID());
+            var noteID = note.save();
         },
 
         getNoteContent: function(annotations, item, att, method) {

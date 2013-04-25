@@ -47,7 +47,8 @@ Zotero.ZotFile.PdfExtractor = {
               };          
 
               // get annotations
-              var annots;
+              var annots,
+                  debug = Zotero.ZotFile.prefs.getBoolPref('pdfExtraction.debug');
               page.getAnnotations().then(function extractAnno(annos) {
                 // filter for supported annotations
                 annots = annos.filter(function(anno) {return SUPPORTED_ANNOTS.indexOf(anno.type) >= 0;});
@@ -75,6 +76,7 @@ Zotero.ZotFile.PdfExtractor = {
                       a.page = page.pageNumber;
                       a.type = annot.type;
                       a.content = annot.content;
+                      if(debug) a.chars = annot.chars;
 
                       a.markup = annot.markup ? annot.markup.join(' ') : null;                  
                       // push annotation to array
