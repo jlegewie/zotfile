@@ -59,7 +59,7 @@ Zotero.ZotFile.PdfExtractor = {
                   if(pdf.numPages>page.pageNumber) pdf.getPage(page.pageNumber+1).then(extract);
                   // finished...
                   else {
-                    args.callback.call(args.callbackObj, extracted_annotations, args.item);
+                    args.callback.call(args.callbackObj, extracted_annotations, args.item, args.att);
                   }
                   return;
                 }
@@ -87,7 +87,7 @@ Zotero.ZotFile.PdfExtractor = {
                   if(pdf.numPages>page.pageNumber) pdf.getPage(page.pageNumber+1).then(extract);
                   // finished...
                   else {
-                    args.callback.call(args.callbackObj, extracted_annotations, args.item);
+                    args.callback.call(args.callbackObj, extracted_annotations, args.item, args.att);
                   }
                 },
                 // error handler for page
@@ -100,7 +100,7 @@ Zotero.ZotFile.PdfExtractor = {
                   if(pdf.numPages>page.pageNumber) pdf.getPage(page.pageNumber+1).then(extract);
                   // finished...
                   else {
-                    args.callback.call(args.callbackObj, extracted_annotations, args.item);
+                    args.callback.call(args.callbackObj, extracted_annotations, args.item, args.att);
                   }
                 });
               },
@@ -114,7 +114,7 @@ Zotero.ZotFile.PdfExtractor = {
                 if(pdf.numPages>page.pageNumber) pdf.getPage(page.pageNumber+1).then(extract);
                 // finished...
                 else {
-                  args.callback.call(args.callbackObj, extracted_annotations, args.item);
+                  args.callback.call(args.callbackObj, extracted_annotations, args.item, args.att);
                 }
               });
           };
@@ -125,13 +125,13 @@ Zotero.ZotFile.PdfExtractor = {
         },function getPdfError(e) {
               // logError('error opening PDF: ' + args.url + ' ' + e.target + ' ' + e.target.status);
               logError('error opening PDF: ' + args.url + ' ' + e);
-              args.callback.call(args.callbackObj, [], args.item);
+              args.callback.call(args.callbackObj, [], args.item, args.att);
         });  // PDFJS.getDocument
 
     // error handler for file promise
     }, function onFileError(msg) {
       logError('error opening PDF: ' + args.url + ' ' + e);
-      args.callback.call(args.callbackObj, [], args.item);
+      args.callback.call(args.callbackObj, [], args.item, args.att);
     });  // file promise
 
   } // extractAnnotations()

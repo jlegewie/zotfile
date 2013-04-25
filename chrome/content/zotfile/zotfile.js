@@ -2697,7 +2697,7 @@ Zotero.ZotFile = {
                             var outputFile=file.path.replace(".pdf",".txt");
                             Zotero.ZotFile.runProcess(this.popplerExtractorPath, [file.path, outputFile]);
                             var annotations = this.popplerExtractorGetAnnotationsFromFile(outputFile);
-                            if(annotations.length!=0) this.createNote(annotations, item, "poppler");
+                            if(annotations.length!=0) this.createNote(annotations, item, att, "poppler");
 
                             // delete output text file
                             if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.popplerDeleteTxtFile")) Zotero.ZotFile.removeFile(Zotero.ZotFile.createFile(outputFile));
@@ -2775,8 +2775,8 @@ Zotero.ZotFile = {
             return annotations;
         },
 
-        createNote: function(annotations, item, method) {
-            var note_content=this.getNoteContent(annotations, item, method);
+        createNote: function(annotations, item, att, method) {
+            var note_content=this.getNoteContent(annotations, item, att, method);
             var note = new Zotero.Item("note");
             note.libraryID = item._libraryID;
 //          note.setNote(Zotero.Utilities.text2html(note_content));
@@ -2787,7 +2787,7 @@ Zotero.ZotFile = {
 //          Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.report'),"TAB:" + prefWindow.document.getElementById('zotfile-tabbox').selectedTab,8000);
         },
 
-        getNoteContent: function(annotations, item, method) {
+        getNoteContent: function(annotations, item, att, method) {
             // get current date
 			var date_str = Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString();
 
@@ -2822,7 +2822,11 @@ Zotero.ZotFile = {
 
                 // get citation
                 var cite="p. ";
-                if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteFullCite")) cite=Zotero.ZotFile.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ");
+                if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteFullCite")) 
+                    cite=Zotero.ZotFile.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ");
+                // get uri
+                var lib = att.libraryID===null ? 0 : att.libraryID;
+                var uri = 'zotfile://open/' + lib + '_' + att.key + '/' + anno.page;                
 
                 // add to note text pdfExtractionNoteRemoveHtmlNote
                 if(anno.content && anno.content != "" &&
@@ -2853,7 +2857,7 @@ Zotero.ZotFile = {
                         tagStart = htmlTagUnderlineStart;
                         tagEnd = htmlTagUnderlineEnd;
                     }
-                    note += "<p>"+tagStart+openingQMarks+markup+closingQMarks+" (" + cite + page + ")" +tagEnd+"</p>";
+                    note += "<p>"+tagStart+openingQMarks+markup+closingQMarks+' (<a href="' + uri + '">' + cite + page + "</a>)" +tagEnd+"</p>";
                 }
             }
             return note;
@@ -2888,6 +2892,7 @@ Zotero.ZotFile = {
                 var args = {};
                 args.url = attachment.path;
                 args.item = attachment.item;
+                args.att = attachment.attachment;
                 args.callbackObj = this;
                 args.callback = this.extractionComplete;
                 Zotero.ZotFile.PdfExtractor.extractAnnotations(args);
@@ -2922,9 +2927,9 @@ Zotero.ZotFile = {
              * any pop-up note in this annotation), and markup (the words from
              * the document, if any, that were highlighted/underlined).
              * @param item The Zotero item these annotations came from */
-            extractionComplete: function(annotations, item) {
+            extractionComplete: function(annotations, item, att) {
                 // put annotations into a Zotero note
-                if (annotations.length > 0) this.createNote(annotations, item, "pdf.js");
+                if (annotations.length > 0) this.createNote(annotations, item, att, "pdf.js");
                 
                 // move on to the next pdf, if there is one
                 if (this.pdfAttachmentsForExtraction.length > 0) {
