@@ -953,14 +953,16 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       dims.width = Math.abs(xy[0] - w[0]);
       var spaceWidth = font.coded ? font.spaceWidth : font.spaceWidth * .001;
       var sw = Util.applyTransform([spaceWidth,0], font2dev);
-      dims.spaceWidth = (sw[0] - font2dev[4]) / 2.0;      
+      // TODO: why 2.0? I changed it to 3
+      // dims.spaceWidth = (sw[0] - font2dev[4]) / 2.0;
+      dims.spaceWidth = (sw[0] - font2dev[4]) / 3.0;      
       return dims;
     },
     /** Determines if character, with the given dimensions, falls within the
       * bounds of annotation annot. If so, returns the 0-based index of the quad
       * region within which the character falls. If the character is outside the
       * annotation, returns -1. */
-    charInAnnot: function canvasCharInAnnot(annot, cdims, user2dev) {
+    charInAnnot: function canvasCharInAnnot(annot, glyph, cdims, user2dev) {
       if (annot.type && (annot.type == 'Highlight' ||
                          annot.type == 'Underline')) {
         for (var i = 0; i < annot.quadPoints.length; i++) {
@@ -974,7 +976,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
           var maxY = Math.max(qxy0[1], qxy1[1]);
           // only grab characters where 50% of the character's
           // width lies within the annotation
-          var xPlusHalfWidth = cdims.x + (0.5 * cdims.width);
+          var xPlusHalfWidth = cdims.x + (0.5 * cdims.width);          
           if (xPlusHalfWidth >= minX && xPlusHalfWidth <= maxX &&
               cdims.y >= minY && cdims.y <= maxY) {            
             return i;
@@ -1005,46 +1007,86 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       // char details for debugging
       var charInfo = {};
       charInfo.fontChar = glyph.fontChar;
-      charInfo.unicode = glyph.unicode;
-      charInfo.character = glyph.character;
+      charInfo.unicode = glyph.unicode;      
       charInfo.charDims = charDims;
       charInfo.isSpace = isSpace;
-      ['x','y','width','spaceWidth'].forEach(function(x) { charInfo.charDims[x]=Math.round(charInfo.charDims[x]*10000)/10000;})
+      // ['x','y','width','spaceWidth'].forEach(function(x) { charInfo.charDims[x]=Math.round(charInfo.charDims[x]*10000)/10000;})      
       // console.log(JSON.stringify(charInfo));
       // add to annotation object
       if (!annot.markup) {
         annot.markup = [];
         annot.markupGeom = [];
         annot.chars = [];
+        annot.relativeSpaceSize = [];
       }
       if (!annot.markup[quad]) {
+        // annot.markupGeom[quad].brx ensures that only characters are added that are right of the first one in annotation
         annot.markupGeom[quad] = {brx: charDims.x + charDims.width};
         annot.markup[quad] = character;
+        charInfo.character = character;
         annot.chars.push(charInfo);
       } else {
         var markupEnd = annot.markup[quad].length - 1;
         var lastCharSpace = (annot.markup[quad].charAt(markupEnd) == ' ');
+        // exclude double spaces
         if (isSpace && lastCharSpace) return;
-
+        // exclude previous space if it is further right then current character
+        var lastChar = annot.chars.slice(-1)[0];
+        if(!isSpace && lastCharSpace && typeof lastChar.charDims.x !== 'undefined' && lastChar.charDims.x>charDims.x) {            
+          annot.markup[quad] = annot.markup[quad].substring(0, markupEnd);
+          annot.chars = annot.chars.splice(0,annot.chars.length-1);          
+          lastChar = annot.chars.slice(-1)[0];
+          annot.markupGeom[quad].brx = lastChar.charDims.x + lastChar.charDims.width;
+          // reset markupEnd and lastCharSpace
+          markupEnd = annot.markup[quad].length - 1;
+          lastCharSpace = (annot.markup[quad].charAt(markupEnd) == ' ');
+        }
+        // show current char
+        /*var rd = function (x) {return Math.round(x*1000)/1000;}
+        console.log(JSON.stringify([
+          glyph.fontChar, rd(charDims.x), rd(charDims.y),
+          isSpace, lastCharSpace,
+          rd(charDims.width), rd(annot.markupGeom[quad].brx), rd(charDims.spaceWidth)]));*/
+        // insert space if ...
         if (!isSpace && !lastCharSpace && charDims.spaceWidth != 0 &&
           charDims.x > annot.markupGeom[quad].brx + charDims.spaceWidth) {
           annot.markup[quad] += ' ';
+          charInfo.character = ' ';
           annot.chars.push(charInfo);
         }
+        // add current character
         if (!isSpace && annot.markupGeom[quad].brx < charDims.x + charDims.width) {          
           annot.markupGeom[quad].brx = charDims.x + charDims.width;
           annot.markup[quad] += character;
+          charInfo.character = character;          
           annot.chars.push(charInfo);
         }
+        // add space but exclude mini spaces
         if (isSpace) {
+          // var lastCharA = annot.chars.slice(-1)[0];
+          var lastChar = annot.chars
+                            .filter(function(c) {return /^[\w]*$/.test(c.character);})
+                            .slice(-1)[0];
+          if (typeof lastChar === 'undefined') lastChar = annot.chars.slice(-1)[0];
           // do not add 'mini' spaces that are between to characters of one word
-          if((charDims.width/annot.chars.slice(-1)[0].charDims.width)<0.2) return; 
+          var relativeSize = charDims.width/lastChar.charDims.width;
+          if(relativeSize<0.2) return;
+          if (annot.relativeSpaceSize.length>0) {
+            var sum = annot.relativeSpaceSize.reduce(function(a, b) { return a + b });
+            var avg = sum / annot.relativeSpaceSize.length;            
+            if(relativeSize/avg<0.6) return;
+          }
+          // save relative size of valid spaces to exclude outliers
+          annot.relativeSpaceSize.push(relativeSize);
+          // add space
           annot.markupGeom[quad].brx = charDims.x + charDims.width;
           annot.markup[quad] += character;
+          charInfo.character = character;
           annot.chars.push(charInfo);
         }
       }
     },
+
 
     showText: function CanvasGraphics_showText(str, skipTextSelection) {
       var ctx = this.ctx;
@@ -1065,6 +1107,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       var canvasWidth = 0.0;
       var vertical = font.vertical;
       var defaultVMetrics = font.defaultVMetrics;
+      var show = false;
 
       // Type3 fonts - each glyph is a "mini-PDF"      
       if (font.coded) {
@@ -1110,8 +1153,8 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
                                            font, ctx.mozCurrentTransform);
             for (var j = 0; j < this.annotations.length; j++) {
               var annot = this.annotations[j];              
-              var quad = this.charInAnnot(annot, chDims, ctx.user2dev);
-              this.updateMarkup(annot, quad, glyph, chDims, false);              
+              var quad = this.charInAnnot(annot, glyph, chDims, ctx.user2dev);
+              this.updateMarkup(annot, quad, glyph, chDims, false);
             }
           }
           
@@ -1216,11 +1259,11 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
             // check if glyph is within an annotation
             // var charDims = this.makeCharDims(glyph.width * fontSize * .001, x, font, ctx.mozCurrentTransform);
             var charDims = this.makeCharDims(width * fontSize * current.fontMatrix[0], x, font, ctx.mozCurrentTransform);            
+            glyph.print = false;
             for (var j = 0; j < this.annotations.length; j++) {
               var annot = this.annotations[j];
-              var quad = this.charInAnnot(annot, charDims, ctx.user2dev);
+              var quad = this.charInAnnot(annot, glyph, charDims, ctx.user2dev);              
               this.updateMarkup(annot, quad, glyph, charDims, false);
-              // if(quad>=1) console.log(glyph);
             }
           }
 
@@ -1293,7 +1336,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
                                   font, font2dev);              
               for (var j = 0; j < this.annotations.length; j++) {
                 var annot = this.annotations[j];
-                var quad = this.charInAnnot(annot, charDims, ctx.user2dev);
+                var quad = this.charInAnnot(annot, {'fontChar':' ', 'unicode': ' '}, charDims, ctx.user2dev);                
                 this.updateMarkup(annot, quad, {'fontChar':' ', 'unicode': ' '}, charDims, true); 
               }
             }
