@@ -2865,7 +2865,14 @@ Zotero.ZotFile = {
                         .replace('\ufb03','ffi')
                         .replace('\ufb04','ffl')
                         .replace('\ufb05','ft')
-                        .replace('\ufb06','st');
+                        .replace('\ufb06','st')
+                        .replace('\uFB00','ff')
+                        .replace('\uFB01','fi')
+                        .replace('\uFB02','fl')
+                        .replace('\uFB03','ffi')
+                        .replace('\uFB04','ffl')
+                        .replace('\uFB05','ft')
+                        .replace('\uFB06','st');
 
                     // create formated markup
                     if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteRemoveHyphens")) markup = this.removeHyphens(markup);
