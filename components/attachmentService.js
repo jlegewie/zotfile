@@ -59,6 +59,7 @@ zotfileProtocol.prototype = {
       var lkh = Zotero.Items.parseLibraryKeyHash(key);
       if (!lkh) exit();
       var item = Zotero.Items.getByLibraryAndKey(lkh.libraryID, lkh.key);
+      if(item==false) exit();
       // if attachment, open file and go to page
       if(!item.isAttachment()) exit();
       // get file and path
