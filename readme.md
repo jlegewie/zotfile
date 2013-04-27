@@ -29,11 +29,11 @@ Contributions preferably through pull requests are welcome!
 #### Changes in 3.0
 - **Improved annotation extraction**
 
-    The extraction of pdf annotations using pdf.js works much better now! Zotfile uses a modified version of the updated [pdf.js](https://github.com/mozilla/pdf.js) library ([here](https://github.com/jlegewie/pdf.js) is the fork), which supports more pdf standards compared to the version used in zotfile 2.x. The detection of correct spaces also works much better now and updates to future versions of pdf.js are much easier. There are still many pdf that won't work! If you can not copy & paste text from the pdf file using your pdf viewer (e.g. Preview), it's unlikely that zotfile can help.
+    The extraction of pdf annotations using pdf.js works much better now! Zotfile uses a modified version of the updated [pdf.js](https://github.com/mozilla/pdf.js) library ([here](https://github.com/jlegewie/pdf.js) is the fork). It now supports more pdf standards, the detection of spaces works much better, and future updates to new versions of pdf.js are relatively easy. There are still  pdfs that won't work though! Some pdf standards are not yet supported and if you can not copy & paste text from the pdf file using your pdf viewer (e.g. Preview), it's unlikely that zotfile can help.
 
-- **Extracted annotations include link to jump to page in pdf**
+- **Jump to annotation: Open pdf on page with annotation**
 
-    The extracted annotations now include a link that opens the pdf file on the corresponding page. For the extracted annotation `"This is my extracted text" (zotfile 2013: 4)`, `zotfile 2013: 4` is a link that opens the corresponding pdf on the page with the annotation.
+    The extracted annotations now include a link that opens the pdf file on the corresponding page. For the extracted annotation `"This is my highlighted text" (zotfile 2013: 4)`, `zotfile 2013: 4` is a link that opens the corresponding pdf on the page with the annotation. Currently, this feature only works from reports (right-click on item and select `generate report`) but future version of Zotero might be able to open the links directly from the note (see discussion [here](https://forums.zotero.org/discussion/15186/clickable-links-in-notes/) and [here](https://forums.zotero.org/discussion/25832/note-hyperlinks-in-standalone/))
 
 - **Tablet feature: Restrict saved search for tablet files to sub-folders**
 
@@ -41,10 +41,11 @@ Contributions preferably through pull requests are welcome!
 
 - **Tablet feature: Support of colored tags in Zotero 4**
 
-    The new version includes two major changes that allow you to work with colored tags. First, zotfile now also tags the parent item when an attachment is send to the tablet. As a result, you can easily see which items are on the tablet and also which items have been modified. Second, using the keys associated with colored tags, you can now send attachments to the tablet and get them back with a simple keystroke. Note that the two tablet tags (`_tablet` and `_tablet_modified`) behave like one tag for key presses: pressing the key for either of the two tags *always* sends attachments to the tablet or gets them back. An attachment, for example, might only have the `_tablet_modified` tag because it was modified but pressing the key for the tablet tag `_tablet` still removes the attachment from the table and therefore *does not* assign the `_tablet` tag. To use these features, simply assign colors to the two tablet tags (`_tablet` and `_tablet_modified`).
+    The new version includes two major changes that allow you to work with colored tags. First, zotfile now also tags the parent item when an attachment is send to the tablet. As a result, you can easily see which items are on the tablet and also which items have been modified. Second, using the keys associated with colored tags, you can now send attachments to the tablet and get them back with a simple keystroke. Note that the two tablet tags (`_tablet` and `_tablet_modified`) behave like one tag for key presses: pressing the key for either of the two tags *always* sends attachments to the tablet or gets them back. An attachment, for example, might only have the `_tablet_modified` tag because it was modified but pressing the key for the tablet tag `_tablet` still removes the attachment from the tablet and therefore *does not* assign the `_tablet` tag. To use these features, simply assign colors to the two tablet tags (`_tablet` and `_tablet_modified`).
 
-- Fix automatic renaming option "Only ask if..."
+- Remove empty sub-folders when getting files from tablet
 - Fix alert window (headline was missing in Zotero 4)
+- Fix automatic renaming option "Only ask if..."
 - Fix for zotfile item menu on Zotero as a tab
 
 #### Changes in 2.3.4
