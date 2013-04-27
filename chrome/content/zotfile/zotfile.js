@@ -395,11 +395,10 @@ Zotero.ZotFile = {
                                     }
                                     // ask user if item has other attachments
                                     if(auto_rename==3) {
-                                        function checkAtt (id) {
-                                            var att = Zotero.Items.get(id);
-                                            return !(att._attachmentLinkMode == Zotero.Attachments.LINK_MODE_IMPORTED_URL && att._attachmentMIMEType != 'application/pdf');
+                                        function checkAtt (att) {
+                                            return att.isImportedAttachment() || att.attachmentLinkMode==Zotero.Attachments.LINK_MODE_LINKED_FILE;                                            
                                         }
-                                        var atts = parent.getAttachments().filter(checkAtt);
+                                        var atts = Zotero.Items.get(parent.getAttachments()).filter(checkAtt);
                                         
                                         if (atts.length>1)
                                             zz.infoWindow(zz.ZFgetString('general.newAttachment'),{lines:["'" + file.leafName + "'"],txt:zz.ZFgetString('renaming.clickMoveRename')},prefs.getIntPref("info_window_duration_clickable"),on_confirm);
