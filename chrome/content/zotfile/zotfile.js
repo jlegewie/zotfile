@@ -436,8 +436,13 @@ Zotero.ZotFile = {
                     'item': Zotero.Items.get(id[0]),
                     'tag': Zotero.Tags.getName(id[1])
                 };            
+            });
+            // exit if not tablet tags
+            if(changes.every(
+                function(change) {return change.tag!=zz.tag && change.tag!=zz.tagMod; }))
+                return;
             // filter list of changes
-            }).filter(function(obj) {
+            changes = changes.filter(function(obj) {
                 var not_excluded = true;
                 if(event == 'add') {
                     not_excluded = zz.blacklistTagAdd.indexOf(obj.item.key)==-1;
@@ -467,49 +472,49 @@ Zotero.ZotFile = {
                 // continue to next change if...
                 if (event != 'add' && event != 'remove') continue;
                 if (!onTablet && event == 'remove') continue;
-                // tablet tag
-                if(changes[i].tag==zz.tag) {
-                    action = (!onTablet) ? 'send' : 'remove';
-                    // send attachments to tablet
-                    if(action=='send') {
-                        try {
-                            if(item.isRegularItem())
-                                Zotero.Items.get(item.getAttachments())
-                                    .forEach(function(att) {
-                                        zz.sendAttachmentToTablet(item, att, '');
-                                    }, zz);
-                            if(item.isAttachment())
-                                zz.sendAttachmentToTablet(zz.getParent(item), item, '');
-                        }
-                        catch(e) {
-                            zz.messages_fatalError.push("Error: " + JSON.stringify(e));
-                        }
-                        // show messages and handle errors
-                        zz.showWarningMessages(zz.ZFgetString('general.warning.skippedAtt'),zz.ZFgetString('general.warning.skippedAtt.msg'));
-                        zz.showReportMessages(zz.ZFgetString('tablet.AttsMoved'));
-                        zz.handleErrors();
+                // if(changes[i].tag==zz.tag) {}
+                action = (!onTablet) ? 'send' : 'remove';
+                // send attachments to tablet
+                if(action=='send') {
+                    try {
+                        if(item.isRegularItem())
+                            Zotero.Items.get(item.getAttachments())
+                                .forEach(function(att) {
+                                    zz.sendAttachmentToTablet(item, att, '');
+                                }, zz);
+                        if(item.isAttachment())
+                            zz.sendAttachmentToTablet(zz.getParent(item), item, '');
                     }
-                    // remove attachments from tablet
-                    if(action=='remove') {
-                        try {
-                            if(item.isRegularItem())
-                                Zotero.Items.get(item.getAttachments())
-                                    .filter(zz.getTabletStatus, zz)
-                                    .forEach(function(att) {
-                                        zz.getAttachmentFromTablet(item, att, false);
-                                    }, zz);
-                            if(item.isAttachment()) 
-                                zz.getAttachmentFromTablet(zz.getParent(item), item, '');
-                        }
-                        catch(e) {
-                            zz.messages_fatalError.push("Error: " + JSON.stringify(e));
-                        }
-                        // show messages and handle errors
-                        zz.showWarningMessages(zz.ZFgetString('general.warning.skippedAtt'),zz.ZFgetString('general.warning.skippedAtt.msg'));
-                        zz.showReportMessages(zz.ZFgetString('tablet.AttsGot'));
-                        zz.handleErrors();
+                    catch(e) {
+                        zz.messages_fatalError.push("Error: " + JSON.stringify(e));
                     }
+                    // show messages and handle errors
+                    zz.showWarningMessages(zz.ZFgetString('general.warning.skippedAtt'),zz.ZFgetString('general.warning.skippedAtt.msg'));
+                    zz.showReportMessages(zz.ZFgetString('tablet.AttsMoved'));
+                    zz.handleErrors();
                 }
+                // remove attachments from tablet
+                if(action=='remove') {
+                    try {
+                        if(item.isRegularItem())
+                            Zotero.Items.get(item.getAttachments())
+                                .filter(zz.getTabletStatus, zz)
+                                .forEach(function(att) {
+                                    zz.getAttachmentFromTablet(item, att, false);
+                                }, zz);
+                        if(item.isAttachment()) 
+                            zz.getAttachmentFromTablet(zz.getParent(item), item, '');
+                    }
+                    catch(e) {
+                        zz.messages_fatalError.push("Error: " + JSON.stringify(e));
+                    }
+                    // show messages and handle errors
+                    zz.showWarningMessages(zz.ZFgetString('general.warning.skippedAtt'),zz.ZFgetString('general.warning.skippedAtt.msg'));
+                    zz.showReportMessages(zz.ZFgetString('tablet.AttsGot'));
+                    zz.handleErrors();
+                }
+                // TABLET TAG (MODIFIED)
+                // if(changes[i].tag==zz.tagMod) {}
             }
         }
     },
