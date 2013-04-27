@@ -2830,7 +2830,7 @@ Zotero.ZotFile = {
                 if(anno.content && anno.content != "" &&
                     (!anno.markup || this.strDistance(anno.content,anno.markup)>0.15 )) {
                     var content = anno.content.replace(/(\r\n|\n|\r)/gm,"<br/>");
-                    note += "<p>"+htmlTagNoteStart+content+" (note on p." + page + ")"+htmlTagNoteEnd+"</p><br>";
+                    note += Zotero.ZotFile.str_format('<p>%(tagStart)%(content)  (<a href="%(uri)">note on p.%(page)</a>)%(tagEnd)</p><br>', {'content':content,'page': page, 'tagStart': htmlTagNoteStart, 'tagEnd': htmlTagNoteEnd,'uri':uri});
                 }
 
                 if(anno.markup && anno.markup != "") {
