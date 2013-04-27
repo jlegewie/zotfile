@@ -1571,13 +1571,25 @@ Zotero.ZotFile = {
 
     },
 
-    removeFile: function(file) {
-        if(file.exists()) {
+    removeFile: function(f) {
+        if(f.exists()) {
             try {
-                file.remove(false);
+                if(!f.isDirectory()) {
+                    f.remove(false);
+                }
+                // for directories, remove them them if no non-hidden files are inside
+                else {                    
+                    var files = f.directoryEntries;
+                    while (files.hasMoreElements()) {
+                        var file = files.getNext();
+                        file.QueryInterface(Components.interfaces.nsIFile);
+                        if (!file.isHidden()) return;
+                    }
+                    f.remove(true);
+                }
             }
             catch(err){
-                if(file.isDirectory()) this.infoWindow(this.ZFgetString('general.report'),this.ZFgetString('file.removeFolderFailed'),8000);
+                if(f.isDirectory()) this.infoWindow(this.ZFgetString('general.report'),this.ZFgetString('file.removeFolderFailed'),8000);
             }
         }
     },
@@ -1615,18 +1627,18 @@ Zotero.ZotFile = {
             // go through all the files in the dir
             var files = dir.directoryEntries;
             while (files.hasMoreElements()) {
-                    // get one after the other file
-                    var file = files.getNext();
-                    file.QueryInterface(Components.interfaces.nsIFile);
-                    // only look at files which are neither folders nor hidden
-                    if(!file.isDirectory() && !file.isHidden()) {
-                    // is this a file we want to work with?
-                        if (this.checkFileType(file)) {
-                            return_files[success]=file;
-                            success=success+1;
-                        }
+                // get one after the other file
+                var file = files.getNext();
+                file.QueryInterface(Components.interfaces.nsIFile);
+                // only look at files which are neither folders nor hidden
+                if(!file.isDirectory() && !file.isHidden()) {
+                // is this a file we want to work with?
+                    if (this.checkFileType(file)) {
+                        return_files[success]=file;
+                        success=success+1;
                     }
                 }
+            }
             if (success>0)  return(return_files);
             else return(-1);
 
@@ -2179,7 +2191,7 @@ Zotero.ZotFile = {
         this.handleErrors();
     },
     
-    getAttachmentFromTablet: function (item, att,fakeRemove) {
+    getAttachmentFromTablet: function (item, att, fakeRemove) {
         var attID=att.getID(),
             option=1,
             itemPulled=false, attsDeleted=false,
@@ -2190,6 +2202,7 @@ Zotero.ZotFile = {
         // get files
         var file_zotero=att.getFile();
         var file_reader=this.getTabletFile(att);
+        var folder = file_reader.parent;
 
         // get modification times for files
         var time_reader = this.fileExists(file_reader) ? parseInt(file_reader.lastModifiedTime+"",10) : 0;
@@ -2275,10 +2288,15 @@ Zotero.ZotFile = {
             att.setNote(note);
             att.save();
         }
+        // remove subfolder if empty
+
+        if(!folder.equals(this.createFile(this.prefs.getCharPref('tablet.dest_dir'))))
+            this.removeFile(folder);
+
         // post-processing if attachment has been removed & it's not a fake-pull
         if (itemPulled && !fakeRemove) {
             // remove tag from attachment and parent item
-            this.removeTabletTag(att, this.tag);
+            this.removeTabletTag(att, this.tag);            
             // clear attachment note
             this.clearInfo(att);
             // extract annotations from attachment and add note
@@ -2396,7 +2414,7 @@ Zotero.ZotFile = {
                     if(attID!==null && attIDs[i]!=attID) selection=Zotero.ZotFile.arrayReplace(selection,attIDs[i],attID);
                 }
                 catch(e) {
-                    this.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
+                    this.messages_fatalError.push('Error: ' + e);
                 }
             }
         }
