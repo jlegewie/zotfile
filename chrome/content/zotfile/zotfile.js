@@ -464,14 +464,12 @@ Zotero.ZotFile = {
                     onTablet =  Zotero.Items.get(item.getAttachments())
                                     .some(zz.getTabletStatus, zz);
                 if(item.isAttachment()) onTablet = zz.getInfo(item, 'lastmod')!='';
-                zz.infoWindow('autoTablet', 'item on tablet:' + onTablet);
                 // continue to next change if...
                 if (event != 'add' && event != 'remove') continue;
                 if (!onTablet && event == 'remove') continue;
                 // tablet tag
                 if(changes[i].tag==zz.tag) {
                     action = (!onTablet) ? 'send' : 'remove';
-                    zz.infoWindow('autoTablet', 'action:' + action);
                     // send attachments to tablet
                     if(action=='send') {
                         try {
