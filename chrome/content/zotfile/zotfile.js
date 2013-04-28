@@ -2764,12 +2764,12 @@ Zotero.ZotFile = {
             var note_content=this.getNoteContent(annotations, item, att, method);
             var note = new Zotero.Item("note");
             note.libraryID = item._libraryID;
-//          note.setNote(Zotero.Utilities.text2html(note_content));
+            // note.setNote(Zotero.Utilities.text2html(note_content));
             note.setNote(note_content);
             note.setSource(item.getID());
             var noteID = note.save();
-            if (method=="pdf.js" && Zotero.ZotFile.prefs.getBoolPref('pdfExtraction.debug'))
-                this.debugExtraction(item, annotations);
+            /*if (method=="pdf.js" && Zotero.ZotFile.prefs.getBoolPref('pdfExtraction.debug'))
+                this.debugExtraction(item, annotations);*/
         },
 
         debugExtraction: function(item, annotations) {
