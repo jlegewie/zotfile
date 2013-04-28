@@ -1,20 +1,20 @@
-<!ENTITY zotfile-attach-file.label "Attach New File">
-<!ENTITY zotfile-attach-file.tooltiptext "Move and attach last file in user defined folder to selected Zotero item">
-<!ENTITY zotfile-manage-attachments.label "Manage Attachments">
-<!ENTITY warning.label "Warning">
-<!ENTITY renameSelectedAttachments.label "Rename Attachments">
-<!ENTITY renameSelectedAttachments.tooltiptext "Move and rename existing Attachments from selected Zotero item">
-<!ENTITY extract-annotations.label "Extract Annotations">
-<!ENTITY extract-annotations.tooltiptext "Extract Annotations and Highlighted Text from pdf file.">
-<!ENTITY send-to-tablet "Send to Tablet">
-<!ENTITY send-attachment-file-to-tablet "Send Attachment File to Tablet.">
-<!ENTITY update-file-modification-time "Update File Modification Time">
-<!ENTITY sync-attachment-file "Sync attachment file on tablet with file in Zotero.">
-<!ENTITY get-from-tablet "Get from Tablet">
-<!ENTITY get-attachment-file-from-tablet "Get Attachment File from Tablet">
-<!ENTITY send-to-subfolder-on-tablet "Send to Subfolder on Tablet">
-<!ENTITY change-subfolders "Change subfolders...">
-<!ENTITY add-and-delete-subfolders "Add and delete subfolders to Menu.">
-<!ENTITY zotfile-options.label "ZotFile Preferences...">
-<!ENTITY saved-search-all "Show Attachments from all Subfolders">
-<!ENTITY saved-search-restrict "Restrict Saved Search to Subfolder">
+<!ENTITY zotfile-attach-file.label "Allega Nuovo File">
+<!ENTITY zotfile-attach-file.tooltiptext "Sposta e allega l'ultimo file nella cartella definita dall'utente all'oggetto selezionato in Zotero">
+<!ENTITY zotfile-manage-attachments.label "Gestisci Allegati">
+<!ENTITY warning.label "Attenzione">
+<!ENTITY renameSelectedAttachments.label "Rinomina Allegati">
+<!ENTITY renameSelectedAttachments.tooltiptext "Sposta e rinomina l'allegato dall'ogetto selezionato in Zotero">
+<!ENTITY extract-annotations.label "Estrarre Annotazioni">
+<!ENTITY extract-annotations.tooltiptext "Estrarre Annotazioni e Testo Evidenziato dal file pdf.">
+<!ENTITY send-to-tablet "Invia al Tablet">
+<!ENTITY send-attachment-file-to-tablet "Invia l'Allegato al Tablet.">
+<!ENTITY update-file-modification-time "Aggiorna l'Orario di Modifica del File">
+<!ENTITY sync-attachment-file "Sincronizza l'allegato sul tablet con il file in Zotero.">
+<!ENTITY get-from-tablet "Scarica dal Tablet">
+<!ENTITY get-attachment-file-from-tablet "Scarica l'allegato dal Tablet">
+<!ENTITY send-to-subfolder-on-tablet "Invia la Sottocartella al Tablet">
+<!ENTITY change-subfolders "Cambia sottocartella...">
+<!ENTITY add-and-delete-subfolders "Aggiungi e cancella sottocartella al Menu.">
+<!ENTITY zotfile-options.label "Preferenze ZotFile...">
+<!ENTITY saved-search-all "Mostra Allegati di tutte le Sottocartelle">
+<!ENTITY saved-search-restrict "Limita Ricerca Salata alla Sottocartella">
