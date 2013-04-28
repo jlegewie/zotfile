@@ -33,27 +33,27 @@
 <!ENTITY use-additional-subfolders "Utilizza sottocartella aggiuntive definite da ">
 <!ENTITY additional-subfolders "Le sottocartelle aggiuntive sono definite in base ai metadati degli oggetti di Zotero. Utilizzare &#37;a per nome autore, &#37;y per anno, &#37;w per pubblicazione/editore, oppure &#37;T per il tipo di oggetto (vedere il sito di zotfile per una lista completa). assicurarsi di inserire i separatori appropriati (/ per OS Mac e altri sistemi Unix e \ per windows).">
 <!ENTITY additional-options "Opzioni aggiuntive">
-<!ENTITY rename-when-sent-to-tablet "Rename files when they are sent to the tablet">
-<!ENTITY save-annotated-file "Save copy of annotated file with suffix ">
-<!ENTITY tablet-copy-information "By default, getting an attachment back from the tablet replaces the file saved in Zotero. When this option is enabled, zotfile instead creates a copy of the file with a specified suffix and adds this file as an additional attachment to Zotero.">
-<!ENTITY automatically-extract-annotations "Automatically extract annotations when getting PDFs back from tablet">
-<!ENTITY preview-renaming-rules "Preview of Current Renaming Rules">
-<!ENTITY update "Update">
-<!ENTITY renaming-format "Renaming Format">
-<!ENTITY zotero-to-rename "Use Zotero to Rename">
-<!ENTITY format-for-all-types "Format for all Item Types except Patents">
-<!ENTITY format-for-patents "Format for Patents">
-<!ENTITY list-of-wildcards "&#37;a = author last name; &#37;y = year; &#37;t = title; &#37;j = journal; use {...} for an optional group and | for exclusive matches">
-<!ENTITY for-a-full-list "For a full list of place holder see the ">
-<!ENTITY additional-settings "Additional Settings">
-<!ENTITY delimiter-multiple-authors "Delimiter between multiple authors">
-<!ENTITY add-user-input-to-filename "Add user input to filename. Default is ">
-<!ENTITY lower-case "Change to lower case">
-<!ENTITY replace-blanks "Replace blanks">
-<!ENTITY truncate-title "Truncate title after . or : or ?">
-<!ENTITY zotfile-truncate_title_max "Maximum length of title">
-<!ENTITY zotfile-truncate_authors "Maximum number of authors">
-<!ENTITY zotfile-add_etal "Add suffix when authors are omitted">
+<!ENTITY rename-when-sent-to-tablet "Renomina i file quando sono inviati al tablet">
+<!ENTITY save-annotated-file "Salva con un suffisso la copia del file annotato ">
+<!ENTITY tablet-copy-information "Per impostazione predefinita, l'allegato scaricato dal tablet sostituisce il file salvato in Zotero. Quando questa opzione è abilitata, zotfile invece crea una copia del file con un suffisso specificato e aggiunge questo file come allegato aggiuntivo a Zotero.">
+<!ENTITY automatically-extract-annotations "Estrai automaticamente le annotazioni quando scarici i PDF dal tablet">
+<!ENTITY preview-renaming-rules "Anteprima delle Regole di Ridenominazione Attuali">
+<!ENTITY update "Aggiornamento">
+<!ENTITY renaming-format "Formato di Ridenominazione">
+<!ENTITY zotero-to-rename "Utilizza Zotero per Ridenominare">
+<!ENTITY format-for-all-types "Formato per tutti i tipi di oggetto escluso i Brevetti">
+<!ENTITY format-for-patents "Formato per Brevetti">
+<!ENTITY list-of-wildcards "&#37;a = cognome autore; &#37;y = anno; &#37;t = titolo; &#37;j = pubblicazione; usa {...} per un  gruppo opzionale e | per accoppiamenti esclusivi">
+<!ENTITY for-a-full-list "Per un elenco completo dei segnaposto vedere ">
+<!ENTITY additional-settings "Impostazione Aggiuntive">
+<!ENTITY delimiter-multiple-authors "Delimitatore tra autori multipli">
+<!ENTITY add-user-input-to-filename "Personalizzazione nome del file. Quello predefinito è ">
+<!ENTITY lower-case "Modifica a carattere minuscolo">
+<!ENTITY replace-blanks "Sostituire spazi">
+<!ENTITY truncate-title "Troncare il titolo dopo . oppure : oppure ?">
+<!ENTITY zotfile-truncate_title_max "Lunghezza massima del titolo">
+<!ENTITY zotfile-truncate_authors "Numero massimo di autori">
+<!ENTITY zotfile-add_etal "Aggiungi suffisso quando mancano gli autori">
 <!ENTITY extract-annotations "Extract Annotations and Highlighted Text from PDF Files">
 <!ENTITY extract-annotations-and-highlighted-text "ZotFile can extract annotations and highlighted text from your pdf attachments.">
 <!ENTITY extraction-method "Extraction Method">
