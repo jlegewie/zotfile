@@ -483,17 +483,18 @@ function deleteSubfolder (subfolder) {
 function changedSubfolder (projectFolderOld,projectFolderNew) {
     // get attachments in old subfolder
     var attInFolder=Zotero.ZotFile.getAttachmentsOnTablet(projectFolderOld);
-
+    // create file file old subfolder
+    var file=Zotero.ZotFile.getTabletLocationFile(projectFolderOld);
     // move attachments to new subfolder
     var confirmed=0;
-    if(attInFolder.length) confirmed=confirm(Zotero.ZotFile.ZFgetString('tablet.moveAttsToNewSubfolder', [attInFolder.length, projectFolderOld, projectFolderNew]));
+    if(attInFolder.length>0) confirmed=confirm(Zotero.ZotFile.ZFgetString('tablet.moveAttsToNewSubfolder', [attInFolder.length, projectFolderOld, projectFolderNew]));
     if (confirmed) {
 //      var path=attInFolder[0].getFile().parent.path;
         Zotero.ZotFile.setTabletFolder(attInFolder,projectFolderNew);
         // remove folder if empty
-        var file=Zotero.ZotFile.getTabletLocationFile(projectFolderOld);
         Zotero.ZotFile.removeFile(file);
     }
+    if(attInFolder.length==0) Zotero.ZotFile.removeFile(file);
 }
 
 function moveSelectedSubfolderUp () {
