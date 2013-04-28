@@ -19,12 +19,12 @@
 				<menuitem label="&warning.label;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>							
 				<menuitem label="&renameSelectedAttachments.label;" tooltiptext="&renameSelectedAttachments.tooltiptext;" oncommand="Zotero.ZotFile.renameSelectedAttachments();"/>
 				<menuitem label="&extract-annotations.label;" tooltiptext="&extract-annotations.tooltiptext;" oncommand="Zotero.ZotFile.pdfAnnotations.getAnnotations();"/>				
-				<menuseparator/>												
+				<menuseparator/>
 				<menuitem label="&warning.label;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>								
 				<menuitem id="id-push2reader-00" label="&send-to-tablet;" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet(-1);"/>
 				<menuitem label="&update-file-modification-time;" tooltiptext="&sync-attachment-file;" oncommand="Zotero.ZotFile.updateSelectedTabletAttachments();"/>	
 				<menuitem label="&get-from-tablet;" tooltiptext="&get-attachment-file-from-tablet;" oncommand="Zotero.ZotFile.getSelectedAttachmentsFromTablet();"/>				
-				<menuseparator/>																
+				<menuseparator/>
 				<menuitem label="&send-to-subfolder-on-tablet;" disabled="true" style="font-size: 80%; background: none; -moz-appearance: none;"/>								
 				<menuitem label="&warning.label;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>								
 				<menuitem id="id-push2reader-01" hidden="true" label="menu1" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet(0);"/>
@@ -56,22 +56,24 @@
        	<menuitem id="id-zotfile-collection-showall" label="&saved-search-all;" oncommand="Zotero.ZotFile.restrictTabletSearch(-1);"/>
  		<menu id="id-zotfile-collection-restrict" label="&saved-search-restrict;" > 
 			<menupopup id="id-zotfile-collection-menu" onpopupshowing="Zotero.ZotFile.buildZotFileCollectionMenu();">
-				<!-- <menuitem label="Restrict Tablet Search to..." disabled="true" style="font-size: 80%; background: none; -moz-appearance: none;"/> -->
-				<menuitem id="id-zotfile-collection-subfolder-01" hidden="true" label="menu1" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(0);"/>
-				<menuitem id="id-zotfile-collection-subfolder-02" hidden="true" label="menu2" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(1);"/>
-				<menuitem id="id-zotfile-collection-subfolder-03" hidden="true" label="menu3" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(2);"/>
-				<menuitem id="id-zotfile-collection-subfolder-04" hidden="true" label="menu4" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(3);"/>
-				<menuitem id="id-zotfile-collection-subfolder-05" hidden="true" label="menu5" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(4);"/>
-				<menuitem id="id-zotfile-collection-subfolder-06" hidden="true" label="menu6" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(5);"/>
-				<menuitem id="id-zotfile-collection-subfolder-07" hidden="true" label="menu7" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(6);"/>
-				<menuitem id="id-zotfile-collection-subfolder-08" hidden="true" label="menu8" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(7);"/>
-				<menuitem id="id-zotfile-collection-subfolder-09" hidden="true" label="menu9" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(8);"/>
-				<menuitem id="id-zotfile-collection-subfolder-10" hidden="true" label="menu10" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(9);"/>
-				<menuitem id="id-zotfile-collection-subfolder-11" hidden="true" label="menu11" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(10);"/>
-				<menuitem id="id-zotfile-collection-subfolder-12" hidden="true" label="menu12" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(11);"/>
-				<menuitem id="id-zotfile-collection-subfolder-13" hidden="true" label="menu13" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(12);"/>
-				<menuitem id="id-zotfile-collection-subfolder-14" hidden="true" label="menu14" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(13);"/>
-				<menuitem id="id-zotfile-collection-subfolder-15" hidden="true" label="menu15" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(14);"/>
+				<menuitem id="id-zotfile-collection-subfolder-00" label="&restrict-basefolder;" hidden="true" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(0);"/>
+				<menuseparator/>
+				<menuitem id="id-zotfile-collection-ui-note" label="&restrict-subfolder;" disabled="true" style="font-size: 80%; background: none; -moz-appearance: none;"/>
+				<menuitem id="id-zotfile-collection-subfolder-01" hidden="true" label="menu1" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(1);"/>
+				<menuitem id="id-zotfile-collection-subfolder-02" hidden="true" label="menu2" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(2);"/>
+				<menuitem id="id-zotfile-collection-subfolder-03" hidden="true" label="menu3" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(3);"/>
+				<menuitem id="id-zotfile-collection-subfolder-04" hidden="true" label="menu4" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(4);"/>
+				<menuitem id="id-zotfile-collection-subfolder-05" hidden="true" label="menu5" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(5);"/>
+				<menuitem id="id-zotfile-collection-subfolder-06" hidden="true" label="menu6" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(6);"/>
+				<menuitem id="id-zotfile-collection-subfolder-07" hidden="true" label="menu7" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(7);"/>
+				<menuitem id="id-zotfile-collection-subfolder-08" hidden="true" label="menu8" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(8);"/>
+				<menuitem id="id-zotfile-collection-subfolder-09" hidden="true" label="menu9" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(9);"/>
+				<menuitem id="id-zotfile-collection-subfolder-10" hidden="true" label="menu10" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(10);"/>
+				<menuitem id="id-zotfile-collection-subfolder-11" hidden="true" label="menu11" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(11);"/>
+				<menuitem id="id-zotfile-collection-subfolder-12" hidden="true" label="menu12" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(12);"/>
+				<menuitem id="id-zotfile-collection-subfolder-13" hidden="true" label="menu13" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(13);"/>
+				<menuitem id="id-zotfile-collection-subfolder-14" hidden="true" label="menu14" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(14);"/>
+				<menuitem id="id-zotfile-collection-subfolder-15" hidden="true" label="menu15" tooltiptext="" oncommand="Zotero.ZotFile.restrictTabletSearch(15);"/>
 			</menupopup>
 		</menu>
     </menupopup>

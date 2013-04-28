@@ -796,14 +796,19 @@ Zotero.ZotFile = {
         for (i=0;i<nodes.length;i++) nodes[i].setAttribute('hidden', true);
         // get subfolders
         var subfolders = JSON.parse(this.prefs.getCharPref("tablet.subfolders"));
+        // show basefolder
+        // nodes[0].setAttribute('label', 'Unfiled Attachments');
+        nodes[0].setAttribute('hidden', false);
+        nodes[1].setAttribute('hidden', false);
+        nodes[2].setAttribute('hidden', false);
         // show subfolders
         subfolders.forEach(function(folder, i) {                
             // set attributes of menu item
-            nodes[i].setAttribute('label', folder.label);
-            nodes[i].setAttribute('tooltiptext', this.ZFgetString('menu.collection.tooltip', [folder.path]));
+            nodes[i+3].setAttribute('label', folder.label);
+            nodes[i+3].setAttribute('tooltiptext', this.ZFgetString('menu.collection.tooltip', [folder.path]));
             // this.ZFgetString('menu.sendAttToSubfolder',[folder.path])
             // show menu item
-            nodes[i].setAttribute('hidden', false);
+            nodes[i+3].setAttribute('hidden', false);
         },Zotero.ZotFile);
     },
 
@@ -2009,10 +2014,18 @@ Zotero.ZotFile = {
         });
         // add note condition for selected subfolder
         var searches=Zotero.Searches.getAll().filter(search_filter);
-        if(which!=-1) searches.forEach(function(search) {
-            search.addCondition('note', 'contains', subfolders[which].path);
+        // restrict to subfolder
+        if(which>0) searches.forEach(function(search) {
+            search.addCondition('note', 'contains', subfolders[which-1].path);
             search.save();
         });
+        // restrict to unfiled items (basefolder)
+        if(which==0) {
+            searches.forEach(function(search) {
+                search.addCondition('note', 'contains', 'projectFolder{}');
+                search.save();
+            });
+        }
     },
                 
     sendAttachmentToTablet: function(item, att, projectFolder, verbose) {

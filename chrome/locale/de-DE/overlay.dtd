@@ -18,3 +18,5 @@
 <!ENTITY zotfile-options.label "ZotFile Einstellungen...">
 <!ENTITY saved-search-all "Zeige Anhänge aus allen Unterordnern">
 <!ENTITY saved-search-restrict "Begrenze gespeicherte Suche auf Unterordner">
+<!ENTITY restrict-subfolder "Begrenze aus Unterordner...">
+<!ENTITY restrict-basefolder "Unfiled Attachments">

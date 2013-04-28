@@ -18,3 +18,5 @@
 <!ENTITY zotfile-options.label "Préférences de ZotFile ...">
 <!ENTITY saved-search-all "Show Attachments from all Subfolders">
 <!ENTITY saved-search-restrict "Restrict Saved Search to Subfolder">
+<!ENTITY restrict-subfolder "Restrict to subfolder...">
+<!ENTITY restrict-basefolder "Unfiled Attachments">
