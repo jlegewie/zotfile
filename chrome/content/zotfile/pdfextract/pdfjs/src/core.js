@@ -514,20 +514,20 @@ var Page = (function PageClosure() {
       }
       // sort items in visual order: top->bottom, left->right
       function sortAnnotations(a, b) {
-         // console.log(''+JSON.stringify(a.item));
-         // console.log(''+item.rect);
-         //rect=[x1, y1, x2, y2]
-
-        if (a.item.rect[1] < b.item.rect[1]) return -1;
-        else if (a.item.rect[1] == b.item.rect[1]) return a.item.rect[0] - b.item.rect[0];
-        else /* a.y > b.y */ return 1;
+        // rect=[x1, y1, x2, y2]
+        if (a.item.rect[2] < b.item.rect[0]) return -1;        
+        if (b.item.rect[2] < a.item.rect[0]) return 1;
+        if (a.item.rect[1] < b.item.rect[1]) return 1;
+        if (a.item.rect[1] > b.item.rect[1]) return -1;
+        return 0;
       }
       items.sort(sortAnnotations);
+      items.forEach(function(a) {console.log(a.item.type + ': ' + a.item.rect);})
 
       this.annotationsList = items;
       return this.annotationsList;
 
-      // return items;
+      return items;
     }
   };
 
