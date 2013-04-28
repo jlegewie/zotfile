@@ -54,30 +54,30 @@
 <!ENTITY zotfile-truncate_title_max "Lunghezza massima del titolo">
 <!ENTITY zotfile-truncate_authors "Numero massimo di autori">
 <!ENTITY zotfile-add_etal "Aggiungi suffisso quando mancano gli autori">
-<!ENTITY extract-annotations "Extract Annotations and Highlighted Text from PDF Files">
-<!ENTITY extract-annotations-and-highlighted-text "ZotFile can extract annotations and highlighted text from your pdf attachments.">
-<!ENTITY extraction-method "Extraction Method">
-<!ENTITY use-pdf-js "Use pdf.js to extract annotations">
-<!ENTITY methods-to-extract-annotations "ZotFile supports two methods to extract annotations from pdf files. The pdf.js-based tool works across all platforms and runs directly from zotero. The poppler-based extraction tool only works for Mac OS and requires a separate download. Currently, pdf.js is more reliable and should be the default in most cases. The poppler-based tool, however, is faster and might handle certain pdf standards that are not yet supported by pdf.js.">
-<!ENTITY use-poppler "Use poppler to extract annotations">
-<!ENTITY add-full-citation "Add full in-text citation to highlighted text snippets in note">
-<!ENTITY use-article-book-chapter-page "Use actual article/book chapter page for highlighted text snippets">
-<!ENTITY page-number-determination "The article page number is determined by adding the page in the pdf document and the starting page from the 'pages' field in the zotero metadata. This approach fails if the first page in the pdf document is not the first page in the article/book chapter">
-<!ENTITY other-advanced-settings "Other Advanced Settings">
+<!ENTITY extract-annotations "Estrai annotazioni e testo evidenziato dai file PDF">
+<!ENTITY extract-annotations-and-highlighted-text "ZotFile estrae annotazioni e testo evidenziato dai tuoi file pdf.">
+<!ENTITY extraction-method "Metodo di Estrazione">
+<!ENTITY use-pdf-js "Uilizza pdf.js per estrarre le annotazioni">
+<!ENTITY methods-to-extract-annotations "ZotFile supporta due metodi di estrazione delle annotazioni dai file pdf. Lo strumento basato su pdf.js funziona su tutte le piattaforme e lavora direttamente in zotero. Lo strumento basato su poppler funziona solamente con OS Mac e richiede un download separato. Attualmente, pdf.js risulta più affodabile e dovrebbe essere lo strumento predefinito nella maggior parte dei casi. Lo strumento basato su poppler, tuttavia, è più veloce e potrebbe gestire alcuni standard pdf che non sono ancora supportati da pdf.js.">
+<!ENTITY use-poppler "Utilizza poppler per estrarre le annotazioni">
+<!ENTITY add-full-citation "Aggiungi nella nota la citazione completa del testo in blocchi di testo evidenziati">
+<!ENTITY use-article-book-chapter-page "Utilizza l'articolo attuale o la pagina di libro per il blocco testo evidenziato">
+<!ENTITY page-number-determination "Il numero di pagina dell'articolo è determinato sommando la pagina nel documento pdf e la pagina iniziale del campo 'pagine' nei metadati di Zotero. Tale approccio non riesce se la prima pagina del documento pdf è non è la prima pagina dell' articolo /capitolo del libro">
+<!ENTITY other-advanced-settings "Altre Impostazioni Aggiuntive">
 
-<!ENTITY watch_folder "Watch for new files in source folder">
+<!ENTITY watch_folder "Controlla la presenza di nuovi file nella cartella">
 
-<!ENTITY automatic_renaming_label "Automatically rename new attachments">
-<!ENTITY automatic_renaming_no "Never">
-<!ENTITY automatic_renaming_ask "Always ask (non-disruptive)">
-<!ENTITY automatic_renaming_ask_mult "Only ask if item has other atts">
-<!ENTITY automatic_renaming_always "Always rename">
+<!ENTITY automatic_renaming_label "Rinominare automaticamente i nuovi allegati">
+<!ENTITY automatic_renaming_no "Mai">
+<!ENTITY automatic_renaming_ask "Richiedi sempre (senza interruzioni)">
+<!ENTITY automatic_renaming_ask_mult "Richiedi solamente se l'oggetto ha altri allegati">
+<!ENTITY automatic_renaming_always "Rinomina  sempre">
 
-<!ENTITY ask-when-attaching-new-files "Ask user when attaching new files">
-<!ENTITY ask-to-batch-rename "Ask user to (batch) rename or move ">
-<!ENTITY or-more-attachments " or more attachments.">
-<!ENTITY remove-special-characters "Remove special characters (diacritics) from filename">
-<!ENTITY work-with-following-filetypes "Only work with the following filetypes ">
-<!ENTITY add-saved-searches "Add Saved Searches">
-<!ENTITY attachments-on-tablet "Attachments on Tablet">
-<!ENTITY modified-attachments-on-tablet "Modified Attachments on Tablet">
+<!ENTITY ask-when-attaching-new-files "Richiedi all'utente quando allegare nuovi file">
+<!ENTITY ask-to-batch-rename "Richiedi all'utente di rinominare o spostare (in gruppo) ">
+<!ENTITY or-more-attachments " o più allegati.">
+<!ENTITY remove-special-characters "Rimuovere i caratteri speciali (segni diacritici) dal nome del file">
+<!ENTITY work-with-following-filetypes "Funziona solo per i seguenti tipi di file ">
+<!ENTITY add-saved-searches "Aggiungi Ricerche Salvate">
+<!ENTITY attachments-on-tablet "Allegati sul Tablet">
+<!ENTITY modified-attachments-on-tablet "Allegati sul Tablet modificati">
