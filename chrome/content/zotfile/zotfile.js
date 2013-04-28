@@ -2836,20 +2836,22 @@ Zotero.ZotFile = {
                 if(anno.markup && anno.markup != "") {
                     var markup = this.trim(anno.markup)
                     // translate ligatures (e.g. 'ﬁ')
-                        .replace('\ufb00','ff')
-                        .replace('\ufb01','fi')
-                        .replace('\ufb02','fl')
-                        .replace('\ufb03','ffi')
-                        .replace('\ufb04','ffl')
-                        .replace('\ufb05','ft')
-                        .replace('\ufb06','st')
-                        .replace('\uFB00','ff')
-                        .replace('\uFB01','fi')
-                        .replace('\uFB02','fl')
-                        .replace('\uFB03','ffi')
-                        .replace('\uFB04','ffl')
-                        .replace('\uFB05','ft')
-                        .replace('\uFB06','st');
+                        .replace(/\ufb00/g,'ff')
+                        .replace(/\ufb01/g,'fi')
+                        .replace(/\ufb02/g,'fl')
+                        .replace(/\ufb03/g,'ffi')
+                        .replace(/\ufb04/g,'ffl')
+                        .replace(/\ufb05/g,'ft')
+                        .replace(/\ufb06/g,'st')
+                        .replace(/\uFB00/g,'ff')
+                        .replace(/\uFB01/g,'fi')
+                        .replace(/\uFB02/g,'fl')
+                        .replace(/\uFB03/g,'ffi')
+                        .replace(/\uFB04/g,'ffl')
+                        .replace(/\uFB05/g,'ft')
+                        .replace(/\uFB06/g,'st')
+                        .replace(/''/g,'"')
+                        .replace(/``/g,'"');
 
                     // create formated markup
                     if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteRemoveHyphens")) markup = this.removeHyphens(markup);
