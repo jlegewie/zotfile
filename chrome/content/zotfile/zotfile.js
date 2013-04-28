@@ -210,7 +210,7 @@ Zotero.ZotFile = {
         // add event listener for automatically renaming attachments
         var notifierID = Zotero.Notifier.registerObserver(this.autoRename, ['item']);
         // add event listener for tablet tags 
-        var notifierID = Zotero.Notifier.registerObserver(this.autoTablet, ['item-tag']);
+        // var notifierID = Zotero.Notifier.registerObserver(this.autoTablet, ['item-tag']);
 
         // Load zotero.js first
         Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
