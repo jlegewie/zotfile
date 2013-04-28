@@ -30,7 +30,7 @@ Contributions preferably through pull requests are welcome!
 
 - **Improved annotation extraction**
 
-    The extraction of pdf annotations using pdf.js works much better now! Zotfile uses a modified version of the updated [pdf.js](https://github.com/mozilla/pdf.js) library ([here](https://github.com/jlegewie/pdf.js) is the fork). It now supports more pdf standards, the detection of spaces works much better, and future updates to new versions of pdf.js are relatively easy. There are still  pdfs that won't work though! Some pdf standards are not yet supported and if you can not copy & paste text from the pdf file using your pdf viewer (e.g. Preview), it's unlikely that zotfile can help.
+    The extraction of pdf annotations using pdf.js works much better now! Zotfile uses a modified version of the updated [pdf.js](https://github.com/mozilla/pdf.js) library ([here](https://github.com/jlegewie/pdf.js) is the fork). It now supports more pdf standards, the detection of spaces works much better, annotations are sorted correctly, and future updates to new versions of pdf.js are relatively easy. There are still  pdfs that won't work though! Some pdf standards are not yet supported and if you can not copy & paste text from the pdf file using your pdf viewer (e.g. Preview), it's unlikely that zotfile can help.
 
 - **Jump to annotation: Open pdf on page with annotation**
 
