@@ -512,7 +512,22 @@ var Page = (function PageClosure() {
           });
         }
       }
-      return items;
+      // sort items in visual order: top->bottom, left->right
+      function sortAnnotations(a, b) {
+         // console.log(''+JSON.stringify(a.item));
+         // console.log(''+item.rect);
+         //rect=[x1, y1, x2, y2]
+
+        if (a.item.rect[1] < b.item.rect[1]) return -1;
+        else if (a.item.rect[1] == b.item.rect[1]) return a.item.rect[0] - b.item.rect[0];
+        else /* a.y > b.y */ return 1;
+      }
+      items.sort(sortAnnotations);
+
+      this.annotationsList = items;
+      return this.annotationsList;
+
+      // return items;
     }
   };
 
