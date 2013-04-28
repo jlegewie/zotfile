@@ -4,35 +4,35 @@
 <!ENTITY tablet-settings "Impostazioni Tablet"> 
 <!ENTITY renaming-rules "Regole di Ridenominazione"> 
 <!ENTITY advanced-settings "Impostazioni Avanzate"> 
-<!ENTITY attachments-source-folder "Cartella di Origine per Nuovi Files da Allegare"> 
-<!ENTITY source-folder-desc "ZotFile can add the most recently modified file from the Firefox download or another folder as a new attachment to the currently selected Zotero item."> 
+<!ENTITY attachments-source-folder "Cartella di Origine per Nuovi File da Allegare"> 
+<!ENTITY source-folder-desc "Zotfile può allegare il file più recentemente modificato da un download di Firefox, o in un'altra cartella, come un nuovo allegato all'oggetto selezionato in Zotero."> 
 <!ENTITY use-firefox-download-folder "Utilizza la cartella dei download di Firefox"> 
 <!ENTITY custom-source-folder "Personalizza:"> 
 <!ENTITY choose "Scegli..."> 
-<!ENTITY location-of-files "Location of Files"> 
-<!ENTITY target-location-desc "ZotFile can move new and existing attachments to different locations. You can either store a copy of your attachment files in Zotero, which allows you to sync files to the Zotero server, or move the file to a custom folder and link to that location from Zotero">
-<!ENTITY attach-stored-copy "Attach stored copy of file(s)"> 
-<!ENTITY custom-location "Custom Location:"> 
-<!ENTITY use-subfolder "Use subfolder defined by"> 
-<!ENTITY subfolder-information "Subfolders are based on metadata from Zotero items. Use &#37;a for author name, &#37;y for year, &#37;w for journal/publisher, or &#37;T for item type (see the zotfile website for a full list). Make sure to insert the appropriate separators (/ for Mac OS and other Unix systems and \ for windows).">
-<!ENTITY for-more-information "For more information see the "> 
-<!ENTITY zotfile-website "ZotFile website"> 
-<!ENTITY consider-donation "If you find this plugin helpful, please consider a ">
-<!ENTITY donation "donation">
-<!ENTITY tablet-desc "ZotFile can streamline the process of reading and annotating your Zotero attachments on a iPad or Android tablet using a pdf annotation app. It sends pdfs to and gets them back from the tablet, renames and sorts them into subfolders so that you can find them, and extracts the annotations and highlighted text to a Zotero note.">
-<!ENTITY send-get-from-tablet "Use ZotFile to send and get files from tablet">
-<!ENTITY location-on-tablet "Location of Files on Tablet">
-<!ENTITY base-folder "Base Folder">
-<!ENTITY show-folder "Show Folder">
-<!ENTITY dropbox "(DropBox or alternative folder that syncs with the reading application on your tablet)">
-<!ENTITY subfolders "Subfolders">
-<!ENTITY no-subfolders "No subfolders">
-<!ENTITY create-subfolders "Create subfolders from zotero collections">
-<!ENTITY custom-subfolders "Custom subfolders">
-<!ENTITY change-subfolders "Change subfolders">
-<!ENTITY use-additional-subfolders "Use additional subfolders defined by ">
-<!ENTITY additional-subfolders "Additional subfolders are based on metadata from Zotero items. Use &#37;a for author name, &#37;y for year, &#37;w for journal/publisher, or &#37;T for item type (see the zotfile website for a full list). Make sure to insert the appropriate separators (/ for Mac OS and other Unix systems and \ for windows).">
-<!ENTITY additional-options "Additional options">
+<!ENTITY location-of-files "Posizione dei File"> 
+<!ENTITY target-location-desc "Zotfile può spostare allegati nuovi e esistenti in nuove posizioni. E' possibile conserare una copia degli allegati in Zotero, permettendo la sincronizzazione dei file con il server di Zotero, o di spostare il file in una cartella definita dall'utente e collegarsi a questa posizione da Zotero">
+<!ENTITY attach-stored-copy "Allegare copia del file"> 
+<!ENTITY custom-location "Posizione definita dall'utente:"> 
+<!ENTITY use-subfolder "Utilizzare sottocartella definita da"> 
+<!ENTITY subfolder-information "Le sottocartelle sono definite in base ai metadati degli oggetti di Zotero. Utilizzare &#37;a per nome autore, &#37;y per anno, &#37;w per pubblicazione/editore, oppure &#37;T per il tipo di oggetto (vedere il sito di zotfile per una lista completa). assicurarsi di inserire i separatori appropriati (/ per OS Mac e altri sistemi Unix e \ per windows).">
+<!ENTITY for-more-information "Per ulteriori informazioni vedere il "> 
+<!ENTITY zotfile-website "sito ZotFile"> 
+<!ENTITY consider-donation "Se ritieni che questo componente sia utile, perfavore considera l'opportunità di fare un ">
+<!ENTITY donation "donazione">
+<!ENTITY tablet-desc "ZotFile può semplificare il processo di lettura e di annotazione dei tuoi allegati Zotero su un iPad o tablet Android con un'app di annotazione pdf. Zotfile invia e scarica i file pdf dal tablet, li rinomina e li ordina in sottocartelle in modo che si possano trovare, ed estrae le annotazioni e il testo evidenziato in una nota di Zotero.">
+<!ENTITY send-get-from-tablet "Usa ZotFile per inviare e scaricare i file dal tablet">
+<!ENTITY location-on-tablet "Posizione dei File sul Tablet">
+<!ENTITY base-folder "Cartella Origine">
+<!ENTITY show-folder "Mostra Cartella">
+<!ENTITY dropbox "(DropBox o cartella alternativa che si sincronizza con l'applicazione di lettura sul tuo tablet)">
+<!ENTITY subfolders "Suttocartelle">
+<!ENTITY no-subfolders "Nessuna sottocartella">
+<!ENTITY create-subfolders "Creare sottocartelle da raccolte Zotero">
+<!ENTITY custom-subfolders "Sottocartelle Utente">
+<!ENTITY change-subfolders "Modifica sottocartelle">
+<!ENTITY use-additional-subfolders "Utilizza sottocartella aggiuntive definite da ">
+<!ENTITY additional-subfolders "Le sottocartelle aggiuntive sono definite in base ai metadati degli oggetti di Zotero. Utilizzare &#37;a per nome autore, &#37;y per anno, &#37;w per pubblicazione/editore, oppure &#37;T per il tipo di oggetto (vedere il sito di zotfile per una lista completa). assicurarsi di inserire i separatori appropriati (/ per OS Mac e altri sistemi Unix e \ per windows).">
+<!ENTITY additional-options "Opzioni aggiuntive">
 <!ENTITY rename-when-sent-to-tablet "Rename files when they are sent to the tablet">
 <!ENTITY save-annotated-file "Save copy of annotated file with suffix ">
 <!ENTITY tablet-copy-information "By default, getting an attachment back from the tablet replaces the file saved in Zotero. When this option is enabled, zotfile instead creates a copy of the file with a specified suffix and adds this file as an additional attachment to Zotero.">
