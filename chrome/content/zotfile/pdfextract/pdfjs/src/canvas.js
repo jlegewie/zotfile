@@ -1010,14 +1010,12 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       charInfo.unicode = glyph.unicode;      
       charInfo.charDims = charDims;
       charInfo.isSpace = isSpace;
-      // ['x','y','width','spaceWidth'].forEach(function(x) { charInfo.charDims[x]=Math.round(charInfo.charDims[x]*10000)/10000;})      
-      // console.log(JSON.stringify(charInfo));
       // add to annotation object
       if (!annot.markup) {
         annot.markup = [];
         annot.markupGeom = [];
         annot.chars = [];
-        annot.relativeSpaceSize = [];
+        annot.spaceSize = [];
       }
       if (!annot.markup[quad]) {
         // annot.markupGeom[quad].brx ensures that only characters are added that are right of the first one in annotation
@@ -1032,7 +1030,8 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         if (isSpace && lastCharSpace) return;
         // exclude previous space if it is further right then current character
         var lastChar = annot.chars.slice(-1)[0];
-        if(!isSpace && lastCharSpace && typeof lastChar.charDims.x !== 'undefined' && lastChar.charDims.x>charDims.x) {            
+        if(!isSpace && lastCharSpace && typeof lastChar.charDims.x !== 'undefined' && 
+            lastChar.charDims.x/*-charDims.spaceWidth*/>charDims.x+charDims.spaceWidth) {
           annot.markup[quad] = annot.markup[quad].substring(0, markupEnd);
           annot.chars = annot.chars.splice(0,annot.chars.length-1);          
           lastChar = annot.chars.slice(-1)[0];
@@ -1041,19 +1040,22 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
           markupEnd = annot.markup[quad].length - 1;
           lastCharSpace = (annot.markup[quad].charAt(markupEnd) == ' ');
         }
+
         // show current char
         /*var rd = function (x) {return Math.round(x*1000)/1000;}
         console.log(JSON.stringify([
           glyph.fontChar, rd(charDims.x), rd(charDims.y),
           isSpace, lastCharSpace,
           rd(charDims.width), rd(annot.markupGeom[quad].brx), rd(charDims.spaceWidth)]));*/
+
         // insert space if ...
-        if (!isSpace && !lastCharSpace && charDims.spaceWidth != 0 &&
+        if (!isSpace && !lastCharSpace && (charDims.spaceWidth != 0 || /^[\u201C\(]*$/.test(character) ) &&
           charDims.x > annot.markupGeom[quad].brx + charDims.spaceWidth) {
           annot.markup[quad] += ' ';
           charInfo.character = ' ';
           annot.chars.push(charInfo);
         }
+
         // add current character
         if (!isSpace && annot.markupGeom[quad].brx < charDims.x + charDims.width) {          
           annot.markupGeom[quad].brx = charDims.x + charDims.width;
@@ -1063,7 +1065,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         }
         // add space but exclude mini spaces
         if (isSpace) {
-          // var lastCharA = annot.chars.slice(-1)[0];
+          // late char (a-z or digits)
           var lastChar = annot.chars
                             .filter(function(c) {return /^[\w]*$/.test(c.character);})
                             .slice(-1)[0];
@@ -1071,13 +1073,13 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
           // do not add 'mini' spaces that are between to characters of one word
           var relativeSize = charDims.width/lastChar.charDims.width;
           if(relativeSize<0.2) return;
-          if (annot.relativeSpaceSize.length>0) {
-            var sum = annot.relativeSpaceSize.reduce(function(a, b) { return a + b });
-            var avg = sum / annot.relativeSpaceSize.length;            
-            if(relativeSize/avg<0.6) return;
+
+          if (annot.spaceSize.length>0) {
+            var sum = annot.spaceSize.reduce(function(a, b) { return a + b });
+            var avg = sum / annot.spaceSize.length;            
+            if(charDims.width/avg<0.3) return;
           }
-          // save relative size of valid spaces to exclude outliers
-          annot.relativeSpaceSize.push(relativeSize);
+          annot.spaceSize.push(charDims.width);
           // add space
           annot.markupGeom[quad].brx = charDims.x + charDims.width;
           annot.markup[quad] += character;
