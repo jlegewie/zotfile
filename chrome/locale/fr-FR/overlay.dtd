@@ -16,3 +16,5 @@
 <!ENTITY change-subfolders "Modifier les sous-dossiers...">
 <!ENTITY add-and-delete-subfolders "Ajouter et supprimer les sous-dossiers au menu.">
 <!ENTITY zotfile-options.label "Préférences de ZotFile ...">
+<!ENTITY saved-search-all "Show Attachments from all Subfolders">
+<!ENTITY saved-search-restrict "Restrict Saved Search to Subfolder">

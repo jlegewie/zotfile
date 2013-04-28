@@ -16,3 +16,5 @@
 <!ENTITY change-subfolders "Change subfolders...">
 <!ENTITY add-and-delete-subfolders "Add and delete subfolders to Menu.">
 <!ENTITY zotfile-options.label "ZotFile Preferences...">
+<!ENTITY saved-search-all "Show Attachments from all Subfolders">
+<!ENTITY saved-search-restrict "Restrict Saved Search to Subfolder">

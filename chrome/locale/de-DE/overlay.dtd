@@ -16,3 +16,5 @@
 <!ENTITY change-subfolders "Unterordner ändern...">
 <!ENTITY add-and-delete-subfolders "Menü-Unterordner hinzufügen oder löschen.">
 <!ENTITY zotfile-options.label "ZotFile Einstellungen...">
+<!ENTITY saved-search-all "Zeige Anhänge aus allen Unterordnern">
+<!ENTITY saved-search-restrict "Begrenze gespeicherte Suche auf Unterordner">

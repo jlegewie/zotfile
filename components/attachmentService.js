@@ -107,7 +107,7 @@ zotfileProtocol.prototype = {
               zz.runProcess('/usr/bin/evince', ['-p', page, path]);
             }
             else {
-              zz.infoWindow('Zotfile', 'Zotfile is unable to open the pdf file. Please set the option manually ("pdfExtraction.openPdfLinux" in about:config to something like "/usr/bin/okular -p %(page) %(path)")')
+              zz.infoWindow('Zotfile', zz.ZFgetString('general.open.pdf'));
             }
           }
         }
@@ -121,7 +121,7 @@ zotfileProtocol.prototype = {
               });
           // run process
           var ex = zz.runProcess(cmd[0], cmd.slice(1));
-          if(ex==-1) zz.infoWindow('Zotfile', 'Zotfile is unable to open the pdf file. Please set the option manually ("pdfExtraction.openPdfLinux" in about:config to something like "/usr/bin/okular -p %(page) %(path)")')
+          if(ex==-1) zz.infoWindow('Zotfile', zz.ZFgetString('general.open.pdf'));
         }
       }
     }
