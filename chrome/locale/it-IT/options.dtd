@@ -25,7 +25,7 @@
 <!ENTITY base-folder "Cartella Origine">
 <!ENTITY show-folder "Mostra Cartella">
 <!ENTITY dropbox "(DropBox o cartella alternativa che si sincronizza con l'applicazione di lettura sul tuo tablet)">
-<!ENTITY subfolders "Suttocartelle">
+<!ENTITY subfolders "Sottocartelle">
 <!ENTITY no-subfolders "Nessuna sottocartella">
 <!ENTITY create-subfolders "Creare sottocartelle da raccolte Zotero">
 <!ENTITY custom-subfolders "Sottocartelle Utente">
