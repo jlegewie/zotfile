@@ -36,7 +36,7 @@
 <!ENTITY rename-when-sent-to-tablet "Renomina i file quando sono inviati al tablet">
 <!ENTITY save-annotated-file "Salva con un suffisso la copia del file annotato ">
 <!ENTITY tablet-copy-information "Per impostazione predefinita, l'allegato scaricato dal tablet sostituisce il file salvato in Zotero. Quando questa opzione è abilitata, zotfile invece crea una copia del file con un suffisso specificato e aggiunge questo file come allegato aggiuntivo a Zotero.">
-<!ENTITY automatically-extract-annotations "Estrai automaticamente le annotazioni quando scarici i PDF dal tablet">
+<!ENTITY automatically-extract-annotations "Estrai automaticamente le annotazioni quando scarichi i PDF dal tablet">
 <!ENTITY preview-renaming-rules "Anteprima delle Regole di Ridenominazione Attuali">
 <!ENTITY update "Aggiornamento">
 <!ENTITY renaming-format "Formato di Ridenominazione">
