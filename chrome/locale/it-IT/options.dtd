@@ -10,7 +10,7 @@
 <!ENTITY custom-source-folder "Personalizza:"> 
 <!ENTITY choose "Scegli..."> 
 <!ENTITY location-of-files "Posizione dei File"> 
-<!ENTITY target-location-desc "Zotfile può spostare allegati nuovi e esistenti in nuove posizioni. E' possibile conservare una copia degli allegati in Zotero, permettendo la sincronizzazione dei file con il server di Zotero, o di spostare il file in una cartella definita dall'utente e collegarsi a questa posizione da Zotero">
+<!ENTITY target-location-desc "Zotfile può spostare allegati nuovi o esistenti in nuove posizioni. E' possibile conservare una copia degli allegati in Zotero, permettendo la sincronizzazione dei file con il server di Zotero, o di spostare il file in una cartella definita dall'utente e collegarsi a questa posizione da Zotero">
 <!ENTITY attach-stored-copy "Allegare copia del file"> 
 <!ENTITY custom-location "Posizione definita dall'utente:"> 
 <!ENTITY use-subfolder "Utilizzare sottocartella definita da"> 
