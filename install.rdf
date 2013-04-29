@@ -57,7 +57,7 @@
      <Description>
 	<em:locale>it-IT</em:locale>
 	<em:name>ZotFile</em:name>
-         <em:description> Un plugin di Zotero per gestire i tuoi allegati: automaticamente rinomina, sposta e allega PDF (o altri file) ad oggetti di Zotero, sincronizza i PDF dalla tua libreria di Zotero al tuo lettore PDF (mobile) (tipo un iPad, un tablet Android, ecc.), ed estrare le annotazioni ai PDF.</em:description>
+         <em:description> Un plugin di Zotero per gestire i tuoi allegati: automaticamente rinomina, sposta e allega PDF (o altri file) ad oggetti di Zotero, sincronizza i PDF dalla tua libreria di Zotero al tuo lettore PDF portatile (tipo un iPad, un tablet Android, ecc.), ed estrare le annotazioni ai PDF.</em:description>
       </Description>
     </em:localized>
     <em:creator>Joscha Legewie</em:creator>
