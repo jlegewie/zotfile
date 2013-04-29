@@ -396,7 +396,9 @@ Zotero.ZotFile = {
                                     // ask user if item has other attachments
                                     if(auto_rename==3) {
                                         function checkAtt (att) {
-                                            return att.isImportedAttachment() || att.attachmentLinkMode==Zotero.Attachments.LINK_MODE_LINKED_FILE;                                            
+                                            return (att.isImportedAttachment() || 
+                                                att.attachmentLinkMode==Zotero.Attachments.LINK_MODE_LINKED_FILE) &&
+                                                zz.checkFileType(att.getFile());
                                         }
                                         var atts = Zotero.Items.get(parent.getAttachments()).filter(checkAtt);
                                         
@@ -1355,17 +1357,11 @@ Zotero.ZotFile = {
     
     checkFileType: function (file) {
         if(!this.prefs.getBoolPref("useFileTypes")) return(true);
-        
         // check
-        var filetype=this.getFiletype(file.leafName);
-    
-        var type=filetype.search(new RegExp(this.prefs.getCharPref("filetypes").replace(/,/gi,"|")));
-        if (type>=0) {
-        return(true);
-        }
-        else {
-            return(false);
-        }
+        var filetype = this.getFiletype(file.leafName),
+            regex = this.prefs.getCharPref("filetypes").replace(/,/gi,"|");
+        // return value
+        return filetype.search(new RegExp(regex))>=0 ? true : false;
     },
 
     completePath: function(location,filename) {
