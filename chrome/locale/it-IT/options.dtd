@@ -19,7 +19,7 @@
 <!ENTITY zotfile-website "sito ZotFile"> 
 <!ENTITY consider-donation "Se ritieni che questo componente sia utile, perfavore considera l'opportunità di fare un ">
 <!ENTITY donation "donazione">
-<!ENTITY tablet-desc "ZotFile può semplificare il processo di lettura e di annotazione dei tuoi allegati Zotero su un iPad o tablet Android con un'app di annotazione pdf. Zotfile invia e scarica i file pdf dal tablet, li rinomina e li ordina in sottocartelle in modo che si possano trovare, ed estrae le annotazioni e il testo evidenziato in una nota di Zotero.">
+<!ENTITY tablet-desc "ZotFile può semplificare il processo di lettura e di annotazione dei tuoi allegati Zotero su un iPad o tablet Android con un'app di annotazione pdf. Zotfile invia e scarica i file pdf dal tablet, li rinomina e li ordina in sottocartelle in modo che si possano trovare ed estrarre le annotazioni e il testo evidenziato in una nota di Zotero.">
 <!ENTITY send-get-from-tablet "Usa ZotFile per inviare e scaricare i file dal tablet">
 <!ENTITY location-on-tablet "Posizione dei File sul Tablet">
 <!ENTITY base-folder "Cartella Origine">
