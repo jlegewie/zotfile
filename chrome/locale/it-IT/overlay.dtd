@@ -15,6 +15,6 @@
 <!ENTITY send-to-subfolder-on-tablet "Invia la Sottocartella al Tablet">
 <!ENTITY change-subfolders "Cambia sottocartella...">
 <!ENTITY add-and-delete-subfolders "Aggiungi e cancella sottocartella al Menu.">
-<!ENTITY zotfile-options.label "Preferenze ZotFile...">
+<!ENTITY zotfile-options.label "Impostazioni ZotFile...">
 <!ENTITY saved-search-all "Mostra Allegati di tutte le Sottocartelle">
 <!ENTITY saved-search-restrict "Limita Ricerca Salvata alla Sottocartella">
