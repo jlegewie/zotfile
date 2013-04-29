@@ -3,7 +3,7 @@
 <!ENTITY zotfile-manage-attachments.label "Gestisci Allegati">
 <!ENTITY warning.label "Attenzione">
 <!ENTITY renameSelectedAttachments.label "Rinomina Allegati">
-<!ENTITY renameSelectedAttachments.tooltiptext "Sposta e rinomina l'allegato dall'ogetto selezionato in Zotero">
+<!ENTITY renameSelectedAttachments.tooltiptext "Sposta e rinomina l'allegato dall'oggetto selezionato in Zotero">
 <!ENTITY extract-annotations.label "Estrarre Annotazioni">
 <!ENTITY extract-annotations.tooltiptext "Estrarre Annotazioni e Testo Evidenziato dal file pdf.">
 <!ENTITY send-to-tablet "Invia al Tablet">
