@@ -11,6 +11,7 @@
 // Zotero support of links in notes:
 // https://forums.zotero.org/discussion/15186/clickable-links-in-notes/
 // https://forums.zotero.org/discussion/25832/note-hyperlinks-in-standalone/
+// https://github.com/zotero/zotero/pull/313/files
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
