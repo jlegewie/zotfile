@@ -9,3 +9,4 @@ contract @mozilla.org/network/protocol;1?name=zotfile {1c32a2c0-ac5e-11e2-9e96-0
 locale zotfile de-DE chrome/locale/de-DE/
 locale zotfile en-US chrome/locale/en-US/
 locale zotfile fr-FR chrome/locale/fr-FR/
+locale zotfile it-IT chrome/locale/it-IT/

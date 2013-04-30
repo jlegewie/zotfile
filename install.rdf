@@ -53,6 +53,13 @@
           <em:description>Un module complémentaire de Zotero pour gérer vos pièces jointes: renommer automatiquement, déplacer, et joindre des PDFs (ou d'autres fichiers) aux documents Zotero, synchroniser les PDFs depuis votre bibliothèque Zotero vers votre lecteur PDF mobile (par ex.: un iPad, une tablette Android, etc.) et extraire les annotations de vos PDFs.</em:description>
       </Description>
     </em:localized>
+      <em:localized>
+     <Description>
+	<em:locale>it-IT</em:locale>
+	<em:name>ZotFile</em:name>
+         <em:description> Un plugin di Zotero per gestire i tuoi allegati: automaticamente rinomina, sposta e allega PDF (o altri file) ad oggetti di Zotero, sincronizza i PDF dalla tua libreria di Zotero al tuo lettore PDF portatile (tipo un iPad, un tablet Android, ecc.), ed estrare le annotazioni ai PDF.</em:description>
+      </Description>
+    </em:localized>
     <em:creator>Joscha Legewie</em:creator>
     <em:homepageURL>http://www.jlegewie.com/zotfile.html</em:homepageURL>
     <em:optionsURL>chrome://zotfile/content/options.xul</em:optionsURL>
