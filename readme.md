@@ -44,6 +44,7 @@ Contributions preferably through pull requests are welcome!
 
     The new version includes two major changes that allow you to work with colored tags. First, zotfile now also tags the parent item when an attachment is send to the tablet. As a result, you can easily see which items are on the tablet and also which items have been modified. Second, using the keys associated with colored tags, you can now send attachments to the tablet and get them back with a simple keystroke. Note that the two tablet tags (`_tablet` and `_tablet_modified`) behave like one tag for key presses: pressing the key for either of the two tags *always* sends attachments to the tablet or gets them back. An attachment, for example, might only have the `_tablet_modified` tag because it was modified but pressing the key for the tablet tag `_tablet` still removes the attachment from the tablet and therefore *does not* assign the `_tablet` tag. To use these features, simply assign colors to the two tablet tags (`_tablet` and `_tablet_modified`).
 
+- Italian localization (thanks to Roberto Caviglia)
 - Remove empty sub-folders when getting files from tablet
 - Fix alert window (headline was missing in Zotero 4)
 - Fix automatic renaming option "Only ask if..."
