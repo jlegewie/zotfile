@@ -58,7 +58,7 @@
 <!ENTITY extract-annotations-and-highlighted-text "ZotFile estrae annotazioni e testo evidenziato dai tuoi file pdf.">
 <!ENTITY extraction-method "Metodo di Estrazione">
 <!ENTITY use-pdf-js "Uilizza pdf.js per estrarre le annotazioni">
-<!ENTITY methods-to-extract-annotations "ZotFile supporta due metodi di estrazione delle annotazioni dai file pdf. Lo strumento basato su pdf.js funziona su tutte le piattaforme e lavora direttamente in zotero. Lo strumento basato su poppler funziona solamente con OS Mac e richiede un download separato. Attualmente, pdf.js risulta più affodabile e dovrebbe essere lo strumento predefinito nella maggior parte dei casi. Lo strumento basato su poppler, tuttavia, è più veloce e potrebbe gestire alcuni standard pdf che non sono ancora supportati da pdf.js.">
+<!ENTITY methods-to-extract-annotations "ZotFile supporta due metodi di estrazione delle annotazioni dai file pdf. Lo strumento basato su pdf.js funziona su tutte le piattaforme e lavora direttamente in zotero. Lo strumento basato su poppler funziona solamente con OS Mac e richiede un download separato. Attualmente, pdf.js risulta più affidabile e dovrebbe essere lo strumento predefinito nella maggior parte dei casi. Lo strumento basato su poppler, tuttavia, è più veloce e potrebbe gestire alcuni standard pdf che non sono ancora supportati da pdf.js.">
 <!ENTITY use-poppler "Utilizza poppler per estrarre le annotazioni">
 <!ENTITY add-full-citation "Aggiungi nella nota la citazione completa del testo in blocchi di testo evidenziati">
 <!ENTITY use-article-book-chapter-page "Utilizza l'articolo attuale o la pagina di libro per il blocco testo evidenziato">
