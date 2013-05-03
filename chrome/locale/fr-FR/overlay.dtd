@@ -15,8 +15,8 @@
 <!ENTITY send-to-subfolder-on-tablet "Envoyer au sous-dossier sur la tablette">
 <!ENTITY change-subfolders "Modifier les sous-dossiers...">
 <!ENTITY add-and-delete-subfolders "Ajouter et supprimer les sous-dossiers au menu.">
-<!ENTITY zotfile-options.label "Préférences de ZotFile ...">
-<!ENTITY saved-search-all "Show Attachments from all Subfolders">
-<!ENTITY saved-search-restrict "Restrict Saved Search to Subfolder">
-<!ENTITY restrict-subfolder "Restrict to subfolder...">
-<!ENTITY restrict-basefolder "Unfiled Attachments">
+<!ENTITY zotfile-options.label "Préférences de ZotFile...">
+<!ENTITY saved-search-all "Montrer les pièces jointes de tous les sous-dossiers">
+<!ENTITY saved-search-restrict "Restreindre la recherche enregistrée au sous-dossier">
+<!ENTITY restrict-subfolder "Restreindre au sous-dossier...">
+<!ENTITY restrict-basefolder "Pièces jointes non classées">
