@@ -3,6 +3,7 @@ if (!Zotero.ZotFile) {
 	var zotfileLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
 					.getService(Components.interfaces.mozIJSSubScriptLoader);
 	zotfileLoader.loadSubScript("chrome://zotfile/content/zotfile.js");
+	zotfileLoader.loadSubScript("chrome://zotfile/content/openPDF-protocol-handler.js");
 }
 
 window.addEventListener('load', function(e) {
@@ -18,4 +19,3 @@ window.addEventListener('load', function(e) {
 		window.ZoteroPane.document.getElementById('zotero-collections-tree').addEventListener('click', Zotero.ZotFile.updateModifiedAttachmentsSearch, false);
 	}
 }, false);
-

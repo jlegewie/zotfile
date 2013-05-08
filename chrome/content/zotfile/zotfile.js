@@ -2833,7 +2833,7 @@ Zotero.ZotFile = {
                     cite=Zotero.ZotFile.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ");
                 // get uri
                 var lib = att.libraryID===null ? 0 : att.libraryID;
-                var uri = 'zotfile://open/' + lib + '_' + att.key + '/' + anno.page;                
+                var uri = 'zotero://open-pdf/' + lib + '_' + att.key + '/' + anno.page;                
 
                 // add to note text pdfExtractionNoteRemoveHtmlNote
                 if(anno.content && anno.content != "" &&
