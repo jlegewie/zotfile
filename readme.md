@@ -1,4 +1,4 @@
-# ZotFile: Advanced PDF handling for Zotero
+# ZotFile: Advanced PDF management for Zotero
 ### Joscha Legewie
 
 Zotfile is a Zotero plugin to manage your attachments: automatically rename, move, and attach PDFs (or other files) to Zotero items, sync PDFs from your Zotero library to your (mobile) PDF reader (e.g. an iPad, Android tablet, etc.) and extract annotations from PDF files.
