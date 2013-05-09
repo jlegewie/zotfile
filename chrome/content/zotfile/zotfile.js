@@ -64,6 +64,10 @@ Zotero.ZotFile = {
         // - transfer project folder preferences to JSON format
         if(this.prefs.getCharPref("version")!=="" && currentVersion.indexOf('3')==0 &&
             !this.prefs.getBoolPref("zotfile3update")) {
+
+            // show change log
+            if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
+            if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
             
             // change tablet tags
             var atts = this.getAttachmentsOnTablet();
