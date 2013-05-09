@@ -6,7 +6,7 @@ Zotfile is a Zotero plugin to manage your attachments: automatically rename, mov
 Detailed information are available from the [zotfile website](http://www.jlegewie.com/zotfile.html).
 
 ## Installation
-The currently released version (2.x) is available [here](https://addons.mozilla.org/en-US/firefox/addon/zotfile/).
+The currently released version (3.x) is available [here](https://addons.mozilla.org/en-US/firefox/addon/zotfile/).
 
 To install the development version on github:
 
@@ -18,6 +18,10 @@ To install the development version on github:
 - rename the file to .xpi
 - For zotero firefox: drag & drop on firefox
 - For zotero standalone: In Zotero Standalone go to 'Tools->Add-ons->Tools for all Add-ons (the small, drop-down wheel menu next to the 'Search all Add-ons' box)->Install Add-on From File' and pick the .xpi file.
+
+## Extraction of PDF Annotations
+
+Zotfile can extracted annotations and highlighted text from many PDF files. But it will never be able to handle all files. If you can not copy & paste meaningful text from the file in your pdf viewer (open your pdf viewer (not the browser plugin), select text, copy and paste it somewhere), zotfile won't be able to extract the highlighted text either. If you can, there is a chance that future versions of zotfile will solve the problem. In general, these files depend on the pdf standards supported by pdf.js, which is the pdf library used by zotfile to extract annotations. 
 
 ## License
 The source code is released under GNU General Public License, version 3.0
@@ -42,7 +46,8 @@ Contributions preferably through pull requests are welcome!
 
 - **Tablet feature: Support of colored tags in Zotero 4**
 
-    The new version includes two major changes that allow you to work with colored tags. First, zotfile now also tags the parent item when an attachment is send to the tablet. As a result, you can easily see which items are on the tablet and also which items have been modified. Second, using the keys associated with colored tags, you can now send attachments to the tablet and get them back with a simple keystroke. Note that the two tablet tags (`_tablet` and `_tablet_modified`) behave like one tag for key presses: pressing the key for either of the two tags *always* sends attachments to the tablet or gets them back. An attachment, for example, might only have the `_tablet_modified` tag because it was modified but pressing the key for the tablet tag `_tablet` still removes the attachment from the tablet and therefore *does not* assign the `_tablet` tag. To use these features, simply assign colors to the two tablet tags (`_tablet` and `_tablet_modified`).
+    The new version also tags the parent item when an attachment is send to the tablet so that you can easily see which items are on the tablet. Simply assign colors to the two tablet tags (`_tablet` and `_tablet_modified`). But DO NOT manually add the tag to items or attachments (also not using the keys for colored tags).
+    <!-- The new version includes two major changes that allow you to work with colored tags. First, zotfile now also tags the parent item when an attachment is send to the tablet. As a result, you can easily see which items are on the tablet and also which items have been modified. Second, using the keys associated with colored tags, you can now send attachments to the tablet and get them back with a simple keystroke. Note that the two tablet tags (`_tablet` and `_tablet_modified`) behave like one tag for key presses: pressing the key for either of the two tags *always* sends attachments to the tablet or gets them back. An attachment, for example, might only have the `_tablet_modified` tag because it was modified but pressing the key for the tablet tag `_tablet` still removes the attachment from the tablet and therefore *does not* assign the `_tablet` tag. To use these features, simply assign colors to the two tablet tags (`_tablet` and `_tablet_modified`). -->
 
 - Italian localization (thanks to Roberto Caviglia)
 - Remove empty sub-folders when getting files from tablet
