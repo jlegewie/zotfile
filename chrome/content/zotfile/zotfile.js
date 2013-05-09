@@ -2801,7 +2801,7 @@ Zotero.ZotFile = {
             // set note title
             var note="<b>" + Zotero.ZotFile.ZFgetString('extraction.noteTitle') + " (" + date_str;
             if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler")) note += ", " + method;
-            note += ")</b><br><br>";
+            note += ")</b>";
 
             // get html tags for notes and highlights
             var htmlTagNoteStart=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.NoteHtmlTagStart");
@@ -2838,7 +2838,7 @@ Zotero.ZotFile = {
                 // add to note text pdfExtractionNoteRemoveHtmlNote
                 if(anno.content && anno.content != "" &&
                     (!anno.markup || this.strDistance(anno.content,anno.markup)>0.15 )) {
-                    var content = anno.content.replace(/(\r\n|\n|\r)/gm,"<br/>");
+                    var content = anno.content.replace(/(\r\n|\n|\r)/gm,"<br>");
                     note += Zotero.ZotFile.str_format('<p>%(tagStart)%(content)  (<a href="%(uri)">note on p.%(page)</a>)%(tagEnd)</p><br>', {'content':content,'page': page, 'tagStart': htmlTagNoteStart, 'tagEnd': htmlTagNoteEnd,'uri':uri});
                 }
 
