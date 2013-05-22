@@ -21,7 +21,7 @@ To install the development version on github:
 
 ## Extraction of PDF Annotations
 
-Zotfile can extracted annotations and highlighted text from many PDF files. But it will never be able to handle all files. If you can not copy & paste meaningful text from the file in your pdf viewer (open your pdf viewer (not the browser plugin), select text, copy and paste it somewhere), zotfile won't be able to extract the highlighted text either. If you can, there is a chance that future versions of zotfile will solve the problem. In general, these files depend on the pdf standards supported by pdf.js, which is the pdf library used by zotfile to extract annotations. 
+Zotfile can extracted annotations and highlighted text from many PDF files. But it will never be able to handle all files. If you can not copy & paste meaningful text from the file in your pdf viewer (open your pdf viewer (not the browser plugin), select text, copy and paste it somewhere), zotfile won't be able to extract the highlighted text either. If you can, there is a chance that future versions of zotfile will solve the problem. In general, these files depend on the pdf standards supported by pdf.js, which is the pdf library used by zotfile to extract annotations.
 
 ## License
 The source code is released under GNU General Public License, version 3.0
@@ -36,7 +36,7 @@ Contributions preferably through pull requests are welcome!
 
     The extraction of pdf annotations using pdf.js works much better now! Zotfile uses a modified version of the updated [pdf.js](https://github.com/mozilla/pdf.js) library ([here](https://github.com/jlegewie/pdf.js) is the fork). The new version supports more pdf standards, detects spaces more precisely, sorts annotations in the correct order, and future updates to new versions of pdf.js are relatively easy. There are still  pdfs that won't work though! Some pdf standards are not yet supported and if you can not copy & paste text from the pdf file using your pdf viewer (e.g. Preview), it's unlikely that zotfile can help.
 
-- **Goto to annotation in pdf**
+- **Goto annotation in pdf**
 
     The extracted annotations now include a link that opens the pdf file on the corresponding page. For the extracted annotation `"This is my text" (zotfile 2013: 4)`, `zotfile 2013: 4` is a link that opens the pdf on the page with the annotation. Currently, this feature only works from reports (right-click on item and select `generate report`) but future version of Zotero might be able to open the links directly from the note (see discussion [here](https://forums.zotero.org/discussion/15186/clickable-links-in-notes/) and [here](https://forums.zotero.org/discussion/25832/note-hyperlinks-in-standalone/))
 
