@@ -5,7 +5,7 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>zotfile@columbia.edu</em:id>
     <em:name>ZotFile</em:name>
-    <em:version>3.0b1</em:version>
+    <em:version>3.0</em:version>
     <em:type>2</em:type>
    
     <!-- Target Application this extension can install into, 
