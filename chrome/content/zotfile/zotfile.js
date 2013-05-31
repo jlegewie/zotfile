@@ -2018,12 +2018,16 @@ Zotero.ZotFile = {
         if(which>0) searches.forEach(function(search) {
             search.addCondition('note', 'contains', subfolders[which-1].path);
             search.save();
+            var win = this.wm.getMostRecentWindow("navigator:browser");
+            win.ZoteroPane.onCollectionSelected();
         });
         // restrict to unfiled items (basefolder)
         if(which==0) {
             searches.forEach(function(search) {
                 search.addCondition('note', 'contains', 'projectFolder{}');
                 search.save();
+                var win = this.wm.getMostRecentWindow("navigator:browser");
+                win.ZoteroPane.onCollectionSelected();
             });
         }
     },
