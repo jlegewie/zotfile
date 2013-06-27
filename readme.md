@@ -10,14 +10,18 @@ The currently released version (3.x) is available [here](https://addons.mozilla.
 
 To install the development version on github:
 
-- download .zip file from github
-- extract .zip file
-- recreate .zip file containing all the files at the top level, i.e.,
-  install.rdf and the chrome directory need to be at the root of the zip file
+1. download `.zip` file from github
+2. extract `.zip` file
+3. recreate `.zip` file containing all the files at the top level, i.e.,
+  install.rdf and the chrome directory need to be at the root of the .zip file
   and not under zotfile/
-- rename the file to .xpi
-- For zotero firefox: drag & drop on firefox
-- For zotero standalone: In Zotero Standalone go to 'Tools->Add-ons->Tools for all Add-ons (the small, drop-down wheel menu next to the 'Search all Add-ons' box)->Install Add-on From File' and pick the .xpi file.
+4. rename the file to `.xpi`
+5. Install
+  - For zotero firefox: drag & drop on firefox
+  - For zotero standalone: In Zotero Standalone go to 'Tools->Add-ons->Tools for all Add-ons (the small, drop-down wheel menu next to the 'Search all Add-ons' box)->Install Add-on From File' and pick the .xpi file.
+
+For Linux, Mac OS X or Cygwin users, there is a `Makefile` which takes care of creating the `.xpi` file.
+Simply run `make` instead of steps 3 and 4 above.
 
 ## Extraction of PDF Annotations
 
