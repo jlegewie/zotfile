@@ -1240,7 +1240,7 @@ Zotero.ZotFile = {
         table["%T"] = item_type_string;
         // pages
         table["%f"] = zitem.getField("pages");
-        // pages
+        // extra
         table["%x"] = zitem.getField("extra");
         // return
         return table;
