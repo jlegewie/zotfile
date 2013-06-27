@@ -1,4 +1,4 @@
-all: zotero.xpi Makefile.in
+all: Makefile.in
 
 -include Makefile.in
 
@@ -9,7 +9,7 @@ zotero.xpi: FORCE
 	zip -r $@ chrome chrome.manifest defaults install.rdf
 
 zotero-%-fx.xpi: zotero.xpi
-	cp $< $@
+	mv $< $@
 
 Makefile.in: install.rdf
 	echo "all: zotero-${RELEASE}-fx.xpi" > Makefile.in
