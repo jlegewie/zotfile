@@ -2004,7 +2004,11 @@ Zotero.ZotFile = {
         var subfolders = JSON.parse(this.prefs.getCharPref("tablet.subfolders"));
         // get tablet searches
         var search_filter = function(search) {
-            return search.getSearchConditions().some(function(cond) {return cond.condition=="tag" && cond.value.indexOf(Zotero.ZotFile.tag) !== -1; });
+            return search.getSearchConditions().some(function(cond) {
+                return cond.condition=="tag" &&
+                    cond.operator != "isNot" &&
+                    cond.value.indexOf(Zotero.ZotFile.tag) !== -1;
+                });
         };
         var searches=Zotero.Searches.getAll().filter(search_filter);
         // remove all note related conditions
@@ -2020,7 +2024,7 @@ Zotero.ZotFile = {
         if(which>0) searches.forEach(function(search) {
             search.addCondition('note', 'contains', subfolders[which-1].path);
             search.save();
-            var win = this.wm.getMostRecentWindow("navigator:browser");
+            var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser");
             win.ZoteroPane.onCollectionSelected();
         });
         // restrict to unfiled items (basefolder)
