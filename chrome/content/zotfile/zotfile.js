@@ -2111,8 +2111,10 @@ Zotero.ZotFile = {
         var projectFolder="";
         if (idx_subfolder!=-1) {
             var subfolders = JSON.parse(this.prefs.getCharPref("tablet.subfolders"));
-            if(this.prefs.getIntPref("tablet.projectFolders")==1) projectFolder = this.projectPath[parseInt(idx_subfolder,10)-1];
-            if(this.prefs.getIntPref("tablet.projectFolders")==2) projectFolder = subfolders[idx_subfolder].path;
+            if(this.prefs.getIntPref("tablet.projectFolders")==1)
+                projectFolder = this.projectPath[idx_subfolder];
+            if(this.prefs.getIntPref("tablet.projectFolders")==2)
+                projectFolder = subfolders[idx_subfolder].path;
         }
 
         // Check which attachments are already on the reader
