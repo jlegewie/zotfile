@@ -156,6 +156,17 @@ Zotero.ZotFile = {
                         getService(Components.interfaces.nsIPrefService);
             this.prefs = this.prefs.getBranch("extensions.zotfile.");
 
+            // monkey-patch Zotero.Attachments
+            Zotero.Attachments.importFromFile = (function (self, original) {
+              return function (file, sourceItemID, libraryID) {
+                if (self.prefs.getBoolPref("autolink") && Zotero.Attachments.getBaseDirectoryRelativePath(file.persistentDescriptor).indexOf('attachments:') == 0) {
+                  return Zotero.Attachments.linkFromFile(file, sourceItemID);
+                } else {
+                  return original.apply(this, arguments);
+                }
+              }
+            })(this, Zotero.Attachments.importFromFile);
+
             this.ffPrefs = Components.classes["@mozilla.org/preferences-service;1"].
                         getService(Components.interfaces.nsIPrefService).getBranch("browser.download.");
             // save some preferences

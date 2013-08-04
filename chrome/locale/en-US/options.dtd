@@ -81,3 +81,4 @@
 <!ENTITY add-saved-searches "Add Saved Searches">
 <!ENTITY attachments-on-tablet "Attachments on Tablet">
 <!ENTITY modified-attachments-on-tablet "Modified Attachments on Tablet">
+<!ENTITY link-instead-of-attach "Automatically link to file under base directory when adding instead of adding to repository">
