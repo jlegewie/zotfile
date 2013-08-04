@@ -77,6 +77,8 @@
 				<!--<preference id="pref-zotfile-pdfExtraction-MenuItem" name="extensions.zotfile.pdfExtraction.MenuItem" type="bool"/> -->
 				<preference id="pref-zotfile-pdfExtraction-NoteTruePage" name="extensions.zotfile.pdfExtraction.NoteTruePage" type="bool"/> 
 				<preference id="pref-zotfile-pdfExtraction-NoteFullCite" name="extensions.zotfile.pdfExtraction.NoteFullCite" type="bool"/> 
+
+				<preference id="pref-zotfile-autolink" name="extensions.zotfile.autolink" type="bool"/>                                                                                              
 				
 				
 				
@@ -370,6 +372,7 @@
 							<button id="id-zotfile-add-search" label="&attachments-on-tablet;" oncommand="Zotero.ZotFile.createSavedSearch('tablet');"/>
 							<button id="id-zotfile-add-search2" label="&modified-attachments-on-tablet;" oncommand="Zotero.ZotFile.createSavedSearch('tablet_modified');"/>
 							</hbox>
+						  <checkbox id="id-zotfile-autolink" label="&link-instead-of-attach;" preference="pref-zotfile-autolink"/>
 						
 						</groupbox>  																													
 						
