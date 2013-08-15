@@ -7,9 +7,9 @@
     <em:name>ZotFile</em:name>
     <em:version>3.0.2</em:version>
     <em:type>2</em:type>
-   
-    <!-- Target Application this extension can install into, 
-         with minimum and maximum supported versions. --> 
+
+    <!-- Target Application this extension can install into,
+         with minimum and maximum supported versions. -->
     <em:targetApplication>
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
@@ -23,14 +23,14 @@
 			<em:minVersion>3.0b1</em:minVersion>
 			<em:maxVersion>4.*</em:maxVersion>
 		</Description>
-	</em:targetApplication> 
+	</em:targetApplication>
 	<em:requires>
 	   <Description>
 	     <em:id>zotero@chnm.gmu.edu</em:id>
 	     <em:minVersion>1.*</em:minVersion>
 	     <em:maxVersion>4.*</em:maxVersion>
 	   </Description>
-	 </em:requires>	
+	 </em:requires>
     <!-- Front End MetaData -->
     <em:localized>
       <Description>
@@ -63,5 +63,5 @@
     <em:creator>Joscha Legewie</em:creator>
     <em:homepageURL>http://www.jlegewie.com/zotfile.html</em:homepageURL>
     <em:optionsURL>chrome://zotfile/content/options.xul</em:optionsURL>
-  </Description>      
+  </Description>
 </RDF>
