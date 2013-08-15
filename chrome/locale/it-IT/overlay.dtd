@@ -18,3 +18,5 @@
 <!ENTITY zotfile-options.label "Impostazioni ZotFile...">
 <!ENTITY saved-search-all "Mostra Allegati di tutte le Sottocartelle">
 <!ENTITY saved-search-restrict "Limita Ricerca Saltata alla Sottocartella">
+<!ENTITY restrict-subfolder "Restrict to subfolder...">
+<!ENTITY restrict-basefolder "Unfiled Attachments">
