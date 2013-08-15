@@ -395,7 +395,9 @@ Zotero.ZotFile = {
                                     zz.excludeAutorenameKeys.push(key);
                                     // ask user
                                     if(auto_rename==2) {
-                                        zz.infoWindow(zz.ZFgetString('general.newAttachment'),{lines:["'" + file.leafName + "'"],txt:zz.ZFgetString('renaming.clickMoveRename')},prefs.getIntPref("info_window_duration_clickable"),on_confirm);
+                                        zz.infoWindow(zz.ZFgetString('general.newAttachment'),
+                                            {lines:["'" + file.leafName + "'"],txt:zz.ZFgetString('renaming.clickMoveRename')},
+                                            prefs.getIntPref("info_window_duration_clickable"),on_confirm);
                                     }
                                     // ask user if item has other attachments
                                     if(auto_rename==3) {
