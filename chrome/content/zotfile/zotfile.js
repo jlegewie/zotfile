@@ -152,9 +152,9 @@ Zotero.ZotFile = {
         // only do this stuff for the first run
         if(this.prefs===null) {
             //get preference objects
-            this.prefs = Components.classes["@mozilla.org/preferences-service;1"].
-                        getService(Components.interfaces.nsIPrefService);
-            this.prefs = this.prefs.getBranch("extensions.zotfile.");
+            this.prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                        .getService(Components.interfaces.nsIPrefService)
+                        .getBranch("extensions.zotfile.");
 
             this.ffPrefs = Components.classes["@mozilla.org/preferences-service;1"].
                         getService(Components.interfaces.nsIPrefService).getBranch("browser.download.");
