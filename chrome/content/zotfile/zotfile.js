@@ -734,6 +734,8 @@ Zotero.ZotFile = {
 
     infoWindow: function(main, message, time, callback){
         // default arguments
+        main = typeof main !== 'undefined' ? main : 'title';
+        message = typeof message !== 'undefined' ? message : 'message';
         callback = typeof callback !== 'undefined' ? callback : null;
         time = typeof time !== 'undefined' ? time : 8000;
         // show window
