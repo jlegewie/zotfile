@@ -409,7 +409,9 @@ Zotero.ZotFile = {
                                         var atts = Zotero.Items.get(parent.getAttachments()).filter(checkAtt);
 
                                         if (atts.length>1)
-                                            zz.infoWindow(zz.ZFgetString('general.newAttachment'),{lines:["'" + file.leafName + "'"],txt:zz.ZFgetString('renaming.clickMoveRename')},prefs.getIntPref("info_window_duration_clickable"),on_confirm);
+                                            zz.infoWindow(zz.ZFgetString('general.newAttachment'),
+                                                {lines:["'" + file.leafName + "'"],txt:zz.ZFgetString('renaming.clickMoveRename')},
+                                                prefs.getIntPref("info_window_duration_clickable"),on_confirm);
                                         else
                                             on_confirm();
                                     }
