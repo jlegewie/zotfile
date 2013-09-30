@@ -65,6 +65,9 @@ Zotero.ZotFile = {
         if(this.prefs.getCharPref("version")!=="" && currentVersion.indexOf('3')==0 &&
             !this.prefs.getBoolPref("zotfile3update")) {
 
+            // updated to version 3
+            this.prefs.setBoolPref("zotfile3update", true);
+
             // show change log
             if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
             if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
@@ -104,8 +107,6 @@ Zotero.ZotFile = {
                 }
                 this.prefs.setCharPref("tablet.subfolders",JSON.stringify(subfolders));
             }
-            // updated to version 3
-            this.prefs.setBoolPref("zotfile3update", true);
         }
 
         // add saved search and change tag when upgrading to 2.1
