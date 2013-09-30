@@ -2465,7 +2465,7 @@ Zotero.ZotFile = {
 
     // Rename & Move Existing Attachments
     renameAttachment: function(item, att, rename, import_att, dest_dir, subfolder, subfolderFormat, notification) {
-        var newAttID=null;
+        var newAttID=att.getID();
         // get link mode and item ID
         var linkmode = att.attachmentLinkMode;
         var itemID = item.id;
