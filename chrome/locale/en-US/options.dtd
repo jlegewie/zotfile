@@ -53,6 +53,7 @@
 <!ENTITY truncate-title "Truncate title after . or : or ?">
 <!ENTITY zotfile-truncate_title_max "Maximum length of title">
 <!ENTITY zotfile-truncate_authors "Maximum number of authors">
+<!ENTITY zotfile-number_truncate_authors "Number of authors to display when authors are omitted">
 <!ENTITY zotfile-add_etal "Add suffix when authors are omitted">
 <!ENTITY extract-annotations "Extract Annotations and Highlighted Text from PDF Files">
 <!ENTITY extract-annotations-and-highlighted-text "ZotFile can extract annotations and highlighted text from your pdf attachments.">

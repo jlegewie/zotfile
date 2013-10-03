@@ -53,6 +53,7 @@
 <!ENTITY truncate-title "Tronquer le titre après . ou : ou ?">
 <!ENTITY zotfile-truncate_title_max "Longueur maximale du titre">
 <!ENTITY zotfile-truncate_authors "Nombre maximum d'auteurs">
+<!ENTITY zotfile-number_truncate_authors "Combien d'auteurs � afficher lorsque les auteurs sont omises">
 <!ENTITY zotfile-add_etal "Ajouter un suffixe quand les auteurs sont omis">
 <!ENTITY extract-annotations "Extraire les annotations et le texte surligné des fichiers PDF">
 <!ENTITY extract-annotations-and-highlighted-text "ZotFile peut extraire les annotations et le texte surligné/souligné de vos fichiers PDF dans des notes Zotero.">
