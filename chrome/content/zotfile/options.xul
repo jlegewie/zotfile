@@ -36,7 +36,8 @@
 				<preference id="pref-zotfile-max_titlelength" name="extensions.zotfile.max_titlelength" type="int"/>                                                                                              
 				<preference id="pref-zotfile-max_authors" name="extensions.zotfile.max_authors" type="int"/>                                                                                              								
 				<preference id="pref-zotfile-truncate_authors" name="extensions.zotfile.truncate_authors" type="bool"/>                                                                                              				
-				<preference id="pref-zotfile-add_etal" name="extensions.zotfile.add_etal" type="bool"/>
+				<preference id="pref-zotfile-number_truncate_authors" name="extensions.zotfile.number_truncate_authors" type="int"/>
+                                <preference id="pref-zotfile-add_etal" name="extensions.zotfile.add_etal" type="bool"/>
 				<preference id="pref-zotfile-removeDiacritics" name="extensions.zotfile.removeDiacritics" type="bool"/>                                                                                              
 				<preference id="pref-zotfile-etal" name="extensions.zotfile.etal" type="string"/>   
 				<preference id="pref-zotfile-authors_delimiter" name="extensions.zotfile.authors_delimiter" type="string"/>
@@ -45,7 +46,7 @@
 				<preference id="pref-zotfile-userInput" name="extensions.zotfile.userInput" type="bool"/>   
 				<preference id="pref-zotfile-userInput_Default" name="extensions.zotfile.userInput_Default" type="string"/>   				
 				<preference id="pref-zotfile-replace_blanks" name="extensions.zotfile.replace_blanks" type="bool"/>   
-        <preference id="pref-zotfile-lower_case" name="extensions.zotfile.lower_case" type="bool"/>
+                                <preference id="pref-zotfile-lower_case" name="extensions.zotfile.lower_case" type="bool"/>
         
 				<preference id="pref-zotfile-confirmation" name="extensions.zotfile.confirmation" type="bool"/>                                                                                              				
 				<preference id="pref-zotfile-confirmation_batch_ask" name="extensions.zotfile.confirmation_batch_ask" type="bool"/>
@@ -297,11 +298,17 @@
 									   <checkbox id="id-zotfile-truncate_authors" label="&zotfile-truncate_authors;" preference="pref-zotfile-truncate_authors" oncommand="updatePreferenceWindow('truncate_authors')"/>								
 									   <textbox id="id-zotfile-max_authors" preference="pref-zotfile-max_authors" width="25"/>
 								   </hbox>
+                                                                   <hbox style="margin: 0">
+									   <label value="&zotfile-number_truncate_authors;"/>
+                                                                           <textbox id="id-zotfile-number_truncate_authors" preference="pref-zotfile-number_truncate_authors" width="25"/>
+								   </hbox>
+
 						   		   <hbox style="margin: 0">					
 									   <checkbox id="id-zotfile-add_etal" label="&zotfile-add_etal;" preference="pref-zotfile-add_etal" oncommand="updatePreferenceWindow('etal')"/>
 									   <textbox id="id-zotfile-etal" preference="pref-zotfile-etal" width="50"/>
 								   </hbox>													
-							</groupbox>																		   											                                                                                                                                                                      				    
+						   		   
+                                                        </groupbox>																		   											                                                                                                                                                                      				    
 			   		  </tabpanel>		 
 			
 			

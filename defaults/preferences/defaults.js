@@ -14,6 +14,7 @@ pref("extensions.zotfile.truncate_title_max", true);
 pref("extensions.zotfile.max_titlelength", 80);
 pref("extensions.zotfile.truncate_authors", true);
 pref("extensions.zotfile.max_authors", 2);
+pref("extensions.zotfile.number_truncate_authors", 1);
 pref("extensions.zotfile.add_etal", true);
 pref("extensions.zotfile.etal", " et al");
 pref("extensions.zotfile.authors_delimiter", "_");
