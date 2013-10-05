@@ -2867,7 +2867,7 @@ Zotero.ZotFile = {
 
                 if(anno.markup && anno.markup != "") {
                     var markup = this.trim(anno.markup)
-                    // translate ligatures (e.g. 'Ô¨?')
+                    // translate ligatures (e.g. 'Ô¨Å')
                         .replace(/\ufb00/g,'ff')
                         .replace(/\ufb01/g,'fi')
                         .replace(/\ufb02/g,'fl')
