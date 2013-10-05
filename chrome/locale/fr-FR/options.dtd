@@ -1,22 +1,22 @@
-﻿<!ENTITY zotfile-preferences "Préférences de ZotFile"> 
-<!ENTITY zotfile-prefpane "Préférences de ZotFile"> 
-<!ENTITY general-settings "Paramètres généraux"> 
-<!ENTITY tablet-settings "Paramètres des tablettes"> 
-<!ENTITY renaming-rules "Règles de renommage"> 
-<!ENTITY advanced-settings "Paramètres avancés"> 
-<!ENTITY attachments-source-folder "Dossier source pour joindre de nouveaux fichiers"> 
-<!ENTITY source-folder-desc "ZotFile peut joindre au document sélectionné dans Zotero le fichier le plus récemment modifié du dossier Téléchargements de Firefox ou de tout autre dossier."> 
-<!ENTITY use-firefox-download-folder "Utiliser le dossier Téléchargements de Firefox"> 
-<!ENTITY custom-source-folder "Personnaliser:"> 
-<!ENTITY choose "Choisir..."> 
-<!ENTITY location-of-files "Emplacement des fichiers"> 
+﻿<!ENTITY zotfile-preferences "Préférences de ZotFile">
+<!ENTITY zotfile-prefpane "Préférences de ZotFile">
+<!ENTITY general-settings "Paramètres généraux">
+<!ENTITY tablet-settings "Paramètres des tablettes">
+<!ENTITY renaming-rules "Règles de renommage">
+<!ENTITY advanced-settings "Paramètres avancés">
+<!ENTITY attachments-source-folder "Dossier source pour joindre de nouveaux fichiers">
+<!ENTITY source-folder-desc "ZotFile peut joindre au document sélectionné dans Zotero le fichier le plus récemment modifié du dossier Téléchargements de Firefox ou de tout autre dossier.">
+<!ENTITY use-firefox-download-folder "Utiliser le dossier Téléchargements de Firefox">
+<!ENTITY custom-source-folder "Personnaliser:">
+<!ENTITY choose "Choisir...">
+<!ENTITY location-of-files "Emplacement des fichiers">
 <!ENTITY target-location-desc "ZotFile peut déplacer les pièces jointes nouvelles et existantes vers différents emplacements. Vous pouvez choisir d'enregistrer une copie de ces fichiers dans Zotero, ce qui vous permet de les synchroniser avec le serveur Zotero, ou bien de les enregistrer dans un dossier personnalisé ce qui aura pour effet de ne joindre qu'un simple lien dans Zotero.">
 <!ENTITY attach-stored-copy "Joindre dans Zotero une copie enregistrée du fichier">
-<!ENTITY custom-location "Dossier personnalisé:"> 
-<!ENTITY use-subfolder "Utiliser le sous-dossier défini par"> 
+<!ENTITY custom-location "Dossier personnalisé:">
+<!ENTITY use-subfolder "Utiliser le sous-dossier défini par">
 <!ENTITY subfolder-information "Les sous-dossiers sont basés sur les métadonnées des documents Zotero. Utilisez &#37;a pour le nom de l'auteur, &#37;y pour l'année, &#37;w pour la revue/l'éditeur, ou &#37;T pour le type de document (consultez le site web de zotfile pour une liste complète). Assurez-vous d'insérer les séparateurs appropriés (/ pour Mac OS et autres systèmes Unix et \ pour Windows).">
-<!ENTITY for-more-information "Pour plus d'information, consultez le "> 
-<!ENTITY zotfile-website "site web de ZotFile"> 
+<!ENTITY for-more-information "Pour plus d'information, consultez le ">
+<!ENTITY zotfile-website "site web de ZotFile">
 <!ENTITY consider-donation "Si vous trouvez ZotFile utile, envisagez s'il vous plaît un ">
 <!ENTITY donation "don">
 <!ENTITY tablet-desc "ZotFile peut simplifier la lecture et l'annotation de vos pièces jointes Zotero sur un iPad ou une tablette Android utilisant une application d'annotation des PDF. Il envoie les PDF et les récupère à partir de la tablette, les renomme et les classe dans des sous-dossiers afin que vous les trouviez, et extrait les annotations et le texte surligné dans une note Zotero.">
@@ -53,7 +53,7 @@
 <!ENTITY truncate-title "Tronquer le titre après . ou : ou ?">
 <!ENTITY zotfile-truncate_title_max "Longueur maximale du titre">
 <!ENTITY zotfile-truncate_authors "Nombre maximum d'auteurs">
-<!ENTITY zotfile-number_truncate_authors "Combien d'auteurs � afficher lorsque les auteurs sont omises">
+<!ENTITY zotfile-number_truncate_authors "Combien d'auteurs afficher lorsque les auteurs sont omises">
 <!ENTITY zotfile-add_etal "Ajouter un suffixe quand les auteurs sont omis">
 <!ENTITY extract-annotations "Extraire les annotations et le texte surligné des fichiers PDF">
 <!ENTITY extract-annotations-and-highlighted-text "ZotFile peut extraire les annotations et le texte surligné/souligné de vos fichiers PDF dans des notes Zotero.">
