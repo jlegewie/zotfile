@@ -1192,7 +1192,7 @@ Zotero.ZotFile = {
         }
         var max_authors = (this.prefs.getBoolPref("truncate_authors")) ? this.prefs.getIntPref("max_authors") : 500;
         if (numauthors <= max_authors) add_etal = false;
-        else numauthors = 1;
+        else numauthors = this.prefs.getIntPref("number_truncate_authors");
         var delimiter = this.prefs.getCharPref("authors_delimiter");
         var j = 0;
         for (i = 0; i < creators.length; ++i) {
@@ -2867,7 +2867,7 @@ Zotero.ZotFile = {
 
                 if(anno.markup && anno.markup != "") {
                     var markup = this.trim(anno.markup)
-                    // translate ligatures (e.g. 'ï¬')
+                    // translate ligatures (e.g. 'ï¬?')
                         .replace(/\ufb00/g,'ff')
                         .replace(/\ufb01/g,'fi')
                         .replace(/\ufb02/g,'fl')
