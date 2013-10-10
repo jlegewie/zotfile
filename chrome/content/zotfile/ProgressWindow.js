@@ -199,9 +199,9 @@ Zotero.ZotFile.ProgressWindow = function(_window){
                 return;
             }
 
-            if (_timeoutID) {
-                _disableTimeout();
-            }
+            // if (_timeoutID) {
+            //     _disableTimeout();
+            // }
 
             if (typeof ms != 'number') {
                 ms = 2500;
@@ -272,7 +272,7 @@ Zotero.ZotFile.ProgressWindow = function(_window){
      */
     function _onMouseOver(e) {
         _mouseWasOver = true;
-        _disableTimeout();
+        //_disableTimeout();
     }
 
 
