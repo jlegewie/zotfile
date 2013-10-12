@@ -262,18 +262,28 @@ Zotero.ZotFile = {
         // compare to last file
         if (file.lastModifiedTime!=zz.lastModifiedFile) {
             var on_confirm = function() {
+                // recognize PDF from metadata
+                var recognizePDF = function(file, item) {
+                    var installed = ZoteroPane_Local.checkPDFConverter();
+                    if (!installed) return;
+                    // create file
+                    if(typeof(file)=='string') file = Zotero.ZotFile.createFile(file);
+                    // attach file
+                    var attID = Zotero.Attachments.importFromFile(file, false, item===null ? null : item.libraryID);
+                    var att = Zotero.Items.get(attID);
+                    // recognize PDF using metadata
+                    var itemRecognizer = new Zotero_RecognizePDF.ItemRecognizer();
+                    itemRecognizer.recognizeItems([att]);
+                }
                 // get selected items
                 var win = zz.wm.getMostRecentWindow("navigator:browser");
                 var items = win.ZoteroPane.getSelectedItems();
                 // continue if nothing is selected
-                if(items.length==0) {
-                    zz.infoWindow(zz.ZFgetString('general.error'),zz.ZFgetString('watchFolder.noRegularItem'));
-                    return(false);
-                }
+                if(items.length==0) recognizePDF(file, null);
                 // get parent if attachment is selected
                 if (items[0].isAttachment()) {
                     var id_parent = items[0].getSource();
-                    if(!id_parent) return(false);
+                    if(!id_parent) recognizePDF(file, items[0]);
                     item = Zotero.Items.get(id_parent);
                 }
                 else {
@@ -290,7 +300,10 @@ Zotero.ZotFile = {
                     file=zz.getLastFileInFolder(source_dir)[0];
                     zz.lastModifiedFile=file.lastModifiedTime;
                 }
-                else zz.infoWindow(zz.ZFgetString('general.error'),zz.ZFgetString('watchFolder.noRegularItem'));
+                else {
+                    recognizePDF(file, item);
+                }
+                // else zz.infoWindow(zz.ZFgetString('general.error'),zz.ZFgetString('watchFolder.noRegularItem'));
             };
             // ask user whether s/he wants to attach and rename the new file
             zz.infoWindow(zz.ZFgetString('watchFolder.newFile'),{lines:["'" + file.leafName + "'"],txt:zz.ZFgetString('watchFolder.clickRename')},zz.prefs.getIntPref("info_window_duration_clickable"),on_confirm);
