@@ -11,7 +11,7 @@ window.addEventListener('load', function(e) {
 	if(window.ZoteroPane) {
 		// attach focus handler for 'zotero-items-tree' element to check folder for changes
 		window.ZoteroPane.document.getElementById('zotero-items-tree').addEventListener('focus', Zotero.ZotFile.watchFolder, false);
-		window.ZoteroPane.document.getElementById('zotero-collections-tree').addEventListener('focus', Zotero.ZotFile.watchFolder, false);
+		// window.ZoteroPane.document.getElementById('zotero-collections-tree').addEventListener('focus', Zotero.ZotFile.watchFolder, false);
 		// add event listener for zotfile menu items
 		window.ZoteroPane.document.getElementById('zotero-itemmenu').addEventListener('popupshowing', Zotero.ZotFile.showMenu, false);
 		// add event listener for zotfile collection menu
