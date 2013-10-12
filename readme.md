@@ -34,6 +34,14 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 3.0.x
+
+- fix problem that small info window does not disappear
+- fix for issue with showing website on every restart
+- fix for issue when adding new attachment
+
+Other small fixes mainly for Italian translation, restriction of saved searches and renaming based on collections.
+
 #### Changes in 3.0
 
 - **Improved extraction of annotation**
