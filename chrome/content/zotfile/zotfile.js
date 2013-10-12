@@ -269,10 +269,10 @@ Zotero.ZotFile = {
                     // create file
                     if(typeof(file)=='string') file = Zotero.ZotFile.createFile(file);
                     // change to library of saved search is selected
+                    var lib = win.ZoteroPane.getSelectedLibraryID();
                     var search = win.ZoteroPane.getSelectedSavedSearch();
-                    if(search) win.ZoteroPane.collectionsView.selectLibrary(null);
+                    if(search) win.ZoteroPane.collectionsView.selectLibrary(lib);
                     // attach file
-                    var lib = ZoteroPane.getSelectedLibraryID();
                     var attID = Zotero.Attachments.importFromFile(file, false, lib);
                     var att = Zotero.Items.get(attID);
                     // add attachment to collection if collection selected
