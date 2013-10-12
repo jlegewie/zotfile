@@ -263,13 +263,14 @@ Zotero.ZotFile = {
         if (file.lastModifiedTime!=zz.lastModifiedFile) {
             var on_confirm = function() {
                 // recognize PDF from metadata
-                var recognizePDF = function(file, item) {
+                var recognizePDF = function(file) {
                     var installed = ZoteroPane_Local.checkPDFConverter();
                     if (!installed) return;
                     // create file
                     if(typeof(file)=='string') file = Zotero.ZotFile.createFile(file);
                     // attach file
-                    var attID = Zotero.Attachments.importFromFile(file, false, item===null ? null : item.libraryID);
+                    var lib = ZoteroPane.getSelectedLibraryID();
+                    var attID = Zotero.Attachments.importFromFile(file, false, lib);
                     var att = Zotero.Items.get(attID);
                     // recognize PDF using metadata
                     var itemRecognizer = new Zotero_RecognizePDF.ItemRecognizer();
@@ -279,11 +280,11 @@ Zotero.ZotFile = {
                 var win = zz.wm.getMostRecentWindow("navigator:browser");
                 var items = win.ZoteroPane.getSelectedItems();
                 // continue if nothing is selected
-                if(items.length==0) recognizePDF(file, null);
+                if(items.length==0) recognizePDF(file);
                 // get parent if attachment is selected
                 if (items[0].isAttachment()) {
                     var id_parent = items[0].getSource();
-                    if(!id_parent) recognizePDF(file, items[0]);
+                    if(!id_parent) recognizePDF(file);
                     item = Zotero.Items.get(id_parent);
                 }
                 else {
@@ -301,7 +302,7 @@ Zotero.ZotFile = {
                     zz.lastModifiedFile=file.lastModifiedTime;
                 }
                 else {
-                    recognizePDF(file, item);
+                    recognizePDF(file);
                 }
                 // else zz.infoWindow(zz.ZFgetString('general.error'),zz.ZFgetString('watchFolder.noRegularItem'));
             };
