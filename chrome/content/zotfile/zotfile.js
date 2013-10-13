@@ -278,6 +278,8 @@ Zotero.ZotFile = {
                     // add attachment to collection if collection selected
                     var collection = win.ZoteroPane.getSelectedCollection();
                     if(collection) collection.addItem(attID);
+                    // select item
+                    win.ZoteroPane.itemsView.selectItems([attID]);
                     // recognize PDF using metadata
                     var itemRecognizer = new Zotero_RecognizePDF.ItemRecognizer();
                     itemRecognizer.recognizeItems([att]);
