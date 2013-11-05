@@ -1205,6 +1205,7 @@ Zotero.ZotFile = {
         else if (item_type === 19) creatorType = [14];
         else if (item_type === 32) creatorType = [21];
         else if (item_type === 27) creatorType = [24];
+        else if (item_type === 16) creatorType = [12];
         var add_etal = this.prefs.getBoolPref("add_etal");
         var author = "", author_lastf="", author_initials="";
         var creators = zitem.getCreators();
