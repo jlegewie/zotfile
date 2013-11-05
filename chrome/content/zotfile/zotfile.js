@@ -283,6 +283,15 @@ Zotero.ZotFile = {
                     // recognize PDF using metadata
                     var itemRecognizer = new Zotero_RecognizePDF.ItemRecognizer();
                     itemRecognizer.recognizeItems([att]);
+                    // rename attachment
+                    /*// itemRecognizer._progressIndicator.value = 100
+                    var test = function() {
+                        Zotero.ZotFile.infoWindow('_progressIndicator','value: ' + itemRecognizer._progressIndicator.value);
+                        // win.ZoteroPane.itemsView.selectItems([att.getID()]);
+                        att.renameAttachmentFile('test.pdf');
+                        // itemRecognizer._items
+                    }
+                    setTimeout(test,2000);*/
                 }
                 // get selected items
                 var win = zz.wm.getMostRecentWindow("navigator:browser");
