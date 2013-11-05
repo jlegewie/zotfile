@@ -297,7 +297,10 @@ Zotero.ZotFile = {
                 var win = zz.wm.getMostRecentWindow("navigator:browser");
                 var items = win.ZoteroPane.getSelectedItems();
                 // continue if nothing is selected
-                if(items.length==0) recognizePDF(file);
+                if(items.length==0) {
+                    recognizePDF(file);
+                    return;
+                }
                 // get parent if attachment is selected
                 if (items[0].isAttachment()) {
                     var id_parent = items[0].getSource();
