@@ -1862,8 +1862,17 @@ Zotero.ZotFile = {
             var content=note.substring(search);
             content=content.substring(content.search("{")+1,content.search("}"));
 
-            // for location tag: replace [BaseFolder] with destination folder
-            if(tagname=="location") content=content.replace("[BaseFolder]",this.prefs.getCharPref("tablet.dest_dir"));
+            // corrections for location tag
+            if(tagname=="location") {
+                // correct file seperator
+                // var unix_file = content[0]=='/' || content[0]=='~';
+                var unix_file = content[0]=='/' || content[0]=='~' || content.indexOf('[BaseFolder]/')==0;
+                if (Zotero.isWin &&  unix_file) content = content.split('/').join('\\');
+                if (Zotero.isMac && !unix_file) content = content.split('\\').join('/');
+                // replace [BaseFolder] with destination folder
+                content = content.replace("[BaseFolder]", this.prefs.getCharPref("tablet.dest_dir"));
+
+            }
 
             return(content);
         }
