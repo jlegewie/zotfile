@@ -34,9 +34,16 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
-#### Changes in 3.0.x
+#### Changes in 3.0.4
 
+- watch folder now adds an attachment and retrieves metadata if no file is selected
+  (change message, change version)
+- Choose the number of authors to display when truncating authors during renaming (thanks to bwiernik)
 - fix problem that small info window does not disappear
+- fix `TypeError: f.exists` error
+
+#### Changes in 3.0.3
+
 - fix for issue with showing website on every restart
 - fix for issue when adding new attachment
 
