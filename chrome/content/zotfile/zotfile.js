@@ -1873,6 +1873,12 @@ Zotero.ZotFile = {
                 if (Zotero.isMac && !unix_file) content = content.split('\\').join('/');
                 // replace [BaseFolder] with destination folder
                 content = content.replace("[BaseFolder]", this.prefs.getCharPref("tablet.dest_dir"));
+                // show infoWindow with location
+                on_click = function() {
+                    Zotero.ZotFile.copy2Clipboard(content);
+                }
+                var valid = this.fileExists(content).toString();
+                this.infoWindow('location',content + ' (' + valid + ')',8000,on_click);
 
             }
 
