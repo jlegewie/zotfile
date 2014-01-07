@@ -1294,6 +1294,19 @@ Zotero.ZotFile = {
         table["%f"] = zitem.getField("pages");
         // extra
         table["%x"] = zitem.getField("extra");
+        // user-defined wildcards
+        if(this.prefs.getCharPref("wildcard.user1")!='') {
+            var field = JSON.parse(this.prefs.getCharPref("wildcard.user1"))[item_type_name];
+            table["%1"] = zitem.getField(field);
+        }
+        if(this.prefs.getCharPref("wildcard.user2")!='') {
+            var field = JSON.parse(this.prefs.getCharPref("wildcard.user2"))[item_type_name];
+            table["%2"] = zitem.getField(field);
+        }
+        if(this.prefs.getCharPref("wildcard.user3")!='') {
+            var field = JSON.parse(this.prefs.getCharPref("wildcard.user3"))[item_type_name];
+            table["%3"] = zitem.getField(field);
+        }
         // return
         return table;
     },
