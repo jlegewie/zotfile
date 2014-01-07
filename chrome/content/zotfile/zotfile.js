@@ -2332,10 +2332,11 @@ Zotero.ZotFile = {
 
                 // show infoWindow with location
                 on_click = function() {
-                    Zotero.ZotFile.copy2Clipboard(file_reader.path + ' (option:' + option + ', valid: ' + valid + ')');
+                    Zotero.ZotFile.copy2Clipboard(file_reader.path + ' (option:' + option + ', valid: ' + valid +', time_reader:'+time_reader+', time_saved:'+time_saved+', time_zotero:'+time_zotero+ ')');
                 }
                 var valid = this.fileExists(file_reader).toString();
-                this.infoWindow('info',file_reader.path + ' (option:' + option + ', valid: ' + valid + ')',8000,on_click);
+                this.infoWindow('info',file_reader.path + ' (option:' + option + ', valid: ' + valid +', time_reader:'+time_reader+', time_saved:'+time_saved+', time_zotero:'+time_zotero+')',8000,on_click);
+
 
                 // if attachment gets replaced
                 if (!this.prefs.getBoolPref("tablet.storeCopyOfFile")) {
