@@ -2172,13 +2172,6 @@ Zotero.ZotFile = {
             }
 
             // add info to note (date of modification to attachment, location, and mode)
-            // show infoWindow with location
-            on_click = function() {
-                Zotero.ZotFile.copy2Clipboard(newFile.path + ' (valid:'+ valid+', lastMod:' + newFile.lastModifiedTime + ')');
-            }
-            var valid = this.fileExists(newFile).toString();
-            this.infoWindow('info',newFile.path + ' (valid:'+ valid+', lastMod:' + newFile.lastModifiedTime + ')',8000,on_click);
-
             this.addInfo(att,"lastmod",newFile.lastModifiedTime);
             this.addInfo(att,"mode",this.prefs.getIntPref("tablet.mode"));
             this.addInfo(att,"location",newFile.path);
@@ -2336,14 +2329,6 @@ Zotero.ZotFile = {
                 if (time_reader<=time_saved && time_zotero<=time_saved) option=2;
                 if (time_reader<=time_saved && time_zotero>time_saved) option=2;
                 if (time_reader>time_saved  && time_zotero>time_saved) option=1;
-
-                // show infoWindow with location
-                on_click = function() {
-                    Zotero.ZotFile.copy2Clipboard(file_reader.path + ' (option:' + option + ', valid: ' + valid +', time_reader:'+time_reader+', time_saved:'+time_saved+', time_zotero:'+time_zotero+ ')');
-                }
-                var valid = this.fileExists(file_reader).toString();
-                this.infoWindow('info',file_reader.path + ' (option:' + option + ', valid: ' + valid +', time_reader:'+time_reader+', time_saved:'+time_saved+', time_zotero:'+time_zotero+')',8000,on_click);
-
 
                 // if attachment gets replaced
                 if (!this.prefs.getBoolPref("tablet.storeCopyOfFile")) {
