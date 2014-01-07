@@ -37,6 +37,7 @@ pref("extensions.zotfile.userInput_Default", "Paper");
 pref("extensions.zotfile.version","");
 pref("extensions.zotfile.zotfile3update",false);
 pref("extensions.zotfile.info_window_duration_clickable",8000);
+pref("extensions.zotfile.wildcard.w",'{"artwork": "", "attachment": "", "audioRecording": "label", "bill": "legislativeBody", "blogPost": "", "book": "publisher", "bookSection": "publisher", "case": "court", "computerProgram": "company", "conferencePaper": "publisher", "dictionaryEntry": "publisher", "email": "", "encyclopediaArticle": "publisher", "film": "distributor", "forumPost": "", "hearing": "publisher", "instantMessage": "", "interview": "", "journalArticle": "publicationTitle", "letter": "", "magazineArticle": "publicationTitle", "manuscript": "", "map": "publisher", "note": "", "newspaperArticle": "publicationTitle", "patent": "issuingAuthority", "podcast": "", "presentation": "meetingName", "radioBroadcast": "network", "report": "institution", "statute": "", "thesis": "university", "tvBroadcast": "network", "videoRecording": "", "webpage": "", "document": "publisher"}');
 
 pref("extensions.zotfile.tablet", false);
 pref("extensions.zotfile.tablet.dest_dir", "");

@@ -1208,7 +1208,8 @@ Zotero.ZotFile = {
     wildcardTable: function(zitem) {
         var table = new Object();
         // get item type
-        var item_type =  zitem.getType();
+        var item_type = zitem.getType();
+        var item_type_name = Zotero.ItemTypes.getName(item_type);
         var item_type_string = Zotero.ItemTypes.getLocalizedString(item_type);
         // get creator and create authors string
         // creator types: author/editor(1,3) for book(2), inventor(14) for patent(19),programmer(24) for computer prog.(27),presenter(21) for presentation(32)
@@ -1262,10 +1263,10 @@ Zotero.ZotFile = {
         table["%s"] = zitem.getField("journalAbbreviation");
         // publisher
         table["%p"] = zitem.getField("publisher");
-        table["%S"] = zitem.getField("institution")
-        // journal or publisher
-        table["%w"] = (table["%j"] != "") ? table["%j"] : table["%p"];
-        table["%w"] = (table["%w"] != "") ? table["%w"] : table["%S"];
+        table["%S"] = zitem.getField("institution");
+        // w wildcard: journal, publisher etc
+        var field = JSON.parse(this.prefs.getCharPref("wildcard.w"))[item_type_name];
+        table["%w"] = zitem.getField(field);
         // patent
         table["%n"] = zitem.getField("patentNumber");
         table["%i"] = zitem.getField("assignee");
