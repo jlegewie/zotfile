@@ -1248,64 +1248,71 @@ Zotero.ZotFile = {
         return([author, author_lastf, author_initials]);
     },
 
-    wildcardTable: function(zitem) {
-        var table = new Object();
-        // get item type
-        var item_type = zitem.getType();
-        var item_type_name = Zotero.ItemTypes.getName(item_type);
-        var item_type_string = Zotero.ItemTypes.getLocalizedString(item_type);
-        // get formated author strings
-        var authors = this.formatAuthors(zitem);
-        // generate look-up table
-        // author
-        table["%a"] = authors[0];
-        table["%A"] = table["%a"].substr(0, 1).toUpperCase();
-        table["%F"] = authors[1];
-        table["%I"] = authors[2];
-        // title
-        table["%t"] = this.truncateTitle(zitem.getField("title"));
-        table["%h"] = zitem.getField("shortTitle");
-        // journal
-        table["%j"] = zitem.getField("publicationTitle");
-        table["%s"] = zitem.getField("journalAbbreviation");
-        // publisher
-        table["%p"] = zitem.getField("publisher");
-        table["%S"] = zitem.getField("institution");
-        // w wildcard: journal, publisher etc
-        var field = JSON.parse(this.prefs.getCharPref("wildcard.w"))[item_type_name];
-        table["%w"] = zitem.getField(field);
-        // patent
-        table["%n"] = zitem.getField("patentNumber");
-        table["%i"] = zitem.getField("assignee");
-        // date
-        table["%u"] = "";
-        table["%y"] = zitem.getField("date", true).substr(0,4);
-        if (item_type === 19) {
-            table["%u"] = zitem.getField("issueDate", true).substr(0,4);
-            table["%y"] = table["%u"];
-        }
-        // volume
-        table["%v"] = zitem.getField("volume");
-        // issue
-        table["%e"] = zitem.getField("issue");
+    wildcardTable: function(item) {
         // item type
-        table["%T"] = item_type_string;
-        // pages
-        table["%f"] = zitem.getField("pages");
-        // extra
-        table["%x"] = zitem.getField("extra");
-        // user-defined wildcards
-        if(this.prefs.getCharPref("wildcard.user1")!='') {
-            var field = JSON.parse(this.prefs.getCharPref("wildcard.user1"))[item_type_name];
-            table["%1"] = zitem.getField(field);
-        }
-        if(this.prefs.getCharPref("wildcard.user2")!='') {
-            var field = JSON.parse(this.prefs.getCharPref("wildcard.user2"))[item_type_name];
-            table["%2"] = zitem.getField(field);
-        }
-        if(this.prefs.getCharPref("wildcard.user3")!='') {
-            var field = JSON.parse(this.prefs.getCharPref("wildcard.user3"))[item_type_name];
-            table["%3"] = zitem.getField(field);
+        var item_type = item.getType();
+        var item_type_name = Zotero.ItemTypes.getName(item_type);
+        // get formated author strings
+        var authors = this.formatAuthors(item);
+        // define additional fields
+        var addFields = {
+            'itemType': Zotero.ItemTypes.getLocalizedString(item_type),
+            'titleFormated': this.truncateTitle(item.getField("title")),
+            'author': authors[0],
+            'authorLastF': authors[1],
+            'authorInitials': authors[2]
+        };
+        // define transform functions
+        var transformFunctions = {
+            'lowerCase': function(s) {return s.toLowerCase();},
+            'upperCase': function(s) {return s.toUpperCase();},
+            'trim': function(s) {return s.trim();}
+        };
+        var getField = function(map) {
+            var name = (item_type_name in map) ? map[item_type_name] : map['default'];
+            return (name in addFields) ? addFields[name] : item.getField(name);
+        };
+        // get wildcards object from preferences
+        var wildcards = JSON.parse(this.prefs.getCharPref("wildcards.default"));
+        var wildcards_user = JSON.parse(this.prefs.getCharPref("wildcards.user"));
+        for (var key in wildcards_user) { wildcards[key] = wildcards_user[key]; }
+        // define wildcard table for item by iterating through wildcards
+        var table = {};
+        for (var key in wildcards) {
+            var property = wildcards[key],
+                value = '';
+            // if string, get field from zotero or using additional fields
+            if(typeof(property)=='string')
+                value = (property in addFields) ? addFields[property] : item.getField(property);
+            if(typeof(property)=='object') {
+                // javascript object with item type specific field names (e.g. '%w')
+                   /* Note: use 'default' key to define default and only include item types that are different */
+                if('default' in property) value = getField(property);
+                // javascript object with three elements for field, regular expression, and group
+                if('field' in property) {
+                    var regex = property['regex'],
+                        field = property['field'],
+                        group = property['group'],
+                        transform = property['transform'],
+                        re = new RegExp(regex, "g"),
+                        str;
+
+                    if (typeof(field)=='string')
+                        str = (field in addFields) ? addFields[field] : item.getField(field);
+                    if (typeof(field)=='object')
+                        str = getField(field);
+                    var match = re.exec(str);
+
+                    value = (match===null) ? str : match[group];
+                    // transform value
+                    if(transform!==undefined)
+                        if (transform in transformFunctions)
+                            value = transformFunctions[transform](value);
+                }
+
+            }
+            // add element to wildcards table
+            table['%' + key] = value;
         }
         // return
         return table;

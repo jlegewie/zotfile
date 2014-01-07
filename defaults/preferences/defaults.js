@@ -41,6 +41,8 @@ pref("extensions.zotfile.wildcard.w",'{"artwork": "", "attachment": "", "audioRe
 pref("extensions.zotfile.wildcard.user1",'');
 pref("extensions.zotfile.wildcard.user2",'');
 pref("extensions.zotfile.wildcard.user3",'');
+pref("extensions.zotfile.wildcards.default",'{"a": "author", "A": {"field": "author", "regex": "\\\\w{1}", "group": 0, "transform": "upperCase"}, "F": "authorLastF", "I": "authorInitials", "t": "titleFormated", "h": "shortTitle", "j": "publicationTitle", "s": "journalAbbreviation", "p": "publisher", "w": {"default": "publisher", "audioRecording": "label", "bill": "legislativeBody", "case": "court", "computerProgram": "company", "film": "distributor", "journalArticle": "publicationTitle", "magazineArticle": "publicationTitle", "newspaperArticle": "publicationTitle", "patent": "issuingAuthority", "presentation": "meetingName", "radioBroadcast": "network", "report": "institution", "thesis": "university", "tvBroadcast": "network"}, "n": "patentNumber", "i": "assignee", "y": {"field": {"default": "date", "patent": "issueDate"}, "regex": "\\\\d{4}", "group": 0 }, "v": "volume", "e": "issue", "T": "itemType", "f": "pages", "x": "extra"}');
+pref("extensions.zotfile.wildcards.user",'{}');
 
 pref("extensions.zotfile.tablet", false);
 pref("extensions.zotfile.tablet.dest_dir", "");
