@@ -1205,12 +1205,8 @@ Zotero.ZotFile = {
         return outer;
     },
 
-    wildcardTable: function(zitem) {
-        var table = new Object();
-        // get item type
-        var item_type = zitem.getType();
-        var item_type_name = Zotero.ItemTypes.getName(item_type);
-        var item_type_string = Zotero.ItemTypes.getLocalizedString(item_type);
+    formatAuthors: function(item) {
+        var item_type = item.getType();
         // get creator and create authors string
         // creator types: author/editor(1,3) for book(2), inventor(14) for patent(19),programmer(24) for computer prog.(27),presenter(21) for presentation(32)
         var creatorType = [1];
@@ -1221,7 +1217,7 @@ Zotero.ZotFile = {
         else if (item_type === 16) creatorType = [12];
         var add_etal = this.prefs.getBoolPref("add_etal");
         var author = "", author_lastf="", author_initials="";
-        var creators = zitem.getCreators();
+        var creators = item.getCreators();
         var numauthors = creators.length;
         for (var i = 0; i < creators.length; ++i) {
             if (creatorType.indexOf(creators[i].creatorTypeID) === -1) numauthors=numauthors-1;
@@ -1249,12 +1245,23 @@ Zotero.ZotFile = {
             author_lastf = author_lastf + this.prefs.getCharPref("etal");
             author_initials = author_initials + this.prefs.getCharPref("etal");
         }
+        return([author, author_lastf, author_initials]);
+    },
+
+    wildcardTable: function(zitem) {
+        var table = new Object();
+        // get item type
+        var item_type = zitem.getType();
+        var item_type_name = Zotero.ItemTypes.getName(item_type);
+        var item_type_string = Zotero.ItemTypes.getLocalizedString(item_type);
+        // get formated author strings
+        var authors = this.formatAuthors(zitem);
         // generate look-up table
         // author
-        table["%a"] = author;
+        table["%a"] = authors[0];
         table["%A"] = table["%a"].substr(0, 1).toUpperCase();
-        table["%F"] = author_lastf;
-        table["%I"] = author_initials;
+        table["%F"] = authors[1];
+        table["%I"] = authors[2];
         // title
         table["%t"] = this.truncateTitle(zitem.getField("title"));
         table["%h"] = zitem.getField("shortTitle");
