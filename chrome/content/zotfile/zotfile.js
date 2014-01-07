@@ -2302,6 +2302,12 @@ Zotero.ZotFile = {
                 if (time_reader<=time_saved && time_zotero>time_saved) option=2;
                 if (time_reader>time_saved  && time_zotero>time_saved) option=1;
 
+                // show infoWindow with location
+                on_click = function() {
+                    Zotero.ZotFile.copy2Clipboard(file_reader.path + ' (' + option + ')');
+                }
+                this.infoWindow('info',file_reader.path + ' (' + option + ')',8000,on_click);
+
                 // if attachment gets replaced
                 if (!this.prefs.getBoolPref("tablet.storeCopyOfFile")) {
                     // prompt if both file have been modified
