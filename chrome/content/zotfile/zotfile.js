@@ -2172,6 +2172,13 @@ Zotero.ZotFile = {
             }
 
             // add info to note (date of modification to attachment, location, and mode)
+            // show infoWindow with location
+            on_click = function() {
+                Zotero.ZotFile.copy2Clipboard(newFile.path + ' (valid:'+ valid+', lastMod:' + newFile.lastModifiedTime + ')');
+            }
+            var valid = this.fileExists(newFile).toString();
+            this.infoWindow('info',newFile.path + ' (valid:'+ valid+', lastMod:' + newFile.lastModifiedTime + ')',8000,on_click);
+
             this.addInfo(att,"lastmod",newFile.lastModifiedTime);
             this.addInfo(att,"mode",this.prefs.getIntPref("tablet.mode"));
             this.addInfo(att,"location",newFile.path);
