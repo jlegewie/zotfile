@@ -34,8 +34,9 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
-#### Changes in 3.0.4
+#### Changes in 3.1
 
+- User-defined wildcards
 - watch folder now adds an attachment and retrieves metadata if no file is selected
   (change message, change version)
 - Choose the number of authors to display when truncating authors during renaming (thanks to bwiernik)
