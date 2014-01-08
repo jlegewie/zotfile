@@ -1268,9 +1268,31 @@ Zotero.ZotFile = {
             'upperCase': function(s) {return s.toUpperCase();},
             'trim': function(s) {return s.trim();}
         };
-        var getField = function(map) {
+        var itemtypeWildcard = function(map) {
             var name = (item_type_name in map) ? map[item_type_name] : map['default'];
             return (name in addFields) ? addFields[name] : item.getField(name);
+        };
+        var regexWildcard = function(item, obj) {
+            var regex = obj['regex'],
+                field = obj['field'],
+                group = obj['group'],
+                transform = obj['transform'],
+                re = new RegExp(regex, "g"),
+                str, value;
+
+            if (typeof(field)=='string')
+                str = (field in addFields) ? addFields[field] : item.getField(field);
+            if (typeof(field)=='object')
+                str = itemtypeWildcard(field);
+            var match = re.exec(str);
+
+            value = (match===null) ? str : match[group];
+            // transform value
+            if(transform!==undefined)
+                if (transform in transformFunctions)
+                    value = transformFunctions[transform](value);
+            // return
+            return value;
         };
         // get wildcards object from preferences
         var wildcards = JSON.parse(this.prefs.getCharPref("wildcards.default"));
@@ -1286,30 +1308,10 @@ Zotero.ZotFile = {
                 value = (property in addFields) ? addFields[property] : item.getField(property);
             if(typeof(property)=='object') {
                 // javascript object with item type specific field names (e.g. '%w')
-                   /* Note: use 'default' key to define default and only include item types that are different */
-                if('default' in property) value = getField(property);
-                // javascript object with three elements for field, regular expression, and group
-                if('field' in property) {
-                    var regex = property['regex'],
-                        field = property['field'],
-                        group = property['group'],
-                        transform = property['transform'],
-                        re = new RegExp(regex, "g"),
-                        str;
-
-                    if (typeof(field)=='string')
-                        str = (field in addFields) ? addFields[field] : item.getField(field);
-                    if (typeof(field)=='object')
-                        str = getField(field);
-                    var match = re.exec(str);
-
-                    value = (match===null) ? str : match[group];
-                    // transform value
-                    if(transform!==undefined)
-                        if (transform in transformFunctions)
-                            value = transformFunctions[transform](value);
-                }
-
+                   /* Note: 'default' key defines default, only include item types that are different */
+                if('default' in property) value = itemtypeWildcard(property);
+                // javascript object with three elements for field, regular expression, and group (e.g. '%y')
+                if('field' in property) value = regexWildcard(item, property);
             }
             // add element to wildcards table
             table['%' + key] = value;
