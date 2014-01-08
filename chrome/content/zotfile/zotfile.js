@@ -1,6 +1,6 @@
 
 /**
-ZotFile: Zotero plugin to manage your attachments
+ZotFile: Advanced PDF management for Zotero
 Joscha Legewie
 
 Zotfile is a Zotero plugin to manage your attachments:
