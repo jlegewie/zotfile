@@ -2682,7 +2682,7 @@ Zotero.ZotFile = {
         pdfExtraction:false,
         popplerExtractorTool:false,
         popplerExtractorSupported:false,
-        popplerExtractorBaseURL:'http://www.columbia.edu/~jpl2136/PDFTools/',
+        popplerExtractorBaseURL:'https://github.com/jlegewie/zotfile/raw/gh-pages/PDFTools/',
 
         /** The list of PDFs we should extract annotations from.  Each
         element is an object with the following fields:
