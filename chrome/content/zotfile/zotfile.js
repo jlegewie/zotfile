@@ -1268,9 +1268,14 @@ Zotero.ZotFile = {
             'upperCase': function(s) {return s.toUpperCase();},
             'trim': function(s) {return s.trim();}
         };
-        var itemtypeWildcard = function(map) {
-            var name = (item_type_name in map) ? map[item_type_name] : map['default'];
-            return (name in addFields) ? addFields[name] : item.getField(name);
+        var itemtypeWildcard = function(item, map) {
+            var value = '',
+                property = (item_type_name in map) ? map[item_type_name] : map['default'];
+            if(typeof(property)=='string')
+                value = (property in addFields) ? addFields[property] : item.getField(property);
+            if(typeof(property)=='object')
+                value = regexWildcard(item, property);
+            return value;
         };
         var regexWildcard = function(item, obj) {
             var regex = obj['regex'],
@@ -1283,7 +1288,7 @@ Zotero.ZotFile = {
             if (typeof(field)=='string')
                 str = (field in addFields) ? addFields[field] : item.getField(field);
             if (typeof(field)=='object')
-                str = itemtypeWildcard(field);
+                str = itemtypeWildcard(item, field);
             var match = re.exec(str);
 
             value = (match===null) ? str : match[group];
@@ -1309,7 +1314,7 @@ Zotero.ZotFile = {
             if(typeof(property)=='object') {
                 // javascript object with item type specific field names (e.g. '%w')
                    /* Note: 'default' key defines default, only include item types that are different */
-                if('default' in property) value = itemtypeWildcard(property);
+                if('default' in property) value = itemtypeWildcard(item, property);
                 // javascript object with three elements for field, regular expression, and group (e.g. '%y')
                 if('field' in property) value = regexWildcard(item, property);
             }
