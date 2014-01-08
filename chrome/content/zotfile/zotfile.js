@@ -30,6 +30,7 @@ Zotero.ZotFile = {
     projectPath: new Array("","","","","","","","","","","","","","",""),
     projectMax:15,
     zotfileURL:"http://www.jlegewie.com/zotfile.html",
+    changelogURL:"http://www.columbia.edu/~jpl2136/zotfile.html#changelog",
     lastModifiedFile:null,
     temp:"",
     messages_warning:[],
@@ -56,8 +57,8 @@ Zotero.ZotFile = {
         }
         // open webpage with changelog
         if(this.prefs.getCharPref("version")!=="" && currentVersion=="2.3") {
-            if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
-            if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
+            if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL); });
+            if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.changelogURL); });
         }
         // version 3
         // - add tags to parent items for attachments on tablet
@@ -69,8 +70,8 @@ Zotero.ZotFile = {
             this.prefs.setBoolPref("zotfile3update", true);
 
             // show change log
-            if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
-            if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI("http://www.columbia.edu/~jpl2136/zotfile.html#changelog"); });
+            if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL); });
+            if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.changelogURL); });
 
             // change tablet tags
             var atts = this.getAttachmentsOnTablet();
