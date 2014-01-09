@@ -1279,26 +1279,28 @@ Zotero.ZotFile = {
             return value;
         };
         var regexWildcard = function(item, obj) {
-            var regex = obj['regex'],
-                field = obj['field'],
-                group = obj['group'],
-                transform = obj['transform'],
-                re = new RegExp(regex, "g"),
-                str, value;
-
+            var field = obj.field,
+                regex = obj.regex,
+                group = obj.group,
+                transform = obj.transform,
+                output = '';
+            // get field
             if (typeof(field)=='string')
-                str = (field in addFields) ? addFields[field] : item.getField(field);
+                output = (field in addFields) ? addFields[field] : item.getField(field);
             if (typeof(field)=='object')
-                str = itemtypeWildcard(item, field);
-            var match = re.exec(str);
-
-            value = (match===null) ? str : match[group];
-            // transform value
+                output = itemtypeWildcard(item, field);
+            // regular expression matching
+            if(regex!==undefined) {
+                var re = new RegExp(regex, "g");
+                var match = re.exec(output);
+                output = (match===null) ? output : match[group];
+            }
+            // transform output
             if(transform!==undefined)
                 if (transform in transformFunctions)
-                    value = transformFunctions[transform](value);
+                    output = transformFunctions[transform](output);
             // return
-            return value;
+            return output;
         };
         // get wildcards object from preferences
         var wildcards = JSON.parse(this.prefs.getCharPref("wildcards.default"));
