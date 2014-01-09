@@ -1280,8 +1280,8 @@ Zotero.ZotFile = {
         };
         var regexWildcard = function(item, obj) {
             var field = obj.field,
+                replace = obj.replace,
                 regex = obj.regex,
-                group = obj.group,
                 transform = obj.transform,
                 output = '';
             // get field
@@ -1289,10 +1289,20 @@ Zotero.ZotFile = {
                 output = (field in addFields) ? addFields[field] : item.getField(field);
             if (typeof(field)=='object')
                 output = itemtypeWildcard(item, field);
-            // regular expression matching
+            // replace string
+            /*https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace*/
+            if(replace!==undefined) {
+                var flags = ('flags' in replace) ? replace.flags : "g",
+                    re = new RegExp(replace.regex, flags);
+                output = output.replace(re, replace.replacement);
+            }
+            // search for matches
+            /*https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec*/
             if(regex!==undefined) {
-                var re = new RegExp(regex, "g");
-                var match = re.exec(output);
+                var flags = ('flags' in obj) ? obj.flags : "g",
+                    group = ('group' in obj) ? obj.group : 0,
+                    re = new RegExp(regex, flags),
+                    match = re.exec(output);
                 output = (match===null) ? output : match[group];
             }
             // transform output
