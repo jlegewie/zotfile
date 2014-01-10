@@ -9,7 +9,7 @@ to Zotero items, sync PDFs from your Zotero library to your (mobile)
 PDF reader (e.g. an iPad, Android tablet, etc.) and extract
 annotations from PDF files.
 
-Webpage: http://www.jlegewie.com/zotfile.html
+Webpage: http://www.zotfile.com
 Github: https://github.com/jlegewie/zotfile
 
 License
