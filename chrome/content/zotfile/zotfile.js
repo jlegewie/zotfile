@@ -1264,11 +1264,6 @@ Zotero.ZotFile = {
             'authorInitials': authors[2]
         };
         // define transform functions
-        var transformFunctions = {
-            'lowerCase': function(s) {return s.toLowerCase();},
-            'upperCase': function(s) {return s.toUpperCase();},
-            'trim': function(s) {return s.trim();}
-        };
         var itemtypeWildcard = function(item, map) {
             var value = '',
                 property = (item_type_name in map) ? map[item_type_name] : map['default'];
@@ -1278,37 +1273,43 @@ Zotero.ZotFile = {
                 value = regexWildcard(item, property);
             return value;
         };
-        var regexWildcard = function(item, obj) {
-            var field = obj.field,
-                replace = obj.replace,
-                regex = obj.regex,
-                transform = obj.transform,
+        var regexWildcard = function(item, w) {
+            var field = w.field,
+                operations = w.operations,
                 output = '';
             // get field
             if (typeof(field)=='string')
                 output = (field in addFields) ? addFields[field] : item.getField(field);
             if (typeof(field)=='object')
                 output = itemtypeWildcard(item, field);
-            // replace string
-            /*https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace*/
-            if(replace!==undefined) {
-                var flags = ('flags' in replace) ? replace.flags : "g",
-                    re = new RegExp(replace.regex, flags);
-                output = output.replace(re, replace.replacement);
+            // operations
+            if(operations!==undefined) {
+                for (var i = 0; i < operations.length; ++i) {
+                    var obj = operations[i],
+                        regex = obj.regex,
+                        replacement = ('replacement' in obj) ? obj.replacement : "",
+                        flags = ('flags' in obj) ? obj.flags : "g",
+                        group = ('group' in obj) ? obj.group : 0,
+                        re = new RegExp(regex, flags);
+                    // replace string
+                    /*https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace*/
+                    if(obj.function=="replace")
+                        output = output.replace(re, replacement);
+                    // search for matches
+                    /*https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec*/
+                    if(obj.function=="exec") {
+                        var match = re.exec(output);
+                        output = (match===null) ? output : match[group];
+                    }
+                    // simple functions
+                    if(obj.function=="toLowerCase")
+                        output = output.toLowerCase();
+                    if(obj.function=="toUpperCase")
+                        output = output.toUpperCase();
+                    if(obj.function=="trim")
+                        output = output.trim();
+                }
             }
-            // search for matches
-            /*https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec*/
-            if(regex!==undefined) {
-                var flags = ('flags' in obj) ? obj.flags : "g",
-                    group = ('group' in obj) ? obj.group : 0,
-                    re = new RegExp(regex, flags),
-                    match = re.exec(output);
-                output = (match===null) ? output : match[group];
-            }
-            // transform output
-            if(transform!==undefined)
-                if (transform in transformFunctions)
-                    output = transformFunctions[transform](output);
             // return
             return output;
         };
