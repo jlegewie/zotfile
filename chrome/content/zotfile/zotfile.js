@@ -29,8 +29,8 @@ Zotero.ZotFile = {
     projectNr: new Array("01","02","03","04","05","06","07","08","09","10","11","12","13","14","15"),
     projectPath: new Array("","","","","","","","","","","","","","",""),
     projectMax:15,
-    zotfileURL:"http://www.jlegewie.com/zotfile.html",
-    changelogURL:"http://www.columbia.edu/~jpl2136/zotfile.html#changelog",
+    zotfileURL:"http://www.zotfile.com",
+    changelogURL:"http://jlegewie.github.io/zotfile/index.html#changelog",
     lastModifiedFile:null,
     temp:"",
     messages_warning:[],
@@ -50,6 +50,11 @@ Zotero.ZotFile = {
     // ========================= //
 
     versionChanges: function (currentVersion) {
+        // open webpage
+        if(this.prefs.getCharPref("version")==="" || currentVersion=="3.1") {
+            if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL); });
+            if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.changelogURL); });
+        }
         // open webpage
         if(this.prefs.getCharPref("version")==="" || currentVersion=="2.0") {
             if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.zotfileURL); });
