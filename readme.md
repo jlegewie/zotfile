@@ -36,6 +36,7 @@ Contributions preferably through pull requests are welcome!
 
 #### Changes in 3.1
 
+- New zotfile webpage at [www.zotfile.com](http://www.zotfile.com/) (please update links)
 - User-defined wildcards
 - watch folder now adds an attachment and retrieves metadata if no file is selected
   (change message, change version)
