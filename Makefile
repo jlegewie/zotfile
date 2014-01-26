@@ -2,7 +2,7 @@ all: Makefile.in
 
 -include Makefile.in
 
-RELEASE:=$(shell grep em:version install.rdf | head -n 1 | sed -r 's/^.*>(.*)<.*$$/\1/')
+RELEASE:=$(shell grep em:version install.rdf | head -n 1 | sed -e 's/ *<em:version>//' -e 's/<\/em:version>//')
 
 zotfile.xpi: FORCE
 	rm -rf $@
