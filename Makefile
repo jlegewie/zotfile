@@ -4,14 +4,14 @@ all: Makefile.in
 
 RELEASE:=$(shell grep em:version install.rdf | head -n 1 | sed -r 's/^.*>(.*)<.*$$/\1/')
 
-zotero.xpi: FORCE
+zotfile.xpi: FORCE
 	rm -rf $@
 	zip -r $@ chrome chrome.manifest defaults install.rdf
 
-zotero-%-fx.xpi: zotero.xpi
+zotfile-%-fx.xpi: zotfile.xpi
 	mv $< $@
 
 Makefile.in: install.rdf
-	echo "all: zotero-${RELEASE}-fx.xpi" > Makefile.in
+	echo "all: zotfile-${RELEASE}-fx.xpi" > Makefile.in
 
 FORCE:
