@@ -41,6 +41,7 @@ Contributions preferably through pull requests are welcome!
 - watch folder now adds an attachment and retrieves metadata if no file is selected
   (change message, change version)
 - fix pdf.js issue with some pdf annotation (see [this](https://forums.zotero.org/discussion/31903/extract-pdf-annotations-message-hangs-on-linuxubuntu/#Comment_177201) discussion)
+- New hidden preferences for duration of info windows (`info_window_duration` and `info_window_duration_clickable`)
 - The `%w` wildcard now maps to the correct field for most item types
 - The `%u` wildcard as redundant (use `%y` instead)
 - Choose the number of authors to display when truncating authors during renaming (thanks to bwiernik)
