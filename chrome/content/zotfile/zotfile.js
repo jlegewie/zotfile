@@ -30,7 +30,7 @@ Zotero.ZotFile = {
     projectPath: new Array("","","","","","","","","","","","","","",""),
     projectMax:15,
     zotfileURL:"http://www.zotfile.com",
-    changelogURL:"http://jlegewie.github.io/zotfile/index.html#changelog",
+    changelogURL:"http://zotfile.com/index.html#changelog",
     lastModifiedFile:null,
     temp:"",
     messages_warning:[],
@@ -2702,7 +2702,8 @@ Zotero.ZotFile = {
         pdfExtraction:false,
         popplerExtractorTool:false,
         popplerExtractorSupported:false,
-        popplerExtractorBaseURL:'https://github.com/jlegewie/zotfile/raw/gh-pages/PDFTools/',
+        // popplerExtractorBaseURL:'https://github.com/jlegewie/zotfile/raw/gh-pages/PDFTools/',
+        popplerExtractorBaseURL:'http://www.zotfile.com/PDFTools/',
 
         /** The list of PDFs we should extract annotations from.  Each
         element is an object with the following fields:
