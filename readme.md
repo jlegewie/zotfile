@@ -45,7 +45,6 @@ Contributions preferably through pull requests are welcome!
 - The `%u` wildcard as redundant (use `%y` instead)
 - Choose the number of authors to display when truncating authors during renaming (thanks to bwiernik)
 - fix problem that small info window does not disappear
-- fix `TypeError: f.exists` error
 
 #### Changes in 3.0.3
 

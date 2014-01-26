@@ -1918,8 +1918,10 @@ Zotero.ZotFile = {
             var content=note.substring(search);
             content=content.substring(content.search("{")+1,content.search("}"));
 
+            // for location tag: replace [BaseFolder] with destination folder
+            if(tagname=="location") content=content.replace("[BaseFolder]",this.prefs.getCharPref("tablet.dest_dir"));
             // corrections for location tag
-            if(tagname=="location") {
+            /*if(tagname=="location") {
                 // correct file seperator
                 // var unix_file = content[0]=='/' || content[0]=='~';
                 var unix_file = content[0]=='/' || content[0]=='~' || content.indexOf('[BaseFolder]/')==0;
@@ -1933,8 +1935,7 @@ Zotero.ZotFile = {
                 }
                 var valid = this.fileExists(content).toString();
                 this.infoWindow('location',content + ' (' + valid + ')',8000,on_click);
-
-            }
+            }*/
 
             return(content);
         }
