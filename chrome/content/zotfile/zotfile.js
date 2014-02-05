@@ -1,4 +1,3 @@
-
 /**
 ZotFile: Advanced PDF management for Zotero
 Joscha Legewie
@@ -1251,7 +1250,30 @@ Zotero.ZotFile = {
             author_lastf = author_lastf + this.prefs.getCharPref("etal");
             author_initials = author_initials + this.prefs.getCharPref("etal");
         }
-        return([author, author_lastf, author_initials]);
+        // get creator and create editors string
+        var editorType = [3,4,5,27,29];
+        var editor = "", editor_lastf="", editor_initials="";
+        var numeditors = creators.length;
+        for (var i = 0; i < creators.length; ++i) {
+            if (editorType.indexOf(creators[i].creatorTypeID) === -1) numeditors=numeditors-1;
+        }
+        if (numeditors <= max_authors) add_etal = false;
+        else numeditors = this.prefs.getIntPref("number_truncate_authors");
+        var j = 0;
+        for (i = 0; i < creators.length; ++i) {
+            if (j < numeditors && editorType.indexOf(creators[i].creatorTypeID) != -1) {
+                if (editor !== "") editor += delimiter + creators[i].ref.lastName;
+                if (editor === "") editor = creators[i].ref.lastName;
+                var lastfe =  creators[i].ref.lastName + creators[i].ref.firstName.substr(0, 1).toUpperCase();
+                if (editor_lastf !== "") editor_lastf += delimiter + lastf;
+                if (editor_lastf === "") editor_lastf = lastf;
+                var initials = creators[i].ref.firstName.substr(0, 1).toUpperCase() + creators[i].ref.lastName.substr(0, 1).toUpperCase()
+                if (editor_initials !== "") editor_initials += delimiter + initials;
+                if (editor_initials === "") editor_initials = initials;
+                j=j+1;
+            }
+        }
+        return([author, author_lastf, author_initials, editor, editor_lastf, editor_initials]);
     },
 
     wildcardTable: function(item) {
@@ -1266,7 +1288,10 @@ Zotero.ZotFile = {
             'titleFormated': this.truncateTitle(item.getField("title")),
             'author': authors[0],
             'authorLastF': authors[1],
-            'authorInitials': authors[2]
+            'authorInitials': authors[2],
+	     'editor': authors[3],
+	     'editorLastF': authors[4],
+	     'editorInitials': authors[5]
         };
         // define transform functions
         var itemtypeWildcard = function(item, map) {
