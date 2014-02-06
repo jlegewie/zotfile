@@ -105,10 +105,18 @@ var OpenPDFExtension = new function(){
                         }
                     }
                 }
-                /*else {
-                    cmd = cmd.replace('%(page)',page).replace('%(path)',path)
-                    zz.runProcess(cmd, [], false);
-                }*/
+                else {
+                    // get page argument
+                    cmd = cmd.split('-');                    
+                    var arg = cmd.pop();
+                    // argument for call
+                    if (page)
+                        args = ['-' + arg, page, path];
+                    else
+                        args = [path];
+                    // run process
+                    zz.runProcess(cmd.join('-'), args, false);                    
+                }
             }        
         }
         catch (e) {
