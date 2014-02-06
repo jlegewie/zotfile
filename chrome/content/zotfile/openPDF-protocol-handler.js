@@ -53,7 +53,7 @@ var OpenPDFExtension = new function(){
             }
             if(Zotero.isWin) {
                 // get path to Adobe Reader
-                var acrobat = zz.prefs.getBoolPref('pdfExtraction.openPdfWin');
+                var acrobat = zz.prefs.getCharPref('pdfExtraction.openPdfWin');
                 // get path from registry if not set
                 // http://stackoverflow.com/questions/11934159/how-extension-can-read-the-registry
                 // 'C:\Program Files (x86)\Adobe\Reader 11.0\Reader\AcroRd32.exe'
