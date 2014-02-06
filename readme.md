@@ -34,6 +34,11 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 3.1.1
+
+- Go to page with annotation using Skim (Mac OS)
+- New wildcards for editors (`%d`, `%D`, `%L`, `%l`)
+
 #### Changes in 3.1
 
 - New zotfile webpage at [www.zotfile.com](http://www.zotfile.com/) (please update links)

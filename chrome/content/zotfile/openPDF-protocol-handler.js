@@ -25,19 +25,30 @@ var OpenPDFExtension = new function(){
             // get file and path
             var file = item.getFile();
             var path = file.path;
+            var filename = path.replace(/^.*[\\\/]/, '');
             // check whether pdf file
-            if(path.indexOf('.pdf')==-1) return;
+            if(filename.toLowerCase().indexOf('.pdf')==-1) return;
             // open pdf and go to page (system specific)
             if(Zotero.isMac) {
-                // open pdf file
-                zz.runProcess('/usr/bin/open', ['-a', 'Preview', path]);
-                // go to page using applescript
-                var args = [
-                  '-e', 'tell app "Preview" to activate', 
-                  '-e', 'tell app "System Events" to keystroke "g" using {option down, command down}', 
-                  '-e', 'tell app "System Events" to keystroke "' + page + '"',
-                  '-e', 'tell app "System Events" to keystroke return'];
-                if (page) zz.runProcess('/usr/bin/osascript', args, false);
+                if(zz.prefs.getBoolPref('pdfExtraction.openPdfMac_skim')) {
+                    var args = [
+                        '-e', 'tell app "Skim" to activate', 
+                        '-e', 'tell app "Skim" to open "' + path + '"'];
+                    if (page)
+                        args.push('-e', 'tell document "' + filename + '" of application "Skim" to go to page ' + page);
+                    zz.runProcess('/usr/bin/osascript', args, false);
+                }
+                else {
+                    // open pdf file
+                    zz.runProcess('/usr/bin/open', ['-a', 'Preview', path]);
+                    // go to page using applescript
+                    var args = [
+                      '-e', 'tell app "Preview" to activate', 
+                      '-e', 'tell app "System Events" to keystroke "g" using {option down, command down}', 
+                      '-e', 'tell app "System Events" to keystroke "' + page + '"',
+                      '-e', 'tell app "System Events" to keystroke return'];
+                    if (page) zz.runProcess('/usr/bin/osascript', args, false);
+                }
             }
             if(Zotero.isWin) {
                 // path to Adobe Reader
@@ -58,9 +69,9 @@ var OpenPDFExtension = new function(){
                 // try okular and evince when nothing is set
                 if (cmd=="") {
                     // try okular
-                    if (zz.fileExists('/usr/bin/okular'))
+                    if (zz.fileExists('/usr/bin/okular')) {
                         zz.runProcess('/usr/bin/okular', ['-p', page, path]);
-
+                    }
                     // try evince
                     else {
                         if (zz.fileExists('/usr/bin/evince')) {
