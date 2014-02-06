@@ -87,14 +87,18 @@ var OpenPDFExtension = new function(){
                 var cmd = zz.prefs.getCharPref('pdfExtraction.openPdfLinux');
                 // try okular and evince when nothing is set
                 if (cmd==='') {
+                    if (page)
+                        args = ['-p', page, path];
+                    else
+                        args = [path];
                     // try okular
                     if (zz.fileExists('/usr/bin/okular')) {
-                        zz.runProcess('/usr/bin/okular', ['-p', page, path], false);
+                        zz.runProcess('/usr/bin/okular', args, false);
                     }
                     // try evince
                     else {
                         if (zz.fileExists('/usr/bin/evince')) {
-                            zz.runProcess('/usr/bin/evince', ['-p', page, path], false);
+                            zz.runProcess('/usr/bin/evince', args, false);
                         }
                         else {
                             zz.infoWindow('Zotfile', zz.ZFgetString('general.open.pdf'));
