@@ -4,11 +4,12 @@ var OpenPDFExtension = new function(){
 
     function newChannel(uri) {
         // get components
-        var ios = Components.classes["@mozilla.org/network/io-service;1"];
-        var Zotero = Components.classes["@zotero.org/Zotero;1"]
-          .getService(Components.interfaces.nsISupports)
-          .wrappedJSObject;
-        var zz = Zotero.ZotFile;
+        var ios = Components.classes["@mozilla.org/network/io-service;1"],
+            Zotero = Components.classes["@zotero.org/Zotero;1"]
+                .getService(Components.interfaces.nsISupports)
+                .wrappedJSObject,
+            zz = Zotero.ZotFile,
+            args;
         generateContent: try {
             // get arguments from uri
             // e.g. zotero://open-pdf/0_EFWJW9U7
@@ -31,7 +32,7 @@ var OpenPDFExtension = new function(){
             // open pdf and go to page (system specific)
             if(Zotero.isMac) {
                 if(zz.prefs.getBoolPref('pdfExtraction.openPdfMac_skim')) {
-                    var args = [
+                    args = [
                         '-e', 'tell app "Skim" to activate', 
                         '-e', 'tell app "Skim" to open "' + path + '"'];
                     if (page)
@@ -42,7 +43,7 @@ var OpenPDFExtension = new function(){
                     // open pdf file
                     zz.runProcess('/usr/bin/open', ['-a', 'Preview', path]);
                     // go to page using applescript
-                    var args = [
+                    args = [
                       '-e', 'tell app "Preview" to activate', 
                       '-e', 'tell app "System Events" to keystroke "g" using {option down, command down}', 
                       '-e', 'tell app "System Events" to keystroke "' + page + '"',
@@ -85,7 +86,7 @@ var OpenPDFExtension = new function(){
             if(Zotero.isLinux) {
                 var cmd = zz.prefs.getCharPref('pdfExtraction.openPdfLinux');
                 // try okular and evince when nothing is set
-                if (cmd=="") {
+                if (cmd==='') {
                     // try okular
                     if (zz.fileExists('/usr/bin/okular')) {
                         zz.runProcess('/usr/bin/okular', ['-p', page, path]);
