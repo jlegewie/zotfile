@@ -89,18 +89,22 @@ var OpenPDFExtension = new function(){
                 if (cmd==='') {
                     // try okular
                     if (zz.fileExists('/usr/bin/okular')) {
-                        zz.runProcess('/usr/bin/okular', ['-p', page, path]);
+                        zz.runProcess('/usr/bin/okular', ['-p', page, path], false);
                     }
                     // try evince
                     else {
                         if (zz.fileExists('/usr/bin/evince')) {
-                            zz.runProcess('/usr/bin/evince', ['-p', page, path]);
+                            zz.runProcess('/usr/bin/evince', ['-p', page, path], false);
                         }
                         else {
                             zz.infoWindow('Zotfile', zz.ZFgetString('general.open.pdf'));
                         }
                     }
                 }
+                /*else {
+                    cmd = cmd.replace('%(page)',page).replace('%(path)',path)
+                    zz.runProcess(cmd, [], false);
+                }*/
             }        
         }
         catch (e) {
