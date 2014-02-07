@@ -52,26 +52,11 @@ var OpenPDFExtension = new function(){
                 }
             }
             if(Zotero.isWin) {
-                // get path to Adobe Reader
-                var acrobat = zz.prefs.getCharPref('pdfExtraction.openPdfWin');
-                // get path from registry if not set
-                // http://stackoverflow.com/questions/11934159/how-extension-can-read-the-registry
-                // 'C:\Program Files (x86)\Adobe\Reader 11.0\Reader\AcroRd32.exe'
-                if (acrobat==='') {
-                    var wrk = Components.classes["@mozilla.org/windows-registry-key;1"]
-                                    .createInstance(Components.interfaces.nsIWindowsRegKey);
-                    wrk.open(wrk.ROOT_KEY_LOCAL_MACHINE,
-                             "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths", 
-                             wrk.ACCESS_READ);
-                    if(wrk.hasChild('AcroRd32.exe')) {
-                        subkey = wrk.openChild('AcroRd32.exe', wrk.ACCESS_READ);
-                        acrobat = subkey.readStringValue('Path') + 'AcroRd32.exe';
-                    }
-                    wrk.close();
-                }
-                // return if invalid path
-                if (!zz.fileExists(acrobat)) {
-                    zz.infoWindow(zz.ZFgetString('general.error'), 'Unable to find path for Adobe Reader. Please install or set path in hidden preferences (see zotfile documentation).');
+                // get path to PDF Reader
+                var pdf_reader = zz.prefs.getCharPref('pdfExtraction.openPdfWin');
+                pdf_reader = pdf_reader==='' ? zz.getPDFReader() : pdf_reader;
+                if (!zz.fileExists(pdf_reader)) {
+                    zz.infoWindow(zz.ZFgetString('general.error'), 'Unable to find path for PDF Reader. Please set path manually in hidden preferences (see zotfile documentation).');
                     return;
                 }
                 // open pdf on page
@@ -81,7 +66,7 @@ var OpenPDFExtension = new function(){
                 else
                     args = ['/A', '"' + path + '"'];
                 // run process
-                zz.runProcess(acrobat, args, false);
+                zz.runProcess(pdf_reader, args, false);
             }
             if(Zotero.isLinux) {
                 var cmd = zz.prefs.getCharPref('pdfExtraction.openPdfLinux');

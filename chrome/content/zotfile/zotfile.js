@@ -1619,6 +1619,9 @@ Zotero.ZotFile = {
     // argument: path as string (with optional filename), zotero att, or file obj
     fileExists: function  (arg, filename) {
         var file;
+        // when undefined
+        if (arg===undefined)
+            return(false);
         // when string is passed
         if(typeof(arg)=='string') {
             if(filename!=null) arg=this.completePath(arg,filename);
@@ -2712,6 +2715,51 @@ Zotero.ZotFile = {
         this.handleErrors();
     },
 
+    getPDFReader: function() {
+        var wrk = Components.classes["@mozilla.org/windows-registry-key;1"]
+                            .createInstance(Components.interfaces.nsIWindowsRegKey);
+
+        //get handler for PDFs
+        var success = false;
+        var tryKeys = ['.pdf', '.PDF']
+        for(var i=0; !success && i<tryKeys.length; i++) {
+            try {
+                wrk.open(wrk.ROOT_KEY_CLASSES_ROOT,
+                     tryKeys[i],
+                     wrk.ACCESS_READ);
+                success = true;
+            } catch(e) {}
+        }
+
+        if(!success) return;
+
+        var progId = wrk.readStringValue('');
+        //get version specific handler, if it exists
+        try {
+            wrk.open(wrk.ROOT_KEY_CLASSES_ROOT,
+                progId + '\CurVer',
+                wrk.ACCESS_READ);
+            progId = wrk.readStringValue('') || progId;
+        } catch(e) {}
+
+        //get command
+        success = false;
+        tryKeys = [progId + '\\shell\\Read\\command', progId + '\\Shell\\Read\\command', progId + '\\shell\\Open\\command', progId + '\\Shell\\Read\\command'];
+        for(var i=0; !success && i<tryKeys.length; i++) {
+            try {
+                wrk.open(wrk.ROOT_KEY_CLASSES_ROOT,
+                     tryKeys[i],
+                     wrk.ACCESS_READ);
+                success = true;
+            } catch(e) {}
+        }
+
+        if(!success) return;
+
+        var command = wrk.readStringValue('').match(/^(?:".+?"|[^"]\S+)/);
+        if(!command) return;
+        return command[0].replace(/"/g, '');
+    },
 
     // =========================================== //
     // FUNCTIONS: PDF ANNOTATION EXTRACTION CLASS //
