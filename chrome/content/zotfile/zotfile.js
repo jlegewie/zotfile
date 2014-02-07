@@ -2744,7 +2744,7 @@ Zotero.ZotFile = {
         //get version specific handler, if it exists
         try {
             wrk.open(wrk.ROOT_KEY_CLASSES_ROOT,
-                progId + '\CurVer',
+                progId + '\\CurVer',
                 wrk.ACCESS_READ);
             progId = wrk.readStringValue('') || progId;
         } catch(e) {}
