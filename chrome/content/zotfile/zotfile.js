@@ -2663,49 +2663,49 @@ Zotero.ZotFile = {
         // get selected attachments
         var attIDs=this.getSelectedAttachments();
 
-        // Pull attachments
-        var confirmed=1;
-        if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) confirmed=confirm(this.ZFgetString('renaming.moveRename', [attIDs.length]));
-        if(confirmed) {
-            for (var i=0; i < attIDs.length; i++) {
-                try {
-                    // get attachment and item
-                    var att = Zotero.Items.get(attIDs[i]);
-                    var item= Zotero.Items.get(att.getSource());
+        // confirm renaming
+        if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) 
+                if(!confirm(this.ZFgetString('renaming.moveRename', [attIDs.length])))
+                    return;
+        // rename attachments
+        for (var i=0; i < attIDs.length; i++) {
+            try {
+                // get attachment and item
+                var att = Zotero.Items.get(attIDs[i]);
+                var item= Zotero.Items.get(att.getSource());
 
-                    // preserve attachment note and tags
-                    var att_note=att.getNote();
-                    var att_tags=att.getTags();
-                    if(att_tags.length>0) for (var j=0; j < att_tags.length; j++) att_tags[j]= att_tags[j]._get('name');
+                // preserve attachment note and tags
+                var att_note=att.getNote();
+                var att_tags=att.getTags();
+                if(att_tags.length>0) for (var j=0; j < att_tags.length; j++) att_tags[j]= att_tags[j]._get('name');
 
-                    // Rename and Move Attachment
-                    var file = att.getFile();
-                    if(this.fileExists(att) && this.checkFileType(file) && !this.getTabletStatus(att)) {
-                        // move & rename
-                        var attID=this.renameAttachment(item, att, true,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),true);
+                // Rename and Move Attachment
+                var file = att.getFile();
+                if(this.fileExists(att) && this.checkFileType(file) && !this.getTabletStatus(att)) {
+                    // move & rename
+                    var attID=this.renameAttachment(item, att, true,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),true);
 
-                        //update list of selected item
-                        if(attID!==null && attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
+                    //update list of selected item
+                    if(attID!==null && attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
 
-                        // restore attachments note and tags
-                        if(att_note!="" || att_tags.length>0) {
-                            att = Zotero.Items.get(attID);
-                            if(att!=false) {
-                                if(att_note!="") att.setNote(att_note);
-                                if(att_tags) for each(var tag in att_tags) att.addTag(tag);
-                                att.save();
-                            }
+                    // restore attachments note and tags
+                    if(att_note!="" || att_tags.length>0) {
+                        att = Zotero.Items.get(attID);
+                        if(att!=false) {
+                            if(att_note!="") att.setNote(att_note);
+                            if(att_tags) for each(var tag in att_tags) att.addTag(tag);
+                            att.save();
                         }
                     }
-                    if(this.getTabletStatus(att)) this.messages_warning.push("'" + file.leafName + "'");
                 }
-                catch(e) {
-                    this.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
-                }
+                if(this.getTabletStatus(att)) this.messages_warning.push("'" + file.leafName + "'");
             }
-            // restore selection
-            if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
+            catch(e) {
+                this.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
+            }
         }
+        // restore selection
+        if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
         // show messages and handle errors
         this.showWarningMessages(this.ZFgetString('general.warning.skippedAtt'),this.ZFgetString('general.warning.skippedAtt.tablet.msg'));
         this.showReportMessages(this.ZFgetString('renaming.renamed'));
