@@ -2669,7 +2669,6 @@ Zotero.ZotFile = {
         if(confirmed) {
             for (var i=0; i < attIDs.length; i++) {
                 try {
-                    //lksdfsdf
                     // get attachment and item
                     var att = Zotero.Items.get(attIDs[i]);
                     var item= Zotero.Items.get(att.getSource());
