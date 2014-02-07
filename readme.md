@@ -38,6 +38,7 @@ Contributions preferably through pull requests are welcome!
 
 - Go to page with annotation using Skim (Mac OS)
 - New wildcards for editors (`%d`, `%D`, `%L`, `%l`)
+- Fix bug with unnecessary suffix after multiple renames of same file
 
 #### Changes in 3.1
 
