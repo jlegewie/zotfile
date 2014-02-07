@@ -1494,7 +1494,8 @@ Zotero.ZotFile = {
     },
 
     completePath: function(location,filename) {
-        return (location + this.folderSep + filename);
+        var path = location.charAt(location.length-1)==this.folderSep ? location + filename : location + this.folderSep + filename;
+        return (path);
     },
 
     addSuffix: function(filename,k) {
@@ -2639,6 +2640,12 @@ Zotero.ZotFile = {
             }
             // (b) TO LINKED ATTACHMENT (only if library is local and not cloud)
             if (!import_att && !item.libraryID) {
+                // check if attachment already is in place                
+                if(this.completePath(location, filename) == file.path) {
+                    if(notification) this.messages_warning.push("'" + filename + "'")                        
+                    return att.id;
+                }
+                // this.completePath(location, filename)
                 // move pdf file
                 var newfile_path=this.moveFile(file,location, filename, att.getDisplayTitle());
                 if (newfile_path!="NULL") {
