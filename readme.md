@@ -38,7 +38,7 @@ Contributions preferably through pull requests are welcome!
 
 - **Goto annotation in pdf**
 
-    This is not really a new feature but with two recent changes in Zotero (see [this](https://github.com/zotero/zotero/pull/450) and [this](https://github.com/zotero/zotero/pull/452) pull request), it became much more useful! Simply click on the link that is part of your extracted annotations in your Zotero notes, and zotfile will open the pdf on the page with the annotation. The feature now works on Windows as well (thanks to aurimasv) and I have added support for Skim on Mac. Check out the [documentation](http://zotfile.com/index.html#extract-pdf-annotations) for some more details.
+    This is not really a new feature but with two recent changes in Zotero (see [this](https://github.com/zotero/zotero/pull/450) and [this](https://github.com/zotero/zotero/pull/452) pull request), it became much more useful! Simply click on the link that is part of your extracted annotations, and zotfile will open the pdf on the page with the annotation. The feature now works on Windows as well (thanks to aurimasv) and I have added support for Skim on Mac. Check out the [documentation](http://zotfile.com/index.html#extract-pdf-annotations) for some more details.
 
 - New wildcards for editors (`%d`, `%D`, `%L`, `%l`)
 - Fix bug with unnecessary suffix after multiple renames of same file
