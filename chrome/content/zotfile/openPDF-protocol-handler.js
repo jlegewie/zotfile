@@ -63,7 +63,7 @@ var OpenPDFExtension = new function(){
                 // Adobe Acrobat: http://partners.adobe.com/public/developer/en/acrobat/PDFOpenParameters.pdf
                 // PDF-XChange: http://help.tracker-software.com/eu/default.aspx?pageid=PDFXView25:command_line_options
                 if (page)
-                    args = ['/A','page=' + page ,path];
+                    args = ['/A', 'page=' + page, path];
                 else
                     args = [path];
                 // run process
@@ -93,7 +93,7 @@ var OpenPDFExtension = new function(){
                 }
                 else {
                     // get page argument
-                    cmd = cmd.split('-');                    
+                    cmd = cmd.split('-');
                     var arg = cmd.pop();
                     // argument for call
                     if (page)
@@ -101,7 +101,7 @@ var OpenPDFExtension = new function(){
                     else
                         args = [path];
                     // run process
-                    zz.runProcess(cmd.join('-'), args, false);                    
+                    zz.runProcess(cmd.join('-'), args, false);
                 }
             }        
         }
