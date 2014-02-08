@@ -50,6 +50,11 @@ Zotero.ZotFile = {
 
     versionChanges: function (currentVersion) {
         // open webpage
+        if(this.prefs.getCharPref("version")==="" || currentVersion=="3.2") {
+            if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL); });
+            if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.changelogURL); });
+        }
+        // open webpage
         if(this.prefs.getCharPref("version")==="" || currentVersion=="3.1") {
             if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL); });
             if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.changelogURL); });
