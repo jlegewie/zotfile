@@ -60,11 +60,12 @@ var OpenPDFExtension = new function(){
                     return;
                 }
                 // open pdf on page
-                // http://partners.adobe.com/public/developer/en/acrobat/PDFOpenParameters.pdf
+                // Adobe Acrobat: http://partners.adobe.com/public/developer/en/acrobat/PDFOpenParameters.pdf
+                // PDF-XChange: http://help.tracker-software.com/eu/default.aspx?pageid=PDFXView25:command_line_options
                 if (page)
-                    args = ['/A', '"page=' + page + '"', '"' + path + '"'];
+                    args = ['/A','page=' + page ,path];
                 else
-                    args = ['/A', '"' + path + '"'];
+                    args = [path];
                 // run process
                 zz.runProcess(pdf_reader, args, false);
             }
