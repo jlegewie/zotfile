@@ -40,6 +40,10 @@ Contributions preferably through pull requests are welcome!
 
     This is not really a new feature but with two recent changes in Zotero (see [this](https://github.com/zotero/zotero/pull/450) and [this](https://github.com/zotero/zotero/pull/452) pull request), it became much more useful! Simply click on the link that is part of your extracted annotations, and zotfile will open the pdf on the page with the annotation. The feature now works on Windows as well (thanks to aurimasv) and I have added support for Skim on Mac. Check out the [documentation](http://zotfile.com/index.html#extract-pdf-annotations) for some more details.
 
+- **Improved extraction of annotation**
+
+    This version includes two improvements for the extraction of annotations. First, the extraction is now based on the most recent pdf.js version ([here](https://github.com/jlegewie/pdf.js/tree/extract-v3) is my fork with the modified version of [pdf.js](https://github.com/mozilla/pdf.js) used in zotfile). With this update, zotfile should work with more pdfs. Second, the extraction is now about 30-60% faster (depending on the pdf) thanks to some improvements in my extraction code.
+
 - New wildcards for editors (`%d`, `%D`, `%L`, `%l`)
 - Fix bug with unnecessary suffix after multiple renames of same file
 
