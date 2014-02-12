@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /* globals bytesToString, DecryptStream, error, isInt, isName, Name,
-           PasswordException, stringToBytes */
+           PasswordException, PasswordResponses, stringToBytes */
 
 'use strict';
 
@@ -352,7 +352,7 @@ var AES128Cipher = (function AES128CipherClosure() {
     this.bufferPosition = 0;
   }
 
-  function decryptBlock2(data) {
+  function decryptBlock2(data, finalize) {
     var i, j, ii, sourceLength = data.length,
         buffer = this.buffer, bufferLength = this.bufferPosition,
         result = [], iv = this.iv;
@@ -375,19 +375,25 @@ var AES128Cipher = (function AES128CipherClosure() {
     this.buffer = buffer;
     this.bufferLength = bufferLength;
     this.iv = iv;
-    if (result.length === 0)
+    if (result.length === 0) {
       return new Uint8Array([]);
-    if (result.length == 1)
-      return result[0];
+    }
     // combining plain text blocks into one
-    var output = new Uint8Array(16 * result.length);
+    var outputLength = 16 * result.length;
+    if (finalize) {
+      // undo a padding that is described in RFC 2898
+      var lastBlock = result[result.length - 1];
+      outputLength -= lastBlock[15];
+      result[result.length - 1] = lastBlock.subarray(0, 16 - lastBlock[15]);
+    }
+    var output = new Uint8Array(outputLength);
     for (i = 0, j = 0, ii = result.length; i < ii; ++i, j += 16)
       output.set(result[i], j);
     return output;
   }
 
   AES128Cipher.prototype = {
-    decryptBlock: function AES128Cipher_decryptBlock(data) {
+    decryptBlock: function AES128Cipher_decryptBlock(data, finalize) {
       var i, sourceLength = data.length;
       var buffer = this.buffer, bufferLength = this.bufferPosition;
       // waiting for IV values -- they are at the start of the stream
@@ -403,7 +409,7 @@ var AES128Cipher = (function AES128CipherClosure() {
       this.bufferLength = 0;
       // starting decryption
       this.decryptBlock = decryptBlock2;
-      return this.decryptBlock(data.subarray(16));
+      return this.decryptBlock(data.subarray(16), finalize);
     }
   };
 
@@ -419,15 +425,15 @@ var CipherTransform = (function CipherTransformClosure() {
     createStream: function CipherTransform_createStream(stream) {
       var cipher = new this.streamCipherConstructor();
       return new DecryptStream(stream,
-        function cipherTransformDecryptStream(data) {
-          return cipher.decryptBlock(data);
+        function cipherTransformDecryptStream(data, finalize) {
+          return cipher.decryptBlock(data, finalize);
         }
       );
     },
     decryptString: function CipherTransform_decryptString(s) {
       var cipher = new this.stringCipherConstructor();
       var data = stringToBytes(s);
-      data = cipher.decryptBlock(data);
+      data = cipher.decryptBlock(data, true);
       return bytesToString(data);
     }
   };
@@ -443,7 +449,8 @@ var CipherTransformFactory = (function CipherTransformFactoryClosure() {
 
   function prepareKeyData(fileId, password, ownerPassword, userPassword,
                           flags, revision, keyLength, encryptMetadata) {
-    var hashData = new Uint8Array(100), i = 0, j, n;
+    var hashDataSize = 40 + ownerPassword.length + fileId.length;
+    var hashData = new Uint8Array(hashDataSize), i = 0, j, n;
     if (password) {
       n = Math.min(32, password.length);
       for (; i < n; ++i)
@@ -558,8 +565,8 @@ var CipherTransformFactory = (function CipherTransformFactoryClosure() {
       keyLength < 40 || (keyLength % 8) !== 0)
       error('invalid key length');
     // prepare keys
-    var ownerPassword = stringToBytes(dict.get('O'));
-    var userPassword = stringToBytes(dict.get('U'));
+    var ownerPassword = stringToBytes(dict.get('O')).subarray(0, 32);
+    var userPassword = stringToBytes(dict.get('U')).subarray(0, 32);
     var flags = dict.get('P');
     var revision = dict.get('R');
     var encryptMetadata = algorithm == 4 &&  // meaningful when V is 4
@@ -575,7 +582,8 @@ var CipherTransformFactory = (function CipherTransformFactoryClosure() {
                                        ownerPassword, userPassword, flags,
                                        revision, keyLength, encryptMetadata);
     if (!encryptionKey && !password) {
-      throw new PasswordException('No password given', 'needpassword');
+      throw new PasswordException('No password given',
+                                  PasswordResponses.NEED_PASSWORD);
     } else if (!encryptionKey && password) {
       // Attempting use the password as an owner password
       var decodedPassword = decodeUserPassword(passwordBytes, ownerPassword,
@@ -586,7 +594,8 @@ var CipherTransformFactory = (function CipherTransformFactoryClosure() {
     }
 
     if (!encryptionKey)
-      throw new PasswordException('Incorrect Password', 'incorrectpassword');
+      throw new PasswordException('Incorrect Password',
+                                  PasswordResponses.INCORRECT_PASSWORD);
 
     this.encryptionKey = encryptionKey;
 

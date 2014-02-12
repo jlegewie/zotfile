@@ -1,34 +1,16 @@
-<!-- <!doctype html> -->
+<!doctype html>
 <html>
 
 <head>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/core.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/api.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/bidi.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/chunked_stream.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/jbig2.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/metadata.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/network.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/pdf_manager.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/util.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/canvas.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/obj.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/function.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/charsets.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/cidmaps.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/colorspace.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/crypto.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/evaluator.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/fonts.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/glyphlist.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/image.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/metrics.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/parser.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/pattern.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/stream.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/worker.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/external/jpgjs/jpg.js"></script>
-  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/jpx.js"></script>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/shared/util.js"></script>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/shared/colorspace.js"></script>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/shared/pattern.js"></script>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/shared/function.js"></script>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/shared/annotation.js"></script>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/display/api.js"></script>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/display/metadata.js"></script>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/display/canvas.js"></script>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/display/font_loader.js"></script>
 
   <script type="text/javascript">
     // Specify the main script used to create a new PDF.JS web worker.
@@ -38,6 +20,9 @@
   <script type="text/javascript" src="extract.js"></script>
 </head>
 
-<body>Extracting PDF metadata...</body>
+<body>
+  Extracting PDF metadata...
+  <canvas id="the-canvas" style="border:1px solid black;"/>
+</body>
 
 </html>

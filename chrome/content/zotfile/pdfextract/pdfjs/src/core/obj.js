@@ -16,9 +16,10 @@
  */
 /* globals assertWellFormed, bytesToString, CipherTransformFactory, error, info,
            InvalidPDFException, isArray, isCmd, isDict, isInt, isName, isRef,
-           isStream, JpegStream, Lexer, log, Page, Parser, Promise, shadow,
+           isStream, Lexer, Page, Parser, Promise, shadow,
            stringToPDFString, stringToUTF8String, warn, isString, assert,
-           Promise, MissingDataException, XRefParseException, Stream */
+           Promise, MissingDataException, XRefParseException, Stream,
+           ChunkedStream, LegacyPromise */
 
 'use strict';
 
@@ -86,6 +87,38 @@ var Dict = (function DictClosure() {
       return xref ? xref.fetchIfRef(value) : value;
     },
 
+    // Same as get(), but returns a promise and uses fetchIfRefAsync().
+    getAsync: function Dict_getAsync(key1, key2, key3) {
+      var value;
+      var promise;
+      var xref = this.xref;
+      if (typeof (value = this.map[key1]) !== undefined || key1 in this.map ||
+          typeof key2 === undefined) {
+        if (xref) {
+          return xref.fetchIfRefAsync(value);
+        }
+        promise = new LegacyPromise();
+        promise.resolve(value);
+        return promise;
+      }
+      if (typeof (value = this.map[key2]) !== undefined || key2 in this.map ||
+          typeof key3 === undefined) {
+        if (xref) {
+          return xref.fetchIfRefAsync(value);
+        }
+        promise = new LegacyPromise();
+        promise.resolve(value);
+        return promise;
+      }
+      value = this.map[key3] || null;
+      if (xref) {
+        return xref.fetchIfRefAsync(value);
+      }
+      promise = new LegacyPromise();
+      promise.resolve(value);
+      return promise;
+    },
+
     // no dereferencing
     getRaw: function Dict_getRaw(key) {
       return this.map[key];
@@ -139,15 +172,51 @@ var RefSet = (function RefSetClosure() {
 
   RefSet.prototype = {
     has: function RefSet_has(ref) {
-      return !!this.dict['R' + ref.num + '.' + ref.gen];
+      return ('R' + ref.num + '.' + ref.gen) in this.dict;
     },
 
     put: function RefSet_put(ref) {
-      this.dict['R' + ref.num + '.' + ref.gen] = ref;
+      this.dict['R' + ref.num + '.' + ref.gen] = true;
+    },
+
+    remove: function RefSet_remove(ref) {
+      delete this.dict['R' + ref.num + '.' + ref.gen];
     }
   };
 
   return RefSet;
+})();
+
+var RefSetCache = (function RefSetCacheClosure() {
+  function RefSetCache() {
+    this.dict = Object.create(null);
+  }
+
+  RefSetCache.prototype = {
+    get: function RefSetCache_get(ref) {
+      return this.dict['R' + ref.num + '.' + ref.gen];
+    },
+
+    has: function RefSetCache_has(ref) {
+      return ('R' + ref.num + '.' + ref.gen) in this.dict;
+    },
+
+    put: function RefSetCache_put(ref, obj) {
+      this.dict['R' + ref.num + '.' + ref.gen] = obj;
+    },
+
+    forEach: function RefSetCache_forEach(fn, thisArg) {
+      for (var i in this.dict) {
+        fn.call(thisArg, this.dict[i]);
+      }
+    },
+
+    clear: function RefSetCache_clear() {
+      this.dict = Object.create(null);
+    }
+  };
+
+  return RefSetCache;
 })();
 
 var Catalog = (function CatalogClosure() {
@@ -155,17 +224,11 @@ var Catalog = (function CatalogClosure() {
     this.pdfManager = pdfManager;
     this.xref = xref;
     this.catDict = xref.getCatalogObj();
+    this.fontCache = new RefSetCache();
     assertWellFormed(isDict(this.catDict),
       'catalog object is not a dictionary');
 
-    // Stores state as we traverse the pages catalog so that we can resume
-    // parsing if an exception is thrown
-    this.traversePagesQueue = [{
-      pagesDict: this.toplevelPagesDict,
-      posInKids: 0
-    }];
     this.pagePromises = [];
-    this.currPageIndex = 0;
   }
 
   Catalog.prototype = {
@@ -207,6 +270,18 @@ var Catalog = (function CatalogClosure() {
       return shadow(this, 'toplevelPagesDict', pagesObj);
     },
     get documentOutline() {
+      var obj = null;
+      try {
+        obj = this.readDocumentOutline();
+      } catch (ex) {
+        if (ex instanceof MissingDataException) {
+          throw ex;
+        }
+        warn('Unable to read document outline');
+      }
+      return shadow(this, 'documentOutline', obj);
+    },
+    readDocumentOutline: function Catalog_readDocumentOutline() {
       var xref = this.xref;
       var obj = this.catDict.get('Outlines');
       var root = { items: [] };
@@ -257,8 +332,7 @@ var Catalog = (function CatalogClosure() {
           }
         }
       }
-      obj = root.items.length > 0 ? root.items : null;
-      return shadow(this, 'documentOutline', obj);
+      return root.items.length > 0 ? root.items : null;
     },
     get numPages() {
       var obj = this.toplevelPagesDict.get('Count');
@@ -337,53 +411,156 @@ var Catalog = (function CatalogClosure() {
       return shadow(this, 'javaScript', javaScript);
     },
 
+    cleanup: function Catalog_cleanup() {
+      this.fontCache.forEach(function (font) {
+        delete font.sent;
+        delete font.translated;
+      });
+      this.fontCache.clear();
+    },
+
     getPage: function Catalog_getPage(pageIndex) {
       if (!(pageIndex in this.pagePromises)) {
-        this.pagePromises[pageIndex] = new Promise();
+        this.pagePromises[pageIndex] = this.getPageDict(pageIndex).then(
+          function (a) {
+            var dict = a[0];
+            var ref = a[1];
+            return new Page(this.pdfManager, this.xref, pageIndex, dict, ref,
+                            this.fontCache);
+          }.bind(this)
+        );
       }
       return this.pagePromises[pageIndex];
     },
 
-    // Traverses pages in DFS order so that pages are processed in increasing
-    // order
-    traversePages: function Catalog_traversePages() {
-      var queue = this.traversePagesQueue;
-      while (queue.length) {
-        var queueItem = queue[queue.length - 1];
-        var pagesDict = queueItem.pagesDict;
+    getPageDict: function Catalog_getPageDict(pageIndex) {
+      var promise = new LegacyPromise();
+      var nodesToVisit = [this.catDict.getRaw('Pages')];
+      var currentPageIndex = 0;
+      var xref = this.xref;
 
-        var kids = pagesDict.get('Kids');
-        assert(isArray(kids), 'page dictionary kids object is not an array');
-        if (queueItem.posInKids >= kids.length) {
-          queue.pop();
-          continue;
-        }
-        var kidRef = kids[queueItem.posInKids];
-        assert(isRef(kidRef), 'page dictionary kid is not a reference');
+      function next() {
+        while (nodesToVisit.length) {
+          var currentNode = nodesToVisit.pop();
 
-        var kid = this.xref.fetch(kidRef);
-        if (isDict(kid, 'Page') || (isDict(kid) && !kid.has('Kids'))) {
-          var pageIndex = this.currPageIndex++;
-          var page = new Page(this.pdfManager, this.xref, pageIndex, kid,
-                              kidRef);
-          if (!(pageIndex in this.pagePromises)) {
-            this.pagePromises[pageIndex] = new Promise();
+          if (isRef(currentNode)) {
+            xref.fetchAsync(currentNode).then(function (obj) {
+              if ((isDict(obj, 'Page') || (isDict(obj) && !obj.has('Kids')))) {
+                if (pageIndex === currentPageIndex) {
+                  promise.resolve([obj, currentNode]);
+                } else {
+                  currentPageIndex++;
+                  next();
+                }
+                return;
+              }
+              nodesToVisit.push(obj);
+              next();
+            }.bind(this), promise.reject.bind(promise));
+            return;
           }
-          this.pagePromises[pageIndex].resolve(page);
 
-        } else { // must be a child page dictionary
+          // must be a child page dictionary
           assert(
-            isDict(kid),
+            isDict(currentNode),
             'page dictionary kid reference points to wrong type of object'
           );
+          var count = currentNode.get('Count');
+          // Skip nodes where the page can't be.
+          if (currentPageIndex + count <= pageIndex) {
+            currentPageIndex += count;
+            continue;
+          }
 
-          queue.push({
-            pagesDict: kid,
-            posInKids: 0
-          });
+          var kids = currentNode.get('Kids');
+          assert(isArray(kids), 'page dictionary kids object is not an array');
+          if (count === kids.length) {
+            // Nodes that don't have the page have been skipped and this is the
+            // bottom of the tree which means the page requested must be a
+            // descendant of this pages node. Ideally we would just resolve the
+            // promise with the page ref here, but there is the case where more
+            // pages nodes could link to single a page (see issue 3666 pdf). To
+            // handle this push it back on the queue so if it is a pages node it
+            // will be descended into.
+            nodesToVisit = [kids[pageIndex - currentPageIndex]];
+            currentPageIndex = pageIndex;
+            continue;
+          } else {
+            for (var last = kids.length - 1; last >= 0; last--) {
+              nodesToVisit.push(kids[last]);
+            }
+          }
         }
-        ++queueItem.posInKids;
+        promise.reject('Page index ' + pageIndex + ' not found.');
       }
+      next();
+      return promise;
+    },
+
+    getPageIndex: function Catalog_getPageIndex(ref) {
+      // The page tree nodes have the count of all the leaves below them. To get
+      // how many pages are before we just have to walk up the tree and keep
+      // adding the count of siblings to the left of the node.
+      var xref = this.xref;
+      function pagesBeforeRef(kidRef) {
+        var total = 0;
+        var parentRef;
+        return xref.fetchAsync(kidRef).then(function (node) {
+          if (!node) {
+            return null;
+          }
+          parentRef = node.getRaw('Parent');
+          return node.getAsync('Parent');
+        }).then(function (parent) {
+          if (!parent) {
+            return null;
+          }
+          return parent.getAsync('Kids');
+        }).then(function (kids) {
+          if (!kids) {
+            return null;
+          }
+          var kidPromises = [];
+          var found = false;
+          for (var i = 0; i < kids.length; i++) {
+            var kid = kids[i];
+            assert(isRef(kid), 'kids must be an ref');
+            if (kid.num == kidRef.num) {
+              found = true;
+              break;
+            }
+            kidPromises.push(xref.fetchAsync(kid).then(function (kid) {
+              if (kid.has('Count')) {
+                var count = kid.get('Count');
+                total += count;
+              } else { // page leaf node
+                total++;
+              }
+            }));
+          }
+          if (!found) {
+            error('kid ref not found in parents kids');
+          }
+          return Promise.all(kidPromises).then(function () {
+            return [total, parentRef];
+          });
+        });
+      }
+
+      var total = 0;
+      function next(ref) {
+        return pagesBeforeRef(ref).then(function (args) {
+          if (!args) {
+            return total;
+          }
+          var count = args[0];
+          var parentRef = args[1];
+          total += count;
+          return next(parentRef);
+        });
+      }
+
+      return next(ref);
     }
   };
 
@@ -539,6 +716,12 @@ var XRef = (function XRefClosure() {
         delete tableState.entryCount;
       }
 
+      // Per issue 3248: hp scanners generate bad XRef
+      if (first === 1 && this.entries[1] && this.entries[1].free) {
+        // shifting the entries
+        this.entries.shift();
+      }
+
       // Sanity check: as per spec, first object must be free
       if (this.entries[0] && !this.entries[0].free)
         error('Invalid XRef table: unexpected first object');
@@ -550,7 +733,7 @@ var XRef = (function XRefClosure() {
       if (!('streamState' in this)) {
         // Stores state of the stream as we process it so we can resume
         // from middle of stream in case of missing data error
-        var streamParameters = stream.parameters;
+        var streamParameters = stream.dict;
         var byteWidths = streamParameters.get('W');
         var range = streamParameters.get('Index');
         if (!range) {
@@ -567,7 +750,7 @@ var XRef = (function XRefClosure() {
       this.readXRefStream(stream);
       delete this.streamState;
 
-      return stream.parameters;
+      return stream.dict;
     },
 
     readXRefStream: function XRef_readXRefStream(stream) {
@@ -682,6 +865,9 @@ var XRef = (function XRefClosure() {
         if (ch === 37) { // %-comment
           do {
             ++position;
+            if (position >= length) {
+              break;
+            }
             ch = buffer[position];
           } while (ch !== 13 && ch !== 10);
           continue;
@@ -791,6 +977,8 @@ var XRef = (function XRefClosure() {
 
             if (!dict)
               error('Failed to read XRef stream');
+          } else {
+            error('Invalid XRef stream header');
           }
 
           // Recursively get previous dictionary, if any
@@ -811,8 +999,7 @@ var XRef = (function XRefClosure() {
         if (e instanceof MissingDataException) {
           throw e;
         }
-
-        log('(while reading XRef): ' + e);
+        info('(while reading XRef): ' + e);
       }
 
       if (recoveryMode)
@@ -885,14 +1072,7 @@ var XRef = (function XRefClosure() {
         } else {
           e = parser.getObj();
         }
-        if (!isStream(e) || e instanceof JpegStream) {
-          this.cache[num] = e;
-        } else if (e instanceof Stream) {
-          e = e.makeSubStream(e.start, e.length, e.dict);
-          this.cache[num] = e;
-        } else if ('readBlock' in e) {
-          e.getBytes();
-          e = e.makeSubStream(0, e.bufferLength, e.dict);
+        if (!isStream(e)) {
           this.cache[num] = e;
         }
         return e;
@@ -903,8 +1083,8 @@ var XRef = (function XRefClosure() {
       stream = this.fetch(new Ref(tableOffset, 0));
       if (!isStream(stream))
         error('bad ObjStm stream');
-      var first = stream.parameters.get('First');
-      var n = stream.parameters.get('N');
+      var first = stream.dict.get('First');
+      var n = stream.dict.get('N');
       if (!isInt(first) || !isInt(n)) {
         error('invalid first and n parameters for ObjStm stream');
       }
@@ -933,10 +1113,34 @@ var XRef = (function XRefClosure() {
         }
       }
       e = entries[e.gen];
-      if (!e) {
+      if (e === undefined) {
         error('bad XRef entry for compressed object');
       }
       return e;
+    },
+    fetchIfRefAsync: function XRef_fetchIfRefAsync(obj) {
+      if (!isRef(obj)) {
+        var promise = new LegacyPromise();
+        promise.resolve(obj);
+        return promise;
+      }
+      return this.fetchAsync(obj);
+    },
+    fetchAsync: function XRef_fetchAsync(ref, suppressEncryption) {
+      var promise = new LegacyPromise();
+      var tryFetch = function (promise) {
+        try {
+          promise.resolve(this.fetch(ref, suppressEncryption));
+        } catch (e) {
+          if (e instanceof MissingDataException) {
+            this.stream.manager.requestRange(e.begin, e.end, tryFetch);
+            return;
+          }
+          promise.reject(e);
+        }
+      }.bind(this, promise);
+      tryFetch();
+      return promise;
     },
     getCatalogObj: function XRef_getCatalogObj() {
       return this.root;
@@ -999,118 +1203,146 @@ var NameTree = (function NameTreeClosure() {
 })();
 
 /**
- * A PDF document and page is built of many objects. E.g. there are objects
- * for fonts, images, rendering code and such. These objects might get processed
- * inside of a worker. The `PDFObjects` implements some basic functions to
- * manage these objects.
+ * A helper for loading missing data in object graphs. It traverses the graph
+ * depth first and queues up any objects that have missing data. Once it has
+ * has traversed as many objects that are available it attempts to bundle the
+ * missing data requests and then resume from the nodes that weren't ready.
+ *
+ * NOTE: It provides protection from circular references by keeping track of
+ * of loaded references. However, you must be careful not to load any graphs
+ * that have references to the catalog or other pages since that will cause the
+ * entire PDF document object graph to be traversed.
  */
-var PDFObjects = (function PDFObjectsClosure() {
-  function PDFObjects() {
-    this.objs = {};
+var ObjectLoader = (function() {
+
+  function mayHaveChildren(value) {
+    return isRef(value) || isDict(value) || isArray(value) || isStream(value);
   }
 
-  PDFObjects.prototype = {
-    /**
-     * Internal function.
-     * Ensures there is an object defined for `objId`. Stores `data` on the
-     * object *if* it is created.
-     */
-    ensureObj: function PDFObjects_ensureObj(objId, data) {
-      if (this.objs[objId])
-        return this.objs[objId];
-      return this.objs[objId] = new Promise(objId, data);
-    },
-
-    /**
-     * If called *without* callback, this returns the data of `objId` but the
-     * object needs to be resolved. If it isn't, this function throws.
-     *
-     * If called *with* a callback, the callback is called with the data of the
-     * object once the object is resolved. That means, if you call this
-     * function and the object is already resolved, the callback gets called
-     * right away.
-     */
-    get: function PDFObjects_get(objId, callback) {
-      // If there is a callback, then the get can be async and the object is
-      // not required to be resolved right now
-      if (callback) {
-        this.ensureObj(objId).then(callback);
-        return null;
-      }
-
-      // If there isn't a callback, the user expects to get the resolved data
-      // directly.
-      var obj = this.objs[objId];
-
-      // If there isn't an object yet or the object isn't resolved, then the
-      // data isn't ready yet!
-      if (!obj || !obj.isResolved)
-        error('Requesting object that isn\'t resolved yet ' + objId);
-
-      return obj.data;
-    },
-
-    /**
-     * Resolves the object `objId` with optional `data`.
-     */
-    resolve: function PDFObjects_resolve(objId, data) {
-      var objs = this.objs;
-
-      // In case there is a promise already on this object, just resolve it.
-      if (objs[objId]) {
-        objs[objId].resolve(data);
+  function addChildren(node, nodesToVisit) {
+    if (isDict(node) || isStream(node)) {
+      var map;
+      if (isDict(node)) {
+        map = node.map;
       } else {
-        this.ensureObj(objId, data);
+        map = node.dict.map;
       }
-    },
-
-    onData: function PDFObjects_onData(objId, callback) {
-      this.ensureObj(objId).onData(callback);
-    },
-
-    isResolved: function PDFObjects_isResolved(objId) {
-      var objs = this.objs;
-      if (!objs[objId]) {
-        return false;
-      } else {
-        return objs[objId].isResolved;
+      for (var key in map) {
+        var value = map[key];
+        if (mayHaveChildren(value)) {
+          nodesToVisit.push(value);
+        }
       }
-    },
-
-    hasData: function PDFObjects_hasData(objId) {
-      var objs = this.objs;
-      if (!objs[objId]) {
-        return false;
-      } else {
-        return objs[objId].hasData;
+    } else if (isArray(node)) {
+      for (var i = 0, ii = node.length; i < ii; i++) {
+        var value = node[i];
+        if (mayHaveChildren(value)) {
+          nodesToVisit.push(value);
+        }
       }
-    },
-
-    /**
-     * Returns the data of `objId` if object exists, null otherwise.
-     */
-    getData: function PDFObjects_getData(objId) {
-      var objs = this.objs;
-      if (!objs[objId] || !objs[objId].hasData) {
-        return null;
-      } else {
-        return objs[objId].data;
-      }
-    },
-
-    /**
-     * Sets the data of an object but *doesn't* resolve it.
-     */
-    setData: function PDFObjects_setData(objId, data) {
-      // Watchout! If you call `this.ensureObj(objId, data)` you're going to
-      // create a *resolved* promise which shouldn't be the case!
-      this.ensureObj(objId).data = data;
-    },
-
-    clear: function PDFObjects_clear() {
-      this.objs = {};
     }
+  }
+
+  function ObjectLoader(obj, keys, xref) {
+    this.obj = obj;
+    this.keys = keys;
+    this.xref = xref;
+    this.refSet = null;
+  }
+
+  ObjectLoader.prototype = {
+
+    load: function ObjectLoader_load() {
+      var keys = this.keys;
+      this.promise = new LegacyPromise();
+      // Don't walk the graph if all the data is already loaded.
+      if (!(this.xref.stream instanceof ChunkedStream) ||
+          this.xref.stream.getMissingChunks().length === 0) {
+        this.promise.resolve();
+        return this.promise;
+      }
+
+      this.refSet = new RefSet();
+      // Setup the initial nodes to visit.
+      var nodesToVisit = [];
+      for (var i = 0; i < keys.length; i++) {
+        nodesToVisit.push(this.obj[keys[i]]);
+      }
+
+      this.walk(nodesToVisit);
+      return this.promise;
+    },
+
+    walk: function ObjectLoader_walk(nodesToVisit) {
+      var nodesToRevisit = [];
+      var pendingRequests = [];
+      // DFS walk of the object graph.
+      while (nodesToVisit.length) {
+        var currentNode = nodesToVisit.pop();
+
+        // Only references or chunked streams can cause missing data exceptions.
+        if (isRef(currentNode)) {
+          // Skip nodes that have already been visited.
+          if (this.refSet.has(currentNode)) {
+            continue;
+          }
+          try {
+            var ref = currentNode;
+            this.refSet.put(ref);
+            currentNode = this.xref.fetch(currentNode);
+          } catch (e) {
+            if (!(e instanceof MissingDataException)) {
+              throw e;
+            }
+            nodesToRevisit.push(currentNode);
+            pendingRequests.push({ begin: e.begin, end: e.end });
+          }
+        }
+        if (currentNode && currentNode.getBaseStreams) {
+          var baseStreams = currentNode.getBaseStreams();
+          var foundMissingData = false;
+          for (var i = 0; i < baseStreams.length; i++) {
+            var stream = baseStreams[i];
+            if (stream.getMissingChunks && stream.getMissingChunks().length) {
+              foundMissingData = true;
+              pendingRequests.push({
+                begin: stream.start,
+                end: stream.end
+              });
+            }
+          }
+          if (foundMissingData) {
+            nodesToRevisit.push(currentNode);
+          }
+        }
+
+        addChildren(currentNode, nodesToVisit);
+      }
+
+      if (pendingRequests.length) {
+        this.xref.stream.manager.requestRanges(pendingRequests,
+            function pendingRequestCallback() {
+          nodesToVisit = nodesToRevisit;
+          for (var i = 0; i < nodesToRevisit.length; i++) {
+            var node = nodesToRevisit[i];
+            // Remove any reference nodes from the currrent refset so they
+            // aren't skipped when we revist them.
+            if (isRef(node)) {
+              this.refSet.remove(node);
+            }
+          }
+          this.walk(nodesToVisit);
+        }.bind(this));
+        return;
+      }
+      // Everything is loaded.
+      this.refSet = null;
+      this.promise.resolve();
+    }
+
   };
-  return PDFObjects;
+
+  return ObjectLoader;
 })();
+
 

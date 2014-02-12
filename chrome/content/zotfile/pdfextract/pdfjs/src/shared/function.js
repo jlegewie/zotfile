@@ -1,6 +1,5 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set shiftwidth=2 tabstop=2 autoindent cindent expandtab: */
-/* globals EOF, error, isArray, isBool, Lexer, TODO */
 /* Copyright 2012 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* globals PostScriptLexer, PostScriptParser, error, info, isArray, isBool */
 
 'use strict';
 
@@ -122,7 +122,7 @@ var PDFFunction = (function PDFFunctionClosure() {
       if (order !== 1) {
         // No description how cubic spline interpolation works in PDF32000:2008
         // As in poppler, ignoring order, linear interpolation may work as good
-        TODO('No support for cubic spline interpolation: ' + order);
+        info('No support for cubic spline interpolation: ' + order);
       }
 
       var encode = dict.get('Encode');
@@ -468,9 +468,8 @@ var PostScriptStack = (function PostScriptStackClosure() {
   return PostScriptStack;
 })();
 var PostScriptEvaluator = (function PostScriptEvaluatorClosure() {
-  function PostScriptEvaluator(operators, operands) {
+  function PostScriptEvaluator(operators) {
     this.operators = operators;
-    this.operands = operands;
   }
   PostScriptEvaluator.prototype = {
     execute: function PostScriptEvaluator_execute(initialStack) {
@@ -698,196 +697,3 @@ var PostScriptEvaluator = (function PostScriptEvaluatorClosure() {
   };
   return PostScriptEvaluator;
 })();
-
-var PostScriptParser = (function PostScriptParserClosure() {
-  function PostScriptParser(lexer) {
-    this.lexer = lexer;
-    this.operators = [];
-    this.token = null;
-    this.prev = null;
-  }
-  PostScriptParser.prototype = {
-    nextToken: function PostScriptParser_nextToken() {
-      this.prev = this.token;
-      this.token = this.lexer.getToken();
-    },
-    accept: function PostScriptParser_accept(type) {
-      if (this.token.type == type) {
-        this.nextToken();
-        return true;
-      }
-      return false;
-    },
-    expect: function PostScriptParser_expect(type) {
-      if (this.accept(type))
-        return true;
-      error('Unexpected symbol: found ' + this.token.type + ' expected ' +
-            type + '.');
-    },
-    parse: function PostScriptParser_parse() {
-      this.nextToken();
-      this.expect(PostScriptTokenTypes.LBRACE);
-      this.parseBlock();
-      this.expect(PostScriptTokenTypes.RBRACE);
-      return this.operators;
-    },
-    parseBlock: function PostScriptParser_parseBlock() {
-      while (true) {
-        if (this.accept(PostScriptTokenTypes.NUMBER)) {
-          this.operators.push(this.prev.value);
-        } else if (this.accept(PostScriptTokenTypes.OPERATOR)) {
-          this.operators.push(this.prev.value);
-        } else if (this.accept(PostScriptTokenTypes.LBRACE)) {
-          this.parseCondition();
-        } else {
-          return;
-        }
-      }
-    },
-    parseCondition: function PostScriptParser_parseCondition() {
-      // Add two place holders that will be updated later
-      var conditionLocation = this.operators.length;
-      this.operators.push(null, null);
-
-      this.parseBlock();
-      this.expect(PostScriptTokenTypes.RBRACE);
-      if (this.accept(PostScriptTokenTypes.IF)) {
-        // The true block is right after the 'if' so it just falls through on
-        // true else it jumps and skips the true block.
-        this.operators[conditionLocation] = this.operators.length;
-        this.operators[conditionLocation + 1] = 'jz';
-      } else if (this.accept(PostScriptTokenTypes.LBRACE)) {
-        var jumpLocation = this.operators.length;
-        this.operators.push(null, null);
-        var endOfTrue = this.operators.length;
-        this.parseBlock();
-        this.expect(PostScriptTokenTypes.RBRACE);
-        this.expect(PostScriptTokenTypes.IFELSE);
-        // The jump is added at the end of the true block to skip the false
-        // block.
-        this.operators[jumpLocation] = this.operators.length;
-        this.operators[jumpLocation + 1] = 'j';
-
-        this.operators[conditionLocation] = endOfTrue;
-        this.operators[conditionLocation + 1] = 'jz';
-      } else {
-        error('PS Function: error parsing conditional.');
-      }
-    }
-  };
-  return PostScriptParser;
-})();
-
-var PostScriptTokenTypes = {
-  LBRACE: 0,
-  RBRACE: 1,
-  NUMBER: 2,
-  OPERATOR: 3,
-  IF: 4,
-  IFELSE: 5
-};
-
-var PostScriptToken = (function PostScriptTokenClosure() {
-  function PostScriptToken(type, value) {
-    this.type = type;
-    this.value = value;
-  }
-
-  var opCache = {};
-
-  PostScriptToken.getOperator = function PostScriptToken_getOperator(op) {
-    var opValue = opCache[op];
-    if (opValue)
-      return opValue;
-
-    return opCache[op] = new PostScriptToken(PostScriptTokenTypes.OPERATOR, op);
-  };
-
-  PostScriptToken.LBRACE = new PostScriptToken(PostScriptTokenTypes.LBRACE,
-                                                '{');
-  PostScriptToken.RBRACE = new PostScriptToken(PostScriptTokenTypes.RBRACE,
-                                                '}');
-  PostScriptToken.IF = new PostScriptToken(PostScriptTokenTypes.IF, 'IF');
-  PostScriptToken.IFELSE = new PostScriptToken(PostScriptTokenTypes.IFELSE,
-                                                'IFELSE');
-  return PostScriptToken;
-})();
-
-var PostScriptLexer = (function PostScriptLexerClosure() {
-  function PostScriptLexer(stream) {
-    this.stream = stream;
-  }
-  PostScriptLexer.prototype = {
-    getToken: function PostScriptLexer_getToken() {
-      var s = '';
-      var ch;
-      var comment = false;
-      var stream = this.stream;
-
-      // skip comments
-      while (true) {
-        if (!(ch = stream.getChar()))
-          return EOF;
-
-        if (comment) {
-          if (ch == '\x0a' || ch == '\x0d')
-            comment = false;
-        } else if (ch == '%') {
-          comment = true;
-        } else if (!Lexer.isSpace(ch)) {
-          break;
-        }
-      }
-      switch (ch) {
-        case '0': case '1': case '2': case '3': case '4':
-        case '5': case '6': case '7': case '8': case '9':
-        case '+': case '-': case '.':
-          return new PostScriptToken(PostScriptTokenTypes.NUMBER,
-                                      this.getNumber(ch));
-        case '{':
-          return PostScriptToken.LBRACE;
-        case '}':
-          return PostScriptToken.RBRACE;
-      }
-      // operator
-      var str = ch.toLowerCase();
-      while (true) {
-        ch = stream.lookChar();
-        if (ch === null)
-          break;
-        ch = ch.toLowerCase();
-        if (ch >= 'a' && ch <= 'z')
-          str += ch;
-        else
-          break;
-        stream.skip();
-      }
-      switch (str) {
-        case 'if':
-          return PostScriptToken.IF;
-        case 'ifelse':
-          return PostScriptToken.IFELSE;
-        default:
-          return PostScriptToken.getOperator(str);
-      }
-    },
-    getNumber: function PostScriptLexer_getNumber(ch) {
-      var str = ch;
-      var stream = this.stream;
-      while (true) {
-        ch = stream.lookChar();
-        if ((ch >= '0' && ch <= '9') || ch == '-' || ch == '.')
-          str += ch;
-        else
-          break;
-        stream.skip();
-      }
-      var value = parseFloat(str);
-      if (isNaN(value))
-        error('Invalid floating point number: ' + value);
-      return value;
-    }
-  };
-  return PostScriptLexer;
-})();
-

@@ -2925,8 +2925,8 @@ Zotero.ZotFile = {
                         this.errorExtractingAnnotations = false;
                         this.numTotalPdfAttachments = this.pdfAttachmentsForExtraction.length;
                         Zotero.showZoteroPaneProgressMeter(Zotero.ZotFile.ZFgetString('extraction.progressBar'),true);
-                        var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser");
-                        win.ZoteroPane.document.addEventListener('keypress', this.cancellationListener,false);
+                        var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser");                        
+                        win.ZoteroPane.document.addEventListener('keypress', this.cancellationListener,false);                        
                         this.pdfHiddenBrowser = Zotero.Browser.createHiddenBrowser();
                         this.pdfHiddenBrowser.loadURI(this.PDF_EXTRACT_URL);
                     }
@@ -3074,6 +3074,12 @@ Zotero.ZotFile = {
                         .replace(/\uFB04/g,'ffl')
                         .replace(/\uFB05/g,'ft')
                         .replace(/\uFB06/g,'st')
+                        .replace(/\u201D/g,'"')
+                        .replace(/\u201C/g,'"')
+                        .replace(/\u2019/g,"'")
+                        .replace(/\u2018/g,"'")                  
+                        .replace(/\u2013/g,'-')
+                        .replace(/''/g,'"')
                         .replace(/''/g,'"')
                         .replace(/``/g,'"')
                         .replace(/`/g,"'");

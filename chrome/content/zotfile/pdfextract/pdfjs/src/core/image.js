@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /* globals ColorSpace, error, isArray, isStream, JpegStream, Name, Promise,
-           Stream, TODO, warn */
+           Stream, warn, LegacyPromise */
 
 'use strict';
 
@@ -54,7 +54,7 @@ var PDFImage = (function PDFImageClosure() {
     if (image.getParams) {
       // JPX/JPEG2000 streams directly contain bits per component
       // and color space mode information.
-      TODO('get params from actual stream');
+      warn('get params from actual stream');
       // var bits = ...
       // var colorspace = ...
     }
@@ -70,6 +70,7 @@ var PDFImage = (function PDFImageClosure() {
 
     this.interpolate = dict.get('Interpolate', 'I') || false;
     this.imageMask = dict.get('ImageMask', 'IM') || false;
+    this.matte = dict.get('Matte') || false;
 
     var bitsPerComponent = image.bitsPerComponent;
     if (!bitsPerComponent) {
@@ -86,7 +87,7 @@ var PDFImage = (function PDFImageClosure() {
     if (!this.imageMask) {
       var colorSpace = dict.get('ColorSpace', 'CS');
       if (!colorSpace) {
-        TODO('JPX images (which don"t require color spaces');
+        warn('JPX images (which don"t require color spaces');
         colorSpace = new Name('DeviceRGB');
       }
       this.colorSpace = ColorSpace.parse(colorSpace, xref, res);
@@ -128,9 +129,9 @@ var PDFImage = (function PDFImageClosure() {
    */
   PDFImage.buildImage = function PDFImage_buildImage(callback, handler, xref,
                                                      res, image, inline) {
-    var imageDataPromise = new Promise();
-    var smaskPromise = new Promise();
-    var maskPromise = new Promise();
+    var imageDataPromise = new LegacyPromise();
+    var smaskPromise = new LegacyPromise();
+    var maskPromise = new LegacyPromise();
     // The image data and smask data may not be ready yet, wait till both are
     // resolved.
     Promise.all([imageDataPromise, smaskPromise, maskPromise]).then(
@@ -206,6 +207,25 @@ var PDFImage = (function PDFImageClosure() {
     return temp;
   };
 
+  PDFImage.createMask = function PDFImage_createMask(imgArray, width, height,
+                                                     inverseDecode) {
+    // Copy imgArray into a typed array (inverting if necessary) so it can be
+    // transferred to the main thread.
+    var length = ((width + 7) >> 3) * height;
+    var data = new Uint8Array(length);
+    if (inverseDecode) {
+      for (var i = 0; i < length; i++) {
+        data[i] = ~imgArray[i];
+      }
+    } else {
+      for (var i = 0; i < length; i++) {
+        data[i] = imgArray[i];
+      }
+    }
+
+    return {data: data, width: width, height: height};
+  };
+
   PDFImage.prototype = {
     get drawWidth() {
       if (!this.smask)
@@ -247,10 +267,10 @@ var PDFImage = (function PDFImageClosure() {
       var bpc = this.bpc;
 
       // This image doesn't require any extra work.
-      if (bpc === 8)
+      if (bpc === 8) {
         return buffer;
+      }
 
-      var bufferLength = buffer.length;
       var width = this.width;
       var height = this.height;
       var numComps = this.numComps;
@@ -306,38 +326,39 @@ var PDFImage = (function PDFImageClosure() {
       }
       return output;
     },
-    getOpacity: function PDFImage_getOpacity(width, height, image) {
+    fillOpacity: function PDFImage_fillOpacity(rgbaBuf, width, height,
+                                               actualHeight, image) {
       var smask = this.smask;
       var mask = this.mask;
-      var originalWidth = this.width;
-      var originalHeight = this.height;
-      var buf;
+      var alphaBuf;
 
       if (smask) {
         var sw = smask.width;
         var sh = smask.height;
-        buf = new Uint8Array(sw * sh);
-        smask.fillGrayBuffer(buf);
+        alphaBuf = new Uint8Array(sw * sh);
+        smask.fillGrayBuffer(alphaBuf);
         if (sw != width || sh != height)
-          buf = PDFImage.resize(buf, smask.bpc, 1, sw, sh, width, height);
+          alphaBuf = PDFImage.resize(alphaBuf, smask.bpc, 1, sw, sh, width,
+                                     height);
       } else if (mask) {
         if (mask instanceof PDFImage) {
           var sw = mask.width;
           var sh = mask.height;
-          buf = new Uint8Array(sw * sh);
+          alphaBuf = new Uint8Array(sw * sh);
           mask.numComps = 1;
-          mask.fillGrayBuffer(buf);
+          mask.fillGrayBuffer(alphaBuf);
 
-          // Need to invert values in buffer
+          // Need to invert values in rgbaBuf
           for (var i = 0, ii = sw * sh; i < ii; ++i)
-            buf[i] = 255 - buf[i];
+            alphaBuf[i] = 255 - alphaBuf[i];
 
           if (sw != width || sh != height)
-            buf = PDFImage.resize(buf, mask.bpc, 1, sw, sh, width, height);
+            alphaBuf = PDFImage.resize(alphaBuf, mask.bpc, 1, sw, sh, width,
+                                       height);
         } else if (isArray(mask)) {
           // Color key mask: if any of the compontents are outside the range
           // then they should be painted.
-          buf = new Uint8Array(width * height);
+          alphaBuf = new Uint8Array(width * height);
           var numComps = this.numComps;
           for (var i = 0, ii = width * height; i < ii; ++i) {
             var opacity = 0;
@@ -350,43 +371,60 @@ var PDFImage = (function PDFImageClosure() {
                 break;
               }
             }
-            buf[i] = opacity;
+            alphaBuf[i] = opacity;
           }
         } else {
           error('Unknown mask format.');
         }
-      } else {
-        buf = new Uint8Array(width * height);
-        for (var i = 0, ii = width * height; i < ii; ++i)
-          buf[i] = 255;
       }
-      return buf;
-    },
-    applyStencilMask: function PDFImage_applyStencilMask(buffer,
-                                                         inverseDecode) {
-      var width = this.width, height = this.height;
-      var bitStrideLength = (width + 7) >> 3;
-      var imgArray = this.getImageBytes(bitStrideLength * height);
-      var imgArrayPos = 0;
-      var i, j, mask, buf;
-      // removing making non-masked pixels transparent
-      var bufferPos = 3; // alpha component offset
-      for (i = 0; i < height; i++) {
-        mask = 0;
-        for (j = 0; j < width; j++) {
-          if (!mask) {
-            buf = imgArray[imgArrayPos++];
-            mask = 128;
-          }
-          if (!(buf & mask) === inverseDecode) {
-            buffer[bufferPos] = 0;
-          }
-          bufferPos += 4;
-          mask >>= 1;
+
+      if (alphaBuf) {
+        for (var i = 0, j = 3, ii = width * actualHeight; i < ii; ++i, j += 4) {
+          rgbaBuf[j] = alphaBuf[i];
+        }
+      } else {
+        // Common case: no mask (and no need to allocate the extra buffer).
+        for (var i = 0, j = 3, ii = width * actualHeight; i < ii; ++i, j += 4) {
+          rgbaBuf[j] = 255;
         }
       }
     },
-    fillRgbaBuffer: function PDFImage_fillRgbaBuffer(buffer, width, height) {
+    undoPreblend: function PDFImage_undoPreblend(buffer, width, height) {
+      var matte = this.smask && this.smask.matte;
+      if (!matte) {
+        return;
+      }
+
+      function clamp(value) {
+        return (value < 0 ? 0 : value > 255 ? 255 : value) | 0;
+      }
+
+      var matteRgb = this.colorSpace.getRgb(matte, 0);
+      var length = width * height * 4;
+      for (var i = 0; i < length; i += 4) {
+        var alpha = buffer[i + 3];
+        if (alpha === 0) {
+          // according formula we have to get Infinity in all components
+          // making it as white (tipical paper color) should be okay
+          buffer[i] = 255;
+          buffer[i + 1] = 255;
+          buffer[i + 2] = 255;
+          continue;
+        }
+        var k = 255 / alpha;
+        buffer[i] = clamp((buffer[i] - matteRgb[0]) * k + matteRgb[0]);
+        buffer[i + 1] = clamp((buffer[i + 1] - matteRgb[1]) * k + matteRgb[1]);
+        buffer[i + 2] = clamp((buffer[i + 2] - matteRgb[2]) * k + matteRgb[2]);
+      }
+    },
+    createImageData: function PDFImage_createImageData() {
+      var drawWidth = this.drawWidth;
+      var drawHeight = this.drawHeight;
+      var imgData = {       // other fields are filled in below
+        width: drawWidth,
+        height: drawHeight,
+      };
+
       var numComps = this.numComps;
       var originalWidth = this.width;
       var originalHeight = this.height;
@@ -398,30 +436,46 @@ var PDFImage = (function PDFImageClosure() {
 
       // imgArray can be incomplete (e.g. after CCITT fax encoding)
       var actualHeight = 0 | (imgArray.length / rowBytes *
-                         height / originalHeight);
+                         drawHeight / originalHeight);
+
+      // If it is a 1-bit-per-pixel grayscale (i.e. black-and-white) image
+      // without any complications, we pass a same-sized copy to the main
+      // thread rather than expanding by 32x to RGBA form. This saves *lots* of
+      // memory for many scanned documents. It's also much faster.
+      if (this.colorSpace.name === 'DeviceGray' && bpc === 1 &&
+          !this.smask && !this.mask && !this.needsDecode &&
+          drawWidth === originalWidth && drawHeight === originalHeight) {
+        imgData.kind = 'grayscale_1bpp';
+
+        // We must make a copy of imgArray, otherwise it'll be neutered upon
+        // transfer which will break any code that subsequently reuses it.
+        var newArray = new Uint8Array(imgArray.length);
+        newArray.set(imgArray);
+        imgData.data = newArray;
+        imgData.origLength = imgArray.length;
+        return imgData;
+      }
+
       var comps = this.getComponents(imgArray);
-      // Build opacity here since color key masking needs to be perormed on
+
+      var rgbaBuf = new Uint8Array(drawWidth * drawHeight * 4);
+
+      // Handle opacity here since color key masking needs to be performed on
       // undecoded values.
-      var opacity = this.getOpacity(width, height, comps);
+      this.fillOpacity(rgbaBuf, drawWidth, drawHeight, actualHeight, comps);
 
       if (this.needsDecode) {
         this.decodeBuffer(comps);
       }
-      var rgbBuf = this.colorSpace.createRgbBuffer(comps, 0,
-                                    originalWidth * originalHeight, bpc);
-      if (originalWidth != width || originalHeight != height)
-        rgbBuf = PDFImage.resize(rgbBuf, this.bpc, 3, originalWidth,
-                                originalHeight, width, height);
-      var compsPos = 0;
-      var opacityPos = 0;
-      var length = width * actualHeight * 4;
 
-      for (var i = 0; i < length; i += 4) {
-        buffer[i] = rgbBuf[compsPos++];
-        buffer[i + 1] = rgbBuf[compsPos++];
-        buffer[i + 2] = rgbBuf[compsPos++];
-        buffer[i + 3] = opacity[opacityPos++];
-      }
+      this.colorSpace.fillRgb(rgbaBuf, originalWidth, originalHeight, drawWidth,
+                              drawHeight, actualHeight, bpc, comps);
+
+      this.undoPreblend(rgbaBuf, drawWidth, actualHeight);
+
+      imgData.kind = 'rgba_32bpp';
+      imgData.data = rgbaBuf;
+      return imgData;
     },
     fillGrayBuffer: function PDFImage_fillGrayBuffer(buffer) {
       var numComps = this.numComps;
@@ -446,18 +500,6 @@ var PDFImage = (function PDFImageClosure() {
       for (var i = 0; i < length; ++i)
         buffer[i] = (scale * comps[i]) | 0;
     },
-    getImageData: function PDFImage_getImageData() {
-      var drawWidth = this.drawWidth;
-      var drawHeight = this.drawHeight;
-      var imgData = {
-        width: drawWidth,
-        height: drawHeight,
-        data: new Uint8Array(drawWidth * drawHeight * 4)
-      };
-      var pixels = imgData.data;
-      this.fillRgbaBuffer(pixels, drawWidth, drawHeight);
-      return imgData;
-    },
     getImageBytes: function PDFImage_getImageBytes(length) {
       this.image.reset();
       return this.image.getBytes(length);
@@ -465,12 +507,3 @@ var PDFImage = (function PDFImageClosure() {
   };
   return PDFImage;
 })();
-
-function loadJpegStream(id, imageData, objs) {
-  var img = new Image();
-  img.onload = (function loadJpegStream_onloadClosure() {
-    objs.resolve(id, img);
-  });
-  img.src = 'data:image/jpeg;base64,' + window.btoa(imageData);
-}
-

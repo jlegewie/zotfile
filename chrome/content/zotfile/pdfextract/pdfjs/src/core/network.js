@@ -27,26 +27,34 @@
 //
 //var EXPORTED_SYMBOLS = ['NetworkManager'];
 //
-//function log(aMsg) {
-//  var msg = 'network.js: ' + (aMsg.join ? aMsg.join('') : aMsg);
-//  Services.console.logStringMessage(msg);
-//  // TODO(mack): dump() doesn't seem to work here...
-//  dump(msg + '\n');
+//var console = {
+//  log: function console_log(aMsg) {
+//    var msg = 'network.js: ' + (aMsg.join ? aMsg.join('') : aMsg);
+//    Services.console.logStringMessage(msg);
+//    // TODO(mack): dump() doesn't seem to work here...
+//    dump(msg + '\n');
+//  }
 //}
-//#else
-function log(aMsg) {
-  console.log(aMsg);
-}
 //#endif
 
 var NetworkManager = (function NetworkManagerClosure() {
+
+  var OK_RESPONSE = 200;
+  var PARTIAL_CONTENT_RESPONSE = 206;
+
   function NetworkManager(url, args) {
     this.url = url;
     args = args || {};
-    this.httpHeaders = args.httpHeaders || {};
+    this.isHttp = /^https?:/i.test(url);
+    this.httpHeaders = (this.isHttp && args.httpHeaders) || {};
+    this.withCredentials = args.withCredentials || false;
     this.getXhr = args.getXhr ||
       function NetworkManager_getXhr() {
+//#if B2G
+//      return new XMLHttpRequest({ mozSystem: true });
+//#else
         return new XMLHttpRequest();
+//#endif
       };
 
     this.currXhrId = 0;
@@ -92,6 +100,7 @@ var NetworkManager = (function NetworkManagerClosure() {
       };
 
       xhr.open('GET', this.url);
+      xhr.withCredentials = this.withCredentials;
       for (var property in this.httpHeaders) {
         var value = this.httpHeaders[property];
         if (typeof value === 'undefined') {
@@ -99,7 +108,7 @@ var NetworkManager = (function NetworkManagerClosure() {
         }
         xhr.setRequestHeader(property, value);
       }
-      if ('begin' in args && 'end' in args) {
+      if (this.isHttp && 'begin' in args && 'end' in args) {
         var rangeStr = args.begin + '-' + (args.end - 1);
         xhr.setRequestHeader('Range', 'bytes=' + rangeStr);
         pendingRequest.expectedStatus = 206;
@@ -153,14 +162,24 @@ var NetworkManager = (function NetworkManagerClosure() {
 
       delete this.pendingRequests[xhrId];
 
-      if (xhr.status === 0) {
+      // success status == 0 can be on ftp, file and other protocols
+      if (xhr.status === 0 && this.isHttp) {
         if (pendingRequest.onError) {
           pendingRequest.onError(xhr.status);
         }
         return;
       }
+      var xhrStatus = xhr.status || OK_RESPONSE;
 
-      if (xhr.status !== pendingRequest.expectedStatus) {
+      // From http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35.2:
+      // "A server MAY ignore the Range header". This means it's possible to
+      // get a 200 rather than a 206 response from a range request.
+      var ok_response_on_range_request =
+          xhrStatus === OK_RESPONSE &&
+          pendingRequest.expectedStatus === PARTIAL_CONTENT_RESPONSE;
+
+      if (!ok_response_on_range_request &&
+          xhrStatus !== pendingRequest.expectedStatus) {
         if (pendingRequest.onError) {
           pendingRequest.onError(xhr.status);
         }
@@ -170,18 +189,17 @@ var NetworkManager = (function NetworkManagerClosure() {
       this.loadedRequests[xhrId] = true;
 
       var chunk = getArrayBuffer(xhr);
-      if (pendingRequest.expectedStatus === 206) {
+      if (xhrStatus === PARTIAL_CONTENT_RESPONSE) {
         var rangeHeader = xhr.getResponseHeader('Content-Range');
         var matches = /bytes (\d+)-(\d+)\/(\d+)/.exec(rangeHeader);
         var begin = parseInt(matches[1], 10);
-        var end = parseInt(matches[2], 10) + 1;
         pendingRequest.onDone({
           begin: begin,
-          end: end,
           chunk: chunk
         });
       } else {
         pendingRequest.onDone({
+          begin: 0,
           chunk: chunk
         });
       }
