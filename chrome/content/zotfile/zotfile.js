@@ -3085,7 +3085,8 @@ Zotero.ZotFile = {
                         .replace(/`/g,"'");
 
                     // create formated markup
-                    if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteRemoveHyphens")) markup = this.removeHyphens(markup);
+                    if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteRemoveHyphens"))
+                        markup = this.removeHyphens(markup);
                     var tagStart = htmlTagHighlightStart;
                     var tagEnd = htmlTagHighlightEnd;
                     if (anno.subtype == "Highlight") {
