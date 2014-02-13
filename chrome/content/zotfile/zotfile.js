@@ -1294,9 +1294,9 @@ Zotero.ZotFile = {
             'author': authors[0],
             'authorLastF': authors[1],
             'authorInitials': authors[2],
-	     'editor': authors[3],
-	     'editorLastF': authors[4],
-	     'editorInitials': authors[5]
+            'editor': authors[3],
+            'editorLastF': authors[4],
+            'editorInitials': authors[5]
         };
         // define transform functions
         var itemtypeWildcard = function(item, map) {
