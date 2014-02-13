@@ -3088,10 +3088,10 @@ Zotero.ZotFile = {
                     if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteRemoveHyphens")) markup = this.removeHyphens(markup);
                     var tagStart = htmlTagHighlightStart;
                     var tagEnd = htmlTagHighlightEnd;
-                    if (anno.type == "Highlight") {
+                    if (anno.subtype == "Highlight") {
                         tagStart = htmlTagHighlightStart;
                         tagEnd = htmlTagHighlightEnd;
-                    } else if (anno.type == "Underline") {
+                    } else if (anno.subtype == "Underline") {
                         tagStart = htmlTagUnderlineStart;
                         tagEnd = htmlTagUnderlineEnd;
                     }
