@@ -42,7 +42,7 @@ Contributions preferably through pull requests are welcome!
 
 - **Improved extraction of annotation**
 
-    This version includes two improvements for the extraction of annotations. First, the extraction is now based on the most recent pdf.js version ([here](https://github.com/jlegewie/pdf.js/tree/extract-v3) is my fork with the modified version of [pdf.js](https://github.com/mozilla/pdf.js) used in zotfile). With this update, zotfile should work with more pdfs. Second, the extraction is now about 30-60% faster (depending on the pdf) thanks to some improvements in my extraction code.
+    This version includes two improvements for the extraction of annotations. First, the extraction is now based on the most recent pdf.js version ([here](https://github.com/jlegewie/pdf.js/tree/extract-v3) is my fork with the modified version of [pdf.js](https://github.com/mozilla/pdf.js) used in zotfile). With this update, zotfile should work with more pdfs. Second, the extraction is now about 40-60% faster (depending on the pdf) thanks to some improvements in my extraction code.
 
 - New wildcards for editors (`%d`, `%D`, `%L`, `%l`)
 - Fix bug with unnecessary suffix after multiple renames of same file
