@@ -2924,7 +2924,6 @@ Zotero.ZotFile = {
                         // setup extraction process
                         this.errorExtractingAnnotations = false;
                         this.numTotalPdfAttachments = this.pdfAttachmentsForExtraction.length;
-                        Zotero.showZoteroPaneProgressMeter(Zotero.ZotFile.ZFgetString('extraction.progressBar'),true);
                         var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser");                        
                         win.ZoteroPane.document.addEventListener('keypress', this.cancellationListener,false);                        
                         this.pdfHiddenBrowser = Zotero.Browser.createHiddenBrowser();
@@ -3057,36 +3056,7 @@ Zotero.ZotFile = {
                     note += Zotero.ZotFile.str_format('<p>%(tagStart)%(content)  (<a href="%(uri)">note on p.%(page)</a>)%(tagEnd)</p><br>', {'content':content,'page': page, 'tagStart': htmlTagNoteStart, 'tagEnd': htmlTagNoteEnd,'uri':uri});
                 }
 
-                if(anno.markup && anno.markup != "") {
-                    var markup = this.trim(anno.markup)
-                    // translate ligatures (e.g. 'ﬁ')
-                        .replace(/\ufb00/g,'ff')
-                        .replace(/\ufb01/g,'fi')
-                        .replace(/\ufb02/g,'fl')
-                        .replace(/\ufb03/g,'ffi')
-                        .replace(/\ufb04/g,'ffl')
-                        .replace(/\ufb05/g,'ft')
-                        .replace(/\ufb06/g,'st')
-                        .replace(/\uFB00/g,'ff')
-                        .replace(/\uFB01/g,'fi')
-                        .replace(/\uFB02/g,'fl')
-                        .replace(/\uFB03/g,'ffi')
-                        .replace(/\uFB04/g,'ffl')
-                        .replace(/\uFB05/g,'ft')
-                        .replace(/\uFB06/g,'st')
-                        .replace(/\u201D/g,'"')
-                        .replace(/\u201C/g,'"')
-                        .replace(/\u2019/g,"'")
-                        .replace(/\u2018/g,"'")                  
-                        .replace(/\u2013/g,'-')
-                        .replace(/''/g,'"')
-                        .replace(/''/g,'"')
-                        .replace(/``/g,'"')
-                        .replace(/`/g,"'");
-
-                    // create formated markup
-                    if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteRemoveHyphens"))
-                        markup = markup.replace(/([a-zA-Z])- ([a-zA-Z])/g, '$1$2');
+                if(anno.markup && anno.markup != "") {                   
                     var tagStart = htmlTagHighlightStart;
                     var tagEnd = htmlTagHighlightEnd;
                     if (anno.subtype == "Highlight") {
@@ -3096,7 +3066,7 @@ Zotero.ZotFile = {
                         tagStart = htmlTagUnderlineStart;
                         tagEnd = htmlTagUnderlineEnd;
                     }
-                    note += "<p>"+tagStart+openingQMarks+markup+closingQMarks+' (<a href="' + uri + '">' + cite + page + "</a>)" +tagEnd+"</p>";
+                    note += "<p>"+tagStart+openingQMarks+anno.markup+closingQMarks+' (<a href="' + uri + '">' + cite + page + "</a>)" +tagEnd+"</p>";
                 }
             }
             return note;
@@ -3126,16 +3096,7 @@ Zotero.ZotFile = {
                 args.callbackObj = this;
                 args.callback = this.extractionComplete;
                 Zotero.ZotFile.PdfExtractor.extractAnnotations(args);
-            },
-
-            /** Called from extract.js whenever a page is processed. */
-            pageExtractionComplete: function(pagesProcessed, totalPages) {
-                // update progress bar
-                var fractionDone = (this.numTotalPdfAttachments - this.pdfAttachmentsForExtraction.length - 1) /
-                    this.numTotalPdfAttachments;
-                fractionDone += ((pagesProcessed / totalPages) * (1.0 / this.numTotalPdfAttachments));
-                Zotero.updateZoteroPaneProgressMeter(fractionDone * 100.0);
-            },
+            },            
 
             /** Keypress listener that cancels the extraction if the user presses escape. */
             cancellationListener: function(keyEvent) {
@@ -3179,5 +3140,3 @@ Zotero.ZotFile = {
     }
 
 };
-
-
