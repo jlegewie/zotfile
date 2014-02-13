@@ -2958,7 +2958,7 @@ Zotero.ZotFile = {
                     var strMarkUp  = (line_split[5]) ? this.trim(line_split[5].replace(/\\n/g,"<br>")) : "";
                     var strText    = (line_split[4]) ? this.trim(line_split[4].replace(/\\n/g,"<br>")) : "";
 
-    //              if(strText!="") var strText=this.removeHyphens(strText);
+    //              if(strText!="") var strText=strText.replace(/([a-zA-Z])- ([a-zA-Z])/g, '$1$2');
 
                     // create annotation object
                     /*                  structure: filename ; page ; ID ; type ; text ; textMarkUp */
@@ -3086,7 +3086,7 @@ Zotero.ZotFile = {
 
                     // create formated markup
                     if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteRemoveHyphens"))
-                        markup = this.removeHyphens(markup);
+                        markup = markup.replace(/([a-zA-Z])- ([a-zA-Z])/g, '$1$2');
                     var tagStart = htmlTagHighlightStart;
                     var tagEnd = htmlTagHighlightEnd;
                     if (anno.subtype == "Highlight") {
@@ -3113,15 +3113,6 @@ Zotero.ZotFile = {
             s2=Zotero.Utilities.trimInternal(s2).replace(/ /g,"");
             var l = (s1.length > s2.length) ? s1.length : s2.length;
             return Zotero.Utilities.levenshtein(s1,s2)/l;
-        },
-
-        removeHyphens: function(str) {
-            while (true) {
-                var pos = str.search(/[a-zA-Z]- [a-zA-Z]/g);
-                if (pos == -1) break;
-                str = str.substring(0,pos+1) + str.substring(pos+3,str.length);
-            }
-            return str;
         },
 
             /* Runs the annotation extraction code in extract.html/extract.js,
