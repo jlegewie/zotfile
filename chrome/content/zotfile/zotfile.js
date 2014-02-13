@@ -2669,6 +2669,47 @@ Zotero.ZotFile = {
         return newAttID;
     },
 
+    renameAttachmentAsync: function(addID) {
+        return new Promise(function(resolve, reject) {
+            try {
+                // get attachment and item
+                var att = Zotero.Items.get(addID);
+                var item= Zotero.Items.get(att.getSource());
+
+                // preserve attachment note and tags
+                var att_note=att.getNote();
+                var att_tags=att.getTags();
+                if(att_tags.length>0) for (var j=0; j < att_tags.length; j++) att_tags[j]= att_tags[j]._get('name');
+
+                // Rename and Move Attachment
+                var file = att.getFile();
+                if(this.fileExists(att) && this.checkFileType(file) && !this.getTabletStatus(att)) {
+                    // move & rename
+                    var attID=this.renameAttachment(item, att, true,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),true);
+
+                    //update list of selected item
+                    if(attID!==null && attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
+
+                    // restore attachments note and tags
+                    if(att_note!="" || att_tags.length>0) {
+                        att = Zotero.Items.get(attID);
+                        if(att!=false) {
+                            if(att_note!="") att.setNote(att_note);
+                            if(att_tags) for each(var tag in att_tags) att.addTag(tag);
+                            att.save();
+                        }
+                    }
+                }
+                if(this.getTabletStatus(att)) this.messages_warning.push("'" + file.leafName + "'");
+                resolve(attID);
+            }
+            catch(e) {
+                this.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
+                reject(e);
+            }
+        });
+    },
+
     // FUNCTION: Rename & Move Existing Attachments
     renameSelectedAttachments: function(){
         // save current selection
@@ -2684,6 +2725,11 @@ Zotero.ZotFile = {
                     return;
         // rename attachments
         for (var i=0; i < attIDs.length; i++) {
+            /*this.renameAttachmentAsync().then(function(result) {
+                this.infoWindow('ZotFile', result); // "Stuff worked!"
+            }, function(err) {
+                this.infoWindow('ZotFile Error', err); // "Stuff worked!"
+            });*/
             try {
                 // get attachment and item
                 var att = Zotero.Items.get(attIDs[i]);
