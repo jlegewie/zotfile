@@ -707,7 +707,7 @@ var LinkAnnotation = (function LinkAnnotationClosure() {
 
   // Lets URLs beginning with 'www.' default to using the 'http://' protocol.
   function addDefaultProtocolToUrl(url) {
-    if (url.indexOf('www.') === 0) {
+    if (url!==undefined && url.indexOf('www.') === 0) {
       return ('http://' + url);
     }
     return url;
