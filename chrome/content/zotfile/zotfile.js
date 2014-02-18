@@ -256,7 +256,6 @@ Zotero.ZotFile = {
 		return l10n;
 	},
 
-
     watchFolder: function() {
         var zz = Zotero.ZotFile, item;
         if(!zz.prefs.getBoolPref('watch_folder')) return;
@@ -1968,8 +1967,6 @@ Zotero.ZotFile = {
         else this.messages_error.push(this.ZFgetString('renaming.renameAttach.wrongItem'));
 
         // show messages and handle errors
-        // this.showWarningMessages(this.ZFgetString('general.warning.skippedAtt'),this.ZFgetString('general.warning.skippedAtt.tablet.msg'));
-        // this.showReportMessages(this.ZFgetString('general.newAttachmentsAdded'));        
         this.handleErrors();
     },
 
@@ -3061,7 +3058,6 @@ Zotero.ZotFile = {
                 else Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.error'),Zotero.ZotFile.ZFgetString('extraction.outdatedFirefox'));
             }
             // show messages and handle errors
-            // this.showReportMessages(Zotero.ZotFile.ZFgetString('tablet.AttsMoved'));
             Zotero.ZotFile.handleErrors();
         },
 
