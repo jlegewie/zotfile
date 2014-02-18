@@ -1730,7 +1730,7 @@ Zotero.ZotFile = {
      */
     moveLinkedAttachmentFile: function(att, location, filename, overwrite) {
         if (!att.isAttachment() || att.attachmentLinkMode!==Zotero.Attachments.LINK_MODE_LINKED_FILE)
-            return;
+            return false;
 
         var file = att.getFile();
         if (!file)
@@ -1744,16 +1744,14 @@ Zotero.ZotFile = {
             // Ignore if no change
             if (file.path === dest.path)
                 return true;
-            
-            // If old and new names differ only in case, let's bank on this
-            // just being a case change and not bother checking for existing
-            // files, since dest.exists() will just show true on a case-insensitive
-            // filesystem anyway.
-            if (file.path.toLowerCase() != dest.path.toLowerCase()) {
-                if (!overwrite && dest.exists()) {
-                    return -1;
-                }
+            if (file.path.toLowerCase() == dest.path.toLowerCase()) {
+                att.renameAttachmentFile(filename);
+                return true;
             }
+            if (file.parent.path == dest.parent.path) {
+                att.renameAttachmentFile(filename);
+                return true;
+            }            
             
             // Update mod time and clear hash so the file syncs
             // TODO: use an integer counter instead of mod time for change detection
@@ -1762,9 +1760,11 @@ Zotero.ZotFile = {
             // file.moveTo(null, newName);
             var newfile_path = this.moveFile(file, location, filename, att.getDisplayTitle());
             if (!newfile_path) 
-                return -1;
+                return false;
             dest = this.createFile(newfile_path);
             att.relinkAttachmentFile(dest);
+            att.setField('title', dest.leafName);
+            att.save();
             
             Zotero.DB.beginTransaction();
             
@@ -1780,7 +1780,7 @@ Zotero.ZotFile = {
             try { file.lastModifiedTime = origModDate } catch (e) {}
             Zotero.debug(e);
             Components.utils.reportError(e);
-            return -2;
+            return false;
         }
     },
 
@@ -2728,78 +2728,93 @@ Zotero.ZotFile = {
 
     // Rename & Move Existing Attachments
     renameAttachment: function(item, att, rename, import_att, dest_dir, subfolder, subfolderFormat, notification) {
-        var newAttID=att.id;
-        // get link mode and item ID
-        var linkmode = att.attachmentLinkMode;
-        var itemID = item.id;
+        var attID = att.id,
+            linkmode = att.attachmentLinkMode,
+            itemID = item.id,
+            file = att.getFile(),
+            path = file.path;
         // only proceed if linked or imported attachment
         if(!att.isImportedAttachment() && !linkmode==Zotero.Attachments.LINK_MODE_LINKED_FILE)
-            return newAttID;
-
-        // get object of attached file
-        var file = att.getFile();
+            return attID;
         // create file name using ZotFile rules
-        var filename = rename ? this.getFilename(item, file.leafName) : file.leafName;
-        var location = this.getLocation(item,dest_dir,subfolder,subfolderFormat);
-
-        // (a) LINKED ATTACHMENT TO IMPORTED ATTACHMENT
+        var filename = rename ? Zotero.ZotFile.getFilename(item, file.leafName) : file.leafName,
+            location = this.getLocation(item,dest_dir,subfolder,subfolderFormat);
+        // (a) LINKED TO IMPORTED ATTACHMENT
         if (linkmode==Zotero.Attachments.LINK_MODE_LINKED_FILE && import_att) {
-            // Attach file to selected Zotero item
-            newAttID=Zotero.Attachments.importFromFile(file, itemID,item.libraryID);
-            // remove file from hard-drive
-            file.remove(false);
-            // erase old attachment
-            att.erase();
-            // create new attachment object
-            att = Zotero.Items.get(newAttID);
-            // notification
+            try {
+                // change to imported attachment
+                att.attachmentLinkMode = Zotero.Attachments.LINK_MODE_IMPORTED_FILE;
+                att.setField('title', filename);
+                att.save();
+                // Create directory for attachment files within storage directory
+                var destDir = Zotero.Attachments.createDirectoryForItem(attID);                
+                // Point to copied file
+                var newFile = destDir.clone();
+                newFile.append(filename);
+                // Copy file to unique filename, which automatically shortens long filenames
+                newFile = Zotero.File.copyToUnique(file, newFile);
+                att.attachmentPath = Zotero.Attachments.getPath(newFile, Zotero.Attachments.LINK_MODE_IMPORTED_FILE);
+                att.save();
+                // remove old file
+                if (file.exists())
+                    file.remove(true);
+            }
+            catch (e){
+                var msg = "Failed renaming file " + file.path;
+                Components.utils.reportError(msg);
+                // cleanup
+                try {
+                    var itemDir = Zotero.Attachments.getStorageDirectory(attID);
+                    if (itemDir.exists()) {
+                        itemDir.remove(true);
+                    }
+                }
+                catch (e) {}
+            }
+            // notification and return
             if(notification) this.messages_report.push(this.ZFgetString('renaming.imported', [filename]));
+            return attID;
         }
-        // RENAME ATTACHMENT FILE
-        if (import_att || item.libraryID) {
+        // (b) IMPORTED TO IMPORTED ATTACHMENT
+        if ((att.isImportedAttachment() && import_att) || item.libraryID) {
             // rename file associated with attachment
             att.renameAttachmentFile(filename);
             // change title of attachment item
             att.setField('title', filename);
             att.save();
-            // notification
+            // notification and return
             if (linkmode!=Zotero.Attachments.LINK_MODE_LINKED_FILE && notification)
                 this.messages_report.push(this.ZFgetString('renaming.imported', [filename]));
+            return attID;
         }
-        // (b) IMPORTED TO LINKED ATTACHMENT (only if library is local and not cloud)
+        // (c) IMPORTED TO LINKED ATTACHMENT (only if library is local and not cloud)
         if (att.isImportedAttachment() && !import_att && !item.libraryID) {
-            // check if attachment already is in place                
-            if(this.completePath(location, filename) == file.path) {
-                if(notification) this.messages_warning.push("'" + filename + "'");
-                return att.id;
-            }
-            // this.completePath(location, filename)
-            // move pdf file
-            var newfile_path=this.moveFile(file,location, filename, att.getDisplayTitle());
-            if (!newfile_path) 
-                return newAttID;
-            // recreate the outfile nslFile Object
-            file = this.createFile(newfile_path);
-            // create linked attachment
-            newAttID=Zotero.Attachments.linkFromFile(file, itemID,item.libraryID);
-            // erase old attachment
-            att.erase();
-            // notification
+            var attDir = Zotero.Attachments.getStorageDirectory(attID);
+            // change to linked attachment
+            att.attachmentLinkMode = Zotero.Attachments.LINK_MODE_LINKED_FILE;
+            att.attachmentPath = path;
+            att.save();
+            // move linked attachment            
+            var success = this.moveLinkedAttachmentFile(att, location, filename, false);            
+            // cleanup
+            if (file.exists())
+                file.remove(true);
+            if (attDir.exists())
+                attDir.remove(true);
+            // notification and return
             if(notification) this.messages_report.push(this.ZFgetString('renaming.linked', [filename]));
+            return attID;
         }
-        // (c) LINKED TO LINKED ATTACHMENT (only if library is local and not cloud)
+        // (d) LINKED TO LINKED ATTACHMENT (only if library is local and not cloud)
         if (!att.isImportedAttachment() && !import_att && !item.libraryID) {
             // relink attachment
             this.moveLinkedAttachmentFile(att, location, filename, false);
-            newAttID = att.id;
-            // change title of attachment item
-            att.setField('title', filename);
-            att.save();
             // notification
             if(notification) this.messages_report.push(this.ZFgetString('renaming.linked', [filename]));
+            return attID;
         }
         // return id of attachment
-        return newAttID;
+        return attID;
     },
 
     renameAttachmentAsync: function(addID) {
@@ -2903,7 +2918,7 @@ Zotero.ZotFile = {
             }
             catch(e) {
                 attProgress.setError();
-                this.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
+                this.messages_fatalError.push(e);
             }
         }
         // restore selection
