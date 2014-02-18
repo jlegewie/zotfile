@@ -807,7 +807,7 @@ Zotero.ZotFile = {
         pw.changeHeadline(main);
         if (main=="error") pw.changeHeadline(Zotero.getString("general.errorHasOccurred"));
 
-        if (typeof(message) == "object") {
+        if (typeof(message) == "object" && message.lines) {
             for (i =0;i<message.lines.length;i++) {
                 // pw.addLines(message.lines[i]);
                 var icon = message.icons ? message.icons[i] : null;
