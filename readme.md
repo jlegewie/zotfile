@@ -141,7 +141,7 @@ Other small fixes mainly for Italian translation, restriction of saved searches 
 
 `{%a-}{%y-}{%s|%j}` - `author-2001-PNAS` or `author-2001-Proceedings...` if `%s` is empty
 
-For full description, see [updated zotfile website](http://www.columbia.edu/~jpl2136/zotfile.html#renaming).
+For full description, see [updated zotfile website](http://www.zotfile.com/index.html#renaming-rules).
 
 #### Changes in 2.2.3
 

@@ -144,12 +144,12 @@
     					   																			
 						    <hbox style="margin: 0">					
 							   <label style="margin-right:0px" value="&for-more-information;"/>
-							   <label style="margin-left:0px; margin-right:0px" class="text-link" href="http://www.columbia.edu/~jpl2136/zotfile.html" value="&zotfile-website;"/>
+							   <label style="margin-left:0px; margin-right:0px" class="text-link" href="http://www.zotfile.com" value="&zotfile-website;"/>
 							   <label style="margin-left:0px; margin-right:0px" value="."/>								
 						    </hbox>
 						    <hbox style="margin: 0">					
 							   <label style="margin-right:0px" value="&consider-donation;"/>
-							   <label style="margin-left:0px; margin-right:0px" class="text-link" href="http://www.columbia.edu/~jpl2136/zotfile.html" value="&donation;"/>
+							   <label style="margin-left:0px; margin-right:0px" class="text-link" href="http://www.zotfile.com" value="&donation;"/>
 							   <label style="margin-left:0px; margin-right:0px" value="."/>								
 						    </hbox>
 													 							   		 
