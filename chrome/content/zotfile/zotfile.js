@@ -816,6 +816,9 @@ Zotero.ZotFile = {
             }
             if (message.txt!==undefined) pw.addDescription(message.txt);
         }
+        else if(typeof(message) == "object") {
+            pw.addDescription(JSON.stringify(message));
+        }
         else
             pw.addDescription(message);
 
