@@ -325,9 +325,7 @@ Zotero.ZotFile = {
                 // attach file
                 var att = zz.attachFile(item, file);
                 // show messages
-                var progressWin = zz.progressWindow(zz.ZFgetString('general.newAttachmentAdded'));
-                progress = new progressWin.ItemProgress(att.getImageSrc(), att.getField('title'));
-                progress.setProgress(100);
+                zz.infoWindow(zz.ZFgetString('general.newAttachmentAdded'), {lines: [att.getField('title')], icons: [att.getImageSrc()]});
                 zz.handleErrors();
                 // set lastModifiedFile variable to previous file
                 file=zz.getLastFileInFolder(source_dir)[0];
