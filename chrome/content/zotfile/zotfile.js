@@ -421,7 +421,7 @@ Zotero.ZotFile = {
                         if(!item.isAttachment()) continue;
                         if(!item.isImportedAttachment()) continue;
                         // get id and key
-                        var id = item.getID(),
+                        var id = item.id,
                             key = item.key,
                             file = item.getFile(),
                             id_parent = item.getSource();
@@ -663,9 +663,9 @@ Zotero.ZotFile = {
             // attachment item that is not top level
             if(item.isAttachment()) {
                 if (!all) if(this.validAttachment(item))                 
-                    attIDs.push(item.getID());
+                    attIDs.push(item.id);
                 if (all && this.checkFileType(item))
-                    attIDs.push(item.getID());
+                    attIDs.push(item.id);
             }
         }
         // remove duplicate elements
@@ -2310,7 +2310,7 @@ Zotero.ZotFile = {
                     file = att.getFile();
                 }
             }
-            newAttID=att.getID();
+            newAttID=att.id;
 
             // create copy of file on tablet and catch errors
             // create copy on tablet
@@ -2444,7 +2444,7 @@ Zotero.ZotFile = {
                         this.addInfo(item,"lastmod",file.lastModifiedTime);
                         this.addTabletTag(item, this.tag);
                         // new attachment ID
-                        newAttID=item.getID();
+                        newAttID=item.id;
                     }
                     if(att_mode==1) {
                         var projectFolder=this.getInfo(item,"projectFolder");
@@ -2474,7 +2474,7 @@ Zotero.ZotFile = {
     },
 
     getAttachmentFromTablet: function (item, att, fakeRemove) {
-        var attID=att.getID(),
+        var attID=att.id,
             option=1,
             itemPulled=false, attsDeleted=false,
             att_mode=this.getInfo(att,"mode"),
@@ -2725,7 +2725,7 @@ Zotero.ZotFile = {
 
     // Rename & Move Existing Attachments
     renameAttachment: function(item, att, rename, import_att, dest_dir, subfolder, subfolderFormat, notification) {
-        var newAttID=att.getID();
+        var newAttID=att.id;
         // get link mode and item ID
         var linkmode = att.attachmentLinkMode;
         var itemID = item.id;
@@ -3185,7 +3185,7 @@ Zotero.ZotFile = {
             note.libraryID = item._libraryID;
             // note.setNote(Zotero.Utilities.text2html(note_content));
             note.setNote(note_content);
-            note.setSource(item.getID());
+            note.setSource(item.id);
             var noteID = note.save();
             /*if (method=="pdf.js" && Zotero.ZotFile.prefs.getBoolPref('pdfExtraction.debug'))
                 this.debugExtraction(item, annotations);*/
@@ -3200,7 +3200,7 @@ Zotero.ZotFile = {
                     return '';
                 }).join('');
             note.setNote(note_content);
-            note.setSource(item.getID());
+            note.setSource(item.id);
             var noteID = note.save();
         },
 
