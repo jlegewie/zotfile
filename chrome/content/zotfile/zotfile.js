@@ -1744,14 +1744,6 @@ Zotero.ZotFile = {
             // Ignore if no change
             if (file.path === dest.path)
                 return true;
-            if (file.path.toLowerCase() == dest.path.toLowerCase()) {
-                att.renameAttachmentFile(filename);
-                return true;
-            }
-            if (file.parent.path == dest.parent.path) {
-                att.renameAttachmentFile(filename);
-                return true;
-            }            
             
             // Update mod time and clear hash so the file syncs
             // TODO: use an integer counter instead of mod time for change detection
