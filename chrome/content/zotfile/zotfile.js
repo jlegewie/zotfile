@@ -427,7 +427,7 @@ Zotero.ZotFile = {
                             file = item.getFile(),
                             id_parent = item.getSource();
                         // Continue if ...
-                        if(!id_parent || !file || Zotero.File.getExtension(file) == "html")
+                        if(!id_parent || !file || !zz.checkFileType(file))                            
                             continue;
                         // get parent item
                         var parent = Zotero.Items.get(id_parent);
