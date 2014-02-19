@@ -2347,9 +2347,6 @@ Zotero.ZotFile = {
     },
 
     sendSelectedAttachmentsToTablet: function(idx_subfolder) {
-        // save current selection
-        var win = this.wm.getMostRecentWindow("navigator:browser");
-        var selection = win.ZoteroPane.itemsView.saveSelection();
         // get selected attachments
         var attIDs = this.getSelectedAttachments(true),
             atts = Zotero.Items.get(attIDs),
@@ -2398,40 +2395,13 @@ Zotero.ZotFile = {
                 // send to tablet
                 this.sendAttachmentToTablet(item, att, projectFolder, false);
                 // update progress window
-                attProgress.complete(att.getFilename(), att.getImageSrc());
-
-                // attachment already on tablet
-                /*if (attOnReader[i]) {
-                    // first pull
-                    var att_mode=this.getInfo(att,"mode");
-                    if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
-                        attID = this.getAttachmentFromTablet(item, att, true).id;
-                        att = Zotero.Items.get(attID);
-                    }
-                    // now push
-                    attID = this.sendAttachmentToTablet(item, att, projectFolder, false);
-                    if(attID!==null && attIDs[i]!=attID) selection = this.arrayReplace(selection, attIDs[i], attID);
-                    // update progress window
-                    att = Zotero.Items.get(attID);
-                    attProgress.complete(att.getFilename(), att.getImageSrc());
-                    
-                }
-                else {
-                    // now push
-                    attID = this.sendAttachmentToTablet(item, att, projectFolder, false);
-                    if(attID!==null && attIDs[i]!=attID) selection = this.arrayReplace(selection, attIDs[i], attID);
-                    // update progress window
-                    att = Zotero.Items.get(attID);
-                    attProgress.complete(att.getFilename(), att.getImageSrc());
-                }*/
+                attProgress.complete(att.getFilename(), att.getImageSrc());                
             }
             catch(e) {
                 attProgress.setError();
                 this.messages_fatalError.push(e);
             }
         }
-        // restore selection
-        if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
         // show messages and handle errors
         /*if(projectFolder!=='')
             progressWin.addDescription('Subfolder: ...' + projectFolder);*/
@@ -2688,16 +2658,9 @@ Zotero.ZotFile = {
     },
 
     getSelectedAttachmentsFromTablet: function() {
-        // save current selection
-        var win = this.wm.getMostRecentWindow("navigator:browser");
-        var selection = win.ZoteroPane.itemsView.saveSelection();
-
         // get selected attachments, filter for tablet
         var atts = Zotero.Items.get(this.getSelectedAttachments()).filter(this.getTabletStatus, Zotero.ZotFile),
-            attIDs = atts.map(function(att) {return att.id;}),
             attExtract = [];
-        var tagID = Zotero.Tags.getID(this.tag,0);
-
         // confirm
         if (this.prefs.getBoolPref("confirmation_batch_ask") && atts.length>=this.prefs.getIntPref("confirmation_batch"))
             if(!confirm(this.ZFgetString('tablet.getAttachments', [atts.length])))
@@ -2710,23 +2673,20 @@ Zotero.ZotFile = {
                 attProgress = new progressWin.ItemProgress(att.getImageSrc(), att.getField('title'));
             try {
                 // get attachment and item object
-                var item= Zotero.Items.get(att.getSource());
+                var item = Zotero.Items.get(att.getSource());
                 // get attachment from tablet
                 var attGet = Zotero.ZotFile.getAttachmentFromTablet(item,att,false);
-                // change IDs to restore correct selection
-                if(attGet.id!==null && attIDs[i]!=attGet.id) selection=Zotero.ZotFile.arrayReplace(selection,attIDs[i],attGet.id);
                 // update progress window
                 attProgress.complete(attGet.att.getFilename(), attGet.att.getImageSrc());
                 // extract annotations
-                if(attGet.extract) attExtract.push(attGet.id);
+                if(attGet.extract)
+                    attExtract.push(attGet.id);
             }
             catch(e) {
                 attProgress.setError();
                 this.messages_fatalError.push('Error: ' + e);
             }
         }
-        // restore selection
-        if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
         // show messages and handle errors
         progressWin.startCloseTimer(this.prefs.getIntPref("info_window_duration"));
         this.handleErrors();
@@ -2831,52 +2791,8 @@ Zotero.ZotFile = {
         return attID;
     },
 
-    renameAttachmentAsync: function(addID) {
-        return new Promise(function(resolve, reject) {
-            try {
-                // get attachment and item
-                var att = Zotero.Items.get(addID);
-                var item= Zotero.Items.get(att.getSource());
-
-                // preserve attachment note and tags
-                var att_note=att.getNote();
-                var att_tags=att.getTags();
-                if(att_tags.length>0) for (var j=0; j < att_tags.length; j++) att_tags[j]= att_tags[j]._get('name');
-
-                // Rename and Move Attachment
-                var file = att.getFile();
-                if(this.fileExists(att) && this.checkFileType(file) && !this.getTabletStatus(att)) {
-                    // move & rename
-                    var attID=this.renameAttachment(item, att, true,this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),true);
-
-                    //update list of selected item
-                    if(attID!==null && attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
-
-                    // restore attachments note and tags
-                    if(att_note!="" || att_tags.length>0) {
-                        att = Zotero.Items.get(attID);
-                        if(att!=false) {
-                            if(att_note!="") att.setNote(att_note);
-                            if(att_tags) for each(var tag in att_tags) att.addTag(tag);
-                            att.save();
-                        }
-                    }
-                }
-                if(this.getTabletStatus(att)) this.messages_warning.push("'" + file.leafName + "'");
-                resolve(attID);
-            }
-            catch(e) {
-                this.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
-                reject(e);
-            }
-        });
-    },
-
     // FUNCTION: Rename & Move Existing Attachments
     renameSelectedAttachments: function(){
-        // save current selection
-        var win = this.wm.getMostRecentWindow("navigator:browser");
-        var selection = win.ZoteroPane.itemsView.saveSelection();
         // get selected attachments
         var attIDs = this.getSelectedAttachments(true);
         if (attIDs.length===0) {
@@ -2904,23 +2820,13 @@ Zotero.ZotFile = {
                 // Rename and Move Attachment
                 if(this.fileExists(att) && !att.isTopLevelItem() && !this.getTabletStatus(att)) {
                     var item = Zotero.Items.get(att.getSource()),
-                        file = att.getFile(),
-                        att_note = att.getNote(),
-                        att_tags = att.getTags().map(function(tag) {return tag._get('name');});
+                        file = att.getFile();
                     // move & rename
                     var attID = this.renameAttachment(item, att, true, imported, dest_dir, subfolder, subfolderFormat, false);
                     att = Zotero.Items.get(attID);
                     if(!att) {
                         attProgress.setError();
                         continue;
-                    }
-                    // update list of selected item
-                    if(attID!==null && attIDs[i]!=attID) selection=this.arrayReplace(selection,attIDs[i],attID);
-                    // restore attachments note and tags
-                    if(att_note!="" || att_tags.length>0) {
-                        if(att_note!="") att.setNote(att_note);
-                        if(att_tags) for each(var tag in att_tags) att.addTag(tag);
-                        att.save();
                     }
                     // update progress window
                     attProgress.complete(att.getFilename(), att.getImageSrc());
@@ -2935,8 +2841,6 @@ Zotero.ZotFile = {
                 this.messages_fatalError.push(e);
             }
         }
-        // restore selection
-        if(Zotero.version>="3") win.ZoteroPane.itemsView.selectItems(selection);
         // show messages and handle errors
         if(addDescription)
             progressWin.addDescription(this.ZFgetString('general.warning.skippedAtt.msg'));
