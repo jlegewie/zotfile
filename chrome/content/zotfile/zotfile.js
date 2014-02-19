@@ -2314,8 +2314,14 @@ Zotero.ZotFile = {
                 newFile = this.copyFile(file, folder, file.leafName);
             else {
                 var tablet_file = this.getTabletFile(att);
-                var path = this.moveFile(tablet_file, folder, file.leafName);
-                newFile = this.createFile(path);
+                if(tablet_file.exists()) {
+                    var path = this.moveFile(tablet_file, folder, file.leafName);
+                    newFile = this.createFile(path);
+                }
+                else {
+                    this.infoWindow('ZotFile Warning', 'File on tablet not found. Zotfile is creating a new copy on tablet.');
+                    newFile = this.copyFile(file, folder, file.leafName);
+                }
             }
         }
         // foreground mode: Rename and Move Attachment
@@ -2493,14 +2499,14 @@ Zotero.ZotFile = {
             tagIDMod = Zotero.Tags.getID(this.tagMod,0);
 
         // get files
-        var file_zotero=att.getFile();
-        var file_reader=this.getTabletFile(att);
+        var file_zotero = att.getFile();
+        var file_reader = this.getTabletFile(att);
         var folder = file_reader.parent;
 
         // get modification times for files
         var time_reader = this.fileExists(file_reader) ? parseInt(file_reader.lastModifiedTime+"",10) : 0;
         var time_saved  = parseInt(this.getInfo(att,"lastmod"),10);
-        var time_zotero = (file_zotero!=false) ? parseInt(file_zotero.lastModifiedTime+"",10) : 0;
+        var time_zotero = (file_zotero) ? parseInt(file_zotero.lastModifiedTime+"",10) : 0;
 
         // background mode
         if(att_mode==1) {
