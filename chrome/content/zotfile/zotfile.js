@@ -2077,7 +2077,8 @@ Zotero.ZotFile = {
         var tag_content=this.getInfo(att,tagname).replace(this.prefs.getCharPref("tablet.dest_dir"),"[BaseFolder]");
 
         // for location tag: replace destination folder with [BaseFolder]
-        if(tagname=="location" && this.prefs.getBoolPref("tablet.dest_dir_relativePath")) value=value.replace(this.prefs.getCharPref("tablet.dest_dir"),"[BaseFolder]");
+        if(tagname=="location" && this.prefs.getBoolPref("tablet.dest_dir_relativePath"))
+            value=value.replace(this.prefs.getCharPref("tablet.dest_dir"),"[BaseFolder]");
 
         // check whether tag already exists
         var search=note.search(tagname);
@@ -2282,62 +2283,61 @@ Zotero.ZotFile = {
     sendAttachmentToTablet: function(item, att, projectFolder, verbose) {
         verbose = (typeof verbose == 'undefined') ? true : verbose;
         var newFile,
-            newAttID=null,
             file = att.getFile(),
             tagID = Zotero.Tags.getID(this.tag,0),
-            tagIDMod = Zotero.Tags.getID(this.tagMod,0);
+            tagIDMod = Zotero.Tags.getID(this.tagMod,0),
+            tablet_status = this.getTabletStatus(att);
+        // settings
+        var tablet_mode = this.prefs.getIntPref("tablet.mode"),
+            tablet_rename = this.prefs.getBoolPref("tablet.rename"),
+            tablet_dest = this.prefs.getCharPref("tablet.dest_dir")+projectFolder,
+            tablet_subfolder = this.prefs.getBoolPref("tablet.subfolder"),
+            tablet_subfolderFormat = this.prefs.getCharPref("tablet.subfolderFormat");
 
         if(!this.fileExists(att) || !this.checkFileType(att))
             return;
 
         // background mode: Rename and Move Attachment
-        if(this.prefs.getIntPref("tablet.mode")==1) {
-
+        if(tablet_mode==1) {
             // change name of file
-            if (this.prefs.getBoolPref("tablet.rename"))  {
+            if (tablet_rename)  {
                 var filename=this.getFilename(item,file.leafName);
                 if(filename!=file.leafName) {
                     att.renameAttachmentFile(filename);
                     att.setField('title', filename);
                     att.save();
-                    file = att.getFile();
                 }
             }
-            newAttID=att.id;
-
             // create copy of file on tablet and catch errors
-            // create copy on tablet
-            var folder=this.getLocation(item,this.prefs.getCharPref("tablet.dest_dir")+projectFolder,this.prefs.getBoolPref("tablet.subfolder"),this.prefs.getCharPref("tablet.subfolderFormat"));
-            newFile=this.copyFile(file,folder,file.leafName);
-
+            var folder = this.getLocation(item, tablet_dest, tablet_subfolder, tablet_subfolderFormat);
+            if (!tablet_status)
+                newFile = this.copyFile(file, folder, file.leafName);
+            else {
+                var tablet_file = this.getTabletFile(att);
+                var path = this.moveFile(tablet_file, folder, file.leafName);
+                newFile = this.createFile(path);
+            }
         }
-
         // foreground mode: Rename and Move Attachment
-        if(this.prefs.getIntPref("tablet.mode")==2) {
-            // save note content
-            var note = att.getNote();
-            // rename attachment
-            newAttID=this.renameAttachment(item, att, this.prefs.getBoolPref("tablet.rename"),false,this.prefs.getCharPref("tablet.dest_dir")+projectFolder,this.prefs.getBoolPref("tablet.subfolder"),this.prefs.getCharPref("tablet.subfolderFormat"),false);
-            // get new attachment and file
-            att = Zotero.Items.get(newAttID);
+        if(tablet_mode==2) {
+            this.renameAttachment(item, att, tablet_rename, false, tablet_dest, tablet_subfolder, tablet_subfolderFormat, false);
             newFile = att.getFile();
-            // add note content
-            att.setNote(note);
-            att.save();
         }
 
         // add info to note (date of modification to attachment, location, and mode)
         this.addInfo(att,"lastmod",newFile.lastModifiedTime);
-        this.addInfo(att,"mode",this.prefs.getIntPref("tablet.mode"));
+        this.addInfo(att,"mode",tablet_mode);
         this.addInfo(att,"location",newFile.path);
         this.addInfo(att,"projectFolder",projectFolder);
         // add tags
-        this.addTabletTag(att, this.tag);
-        if (this.prefs.getBoolPref("tablet.tagParentPush")) item.addTag(this.prefs.getCharPref("tablet.tagParentPush_tag"));
+        if (!tablet_status) {
+            this.addTabletTag(att, this.tag);
+            if (this.prefs.getBoolPref("tablet.tagParentPush")) item.addTag(this.prefs.getCharPref("tablet.tagParentPush_tag"));
+        }
         // notification
         if(verbose) this.messages_report.push("'" + newFile.leafName + "'");
 
-        return(newAttID);
+        return(att.id);
     },
 
     sendSelectedAttachmentsToTablet: function(idx_subfolder) {
@@ -2377,17 +2377,30 @@ Zotero.ZotFile = {
             var att = atts[i],
                 attProgress = new progressWin.ItemProgress(att.getImageSrc(), att.getField('title'));
             try {
-                if(this.fileExists(att) && !att.isTopLevelItem() && (!attOnReader[i] || (attOnReader[i] && repush))) {
-                    var att = atts[i],
-                        item = Zotero.Items.get(att.getSource());
-                    // first pull if already on reader
-                    if (attOnReader[i]) {
-                        var att_mode=this.getInfo(att,"mode");
-                        if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
-                            attID = this.getAttachmentFromTablet(item, att, true).id;
-                            att = Zotero.Items.get(attID);
-                        }
-                        
+                if(!this.fileExists(att) || att.isTopLevelItem() || (attOnReader[i] && !repush)) {
+                    addDescription = true;
+                    attProgress.setError();
+                    continue;
+                }
+                var item = Zotero.Items.get(att.getSource()),
+                    att_mode = this.getInfo(att,"mode");
+                // First remove from tablet if mode has changed
+                if(attOnReader[i] && att_mode!=this.prefs.getIntPref("tablet.mode")) {
+                    attID = this.getAttachmentFromTablet(item, att, true).id;
+                    att = Zotero.Items.get(attID);
+                }
+                // send to tablet
+                this.sendAttachmentToTablet(item, att, projectFolder, false);
+                // update progress window
+                attProgress.complete(att.getFilename(), att.getImageSrc());
+
+                // attachment already on tablet
+                /*if (attOnReader[i]) {
+                    // first pull
+                    var att_mode=this.getInfo(att,"mode");
+                    if(att_mode==1 || att_mode!=this.prefs.getIntPref("tablet.mode")) {
+                        attID = this.getAttachmentFromTablet(item, att, true).id;
+                        att = Zotero.Items.get(attID);
                     }
                     // now push
                     attID = this.sendAttachmentToTablet(item, att, projectFolder, false);
@@ -2395,11 +2408,16 @@ Zotero.ZotFile = {
                     // update progress window
                     att = Zotero.Items.get(attID);
                     attProgress.complete(att.getFilename(), att.getImageSrc());
+                    
                 }
                 else {
-                    addDescription = true;
-                    attProgress.setError();
-                }
+                    // now push
+                    attID = this.sendAttachmentToTablet(item, att, projectFolder, false);
+                    if(attID!==null && attIDs[i]!=attID) selection = this.arrayReplace(selection, attIDs[i], attID);
+                    // update progress window
+                    att = Zotero.Items.get(attID);
+                    attProgress.complete(att.getFilename(), att.getImageSrc());
+                }*/
             }
             catch(e) {
                 attProgress.setError();
