@@ -2372,14 +2372,20 @@ Zotero.ZotFile = {
                     return;
         if (!repush && attOnReaderCount>0)
             repush = confirm(this.ZFgetString('tablet.replaceAttachAlready', [attOnReaderCount]));
+        if (!repush && attOnReaderCount==attIDs.length) {
+            this.handleErrors();
+            return;
+        }
         // show infoWindow
         var progressWin = this.progressWindow(this.ZFgetString('tablet.AttsMoved'));
         // iterate through attachments
         for (i=0; i < attIDs.length; i++) {
+            if(attOnReader[i] && !repush)
+                continue;
             var att = atts[i],
                 attProgress = new progressWin.ItemProgress(att.getImageSrc(), att.getField('title'));
             try {
-                if(!this.fileExists(att) || att.isTopLevelItem() || (attOnReader[i] && !repush)) {
+                if(!this.fileExists(att) || att.isTopLevelItem()) {
                     addDescription = true;
                     attProgress.setError();
                     continue;
