@@ -652,6 +652,8 @@ Zotero.ZotFile = {
                 var attachments = item.getAttachments();
                 // go through all attachments and add those with a tag
                 for (var j=0; j < attachments.length; j++) {
+                    if (attachments[j].attachmentLinkMode == Zotero.Attachments.LINK_MODE_LINKED_URL)
+                        continue;
                     if (!all) if(this.validAttachment(attachments[j])) 
                         attIDs.push(attachments[j]);
                     if (all && this.checkFileType(attachments[j]))
@@ -660,12 +662,15 @@ Zotero.ZotFile = {
             }
             // attachment item that is not top level
             if(item.isAttachment()) {
-                if (!all) if(this.validAttachment(item))                 
+                if (item.attachmentLinkMode == Zotero.Attachments.LINK_MODE_LINKED_URL)
+                    continue;
+                if (!all) if(this.validAttachment(item))
                     attIDs.push(item.id);
                 if (all && this.checkFileType(item))
                     attIDs.push(item.id);
             }
         }
+
         // remove duplicate elements
         if(attIDs.length>0) attIDs=this.removeDuplicates(attIDs);
         // return array of attachment IDs
