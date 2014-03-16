@@ -61,7 +61,7 @@
       </Description>
     </em:localized>
     <em:creator>Joscha Legewie</em:creator>
-    <em:homepageURL>http://www.jlegewie.com/zotfile.html</em:homepageURL>
+    <em:homepageURL>http://www.zotfile.com</em:homepageURL>
     <em:optionsURL>chrome://zotfile/content/options.xul</em:optionsURL>
   </Description>
 </RDF>

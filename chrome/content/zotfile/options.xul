@@ -258,7 +258,7 @@
 							   <label id="id-zotfile-renameFormat-des1" style="font-size: 9px" value="&list-of-wildcards;"/>					   							   
 							   <hbox style="margin: 0">					
 								   <label id="id-zotfile-renameFormat-des2" style="font-size: 9px; margin-right:0px" value="&for-a-full-list;"/>
-								   <label id="id-zotfile-renameFormat-des3" style="font-size: 9px; margin-left:0px; margin-right:0px" class="text-link" href="http://www.jlegewie.com/zotfile.html&#35;rename" value="&zotfile-website;"/>
+								   <label id="id-zotfile-renameFormat-des3" style="font-size: 9px; margin-left:0px; margin-right:0px" class="text-link" href="http://www.zotfile.com/index.html&#35;renaming-rules" value="&zotfile-website;"/>
 								   <label id="id-zotfile-renameFormat-des4" style="font-size: 9px; margin-left:0px; margin-right:0px" value="."/>								
 							   </hbox>
 						    			
