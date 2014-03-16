@@ -3208,13 +3208,6 @@ Zotero.ZotFile = {
                 var lib = att.libraryID===null ? 0 : att.libraryID;
                 var uri = 'zotero://open-pdf/' + lib + '_' + att.key + '/' + anno.page;
 
-                // add to note text pdfExtractionNoteRemoveHtmlNote
-                if(anno.content && anno.content != "" &&
-                    (!anno.markup || this.strDistance(anno.content,anno.markup)>0.15 )) {
-                    var content = anno.content.replace(/(\r\n|\n|\r)/gm,"<br>");
-                    note += Zotero.ZotFile.str_format('<p>%(tagStart)%(content)  (<a href="%(uri)">note on p.%(page)</a>)%(tagEnd)</p><br>', {'content':content,'page': page, 'tagStart': htmlTagNoteStart, 'tagEnd': htmlTagNoteEnd,'uri':uri});
-                }
-
                 if(anno.markup && anno.markup != "") {                   
                     var tagStart = htmlTagHighlightStart;
                     var tagEnd = htmlTagHighlightEnd;
@@ -3227,6 +3220,14 @@ Zotero.ZotFile = {
                     }
                     note += "<p>"+tagStart+openingQMarks+anno.markup+closingQMarks+' (<a href="' + uri + '">' + cite + page + "</a>)" +tagEnd+"</p>";
                 }
+
+                // add to note text pdfExtractionNoteRemoveHtmlNote
+                if(anno.content && anno.content != "" &&
+                    (!anno.markup || this.strDistance(anno.content,anno.markup)>0.15 )) {
+                    var content = anno.content.replace(/(\r\n|\n|\r)/gm,"<br>");
+                    note += Zotero.ZotFile.str_format('<p>%(tagStart)%(content)  (<a href="%(uri)">note on p.%(page)</a>)%(tagEnd)</p><br>', {'content':content,'page': page, 'tagStart': htmlTagNoteStart, 'tagEnd': htmlTagNoteEnd,'uri':uri});
+                }
+
             }
             return note;
 
