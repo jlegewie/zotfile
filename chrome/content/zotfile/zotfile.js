@@ -2031,66 +2031,84 @@ Zotero.ZotFile = {
     // FUNCTIONS: TABLET FUNCTIONS //
     // =========================== //
 
-    clearInfo: function (att) {
-        note = att.getNote().split("; lastmod{")[0];
-        att.setNote(note.split("lastmod{")[0]);
-        att.save();
+    clearInfo: function (att) {        
+        // remove new info
+        var content = att.getNote(),
+            note = document.createElement('div');
+        note.innerHTML = content;
+        var p = note.querySelector("#zotfile-data");
+        if (p!==null)
+            note.removeChild(p);
+        // remove old info
+        p = note.querySelectorAll("p");
+        for (var i = 0; i < p.length; i++) {
+            if(p[i].innerHTML.indexOf('lastmod{')!=-1)
+                note.removeChild(p[i]);
+        }
+        note.innerHTML = note.innerHTML.replace(/(lastmod|mode|location|projectFolder)\{.*?\};?/g,'');
+        // save note
+        att.setNote(note.innerHTML);
+        att.save();        
     },
 
-    getInfo: function (att,tagname) {
+    getInfo: function (att, key) {
         try {
-            var note = att.getNote();
-            var search=note.search(tagname);
-            var content=note.substring(search);
-            content=content.substring(content.search("{")+1,content.search("}"));
-
+            // create element with note content
+            var content = att.getNote(),
+                note = document.createElement('div'),
+                value;
+            note.innerHTML = content;
+            // get zotfile data
+            var p = note.querySelector("#zotfile-data");
+            if(p===null) {
+                // support for old system
+                var search = content.search(key);
+                value = content.substring(search);
+                value = value.substring(value.search("{")+1,value.search("}"));
+            }
+            else {
+                var data = JSON.parse(p.getAttribute('title'));
+                value = data[key]===undefined ? '' : data[key];
+            }
             // for location tag: replace [BaseFolder] with destination folder
-            if(tagname=="location") content=content.replace("[BaseFolder]",this.prefs.getCharPref("tablet.dest_dir"));
-            // corrections for location tag
-            /*if(tagname=="location") {
-                // correct file seperator
-                // var unix_file = content[0]=='/' || content[0]=='~';
-                var unix_file = content[0]=='/' || content[0]=='~' || content.indexOf('[BaseFolder]/')==0;
-                if (Zotero.isWin &&  unix_file) content = content.split('/').join('\\');
-                if (Zotero.isMac && !unix_file) content = content.split('\\').join('/');
-                // replace [BaseFolder] with destination folder
-                content = content.replace("[BaseFolder]", this.prefs.getCharPref("tablet.dest_dir"));
-                // show infoWindow with location
-                on_click = function() {
-                    Zotero.ZotFile.copy2Clipboard(content);
-                }
-                var valid = this.fileExists(content).toString();
-                this.infoWindow('location',content + ' (' + valid + ')',8000,on_click);
-            }*/
-
-            return(content);
+            if(key=="location") value = value.replace("[BaseFolder]",this.prefs.getCharPref("tablet.dest_dir"));
+            // return
+            return(value);
         }
         catch (err) {
             return("");
         }
     },
 
-    addInfo: function(att,tagname,value) {
-
-        var note = att.getNote();
-        var tag_content=this.getInfo(att,tagname).replace(this.prefs.getCharPref("tablet.dest_dir"),"[BaseFolder]");
-
+    addInfo: function(att, key, value) {
+        // get current content of note
+        var content = att.getNote(),
+            note = document.createElement('div'),
+            data = {};
+        note.innerHTML = content;
         // for location tag: replace destination folder with [BaseFolder]
-        if(tagname=="location" && this.prefs.getBoolPref("tablet.dest_dir_relativePath"))
-            value=value.replace(this.prefs.getCharPref("tablet.dest_dir"),"[BaseFolder]");
-
-        // check whether tag already exists
-        var search=note.search(tagname);
-
-        // tag already exists
-        if (search!=-1) {
-                att.setNote(note.replace(tagname +"{"+tag_content+"}",tagname +"{"+value+"}"));
+        if(key=="location" && this.prefs.getBoolPref("tablet.dest_dir_relativePath"))
+            value = value.replace(this.prefs.getCharPref("tablet.dest_dir"),"[BaseFolder]");
+        // get zotfile element
+        var p = note.querySelector("#zotfile-data");
+        // doesn't exists...
+        if (p===null) {            
+            data[key] = value;
+            p = document.createElement("p");
+            p.setAttribute('id', 'zotfile-data');
+            p.setAttribute('style', 'color: #cccccc;');
+            p.setAttribute('title', JSON.stringify(data));
+            p.innerHTML = '(hidden zotfile data)';
+            note.appendChild(p);
         }
-        // tag does not exists
+        // already exists...
         else {
-            if(note=="") att.setNote(note + tagname +"{"+value+"}");
-            if(note!="") att.setNote(note + "; " + tagname +"{"+value+"}");
+            data = JSON.parse(p.getAttribute('title'));
+            data[key] = value;
+            p.setAttribute('title', JSON.stringify(data));
         }
+        // save changes in zotero note
+        att.setNote(note.innerHTML);
         att.save();
     },
 
@@ -2331,10 +2349,10 @@ Zotero.ZotFile = {
         }
 
         // add info to note (date of modification to attachment, location, and mode)
-        this.addInfo(att,"lastmod",newFile.lastModifiedTime);
-        this.addInfo(att,"mode",tablet_mode);
-        this.addInfo(att,"location",newFile.path);
-        this.addInfo(att,"projectFolder",projectFolder);
+        this.addInfo(att,"lastmod", newFile.lastModifiedTime);
+        this.addInfo(att,"mode", tablet_mode);
+        this.addInfo(att,"location", newFile.path);
+        this.addInfo(att,"projectFolder", projectFolder);
         // add tags
         if (!tablet_status) {
             this.addTabletTag(att, this.tag);
@@ -2435,7 +2453,7 @@ Zotero.ZotFile = {
 
                     var att_mode=this.getInfo(item,"mode");
                     if(att_mode==2) {
-                        this.addInfo(item,"lastmod",file.lastModifiedTime);
+                        this.addInfo(item, "lastmod", file.lastModifiedTime);
                         this.addTabletTag(item, this.tag);
                         // new attachment ID
                         newAttID=item.id;
