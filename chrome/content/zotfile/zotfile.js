@@ -42,6 +42,7 @@ Zotero.ZotFile = {
     // tablet tags
     tag:null,
     tagMod:null,
+    renameNotifierID:null,
 
 
     // ========================= //
@@ -222,10 +223,14 @@ Zotero.ZotFile = {
             });
         }
 
-        // add event listener for automatically renaming attachments
-        var notifierID = Zotero.Notifier.registerObserver(this.autoRename, ['item']);
         // add event listener for tablet tags
         // var notifierID = Zotero.Notifier.registerObserver(this.autoTablet, ['item-tag']);
+        // Register callbacks in Zotero as item observers
+        if(Zotero.ZotFile.renameNotifierID===null)
+            Zotero.ZotFile.renameNotifierID = Zotero.Notifier.registerObserver(this.autoRename, ['item']);
+                Zotero.Notifier.unregisterObserver(Zotero.ZotFile.outlineNotifierID);
+                Zotero.ZotFile.renameNotifierID = null;
+        }, false);
 
         // Load zotero.js first
         Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
