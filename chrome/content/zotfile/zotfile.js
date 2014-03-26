@@ -3039,25 +3039,28 @@ Zotero.ZotFile = {
             toc.setAttribute('style', 'list-style-type: none; padding-left:0px');
             toc.setAttribute('id', 'toc');
 
-            var create_toc = function(obj) {
+            var create_toc = function(entry) {                
                 var li = document.createElement('li'),
                     a  = document.createElement('a');
                 if (!firstElement)
-                    li.setAttribute('style', obj['items'].length>0 ? 'padding-top:8px' : 'padding-top:4px');
+                    li.setAttribute('style', entry['items'].length>0 ? 'padding-top:8px' : 'padding-top:4px');
                 firstElement = false;
-                a.setAttribute('href', zz.str_format(href, {'lib': lib, 'key': key, 'page': obj['page'] + 1}));
-                a.innerHTML = obj['title'];
-                li.appendChild(a);
+                a.setAttribute('href', zz.str_format(href, {'lib': lib, 'key': key, 'page': entry.page + 1}));
+                a.innerHTML = entry.title;
+                if(entry.page!==undefined)
+                    li.appendChild(a);
+                if(entry.page!==undefined && entry.items.length>0)
+                    lvl++;
                 // add subitems
-                if(obj['items'].length>0 &&
-                    (++lvl + 1) <= zz.prefs.getIntPref('pdfOutline.tocDepth')) {
+                if(entry.items.length>0 && (lvl + 1) <= zz.prefs.getIntPref('pdfOutline.tocDepth')) {
                     var ul = document.createElement('ul');
                     ul.setAttribute('style', zz.str_format(style, {'padding': 12*lvl}));        
-                    obj['items'].forEach(create_toc, ul);
+                    entry.items.forEach(create_toc, ul);
                     li.appendChild(ul);
+                }
+                if(entry.page!==undefined && entry.items.length>0)
                     lvl--;
-                 }
-                 this.appendChild(li);
+                this.appendChild(li);
             };
             outline.forEach(create_toc, toc);
             // add toc to note
