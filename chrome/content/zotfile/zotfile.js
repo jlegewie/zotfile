@@ -2060,23 +2060,29 @@ Zotero.ZotFile = {
     // =========================== //
 
     clearInfo: function (att) {        
-        // remove new info
-        var content = att.getNote(),
-            note = document.createElement('div');
-        note.innerHTML = content;
-        var p = note.querySelector("#zotfile-data");
-        if (p!==null)
-            note.removeChild(p);
-        // remove old info
-        p = note.querySelectorAll("p");
-        for (var i = 0; i < p.length; i++) {
-            if(p[i].innerHTML.indexOf('lastmod{')!=-1)
-                note.removeChild(p[i]);
+        try {
+            // remove new info
+            var content = att.getNote(),
+                note = document.createElement('div');
+            note.innerHTML = content;
+            var p = note.querySelector("#zotfile-data");
+            if (p!==null)
+                note.removeChild(p);
+            // remove old info
+            p = note.querySelectorAll("p");
+            for (var i = 0; i < p.length; i++) {
+                if(p[i].innerHTML.indexOf('lastmod{')!=-1)
+                    note.removeChild(p[i]);
+            }
+            note.innerHTML = note.innerHTML.replace(/(lastmod|mode|location|projectFolder)\{.*?\};?/g,'');
+            // save note
+            att.setNote(note.innerHTML);
+            att.save();
         }
-        note.innerHTML = note.innerHTML.replace(/(lastmod|mode|location|projectFolder)\{.*?\};?/g,'');
-        // save note
-        att.setNote(note.innerHTML);
-        att.save();        
+        catch(e) {
+            att.setNote('');
+            att.save();
+        }
     },
 
     getInfo: function (att, key) {
@@ -2085,7 +2091,15 @@ Zotero.ZotFile = {
             var content = att.getNote(),
                 note = document.createElement('div'),
                 value;
-            note.innerHTML = content;
+            try {
+                note.innerHTML = content;
+            }
+            catch (e){
+                var match = content.match(/<p id="zotfile-data".+<\/p>/);
+                if (match===null)
+                    return '';
+                note.innerHTML = match[0];
+            }
             // get zotfile data
             var p = note.querySelector("#zotfile-data");
             if(p===null) {
@@ -2104,7 +2118,7 @@ Zotero.ZotFile = {
             return(value);
         }
         catch (err) {
-            return("");
+            return '';
         }
     },
 
@@ -2113,7 +2127,16 @@ Zotero.ZotFile = {
         var content = att.getNote(),
             note = document.createElement('div'),
             data = {};
-        note.innerHTML = content;
+        try {
+            note.innerHTML = content;
+        }
+        catch (e){
+            var match = content.match(/<p id="zotfile-data".+<\/p>/);
+            if (match===null)
+                note.innerHTML = '';
+            else
+                note.innerHTML = match[0];
+        }
         // for location tag: replace destination folder with [BaseFolder]
         if(key=="location" && this.prefs.getBoolPref("tablet.dest_dir_relativePath"))
             value = value.replace(this.prefs.getCharPref("tablet.dest_dir"),"[BaseFolder]");
@@ -3023,6 +3046,8 @@ Zotero.ZotFile = {
 
         createOutline: function(att, outline, itemProgress) {
             var zz = Zotero.ZotFile;
+            itemProgress.setProgress(100);            
+            // [JavaScript Error: "mismatched tag. Expected: </p>."]
             if (outline===null) {
                 itemProgress.setError();
                 return;
@@ -3033,28 +3058,27 @@ Zotero.ZotFile = {
                 lib = att.libraryID===null ? 0 : att.libraryID,
                 href = 'zotero://open-pdf/%(lib)_%(key)/%(page)',
                 style = 'list-style-type: none; padding-left:%(padding)px',
-                lvl = 0,
+                lvl = 1,
                 firstElement = true;
             // style toc
             toc.setAttribute('style', 'list-style-type: none; padding-left:0px');
             toc.setAttribute('id', 'toc');
-
-            var create_toc = function(entry) {                
+            var create_toc = function(entry) {
                 var li = document.createElement('li'),
                     a  = document.createElement('a');
                 if (!firstElement)
-                    li.setAttribute('style', entry['items'].length>0 ? 'padding-top:8px' : 'padding-top:4px');
+                    li.setAttribute('style', entry.items.length>0 ? 'padding-top:8px' : 'padding-top:4px');
                 firstElement = false;
                 a.setAttribute('href', zz.str_format(href, {'lib': lib, 'key': key, 'page': entry.page + 1}));
-                a.innerHTML = entry.title;
+                a.innerHTML = Zotero.Utilities.htmlSpecialChars(entry.title);
                 if(entry.page!==undefined)
                     li.appendChild(a);
                 if(entry.page!==undefined && entry.items.length>0)
                     lvl++;
                 // add subitems
-                if(entry.items.length>0 && (lvl + 1) <= zz.prefs.getIntPref('pdfOutline.tocDepth')) {
+                if(entry.items.length>0 && lvl <= zz.prefs.getIntPref('pdfOutline.tocDepth')) {
                     var ul = document.createElement('ul');
-                    ul.setAttribute('style', zz.str_format(style, {'padding': 12*lvl}));        
+                    ul.setAttribute('style', zz.str_format(style, {'padding': 12*(lvl-1)}));        
                     entry.items.forEach(create_toc, ul);
                     li.appendChild(ul);
                 }
@@ -3067,7 +3091,16 @@ Zotero.ZotFile = {
             var note = document.createElement('div'),
                 title = document.createElement('p'),
                 content = att.getNote();
-            note.innerHTML = content;
+            try {
+                note.innerHTML = content;
+            }
+            catch (e){
+                var match = content.match(/<p id="zotfile-data".+<\/p>/);
+                if (match===null)
+                    note.innerHTML = '';
+                else
+                    note.innerHTML = match[0];
+            }
             // title
             title.setAttribute('id', 'title');
             title.innerHTML = '<strong>Contents</strong>'
@@ -3082,8 +3115,7 @@ Zotero.ZotFile = {
             // save toc in note
             att.setNote(note.innerHTML);
             att.save();
-            // done with this att...
-            itemProgress.setProgress(100)
+            // done with this att...            
             itemProgress.setIcon('chrome://zotero/skin/tick.png');
         },
 
@@ -3325,7 +3357,7 @@ Zotero.ZotFile = {
         },
 
         createNote: function(annotations, item, att, method) {
-            var note_content=this.getNoteContent(annotations, item, att, method);
+            var note_content = this.getNoteContent(annotations, item, att, method);
             var note = new Zotero.Item("note");
             note.libraryID = item._libraryID;
             // note.setNote(Zotero.Utilities.text2html(note_content));

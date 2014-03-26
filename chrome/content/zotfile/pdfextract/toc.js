@@ -34,7 +34,7 @@ Zotero.ZotFile.PdfGetOutline = {
                         var pageIndex = [],
                             pageMap = {};
                         var buildIndex = function(obj) {
-                            if(obj.dest!==undefined && obj.dest!==null)
+                            if(obj.dest && obj.dest[0])
                                 pageIndex.push(obj.dest);
                             obj.items.forEach(buildIndex);
                         };
@@ -55,24 +55,24 @@ Zotero.ZotFile.PdfGetOutline = {
                                     pageMap[key] = page;
                                 });
                             }, Promise.resolve()).then(function() {
-                              var toc = function(obj) {
-                                var key, page;
-                                if(obj.dest) {
-                                    key = typeof obj.dest =='string' ? obj.dest : JSON.stringify(obj.dest[0]);
-                                    page = pageMap[key];
-                                }
-                                return {
-                                  'page': page,
-                                  'title': obj.title,
-                                  'items': obj.items.map(toc)
+                                var toc = function(obj) {
+                                    var key, page;
+                                    if(obj.dest) {
+                                        key = typeof obj.dest =='string' ? obj.dest : JSON.stringify(obj.dest[0]);
+                                        page = pageMap[key];
+                                    }
+                                    return {
+                                        'page': page,
+                                        'title': obj.title,
+                                        'items': obj.items.map(toc)
+                                    };
                                 };
-                              };
-                              outline = outline.map(toc);
-                              // remove highest level if it just has one item
-                              if(outline.length==1)
-                                if(outline[0].items.length>0)
-                                  outline = outline[0].items;
-                              // returned outline
+                                outline = outline.map(toc);
+                                // remove highest level if it just has one item
+                                if(outline.length==1)
+                                    if(outline[0].items.length>0)
+                                        outline = outline[0].items;
+                                // returned outline
                               args.callback.call(args.callbackObj, args.att, outline, args.itemProgress);
                             });
                         }); /* getDestinations() */
