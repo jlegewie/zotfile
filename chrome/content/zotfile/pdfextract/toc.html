@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+
+<head>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/shared/util.js"></script>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/shared/colorspace.js"></script>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/shared/pattern.js"></script>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/shared/function.js"></script>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/shared/annotation.js"></script>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/display/api.js"></script>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/display/metadata.js"></script>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/display/canvas.js"></script>
+  <script type="text/javascript" src="chrome://zotfile/content/pdfextract/pdfjs/src/display/font_loader.js"></script>
+
+  <script type="text/javascript">
+    // Specify the main script used to create a new PDF.JS web worker.
+    PDFJS.workerSrc = 'chrome://zotfile/content/pdfextract/pdfjs/src/worker_loader.js';
+  </script>
+  <script type="text/javascript" src="chrome://zotero/content/include.js"></script>
+  <script type="text/javascript" src="toc.js"></script>
+</head>
+
+<body>
+  Get toc from PDF...
+  <canvas id="the-canvas" style="border:1px solid black;"/>
+</body>
+
+</html>
