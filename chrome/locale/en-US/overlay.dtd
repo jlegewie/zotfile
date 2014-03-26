@@ -6,6 +6,8 @@
 <!ENTITY renameSelectedAttachments.tooltiptext "Move and rename existing Attachments from selected Zotero item">
 <!ENTITY extract-annotations.label "Extract Annotations">
 <!ENTITY extract-annotations.tooltiptext "Extract Annotations and Highlighted Text from pdf file.">
+<!ENTITY pdf-outline.label "Get Table of Contents">
+<!ENTITY pdf-outline.tooltiptext "Get Table of Contents from pdf file.">
 <!ENTITY send-to-tablet "Send to Tablet">
 <!ENTITY send-attachment-file-to-tablet "Send Attachment File to Tablet.">
 <!ENTITY update-file-modification-time "Update File Modification Time">

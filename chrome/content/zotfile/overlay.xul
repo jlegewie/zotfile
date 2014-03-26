@@ -18,7 +18,8 @@
 			<menupopup id="id-zotfile-menu" onpopupshowing="Zotero.ZotFile.buildZotFileMenu();">
 				<menuitem label="&warning.label;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>							
 				<menuitem label="&renameSelectedAttachments.label;" tooltiptext="&renameSelectedAttachments.tooltiptext;" oncommand="Zotero.ZotFile.renameSelectedAttachments();"/>
-				<menuitem label="&extract-annotations.label;" tooltiptext="&extract-annotations.tooltiptext;" oncommand="Zotero.ZotFile.pdfAnnotations.getAnnotations();"/>				
+				<menuitem label="&extract-annotations.label;" tooltiptext="&extract-annotations.tooltiptext;" oncommand="Zotero.ZotFile.pdfAnnotations.getAnnotations();"/>
+				<menuitem label="&pdf-outline.label;" tooltiptext="&pdf-outline.tooltiptext;" oncommand="Zotero.ZotFile.pdfOutline.getOutline();"/>
 				<menuseparator/>
 				<menuitem label="&warning.label;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>								
 				<menuitem id="id-push2reader-00" label="&send-to-tablet;" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.sendSelectedAttachmentsToTablet(-1);"/>

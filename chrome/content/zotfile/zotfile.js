@@ -43,6 +43,7 @@ Zotero.ZotFile = {
     tag:null,
     tagMod:null,
     renameNotifierID:null,
+    outlineNotifierID:null,
 
 
     // ========================= //
@@ -223,13 +224,18 @@ Zotero.ZotFile = {
             });
         }
 
-        // add event listener for tablet tags
-        // var notifierID = Zotero.Notifier.registerObserver(this.autoTablet, ['item-tag']);
         // Register callbacks in Zotero as item observers
         if(Zotero.ZotFile.renameNotifierID===null)
             Zotero.ZotFile.renameNotifierID = Zotero.Notifier.registerObserver(this.autoRename, ['item']);
+        if(Zotero.ZotFile.outlineNotifierID===null)
+            Zotero.ZotFile.outlineNotifierID = Zotero.Notifier.registerObserver(this.autoOutline, ['item']);
+        // var renameNotifierID = Zotero.Notifier.registerObserver(this.autoTablet, ['item-tag']);
+        // Unregister callback when the window closes (important to avoid a memory leak)
+        window.addEventListener('unload', function(e) {
+                Zotero.Notifier.unregisterObserver(Zotero.ZotFile.renameNotifierID);
                 Zotero.Notifier.unregisterObserver(Zotero.ZotFile.outlineNotifierID);
                 Zotero.ZotFile.renameNotifierID = null;
+                Zotero.ZotFile.outlineNotifierID = null;
         }, false);
 
         // Load zotero.js first
@@ -479,6 +485,22 @@ Zotero.ZotFile = {
                     }
                 }
                 progressWin.startCloseTimer();
+            },100);
+        }
+    },
+
+    autoOutline: {
+        parent: this,
+        notify: function(event, type, ids, extraData) {
+            // check event and preferences
+            if (type != 'item' || event != 'add')
+                return;
+            var zz = Zotero.ZotFile;
+            if(!zz.prefs.getBoolPref('pdfOutline.getToc'))
+                return;
+            // get pdf outline
+            setTimeout(function() {
+                zz.pdfOutline.getOutline(ids);
             },100);
         }
     },
@@ -934,18 +956,19 @@ Zotero.ZotFile = {
             warning1:0,
             rename: 1,
             extractanno: 2,
-            sep1: 3,
-            warning2: 4,
-            push2reader: 5,
-            updatefile: 6,
-            pullreader: 7,
-            sep2: 8,
-            tablet: 9,
-            warning3: 10,
-            subfolders:new Array(11,12,13,14,15,16,17,18,19,20,21,22,23,24,25),
-            sep3: 26,
-            menuConfigure: 27,
-            length:28
+            getoutline: 3,
+            sep1: 4,
+            warning2: 5,
+            push2reader: 6,
+            updatefile: 7,
+            pullreader: 8,
+            sep2: 9,
+            tablet: 10,
+            warning3: 11,
+            subfolders:new Array(12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
+            sep3: 27,
+            menuConfigure: 28,
+            length:29
         };
 
         // list of disabled and show menu-items
@@ -1006,14 +1029,14 @@ Zotero.ZotFile = {
 
             // warning
             if(!oneAtt) {
-                disable.push(m.rename, m.extractanno);
+                disable.push(m.rename, m.extractanno, m.getoutline);
                 show.push(m.sep1,m.warning2);
                 menu.childNodes[m.warning2].setAttribute('label',this.ZFgetString('menu.itemHasNoAtts'));
-
             }
 
             // add 'Extract annotations'
             if(this.prefs.getBoolPref("pdfExtraction.MenuItem")) show.push(m.extractanno);
+            if(this.prefs.getBoolPref("pdfOutline.menuItem")) show.push(m.getoutline);
 
             // tablet menu part
             if(this.prefs.getBoolPref("tablet") && oneAtt) {
@@ -2944,6 +2967,139 @@ Zotero.ZotFile = {
         return command[0].replace(/"/g, '');
     },
 
+    pdfOutline : {
+        atts: [],
+        toc_url: 'chrome://zotfile/content/pdfextract/toc.html',        
+        progressWin: null,
+        itemProgress: [],
+
+        getOutline: function(attIDs) {
+            var verbose = false;
+            this.progressWin = null;
+            this.itemProgress = [];
+            // get selected attachments if no att ids are passed
+            if(attIDs==null) {
+                verbose = true;
+                attIDs = Zotero.ZotFile.getSelectedAttachments();
+                Zotero.ZotFile.showWarningMessages(Zotero.ZotFile.ZFgetString('general.warning.skippedAtt'),Zotero.ZotFile.ZFgetString('general.warning.skippedAtt.msg'));
+            }
+            // get attachment item, parent and file
+            this.atts  = Zotero.Items.get(attIDs)
+                .filter(function(att) {
+                    return att.isAttachment() && att.getFile().exists() && att.attachmentMIMEType.indexOf('pdf') != -1;
+                });
+            if (this.atts.length==0)
+                return;            
+            if (Zotero.isFx36) {
+                Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.error'),Zotero.ZotFile.ZFgetString('extraction.outdatedFirefox'));
+                return;
+            }        
+            // progresswindow
+            this.progressWin = new Zotero.ZotFile.ProgressWindow();
+            this.progressWin.changeHeadline('Zotfile: Getting Table of Contents...');
+            var icon_pdf = 'chrome://zotero/skin/treeitem-attachment-pdf.png';
+            for (var i = 0; i < this.atts.length; i++) {
+                this.itemProgress.push(new this.progressWin.ItemProgress(icon_pdf, this.atts[i].getField('title')));
+            };
+            this.progressWin.addDescription("Zotfile can only extract the TOC for PDFs that have a TOC.");
+            if(verbose) this.progressWin.show();
+
+            // get outline in hidden browser
+            this.pdfHiddenBrowser = Zotero.Browser.createHiddenBrowser();
+            this.pdfHiddenBrowser.loadURI(this.toc_url);            
+        },
+
+        getOutlineFromFiles: function() {
+            var attachment = this.atts.shift();
+            var itemProgress = this.itemProgress.shift();
+            var args = {};
+            args.url = attachment.getFile().path;
+            args.att = attachment;
+            args.itemProgress = itemProgress;
+            args.callbackObj = this;
+            args.callback = this.complete;
+            Zotero.ZotFile.PdfGetOutline.getOutline(args);
+        },
+
+        createOutline: function(att, outline, itemProgress) {
+            var zz = Zotero.ZotFile;
+            if (outline===null) {
+                itemProgress.setError();
+                return;
+            }            
+            // create toc from outline
+            var toc = document.createElement('ul'),
+                key = att.key,
+                lib = att.libraryID===null ? 0 : att.libraryID,
+                href = 'zotero://open-pdf/%(lib)_%(key)/%(page)',
+                style = 'list-style-type: none; padding-left:%(padding)px',
+                lvl = 0,
+                firstElement = true;
+            // style toc
+            toc.setAttribute('style', 'list-style-type: none; padding-left:0px');
+            toc.setAttribute('id', 'toc');
+
+            var create_toc = function(obj) {
+                var li = document.createElement('li'),
+                    a  = document.createElement('a');
+                if (!firstElement)
+                    li.setAttribute('style', obj['items'].length>0 ? 'padding-top:8px' : 'padding-top:4px');
+                firstElement = false;
+                a.setAttribute('href', zz.str_format(href, {'lib': lib, 'key': key, 'page': obj['page'] + 1}));
+                a.innerHTML = obj['title'];
+                li.appendChild(a);
+                // add subitems
+                if(obj['items'].length>0 &&
+                    (++lvl + 1) <= zz.prefs.getIntPref('pdfOutline.tocDepth')) {
+                    var ul = document.createElement('ul');
+                    ul.setAttribute('style', zz.str_format(style, {'padding': 12*lvl}));        
+                    obj['items'].forEach(create_toc, ul);
+                    li.appendChild(ul);
+                    lvl--;
+                 }
+                 this.appendChild(li);
+            };
+            outline.forEach(create_toc, toc);
+            // add toc to note
+            var note = document.createElement('div'),
+                title = document.createElement('p'),
+                content = att.getNote();
+            note.innerHTML = content;
+            // title
+            title.setAttribute('id', 'title');
+            title.innerHTML = '<strong>Contents</strong>'
+            // remove previous title and toc
+            var pre_toc = note.querySelector('#toc');
+            if (pre_toc!==null) note.removeChild(pre_toc);
+            var pre_title = note.querySelector('#title');
+            if (pre_title!==null) note.removeChild(pre_title);
+            // add toc at beginning of note
+            note.insertBefore(toc, note.firstChild);
+            note.insertBefore(title, note.firstChild);
+            // save toc in note
+            att.setNote(note.innerHTML);
+            att.save();
+            // done with this att...
+            itemProgress.setProgress(100)
+            itemProgress.setIcon('chrome://zotero/skin/tick.png');
+        },
+
+        complete: function(att, outline, itemProgress) {
+            // create outline
+            this.createOutline(att, outline, itemProgress);
+            // move on to the next pdf, if there is one
+            if (this.atts.length > 0) {
+                this.getOutlineFromFiles();
+            } else { // we're done
+                Zotero.Browser.deleteHiddenBrowser(this.pdfHiddenBrowser);
+                this.pdfHiddenBrowser = null;
+                this.progressWin.startCloseTimer(Zotero.ZotFile.prefs.getIntPref("info_window_duration"));
+            }
+        }
+    },
+
+    /* Runs the annotation extraction code in extract.html/extract.js,
+     * to extract annotations from a single PDF. */
     // =========================================== //
     // FUNCTIONS: PDF ANNOTATION EXTRACTION CLASS //
     // ========================================== //

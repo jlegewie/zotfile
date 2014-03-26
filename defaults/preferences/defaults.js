@@ -107,6 +107,10 @@ pref("extensions.zotfile.tablet.subfolder", false);
 pref("extensions.zotfile.tablet.subfolderFormat", "/%w/%y");
 pref("extensions.zotfile.tablet.mode", 1);
 
+pref("extensions.zotfile.pdfOutline.tocDepth", 4);
+pref("extensions.zotfile.pdfOutline.getToc", true);
+pref("extensions.zotfile.pdfOutline.menuItem", true);
+
 pref("extensions.zotfile.pdfExtraction.UsePDFJS", true);
 pref("extensions.zotfile.pdfExtraction.debug", false);
 pref("extensions.zotfile.pdfExtraction.openPdfWin", "");

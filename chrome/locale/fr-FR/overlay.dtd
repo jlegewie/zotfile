@@ -6,6 +6,8 @@
 <!ENTITY renameSelectedAttachments.tooltiptext "Déplace et renomme les pièces jointes existantes du document sélectionné">
 <!ENTITY extract-annotations.label "Extraire les annotations">
 <!ENTITY extract-annotations.tooltiptext "Extrait du fichier PDF les annotations et le texte surligné.">
+<!ENTITY pdf-outline.label "Get Table of Contents">
+<!ENTITY pdf-outline.tooltiptext "Get Table of Contents from pdf file.">
 <!ENTITY send-to-tablet "Envoyer vers la tablette">
 <!ENTITY send-attachment-file-to-tablet "Envoyer la pièce jointe vers la tablette.">
 <!ENTITY update-file-modification-time "Mettre à jout la date de modification du fichier">
