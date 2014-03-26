@@ -3347,13 +3347,22 @@ Zotero.ZotFile = {
         },
 
         getNoteContent: function(annotations, item, att, method) {
-            // get current date
-			var date_str = Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString();
+            // get preferences relating to note title
+            var noteTitle = Zotero.ZotFile.prefs.getCharPref("pdfExtraction.noteTitle") || Zotero.ZotFile.ZFgetString('extraction.noteTitle');
+            var htmlTagNoteTitleStart = Zotero.ZotFile.prefs.getCharPref("pdfExtraction.NoteTitleHtmlTagStart");
+            var htmlTagNoteTitleEnd = Zotero.ZotFile.prefs.getCharPref("pdfExtraction.NoteTitleHtmlTagEnd");
+            var includeDateInTitle = Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.includeDateInNote");
 
             // set note title
-            var note="<b>" + Zotero.ZotFile.ZFgetString('extraction.noteTitle') + " (" + date_str;
+            var note = htmlTagNoteTitleStart + noteTitle;
+            if (includeDateInTitle) {
+              // get current date
+              var date_str = Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString();
+              note += ' (' + date_str + ')';
+            }
             if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler")) note += ", " + method;
-            note += ")</b>";
+
+            note += htmlTagNoteTitleEnd;
 
             // get html tags for notes and highlights
             var htmlTagNoteStart=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.NoteHtmlTagStart");
