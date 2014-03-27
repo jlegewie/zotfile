@@ -123,9 +123,8 @@ pref("extensions.zotfile.pdfExtraction.MenuItem", true);
 pref("extensions.zotfile.pdfExtraction.NoteTruePage", true);
 pref("extensions.zotfile.pdfExtraction.NoteFullCite", true);
 pref("extensions.zotfile.pdfExtraction.NoteRemoveHyphens", true);
-pref("extensions.zotfile.pdfExtraction.noteTitle", "");
-pref("extensions.zotfile.pdfExtraction.NoteTitleHtmlTagStart", "<b>");
-pref("extensions.zotfile.pdfExtraction.NoteTitleHtmlTagEnd", "</b>");
+
+pref("extensions.zotfile.pdfExtraction.formatNoteTitle", "<b>%(title) (%(date))</b>");
 pref("extensions.zotfile.pdfExtraction.NoteHtmlTagStart", "<i>");
 pref("extensions.zotfile.pdfExtraction.NoteHtmlTagEnd", "</i>");
 pref("extensions.zotfile.pdfExtraction.HighlightHtmlTagStart", "");

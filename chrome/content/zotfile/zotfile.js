@@ -3382,22 +3382,13 @@ Zotero.ZotFile = {
         },
 
         getNoteContent: function(annotations, item, att, method) {
-            // get preferences relating to note title
-            var noteTitle = Zotero.ZotFile.prefs.getCharPref("pdfExtraction.noteTitle") || Zotero.ZotFile.ZFgetString('extraction.noteTitle');
-            var htmlTagNoteTitleStart = Zotero.ZotFile.prefs.getCharPref("pdfExtraction.NoteTitleHtmlTagStart");
-            var htmlTagNoteTitleEnd = Zotero.ZotFile.prefs.getCharPref("pdfExtraction.NoteTitleHtmlTagEnd");
-            var includeDateInTitle = Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.includeDateInNote");
-
-            // set note title
-            var note = htmlTagNoteTitleStart + noteTitle;
-            if (includeDateInTitle) {
-              // get current date
-              var date_str = Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString();
-              note += ' (' + date_str + ')';
-            }
-            if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler")) note += ", " + method;
-
-            note += htmlTagNoteTitleEnd;
+            var zz = Zotero.ZotFile;
+            // add note title
+            var date_str = zz.prefs.getBoolPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString(),
+                title = zz.str_format(zz.prefs.getCharPref("pdfExtraction.formatNoteTitle"), {'title': zz.ZFgetString('extraction.noteTitle'), 'date': date_str});
+            var note = title;
+            if (zz.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler"))
+                note += ' ' + method;
 
             // get html tags for notes and highlights
             var htmlTagNoteStart=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.NoteHtmlTagStart");
