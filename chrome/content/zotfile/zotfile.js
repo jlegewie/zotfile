@@ -3382,69 +3382,49 @@ Zotero.ZotFile = {
         },
 
         getNoteContent: function(annotations, item, att, method) {
-            var zz = Zotero.ZotFile;
+            var zz = Zotero.ZotFile,
+                lib = att.libraryID===null ? 0 : att.libraryID,
+                format_uri = 'zotero://open-pdf/%(lib)_%(key)/%(page)',
+                format_title = zz.prefs.getCharPref("pdfExtraction.formatNoteTitle"),
+                format_note = zz.prefs.getCharPref("pdfExtraction.formatAnnotationNote"),
+                format_highlight = zz.prefs.getCharPref("pdfExtraction.formatAnnotationHighlight"),
+                format_underline = zz.prefs.getCharPref("pdfExtraction.formatAnnotationUnderline"),
+                cite = zz.prefs.getBoolPref("pdfExtraction.NoteFullCite") ? zz.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ") : "p. ";
             // add note title
             var date_str = zz.prefs.getBoolPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString(),
-                title = zz.str_format(zz.prefs.getCharPref("pdfExtraction.formatNoteTitle"), {'title': zz.ZFgetString('extraction.noteTitle'), 'date': date_str});
-            var note = title;
+                title = zz.str_format(format_title, {'title': zz.ZFgetString('extraction.noteTitle'), 'date': date_str}),
+                note = title;
             if (zz.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler"))
                 note += ' ' + method;
-
-            // get html tags for notes and highlights
-            var htmlTagNoteStart=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.NoteHtmlTagStart");
-            var htmlTagNoteEnd=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.NoteHtmlTagEnd");
-            var htmlTagHighlightStart=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.HighlightHtmlTagStart");
-            var htmlTagHighlightEnd=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.HighlightHtmlTagEnd");
-            var htmlTagUnderlineStart=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.UnderlineHtmlTagStart");
-            var htmlTagUnderlineEnd=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.UnderlineHtmlTagEnd");
-			var openingQMarks=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.openingQuotationMarks");
-			var closingQMarks=Zotero.ZotFile.prefs.getCharPref("pdfExtraction.closingQuotationMarks");
-
             // iterature through annotations
             for (var i=0; i < annotations.length; i++) {
-                var anno=annotations[i];
-
+                var anno = annotations[i],
+                    page = anno.page,
+                    uri = zz.str_format(format_uri, {'lib': lib, 'key': att.key, 'page': anno.page});
                 // get page
-                var page=anno.page;
-                if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteTruePage")) {
+                if(zz.prefs.getBoolPref("pdfExtraction.NoteTruePage")) {
                     try {
-                        var itemPages=item.getField('pages');
-                        if(itemPages) page=parseInt(itemPages.split('-')[0],10)+page-1;
+                        var itemPages = item.getField('pages');
+                        if(itemPages) page = parseInt(itemPages.split('-')[0],10) + page - 1;
                     }
                     catch(err) {}
                 }
-
-                // get citation
-                var cite="p. ";
-                if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteFullCite"))
-                    cite=Zotero.ZotFile.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ");
-                // get uri
-                var lib = att.libraryID===null ? 0 : att.libraryID;
-                var uri = 'zotero://open-pdf/' + lib + '_' + att.key + '/' + anno.page;
-
-                if(anno.markup && anno.markup != "") {                   
-                    var tagStart = htmlTagHighlightStart;
-                    var tagEnd = htmlTagHighlightEnd;
-                    if (anno.subtype == "Highlight") {
-                        tagStart = htmlTagHighlightStart;
-                        tagEnd = htmlTagHighlightEnd;
-                    } else if (anno.subtype == "Underline") {
-                        tagStart = htmlTagUnderlineStart;
-                        tagEnd = htmlTagUnderlineEnd;
-                    }
-                    note += "<p>"+tagStart+openingQMarks+anno.markup+closingQMarks+' (<a href="' + uri + '">' + cite + page + "</a>)" +tagEnd+"</p>";
+                // link
+                var link = '<a href="' + uri + '">' + cite + page + '</a>';
+                // add markup to note
+                if(anno.markup && anno.markup != "") {       
+                    var format_markup = anno.subtype == "Highlight" ? format_highlight : format_underline;
+                    note += zz.str_format(format_markup, {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri});
                 }
-
-                // add to note text pdfExtractionNoteRemoveHtmlNote
+                // add to note text
                 if(anno.content && anno.content != "" &&
-                    (!anno.markup || this.strDistance(anno.content,anno.markup)>0.15 )) {
+                  (!anno.markup || this.strDistance(anno.content,anno.markup)>0.15 )) {                    
                     var content = anno.content.replace(/(\r\n|\n|\r)/gm,"<br>");
-                    note += Zotero.ZotFile.str_format('<p>%(tagStart)%(content)  (<a href="%(uri)">note on p.%(page)</a>)%(tagEnd)</p><br>', {'content':content,'page': page, 'tagStart': htmlTagNoteStart, 'tagEnd': htmlTagNoteEnd,'uri':uri});
+                    '<p><i>%(content) (<a href="%(uri)">note on p.%(page)</a>)</i></p><br>'
+                    note += zz.str_format(format_note, {'content': content, 'cite': link, 'page': page, 'uri': uri});
                 }
-
             }
             return note;
-
         },
 
         trim: function(str) {

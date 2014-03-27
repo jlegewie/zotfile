@@ -38,10 +38,15 @@ Contributions preferably through pull requests are welcome!
 
 - **Get Table of Contents from PDF**
 
-    ZotFile can now get the table of contents from PDF and save it with links to the correct page in attachment notes. Simply click on the the desired section and zotfile opens the pdf on the correct page. Zotfile automatically extracts the table of content for all newly added pdf attachments (disable with `zotfile.pdfOutline.getToc` setting) or you can manually extract the toc using 'Manage Attachments->Get Table of Contents' (remove menu item with `zotfile.pdfOutline.menuItem` setting). This feature, of course, only works for pdf that have a table of content (same as in your pdf reader).
+    Similar to [Mendeley](http://blog.mendeley.com/progress-update/desktop-contents-tables-and-figures/), ZotFile can now get the table of contents from PDF and save it with links to the correct page in attachment notes. Simply click on the the desired section and zotfile opens the pdf on the correct page. Zotfile automatically extracts the table of content for all newly added pdf attachments (disable with `zotfile.pdfOutline.getToc` setting) or you can manually extract the toc using 'Manage Attachments->Get Table of Contents' (remove menu item with `zotfile.pdfOutline.menuItem` setting). This feature, of course, only works for pdf that have a table of content (same as in your pdf reader).
 
-- Customization of note title for extracted annotations with hidden options
+- Improved customization of note for extracted annotations with hidden options (`formatNoteTitle`, `formatAnnotationNote`, `formatAnnotationHighlight`, `formatAnnotationUnderline`)
+
+    WARNING: I removed the old settings. You will have to change the new settings if you want to customize the format of the note with extracted annotations.
+  
 - Information for attachments on the tablet is now hidden in the attachment note
+
+
 
 #### Changes in 3.2
 
