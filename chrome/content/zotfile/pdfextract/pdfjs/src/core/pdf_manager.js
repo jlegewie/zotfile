@@ -19,6 +19,9 @@
 
 'use strict';
 
+// The maximum number of bytes fetched per range request
+var RANGE_CHUNK_SIZE = 65536;
+
 // TODO(mack): Make use of PDFJS.Util.inherit() when it becomes available
 var BasePdfManager = (function BasePdfManagerClosure() {
   function BasePdfManager() {
@@ -30,24 +33,24 @@ var BasePdfManager = (function BasePdfManagerClosure() {
       throw new NotImplementedException();
     },
 
-    ensureModel: function BasePdfManager_ensureModel(prop, args) {
-      return this.ensure(this.pdfModel, prop, args);
+    ensureDoc: function BasePdfManager_ensureDoc(prop, args) {
+      return this.ensure(this.pdfDocument, prop, args);
     },
 
     ensureXRef: function BasePdfManager_ensureXRef(prop, args) {
-      return this.ensure(this.pdfModel.xref, prop, args);
+      return this.ensure(this.pdfDocument.xref, prop, args);
     },
 
     ensureCatalog: function BasePdfManager_ensureCatalog(prop, args) {
-      return this.ensure(this.pdfModel.catalog, prop, args);
+      return this.ensure(this.pdfDocument.catalog, prop, args);
     },
 
     getPage: function BasePdfManager_pagePage(pageIndex) {
-      return this.pdfModel.getPage(pageIndex);
+      return this.pdfDocument.getPage(pageIndex);
     },
 
     cleanup: function BasePdfManager_cleanup() {
-      return this.pdfModel.cleanup();
+      return this.pdfDocument.cleanup();
     },
 
     ensure: function BasePdfManager_ensure(obj, prop, args) {
@@ -63,7 +66,7 @@ var BasePdfManager = (function BasePdfManagerClosure() {
     },
 
     updatePassword: function BasePdfManager_updatePassword(password) {
-      this.pdfModel.xref.password = this.password = password;
+      this.pdfDocument.xref.password = this.password = password;
       if (this.passwordChangedPromise) {
         this.passwordChangedPromise.resolve();
       }
@@ -80,7 +83,7 @@ var BasePdfManager = (function BasePdfManagerClosure() {
 var LocalPdfManager = (function LocalPdfManagerClosure() {
   function LocalPdfManager(data, password) {
     var stream = new Stream(data);
-    this.pdfModel = new PDFDocument(this, stream, password);
+    this.pdfDocument = new PDFDocument(this, stream, password);
     this.loadedStream = new LegacyPromise();
     this.loadedStream.resolve(stream);
   }
@@ -132,9 +135,6 @@ var LocalPdfManager = (function LocalPdfManagerClosure() {
 })();
 
 var NetworkPdfManager = (function NetworkPdfManagerClosure() {
-
-  var CHUNK_SIZE = 65536;
-
   function NetworkPdfManager(args, msgHandler) {
 
     this.msgHandler = msgHandler;
@@ -147,10 +147,10 @@ var NetworkPdfManager = (function NetworkPdfManagerClosure() {
       disableAutoFetch: args.disableAutoFetch,
       initialData: args.initialData
     };
-    this.streamManager = new ChunkedStreamManager(args.length, CHUNK_SIZE,
+    this.streamManager = new ChunkedStreamManager(args.length, RANGE_CHUNK_SIZE,
                                                   args.url, params);
 
-    this.pdfModel = new PDFDocument(this, this.streamManager.getStream(),
+    this.pdfDocument = new PDFDocument(this, this.streamManager.getStream(),
                                     args.password);
   }
 

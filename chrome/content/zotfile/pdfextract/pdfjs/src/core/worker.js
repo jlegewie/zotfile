@@ -18,7 +18,7 @@
            MissingPDFException, PasswordException, PDFJS, Promise,
            UnknownErrorException, NetworkManager, LocalPdfManager,
            NetworkPdfManager, XRefParseException, LegacyPromise,
-           isInt, PasswordResponses, MessageHandler, Ref */
+           isInt, PasswordResponses, MessageHandler, Ref, RANGE_CHUNK_SIZE */
 
 'use strict';
 
@@ -30,17 +30,16 @@ var WorkerMessageHandler = PDFJS.WorkerMessageHandler = {
       var loadDocumentPromise = new LegacyPromise();
 
       var parseSuccess = function parseSuccess() {
-        var numPagesPromise = pdfManager.ensureModel('numPages');
-        var fingerprintPromise = pdfManager.ensureModel('fingerprint');
+        var numPagesPromise = pdfManager.ensureDoc('numPages');
+        var fingerprintPromise = pdfManager.ensureDoc('fingerprint');
         var outlinePromise = pdfManager.ensureCatalog('documentOutline');
-        var infoPromise = pdfManager.ensureModel('documentInfo');
+        var infoPromise = pdfManager.ensureDoc('documentInfo');
         var metadataPromise = pdfManager.ensureCatalog('metadata');
         var encryptedPromise = pdfManager.ensureXRef('encrypt');
         var javaScriptPromise = pdfManager.ensureCatalog('javaScript');
         Promise.all([numPagesPromise, fingerprintPromise, outlinePromise,
-          infoPromise, metadataPromise, encryptedPromise,
-          javaScriptPromise]).then(
-            function onDocReady(results) {
+                     infoPromise, metadataPromise, encryptedPromise,
+                     javaScriptPromise]).then(function onDocReady(results) {
 
           var doc = {
             numPages: results[0],
@@ -60,10 +59,10 @@ var WorkerMessageHandler = PDFJS.WorkerMessageHandler = {
         loadDocumentPromise.reject(e);
       };
 
-      pdfManager.ensureModel('checkHeader', []).then(function() {
-        pdfManager.ensureModel('parseStartXRef', []).then(function() {
-          pdfManager.ensureModel('parse', [recoveryMode]).then(
-              parseSuccess, parseFailure);
+      pdfManager.ensureDoc('checkHeader', []).then(function() {
+        pdfManager.ensureDoc('parseStartXRef', []).then(function() {
+          pdfManager.ensureDoc('parse', [recoveryMode]).then(
+            parseSuccess, parseFailure);
         }, parseFailure);
       }, parseFailure);
 
@@ -119,6 +118,13 @@ var WorkerMessageHandler = PDFJS.WorkerMessageHandler = {
           if (!isInt(length)) {
             return;
           }
+          source.length = length;
+          if (length <= 2 * RANGE_CHUNK_SIZE) {
+            // The file size is smaller than the size of two chunks, so it does
+            // not make any sense to abort the request and retry with a range
+            // request.
+            return;
+          }
 
           // NOTE: by cancelling the full request, and then issuing range
           // requests, there will be an issue for sites where you can only
@@ -126,7 +132,6 @@ var WorkerMessageHandler = PDFJS.WorkerMessageHandler = {
           // server should not be returning that it can support range requests.
           networkManager.abortRequest(fullRequestXhrId);
 
-          source.length = length;
           try {
             pdfManager = new NetworkPdfManager(source, handler);
             pdfManagerPromise.resolve(pdfManager);
@@ -147,20 +152,20 @@ var WorkerMessageHandler = PDFJS.WorkerMessageHandler = {
 
         onError: function onError(status) {
           if (status == 404) {
-            var exception = new MissingPDFException( 'Missing PDF "' +
-                source.url + '".');
+            var exception = new MissingPDFException('Missing PDF "' +
+                                                    source.url + '".');
             handler.send('MissingPDF', { exception: exception });
           } else {
             handler.send('DocError', 'Unexpected server response (' +
-                status + ') while retrieving PDF "' +
-                source.url + '".');
+                         status + ') while retrieving PDF "' +
+                         source.url + '".');
           }
         },
 
         onProgress: function onProgress(evt) {
           handler.send('DocProgress', {
             loaded: evt.loaded,
-            total: evt.lengthComputable ? evt.total : void(0)
+            total: evt.lengthComputable ? evt.total : source.length
           });
         }
       });
@@ -233,6 +238,9 @@ var WorkerMessageHandler = PDFJS.WorkerMessageHandler = {
       PDFJS.disableFontFace = data.disableFontFace;
       PDFJS.disableCreateObjectURL = data.disableCreateObjectURL;
       PDFJS.verbosity = data.verbosity;
+      PDFJS.cMapUrl = data.cMapUrl === undefined ?
+                           null : data.cMapUrl;
+      PDFJS.cMapPacked = data.cMapPacked === true;
 
       getPdfManager(data).then(function () {
         pdfManager.onLoadedStream().then(function(stream) {
@@ -245,8 +253,7 @@ var WorkerMessageHandler = PDFJS.WorkerMessageHandler = {
             if (ex instanceof PasswordException) {
               // after password exception prepare to receive a new password
               // to repeat loading
-              pdfManager.passwordChangedPromise =
-                new LegacyPromise();
+              pdfManager.passwordChangedPromise = new LegacyPromise();
               pdfManager.passwordChangedPromise.then(pdfManagerReady);
             }
 
@@ -285,7 +292,8 @@ var WorkerMessageHandler = PDFJS.WorkerMessageHandler = {
 
     handler.on('GetPageIndex', function wphSetupGetPageIndex(data, deferred) {
       var ref = new Ref(data.ref.num, data.ref.gen);
-      pdfManager.pdfModel.catalog.getPageIndex(ref).then(function (pageIndex) {
+      var catalog = pdfManager.pdfDocument.catalog;
+      catalog.getPageIndex(ref).then(function (pageIndex) {
         deferred.resolve(pageIndex);
       }, deferred.reject);
     });
@@ -328,15 +336,15 @@ var WorkerMessageHandler = PDFJS.WorkerMessageHandler = {
         var pageNum = data.pageIndex + 1;
         var start = Date.now();
         // Pre compile the pdf page and fetch the fonts/images.
-        page.getOperatorList(handler).then(function(operatorList) {
+        page.getOperatorList(handler, data.intent).then(function(operatorList) {
 
-          info('page=%d - getOperatorList: time=%dms, len=%d', pageNum,
-              Date.now() - start, operatorList.fnArray.length);
+          info('page=' + pageNum + ' - getOperatorList: time=' +
+               (Date.now() - start) + 'ms, len=' + operatorList.fnArray.length);
 
         }, function(e) {
 
           var minimumStackMessage =
-              'worker.js: while trying to getPage() and getOperatorList()';
+            'worker.js: while trying to getPage() and getOperatorList()';
 
           var wrappedException;
 
@@ -360,7 +368,8 @@ var WorkerMessageHandler = PDFJS.WorkerMessageHandler = {
 
           handler.send('PageError', {
             pageNum: pageNum,
-            error: wrappedException
+            error: wrappedException,
+            intent: data.intent
           });
         });
       });
@@ -372,8 +381,8 @@ var WorkerMessageHandler = PDFJS.WorkerMessageHandler = {
         var start = Date.now();
         page.extractTextContent().then(function(textContent) {
           deferred.resolve(textContent);
-          info('text indexing: page=%d - time=%dms', pageNum,
-              Date.now() - start);
+          info('text indexing: page=' + pageNum + ' - time=' +
+               (Date.now() - start) + 'ms');
         }, function (e) {
           // Skip errored pages
           deferred.reject(e);

@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* globals ColorSpace, DeviceCmykCS, DeviceGrayCS, DeviceRgbCS, error,
-           FONT_IDENTITY_MATRIX, IDENTITY_MATRIX, ImageData, isArray, isNum,
-           TilingPattern, OPS, Promise, Util, warn, assert, info, shadow,
-           TextRenderingMode, getShadingPatternFromIR */
+/* globals ColorSpace, DeviceCmykCS, DeviceGrayCS, DeviceRgbCS, error, PDFJS,
+           FONT_IDENTITY_MATRIX, Uint32ArrayView, IDENTITY_MATRIX, ImageData,
+           ImageKind, isArray, isNum, TilingPattern, OPS, Promise, Util, warn,
+           assert, info, shadow, TextRenderingMode, getShadingPatternFromIR */
 
 'use strict';
 
@@ -297,7 +297,9 @@ function compileType3Glyph(imgData) {
     var type = points[p], p0 = p, pp;
     do {
       var step = steps[type];
-      do { p += step; } while (!points[p]);
+      do {
+        p += step;
+      } while (!points[p]);
 
       pp = points[p];
       if (pp !== 5 && pp !== 10) {
@@ -453,76 +455,88 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
     var chunkImgData = ctx.createImageData(width, fullChunkHeight);
     var srcPos = 0;
     var src = imgData.data;
-    var dst = chunkImgData.data;
+    var dest = chunkImgData.data;
 
     // There are multiple forms in which the pixel data can be passed, and
     // imgData.kind tells us which one this is.
 
-    if (imgData.kind === 'grayscale_1bpp') {
+    if (imgData.kind === ImageKind.GRAYSCALE_1BPP) {
       // Grayscale, 1 bit per pixel (i.e. black-and-white).
-      var srcData = imgData.data;
-      var destData = chunkImgData.data;
-      var destDataLength = destData.length;
-      var origLength = imgData.origLength;
-      for (var i = 3; i < destDataLength; i += 4) {
-        destData[i] = 255;
-      }
+      var destDataLength = dest.length;
+      var srcLength = src.byteLength;
+      var dest32 = PDFJS.hasCanvasTypedArrays ? new Uint32Array(dest.buffer) :
+        new Uint32ArrayView(dest);
+      var dest32DataLength = dest32.length;
+      var fullSrcDiff = (width + 7) >> 3;
+      var white = 0xFFFFFFFF;
+      var black = (PDFJS.isLittleEndian || !PDFJS.hasCanvasTypedArrays) ?
+        0xFF000000 : 0x000000FF;
       for (var i = 0; i < totalChunks; i++) {
         var thisChunkHeight =
           (i < fullChunks) ? fullChunkHeight : partialChunkHeight;
         var destPos = 0;
         for (var j = 0; j < thisChunkHeight; j++) {
+          var srcDiff = srcLength - srcPos;
+          var k = 0;
+          var kEnd = (srcDiff > fullSrcDiff) ? width : srcDiff * 8 - 7;
+          var kEndUnrolled = kEnd & ~7;
           var mask = 0;
           var srcByte = 0;
-          for (var k = 0; k < width; k++, destPos += 4) {
-            if (mask === 0) {
-              if (srcPos >= origLength) {
-                break;
-              }
-              srcByte = srcData[srcPos++];
-              mask = 128;
-            }
+          for (; k < kEndUnrolled; k += 8) {
+            srcByte = src[srcPos++];
+            dest32[destPos++] = (srcByte & 128) ? white : black;
+            dest32[destPos++] = (srcByte & 64) ? white : black;
+            dest32[destPos++] = (srcByte & 32) ? white : black;
+            dest32[destPos++] = (srcByte & 16) ? white : black;
+            dest32[destPos++] = (srcByte & 8) ? white : black;
+            dest32[destPos++] = (srcByte & 4) ? white : black;
+            dest32[destPos++] = (srcByte & 2) ? white : black;
+            dest32[destPos++] = (srcByte & 1) ? white : black;
+          }
+          for (; k < kEnd; k++) {
+             if (mask === 0) {
+               srcByte = src[srcPos++];
+               mask = 128;
+             }
 
-            if ((srcByte & mask)) {
-              destData[destPos] = 255;
-              destData[destPos + 1] = 255;
-              destData[destPos + 2] = 255;
-            } else {
-              destData[destPos] = 0;
-              destData[destPos + 1] = 0;
-              destData[destPos + 2] = 0;
-            }
-
+            dest32[destPos++] = (srcByte & mask) ? white : black;
             mask >>= 1;
           }
         }
-        if (destPos < destDataLength) {
-          // We ran out of input. Make all remaining pixels transparent.
-          destPos += 3;
-          do {
-            destData[destPos] = 0;
-            destPos += 4;
-          } while (destPos < destDataLength);
+        // We ran out of input. Make all remaining pixels transparent.
+        while (destPos < dest32DataLength) {
+          dest32[destPos++] = 0;
         }
 
         ctx.putImageData(chunkImgData, 0, i * fullChunkHeight);
       }
 
-    } else if (imgData.kind === 'rgba_32bpp') {
+    } else if (imgData.kind === ImageKind.RGBA_32BPP) {
       // RGBA, 32-bits per pixel.
-      var haveSetAndSubarray = 'set' in dst && 'subarray' in src;
 
       for (var i = 0; i < totalChunks; i++) {
         var thisChunkHeight =
           (i < fullChunks) ? fullChunkHeight : partialChunkHeight;
         var elemsInThisChunk = imgData.width * thisChunkHeight * 4;
-        if (haveSetAndSubarray) {
-          dst.set(src.subarray(srcPos, srcPos + elemsInThisChunk));
-          srcPos += elemsInThisChunk;
-        } else {
-          for (var j = 0; j < elemsInThisChunk; j++) {
-            chunkImgData.data[j] = imgData.data[srcPos++];
-          }
+
+        dest.set(src.subarray(srcPos, srcPos + elemsInThisChunk));
+        srcPos += elemsInThisChunk;
+
+        ctx.putImageData(chunkImgData, 0, i * fullChunkHeight);
+      }
+
+    } else if (imgData.kind === ImageKind.RGB_24BPP) {
+      // RGB, 24-bits per pixel.
+      for (var i = 0; i < totalChunks; i++) {
+        var thisChunkHeight =
+          (i < fullChunks) ? fullChunkHeight : partialChunkHeight;
+        var elemsInThisChunk = imgData.width * thisChunkHeight * 3;
+        var destPos = 0;
+        for (var j = 0; j < elemsInThisChunk; j += 3) {
+          dest[destPos++] = src[srcPos++];
+          dest[destPos++] = src[srcPos++];
+          dest[destPos++] = src[srcPos++];
+          dest[destPos++] = 255;
         }
         ctx.putImageData(chunkImgData, 0, i * fullChunkHeight);
       }
@@ -533,31 +547,39 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
   }
 
   function putBinaryImageMask(ctx, imgData) {
-    var width = imgData.width, height = imgData.height;
-    var tmpImgData = ctx.createImageData(width, height);
-    var data = imgData.data;
-    var tmpImgDataPixels = tmpImgData.data;
-    var dataPos = 0;
+    var height = imgData.height, width = imgData.width;
+    var fullChunkHeight = 16;
+    var fracChunks = height / fullChunkHeight;
+    var fullChunks = Math.floor(fracChunks);
+    var totalChunks = Math.ceil(fracChunks);
+    var partialChunkHeight = height - fullChunks * fullChunkHeight;
 
-    // Expand the mask so it can be used by the canvas.  Any required inversion
-    // has already been handled.
-    var tmpPos = 3; // alpha component offset
-    for (var i = 0; i < height; i++) {
-      var mask = 0;
-      for (var j = 0; j < width; j++) {
-        if (!mask) {
-          var elem = data[dataPos++];
-          mask = 128;
+    var chunkImgData = ctx.createImageData(width, fullChunkHeight);
+    var srcPos = 0;
+    var src = imgData.data;
+    var dest = chunkImgData.data;
+
+    for (var i = 0; i < totalChunks; i++) {
+      var thisChunkHeight =
+        (i < fullChunks) ? fullChunkHeight : partialChunkHeight;
+
+      // Expand the mask so it can be used by the canvas.  Any required
+      // inversion has already been handled.
+      var destPos = 3; // alpha component offset
+      for (var j = 0; j < thisChunkHeight; j++) {
+        var mask = 0;
+        for (var k = 0; k < width; k++) {
+          if (!mask) {
+            var elem = src[srcPos++];
+            mask = 128;
+          }
+          dest[destPos] = (elem & mask) ? 0 : 255;
+          destPos += 4;
+          mask >>= 1;
         }
-        if (!(elem & mask)) {
-          tmpImgDataPixels[tmpPos] = 255;
-        }
-        tmpPos += 4;
-        mask >>= 1;
       }
+      ctx.putImageData(chunkImgData, 0, i * fullChunkHeight);
     }
-
-    ctx.putImageData(tmpImgData, 0, 0);
   }
 
   function copyCtxState(sourceCtx, destCtx) {
@@ -708,9 +730,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       var commonObjs = this.commonObjs;
       var objs = this.objs;
       var fnId;
-
-      var deferred = Promise.resolve(0);
-
+      var deferred = Promise.resolve();
 
       while (true) {
         if (stepper && i === stepper.nextBreakPoint) {
@@ -964,8 +984,9 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       consumePath = typeof consumePath !== 'undefined' ? consumePath : true;
       var ctx = this.ctx;
       var strokeColor = this.current.strokeColor;
-      if (this.current.lineWidth === 0)
+      if (this.current.lineWidth === 0) {
         ctx.lineWidth = this.getSinglePixelWidth();
+      }
       // For stroke we want to temporarily change the global alpha to the
       // stroking alpha.
       ctx.globalAlpha = this.current.strokeAlpha;
@@ -980,8 +1001,9 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       } else {
         ctx.stroke();
       }
-      if (consumePath)
+      if (consumePath) {
         this.consumePath();
+      }
       // Restore the global alpha to the fill alpha
       ctx.globalAlpha = this.current.fillAlpha;
     },
@@ -1105,11 +1127,12 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       var fontObj = this.commonObjs.get(fontRefName);
       var current = this.current;
 
-      if (!fontObj)
+      if (!fontObj) {
         error('Can\'t find font for ' + fontRefName);
+      }
 
-      current.fontMatrix = fontObj.fontMatrix ? fontObj.fontMatrix :
-                                                FONT_IDENTITY_MATRIX;
+      current.fontMatrix = (fontObj.fontMatrix ?
+                            fontObj.fontMatrix : FONT_IDENTITY_MATRIX);
 
       // A valid matrix needs all main diagonal elements to be non-zero
       // This also ensures we bypass FF bugzilla bug #719844.
@@ -1130,8 +1153,9 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       this.current.font = fontObj;
       this.current.fontSize = size;
 
-      if (fontObj.coded)
+      if (fontObj.coded) {
         return; // we don't need ctx.font for Type3 fonts
+      }
 
       var name = fontObj.loadedName || 'sans-serif';
       var bold = fontObj.black ? (fontObj.bold ? 'bolder' : 'bold') :
@@ -1219,16 +1243,13 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
     * x, y, and width properties, and the width of a space in the given font,
     * all in device space.
     */
-    makeCharDims: function canvasMakeCharDims(charWidth, xOffset, font, font2dev) {
+    makeCharDims: function canvasMakeCharDims(charWidth, xOffset, spaceWidth, font2dev) {
       var xy = Util.applyTransform([xOffset, 0], font2dev);
-      var w = Util.applyTransform([xOffset + charWidth, 0], font2dev);
+      var w = Util.applyTransformX([xOffset + charWidth, 0], font2dev);
       var dims = {x: xy[0], y: xy[1]};
-      dims.width = Math.abs(xy[0] - w[0]);
-      var spaceWidth = font.coded ? font.spaceWidth : font.spaceWidth * .001;
-      var sw = Util.applyTransform([spaceWidth,0], font2dev);
-      // TODO: why 2.0? I changed it to 3
-      // dims.spaceWidth = (sw[0] - font2dev[4]) / 2.0;
-      dims.spaceWidth = (sw[0] - font2dev[4]) / 3.0;
+      dims.width = Math.abs(xy[0] - w);
+      dims.spaceWidth = spaceWidth;
+      dims.xPlusHalfWidth = dims.x + (0.5 * dims.width);
       return dims;
     },
     /** Compute the coordinates of the quadpoints given its the annotations
@@ -1262,9 +1283,8 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       for (var i = 0; i < annot.quadPoints.length; i++) {
         var qdims = annot.quadPoints[i].dims;
         // only grab characters where 50% of the character's
-        // width lies within the annotation
-        var xPlusHalfWidth = cdims.x + (0.5 * cdims.width);
-        if (xPlusHalfWidth >= qdims.minX && xPlusHalfWidth <= qdims.maxX &&
+        // width lies within the annotation        
+        if (cdims.xPlusHalfWidth >= qdims.minX && cdims.xPlusHalfWidth <= qdims.maxX &&
             cdims.y >=qdims.minY && cdims.y <= qdims.maxY) {
           return i;
         }
@@ -1290,7 +1310,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         annot.markup = [];
         annot.markupGeom = [];
         annot.chars = [];
-        annot.spaceSize = [];
+        annot.spaces = {'n':0, 'sumWidth':0};
       }
       if (!annot.markup[quad]) {
         // annot.markupGeom[quad].brx ensures that only characters are added that are right of the first one in annotation
@@ -1348,12 +1368,14 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
           var relativeSize = charDims.width/lastChar.charDims.width;
           if(relativeSize<0.2) return;
 
-          if (annot.spaceSize.length>0) {
-            var sum = annot.spaceSize.reduce(function(a, b) { return a + b;});
-            var avg = sum / annot.spaceSize.length;
+          // exclude spaces that are small compred to others
+          if (annot.spaces.n>0) {
+            var avg = annot.spaces.sumWidth/annot.spaces.n;
             if(charDims.width/avg<0.3) return;
           }
-          annot.spaceSize.push(charDims.width);
+          annot.spaces.sumWidth = annot.spaces.sumWidth + charDims.width;
+          annot.spaces.n++;
+
           // add space
           annot.markupGeom[quad].brx = charDims.x + charDims.width;
           annot.markup[quad] += character;
@@ -1441,6 +1463,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       var fontSizeScale = current.fontSizeScale;
       var charSpacing = current.charSpacing;
       var wordSpacing = current.wordSpacing;
+      var spaceWidth = font.coded ? font.spaceWidth : font.spaceWidth * 0.001;
       var textHScale = current.textHScale * current.fontDirection;
       var fontMatrix = current.fontMatrix || FONT_IDENTITY_MATRIX;
       var glyphsLength = glyphs.length;
@@ -1450,6 +1473,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       var canvasWidth = 0.0;
       var vertical = font.vertical;
       var defaultVMetrics = font.defaultVMetrics;
+      var sw, spaceWidthProj;
 
       // Type3 fonts - each glyph is a "mini-PDF"
       if (font.coded) {
@@ -1457,6 +1481,11 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         ctx.transform.apply(ctx, current.textMatrix);
         ctx.translate(current.x, current.y);
         font2dev = ctx.mozCurrentTransform;
+        // projected spaceWidth
+        sw = Util.applyTransformX([spaceWidth,0], font2dev);
+        // TODO: why 2.0? I changed it to 3
+        // dims.spaceWidth = (sw[0] - font2dev[4]) / 2.0;
+        spaceWidthProj = (sw - font2dev[4]) / 3.0;
 
         ctx.scale(textHScale, 1);
 
@@ -1483,8 +1512,8 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
           this.executeOperatorList(glyph.operatorList);
           this.restore();
 
-          var transformed = Util.applyTransform([glyph.width, 0], fontMatrix);
-          var width = (transformed[0] * fontSize + charSpacing) *
+          var transformed = Util.applyTransformX([glyph.width, 0], fontMatrix);
+          var width = (transformed * fontSize + charSpacing) *
                       current.fontDirection;
 
           ctx.translate(width, 0);
@@ -1492,7 +1521,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
 
           if (this.annotations) {
             // check if glyph is within an annotation            
-            var chDims = this.makeCharDims(transformed[0] * fontSize, width, font, font2dev);
+            var chDims = this.makeCharDims(transformed * fontSize, width, spaceWidthProj, font2dev);
             for (var j = 0; j < this.annotations.length; j++) {
               var annot = this.annotations[j];
               var quad = this.charInAnnot(annot, chDims);
@@ -1508,17 +1537,24 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         ctx.save();
         this.applyTextTransforms();
         font2dev = ctx.mozCurrentTransform;
+        // projected spaceWidth
+        sw = Util.applyTransformX([spaceWidth,0], font2dev);
+        // TODO: why 2.0? I changed it to 3
+        // dims.spaceWidth = (sw[0] - font2dev[4]) / 2.0;
+        spaceWidthProj = (sw - font2dev[4]) / 3.0;
 
         var lineWidth = current.lineWidth;
         var a1 = current.textMatrix[0], b1 = current.textMatrix[1];
         var scale = Math.sqrt(a1 * a1 + b1 * b1);
-        if (scale === 0 || lineWidth === 0)
+        if (scale === 0 || lineWidth === 0) {
           lineWidth = this.getSinglePixelWidth();
-        else
+        } else {
           lineWidth /= scale;
+        }
 
-        if (textSelection || this.annotations)
+        if (textSelection || this.annotations) {
           geom = this.createTextGeometry();
+        }
 
         if (fontSizeScale != 1.0) {
           ctx.scale(fontSizeScale, fontSizeScale);
@@ -1550,41 +1586,33 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
           var accent = glyph.accent;
 
           var scaledX, scaledY, scaledAccentX, scaledAccentY;
-          if (!glyph.disabled) {
-            if (vertical) {
-              scaledX = vx / fontSizeScale;
-              scaledY = (x + vy) / fontSizeScale;
-            } else {
-              scaledX = x / fontSizeScale;
-              scaledY = 0;
-            }
 
-            if (font.remeasure && width > 0 && this.isFontSubpixelAAEnabled) {
-              // some standard fonts may not have the exact width, trying to
-              // rescale per character
-              var measuredWidth = ctx.measureText(character).width * 1000 /
-                current.fontSize * current.fontSizeScale;
-              var characterScaleX = width / measuredWidth;
-              restoreNeeded = true;
-              ctx.save();
-              ctx.scale(characterScaleX, 1);
-              scaledX /= characterScaleX;
-              if (accent) {
-                scaledAccentX /= characterScaleX;
-              }
-            }
+          if (vertical) {
+            scaledX = vx / fontSizeScale;
+            scaledY = (x + vy) / fontSizeScale;
+          } else {
+            scaledX = x / fontSizeScale;
+            scaledY = 0;
+          }
 
-            /*this.paintChar(character, scaledX, scaledY);
+          if (font.remeasure && width > 0 && this.isFontSubpixelAAEnabled) {
+            // some standard fonts may not have the exact width, trying to
+            // rescale per character
+            var measuredWidth = ctx.measureText(character).width * 1000 /
+              current.fontSize * current.fontSizeScale;
+            var characterScaleX = width / measuredWidth;
+            restoreNeeded = true;
+            ctx.save();
+            ctx.scale(characterScaleX, 1);
+            scaledX /= characterScaleX;
             if (accent) {
-              scaledAccentX = scaledX + accent.offset.x / fontSizeScale;
-              scaledAccentY = scaledY - accent.offset.y / fontSizeScale;
-              this.paintChar(accent.fontChar, scaledAccentX, scaledAccentY);
-            }*/
+              scaledAccentX /= characterScaleX;
+            }
           }
 
           if (this.annotations) {
             // check if glyph is within an annotation
-            var charDims = this.makeCharDims(width * fontSize * current.fontMatrix[0], x, font, font2dev);
+            var charDims = this.makeCharDims(width * fontSize * current.fontMatrix[0], x, spaceWidthProj, font2dev);
             glyph.print = false;
             for (var j = 0; j < this.annotations.length; j++) {
               var annot = this.annotations[j];
@@ -1592,6 +1620,15 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
               this.updateMarkup(annot, quad, glyph, charDims, false);
             }
           }
+
+          /*
+          this.paintChar(character, scaledX, scaledY);
+          if (accent) {
+            scaledAccentX = scaledX + accent.offset.x / fontSizeScale;
+            scaledAccentY = scaledY - accent.offset.y / fontSizeScale;
+            this.paintChar(accent.fontChar, scaledAccentX, scaledAccentY);
+          }
+          */
 
           x += charWidth;
 
@@ -1625,6 +1662,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       var current = this.current;
       var font = current.font;
       var fontSize = current.fontSize;
+      var spaceWidth = font.coded ? font.spaceWidth : font.spaceWidth * 0.001;
       // TJ array's number is independent from fontMatrix
       var textHScale = current.textHScale * 0.001 * current.fontDirection;
       var arrLength = arr.length;
@@ -1640,6 +1678,11 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         ctx.save();
         this.applyTextTransforms();
         font2dev = ctx.mozCurrentTransform.slice(0, 6);
+        // projected spaceWidth
+        var sw = Util.applyTransformX([spaceWidth,0], font2dev);
+        // TODO: why 2.0? I changed it to 3
+        // dims.spaceWidth = (sw[0] - font2dev[4]) / 2.0;
+        var spaceWidthProj = (sw - font2dev[4]) / 3.0;
         geom = this.createTextGeometry();
         ctx.restore();
       }
@@ -1654,18 +1697,18 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
             current.x += spacingLength;
           }
 
-          if (textSelection || this.annotations)
+          if (textSelection || this.annotations) {
             spacingAccumulator += spacingLength;
+          }
 
-          if (this.annotations) {            
-            var charDims = this.makeCharDims(spacingLength, canvasWidth - spacingLength, font, font2dev);
+          if (this.annotations) {
+            var charDims = this.makeCharDims(spacingLength, canvasWidth - spacingLength, spaceWidthProj, font2dev);
             for (var j = 0; j < this.annotations.length; j++) {
               var annot = this.annotations[j];
               var quad = this.charInAnnot(annot, charDims);
               this.updateMarkup(annot, quad, {str: ' '}, charDims, true);
             }
           }
-
         } else {
           var shownCanvasWidth = this.showText(e, true);
 
@@ -1820,7 +1863,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
     },
 
     shadingFill: function CanvasGraphics_shadingFill(patternIR) {
-      /*var ctx = this.ctx;
+      var ctx = this.ctx;
 
       this.save();
       var pattern = getShadingPatternFromIR(patternIR);
@@ -1853,7 +1896,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         this.ctx.fillRect(-1e10, -1e10, 2e10, 2e10);
       }
 
-      this.restore();*/
+      this.restore();
     },
 
     // Images
@@ -1869,8 +1912,9 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       this.save();
       this.baseTransformStack.push(this.baseTransform);
 
-      if (matrix && isArray(matrix) && 6 == matrix.length)
+      if (matrix && isArray(matrix) && 6 == matrix.length) {
         this.transform.apply(this, matrix);
+      }
 
       this.baseTransform = this.ctx.mozCurrentTransform;
       // project coordinates of quadPoints to device space
@@ -2036,7 +2080,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
     },
 
     paintJpegXObject: function CanvasGraphics_paintJpegXObject(objId, w, h) {
-      var domImage = this.objs.get(objId);
+     var domImage = this.objs.get(objId);
       if (!domImage) {
         error('Dependent image isn\'t ready yet');
       }
@@ -2103,6 +2147,39 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       this.paintInlineImageXObject(maskCanvas.canvas);
     },
 
+    paintImageMaskXObjectRepeat:
+      function CanvasGraphics_paintImageMaskXObjectRepeat(imgData, scaleX,
+                                                          scaleY, positions) {
+      var width = imgData.width;
+      var height = imgData.height;
+      var ctx = this.ctx;
+
+      var maskCanvas = CachedCanvases.getCanvas('maskCanvas', width, height);
+      var maskCtx = maskCanvas.context;
+      maskCtx.save();
+
+      putBinaryImageMask(maskCtx, imgData);
+
+      maskCtx.globalCompositeOperation = 'source-in';
+
+      var fillColor = this.current.fillColor;
+      maskCtx.fillStyle = (fillColor && fillColor.hasOwnProperty('type') &&
+        fillColor.type === 'Pattern') ?
+        fillColor.getPattern(maskCtx, this) : fillColor;
+      maskCtx.fillRect(0, 0, width, height);
+
+      maskCtx.restore();
+
+      for (var i = 0, ii = positions.length; i < ii; i += 2) {
+        ctx.save();
+        ctx.transform(scaleX, 0, 0, scaleY, positions[i], positions[i + 1]);
+        ctx.scale(1, -1);
+        ctx.drawImage(maskCanvas.canvas, 0, 0, width, height,
+          0, -1, 1, 1);
+        ctx.restore();
+      }
+    },
+
     paintImageMaskXObjectGroup:
       function CanvasGraphics_paintImageMaskXObjectGroup(images) {
       var ctx = this.ctx;
@@ -2138,10 +2215,29 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
 
     paintImageXObject: function CanvasGraphics_paintImageXObject(objId) {
       var imgData = this.objs.get(objId);
-      if (!imgData)
+      if (!imgData) {
         error('Dependent image isn\'t ready yet');
+      }
 
       this.paintInlineImageXObject(imgData);
+    },
+
+    paintImageXObjectRepeat:
+      function CanvasGraphics_paintImageXObjectRepeat(objId, scaleX, scaleY,
+                                                          positions) {
+      var imgData = this.objs.get(objId);
+      if (!imgData) {
+        error('Dependent image isn\'t ready yet');
+      }
+
+      var width = imgData.width;
+      var height = imgData.height;
+      var map = [];
+      for (var i = 0, ii = positions.length; i < ii; i += 2) {
+        map.push({transform: [scaleX, 0, 0, scaleY, positions[i],
+                 positions[i + 1]], x: 0, y: 0, w: width, h: height});
+      }
+      this.paintInlineImageXObjectGroup(imgData, map);
     },
 
     paintInlineImageXObject:
@@ -2243,6 +2339,11 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         }
         ctx.restore();
       }
+    },
+
+    paintSolidColorImageMask:
+      function CanvasGraphics_paintSolidColorImageMask() {
+        this.ctx.fillRect(0, 0, 1, 1);
     },
 
     // Marked content
