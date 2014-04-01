@@ -1536,7 +1536,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       } else {
         ctx.save();
         this.applyTextTransforms();
-        font2dev = ctx.mozCurrentTransform;
+        font2dev = ctx.mozCurrentTransform.slice(0);
         // projected spaceWidth
         sw = Util.applyTransformX([spaceWidth,0], font2dev);
         // TODO: why 2.0? I changed it to 3
