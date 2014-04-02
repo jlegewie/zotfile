@@ -1,4 +1,11 @@
-"use strict";
+/**
+ * PDF.js extension that extracts highlighted text and annotations from pdf files.
+ * Based on modified version of pdf.js available here https://github.com/jlegewie/pdf.js
+ * (see various extract branches). See 'PDF Reference Manual 1.7' section 8.4 for details on 
+ * annotations in pdf files.
+ */
+
+'use strict';
 
 /**
  * @return {Promise} A promise that is resolved with an Object
