@@ -105,7 +105,6 @@ PDFJS.getPDFAnnotations = function(url, removeHyphens, progress, debug) {
                                 delete anno.annotationFlags;
                                 delete anno.borderWidth;
                                 delete anno.chars;
-                                delete anno.color;
                                 delete anno.hasAppearance;
                                 delete anno.markupGeom;
                                 delete anno.quadPoints;

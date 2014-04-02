@@ -91,6 +91,11 @@ var Annotation = (function AnnotationClosure() {
       data.title = stringToPDFString(title || '');
     }
 
+    // annotation name
+    data.name = dict.get('NM');
+    // modification time
+    data.mtime = dict.get('M');
+
     // get quad points for annotation
     data.quadPoints = [];
     var quadpts = dict.get('QuadPoints') || [];
