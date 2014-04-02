@@ -1480,7 +1480,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         ctx.save();
         ctx.transform.apply(ctx, current.textMatrix);
         ctx.translate(current.x, current.y);
-        font2dev = ctx.mozCurrentTransform;
+        font2dev = ctx.mozCurrentTransform.slice(0);
         // projected spaceWidth
         sw = Util.applyTransformX([spaceWidth,0], font2dev);
         // TODO: why 2.0? I changed it to 3
