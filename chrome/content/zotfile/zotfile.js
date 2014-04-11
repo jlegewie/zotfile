@@ -2097,6 +2097,8 @@ Zotero.ZotFile = {
             catch (e){
                 var match = content.match(/<p id="zotfile-data".+<\/p>/);
                 if (match===null)
+                    match = content.match(/lastmod{.+}/);
+                if (match===null)
                     return '';
                 note.innerHTML = match[0];
             }
@@ -2126,7 +2128,11 @@ Zotero.ZotFile = {
         // get current content of note
         var content = att.getNote(),
             note = document.createElement('div'),
-            data = {};
+            data = {},
+            htmlEncode = function(str) {
+                return document.createElement('a').appendChild( 
+                    document.createTextNode(str)).parentNode.innerHTML;
+            };
         try {
             note.innerHTML = content;
         }
@@ -2149,7 +2155,9 @@ Zotero.ZotFile = {
             p.setAttribute('id', 'zotfile-data');
             p.setAttribute('style', 'color: #cccccc;');
             p.setAttribute('title', JSON.stringify(data));
-            p.innerHTML = '(hidden zotfile data)';
+            if(key=='projectFolder')
+                p.innerHTML = htmlEncode("(Attachment stored in tablet folder '[Basefolder]" + value + "')");
+            // p.innerHTML = '(hidden zotfile data)';
             note.appendChild(p);
         }
         // already exists...
@@ -2157,10 +2165,18 @@ Zotero.ZotFile = {
             data = JSON.parse(p.getAttribute('title'));
             data[key] = value;
             p.setAttribute('title', JSON.stringify(data));
+            if(key=='projectFolder')
+                p.innerHTML = htmlEncode('(Attachment stored in tablet folder "[Basefolder]' + value + '")');
         }
         // save changes in zotero note
         att.setNote(note.innerHTML);
         att.save();
+        /*htmlEncode = function(str) {
+            return document.createElement('a').appendChild( 
+                document.createTextNode(str)).parentNode.innerHTML;
+        };
+        Zotero.ZotFile.addInfo(att, "projectFolder", htmlEncode('/test<"'))
+*/
     },
 
     getTabletStatus: function(att) {
@@ -2221,7 +2237,8 @@ Zotero.ZotFile = {
             if(!item.isTopLevelItem() && item.isAttachment()) {
 
                 // show warning if no information in note
-                if(this.getInfo(item,"mode")==="") this.infoWindow(this.ZFgetString('general.warning'),this.ZFgetString('tablet.attachmentNoteMissing'));
+                if(this.getInfo(item,"mode")==="")
+                    this.infoWindow(this.ZFgetString('general.warning'),this.ZFgetString('tablet.attachmentNoteMissing') + ' (' + item.key + ')');
                 if(this.getInfo(item,"mode")!="") {
                     if(subfolder===undefined) atts.push(item);
                     if(subfolder!==undefined) if(this.getInfo(item,"projectFolder").toLowerCase()==subfolder.toLowerCase()) atts.push(item);
