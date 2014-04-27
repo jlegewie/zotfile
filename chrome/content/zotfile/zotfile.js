@@ -1600,6 +1600,7 @@ Zotero.ZotFile = {
             filename = obj.leafName;
         } else {
             if(typeof(obj)=="number") obj = Zotero.Items.get(obj);
+            if (obj.attachmentLinkMode === Zotero.Attachments.LINK_MODE_LINKED_URL)  return false;
             filename = obj.getFilename();
         }
         // check
