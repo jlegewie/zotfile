@@ -220,7 +220,7 @@ Zotero.ZotFile = {
 
                 // set to pdf.js if poppler is not supported
                 if(!Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported) Zotero.ZotFile.prefs.setBoolPref("pdfExtraction.UsePDFJS",true);
-
+                
             });
         }
 
@@ -236,12 +236,22 @@ Zotero.ZotFile = {
                 Zotero.Notifier.unregisterObserver(Zotero.ZotFile.outlineNotifierID);
                 Zotero.ZotFile.renameNotifierID = null;
                 Zotero.ZotFile.outlineNotifierID = null;
-        }, false);
+        }, false);        
 
         // Load zotero.js first
         Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
             .getService(Components.interfaces.mozIJSSubScriptLoader)
             .loadSubScript("chrome://zotfile/content/ProgressWindow.js", Zotero.ZotFile);
+
+        // add event listener for selecting items in zotero tree
+        if(Zotero.ZotFile.prefs.getBoolPref('tablet')) {
+            var pane = this.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
+                tree = pane.document.getElementById('zotero-items-tree'),
+                onselect = tree.getAttribute('onselect'),
+                updated = onselect + '; Zotero.ZotFile.attboxUpdateTabletStatus();';
+            if(onselect.indexOf('attboxUpdateTabletStatus')==-1)
+                tree.setAttribute('onselect', updated.replace(';;', ';'));
+        }
     },
 
 	//Localization (borrowed from Zotero sourcecode)
@@ -943,7 +953,7 @@ Zotero.ZotFile = {
         ZP.document.getElementById("id-zotfile-manage-attachments").hidden = !showMenu;
     },
 
-    buildZotFileMenu: function () {
+    buildZotFileMenu: function() {
         var menuItemExtract=true;
 
         // get selected items
@@ -1142,6 +1152,137 @@ Zotero.ZotFile = {
 
     },
 
+    buildTabletMenu: function() {
+        // get selected items
+        var pane = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
+            att = pane.getSelectedItems()[0],
+            tablet = Zotero.ZotFile.getTabletStatus(att);
+        if(!att.isAttachment())
+            return;
+        
+        // update popupmenu
+        var menupopup = pane.document.getElementById('zotfile-tablet-popup');
+        // remove all children
+        while (menupopup.firstChild) {
+            menupopup.removeChild(menupopup.firstChild);
+        }
+            
+        // add menu items
+        var items = [
+            {
+                'label': 'View PDF',
+                'tooltiptext': '',
+                'oncommand': 'Zotero.ZotFile.openTabletFile();',
+                'hidden': tablet ? 'false' : 'true'
+            },
+            {
+                'label': 'Show File',
+                'tooltiptext': '',
+                'oncommand': 'Zotero.ZotFile.showTabletFile();',
+                'hidden': tablet ? 'false' : 'true'
+            },
+            {
+                'label': 'Send to Tablet',
+                'tooltiptext': '',
+                'oncommand': 'Zotero.ZotFile.sendSelectedAttachmentsToTablet(-1); Zotero.ZotFile.buildTabletMenu();',
+                'disabled': tablet ? 'true' : 'false'
+            },
+            {
+                'label': 'Get from Tablet',
+                'tooltiptext': '',
+                'oncommand': 'Zotero.ZotFile.getSelectedAttachmentsFromTablet(); Zotero.ZotFile.buildTabletMenu();',
+                'disabled': tablet ? 'false' : 'true'
+            }
+        ];
+        for(i in items) {
+            var item = items[i],
+                keys = Object.keys(item),
+                menuitem = pane.document.createElement("menuitem");
+            for(key in Object.keys(item))
+                menuitem.setAttribute(keys[key], item[keys[key]]);
+            menupopup.appendChild(menuitem);
+            if(item.label=='Show File' && tablet)
+                menupopup.appendChild(pane.document.createElement("menuseparator"));
+        }
+        
+        if(Zotero.ZotFile.prefs.getIntPref("tablet.projectFolders")==2) {
+            // add seperater and heading
+            menupopup.appendChild(pane.document.createElement("menuseparator"));
+            var menuitem = pane.document.createElement("menuitem");
+            menuitem.setAttribute('label', 'Send to Subfolder on Tablet');
+            menuitem.setAttribute('disabled', 'true');
+            menuitem.setAttribute('style', 'font-size: 80%; background: none; -moz-appearance: none;');    
+            menupopup.appendChild(menuitem);
+    //         add subfolders
+            var subfolders = JSON.parse(Zotero.ZotFile.prefs.getCharPref("tablet.subfolders"));
+            subfolders.forEach(function(folder, i) {
+                var menuitem = pane.document.createElement("menuitem");
+                menuitem.setAttribute('label', folder.label);
+                menuitem.setAttribute('oncommand', 'Zotero.ZotFile.sendSelectedAttachmentsToTablet(' + i + '); Zotero.ZotFile.buildTabletMenu();');
+                menupopup.appendChild(menuitem);
+            }, Zotero.ZotFile);
+            if(subfolders.length>0) projectsSet=1;
+            // add 'change subfolder' item
+            menupopup.appendChild(pane.document.createElement("menuseparator"));
+            var menuitem = pane.document.createElement("menuitem");
+            menuitem.setAttribute('label', 'Change subfolders...');
+            menuitem.setAttribute('oncommand', 'Zotero.ZotFile.openSubfolderWindow();');
+            menupopup.appendChild(menuitem);
+        }    
+    },
+
+    attboxAddTabletRow: function() {
+        // add tablet row to attachment info
+        var pane = this.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
+            row = pane.document.createElement("row");
+        row.setAttribute('id', 'zotfile-tablet-row');
+        var rows = pane.document.getElementById('indexStatusRow').parentNode,
+            lab1 = pane.document.createElement("label"),
+            lab2 = pane.document.createElement("label");
+        lab1.setAttribute('id', 'zotfile-tabletLabel');
+        lab1.setAttribute('value', 'Tablet:');
+        row.appendChild(lab1);
+        lab2.setAttribute('id', 'zotfile-tabletStatus');
+        lab2.setAttribute('value', '');
+        lab2.setAttribute('crop', 'end');
+        lab2.setAttribute('class', 'zotero-clicky');
+        lab2.setAttribute('popup', 'zotfile-tablet-popup');
+        lab2.setAttribute('onclick', 'Zotero.ZotFile.buildTabletMenu();');
+        row.appendChild(lab2);
+        rows.appendChild(row);
+        // add popup menu to DOM
+        var popupset = pane.document.getElementById('seeAlsoPopup').parentNode,
+           menupopup = pane.document.createElement("menupopup");
+        menupopup.setAttribute('id', 'zotfile-tablet-popup');
+        popupset.appendChild(menupopup);
+        return row;
+    },
+
+    attboxUpdateTabletStatus: function() {
+        var pane = this.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
+            items = pane.getSelectedItems(),
+            row = pane.document.getElementById('zotfile-tablet-row');
+        if(items.length!=1) return;
+        var att = items[0];
+        if(!this.prefs.getBoolPref('tablet') || !att.isAttachment() || att._attachmentMIMEType!='application/pdf') {
+            if(row) row.setAttribute('hidden', 'true');
+            return;
+        }
+        // add row if it does not exists
+        if(!row) row = this.attboxAddTabletRow();
+        // pdf attachment
+        row.setAttribute('hidden', 'false');
+        // update tablet status
+        lab = pane.document.getElementById('zotfile-tabletStatus');
+        if(Zotero.ZotFile.getTabletStatus(att)) {
+            var subfolder = Zotero.ZotFile.getInfo(att, 'projectFolder'),
+                folder = subfolder==='' ? '[Basefolder]' : '[Basefolder]' + subfolder;
+            lab.setAttribute('value', folder);
+        }
+        else {
+            lab.setAttribute('value', 'No');
+        }
+    },
 
     // =================================== //
     // FUNCTIONS: GET FILE- & FOLDER NAME  //
@@ -2156,9 +2297,7 @@ Zotero.ZotFile = {
             p.setAttribute('id', 'zotfile-data');
             p.setAttribute('style', 'color: #cccccc;');
             p.setAttribute('title', JSON.stringify(data));
-            if(key=='projectFolder')
-                p.innerHTML = htmlEncode("(Attachment stored in tablet folder '[Basefolder]" + value + "')");
-            // p.innerHTML = '(hidden zotfile data)';
+            p.innerHTML = '(hidden zotfile data)';
             note.appendChild(p);
         }
         // already exists...
@@ -2166,18 +2305,11 @@ Zotero.ZotFile = {
             data = JSON.parse(p.getAttribute('title'));
             data[key] = value;
             p.setAttribute('title', JSON.stringify(data));
-            if(key=='projectFolder')
-                p.innerHTML = htmlEncode('(Attachment stored in tablet folder "[Basefolder]' + value + '")');
+            // if(key=='projectFolder') p.innerHTML = htmlEncode('(Attachment stored in tablet folder "[Basefolder]' + value + '")');
         }
         // save changes in zotero note
         att.setNote(note.innerHTML);
         att.save();
-        /*htmlEncode = function(str) {
-            return document.createElement('a').appendChild( 
-                document.createTextNode(str)).parentNode.innerHTML;
-        };
-        Zotero.ZotFile.addInfo(att, "projectFolder", htmlEncode('/test<"'))
-*/
     },
 
     getTabletStatus: function(att) {
@@ -2201,6 +2333,30 @@ Zotero.ZotFile = {
             }
         }
         return modified;
+    },
+
+    showTabletFile: function() {
+        var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser"),
+            att = win.ZoteroPane.getSelectedItems()[0],
+            tablet = Zotero.ZotFile.getTabletStatus(att);
+        if(!tablet)
+            return;
+        var file = Zotero.ZotFile.getTabletFile(att);
+        if(!file.exists())
+            return;
+        file.reveal();
+    },
+
+    openTabletFile: function() {
+        var win = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser"),
+            att = win.ZoteroPane.getSelectedItems()[0],
+            tablet = Zotero.ZotFile.getTabletStatus(att);
+        if(!tablet)
+            return;
+        var file = Zotero.ZotFile.getTabletFile(att);
+        if(!file.exists())
+            return;
+        Zotero.launchFile(file);
     },
 
     getTabletFile: function(att) {
