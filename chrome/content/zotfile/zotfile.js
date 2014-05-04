@@ -275,7 +275,8 @@ Zotero.ZotFile = {
         var source_dir=zz.getSourceDir(true);
         if (source_dir==-1) return;
         // get last modified file in source folder
-        var file=zz.getLastFileInFolder(source_dir)[0];
+        var file = zz.getLastFileInFolder(source_dir)[0];
+        if(!file) return;
         if(file==-1 || file==-2) return;
         if (zz.lastModifiedFile===null) zz.lastModifiedFile=file.lastModifiedTime;
         // compare to last file
