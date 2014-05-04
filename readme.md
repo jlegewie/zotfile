@@ -40,7 +40,11 @@ Contributions preferably through pull requests are welcome!
 
     Similar to [Mendeley](http://blog.mendeley.com/progress-update/desktop-contents-tables-and-figures/), ZotFile can now get the table of contents from PDF and save it with links to the correct page in attachment notes. Simply click on the the desired section and zotfile opens the pdf on the correct page. Zotfile automatically extracts the table of content for all newly added pdf attachments (disable with `zotfile.pdfOutline.getToc` setting) or you can manually extract the toc using 'Manage Attachments->Get Table of Contents' (remove menu item with `zotfile.pdfOutline.menuItem` setting). This feature only works for pdfs that have an embedded table of content. Unfortunately, many don't. 
 
-- Improved Extraction of Annotations (mainly for wrong spaces)
+- **Tablet status is now shown in right-pane with other attachment information**
+
+    The right pane now includes a row with the current tablet status such as `No` for files that are not on the tablet or `[Basefolder]` for files that are in the tablet base-folder. Click on this information to change the tablet status and open or reveal the file on the tablet (very convenient because double-clicking on the attachment opens the imported zotero attachment and not the file on the tablet).
+
+- **Improved Extraction of Annotations** (mainly for wrong word spacing)
 
 - Improved customization of note for extracted annotations with hidden options (`formatNoteTitle`, `formatAnnotationNote`, `formatAnnotationHighlight`, `formatAnnotationUnderline`)
 
