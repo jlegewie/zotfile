@@ -52,25 +52,12 @@ Zotero.ZotFile = {
 
     versionChanges: function (currentVersion) {
         // open webpage
-        if(this.prefs.getCharPref("version")==="" || currentVersion=="3.2") {
+        var open_page = ["3.3", "3.2", "3.1", "2.0", "2.3"];
+
+        if(this.prefs.getCharPref("version")==="" || open_page.indexOf(currentVersion) != -1) {
             if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL); });
             if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.changelogURL); });
-        }
-        // open webpage
-        if(this.prefs.getCharPref("version")==="" || currentVersion=="3.1") {
-            if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL); });
-            if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.changelogURL); });
-        }
-        // open webpage
-        if(this.prefs.getCharPref("version")==="" || currentVersion=="2.0") {
-            if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.zotfileURL); });
-            if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.zotfileURL); });
-        }
-        // open webpage with changelog
-        if(this.prefs.getCharPref("version")!=="" && currentVersion=="2.3") {
-            if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL); });
-            if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.changelogURL); });
-        }
+        }        
         // version 3
         // - add tags to parent items for attachments on tablet
         // - transfer project folder preferences to JSON format
