@@ -1689,6 +1689,7 @@ Zotero.ZotFile = {
     },
 
     getFiletype: function(fname){
+        if (!fname) { return ''; }
         var pos = fname.lastIndexOf('.');
         return pos==-1 ? '' : fname.substr(pos+1);
     },
