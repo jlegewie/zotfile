@@ -1691,8 +1691,8 @@ Zotero.ZotFile = {
             filename = obj.getFilename();
         }
         // check
-        var filetype = this.getFiletype(filename),
-            regex = this.prefs.getCharPref("filetypes").replace(/,/gi,"|");
+        var filetype = this.getFiletype(filename).toLowerCase(),
+            regex = this.prefs.getCharPref("filetypes").toLowerCase().replace(/,/gi,"|");
         // return value
         return filetype.search(new RegExp(regex))>=0 ? true : false;
     },
