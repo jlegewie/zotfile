@@ -3551,7 +3551,12 @@ Zotero.ZotFile = {
                 format_note = zz.prefs.getCharPref("pdfExtraction.formatAnnotationNote"),
                 format_highlight = zz.prefs.getCharPref("pdfExtraction.formatAnnotationHighlight"),
                 format_underline = zz.prefs.getCharPref("pdfExtraction.formatAnnotationUnderline"),
-                cite = zz.prefs.getBoolPref("pdfExtraction.NoteFullCite") ? zz.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ") : "p. ";
+                cite = zz.prefs.getBoolPref("pdfExtraction.NoteFullCite") ? zz.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ") : "p. ",
+                repl = JSON.parse(zz.prefs.getCharPref("pdfExtraction.replacements")),
+                reg = repl.map(function(obj) {
+                    var flags = ('flags' in obj) ? obj.flags : "g";
+                    return new RegExp(obj.regex, flags);
+                });
             // add note title
             var date_str = zz.prefs.getBoolPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString(),
                 title = zz.str_format(format_title, {'title': zz.ZFgetString('extraction.noteTitle'), 'date': date_str}),
@@ -3576,13 +3581,15 @@ Zotero.ZotFile = {
                 // add markup to note
                 if(anno.markup && anno.markup != "") {       
                     var format_markup = anno.subtype == "Highlight" ? format_highlight : format_underline;
+                    for (var k = 0; k < repl.length; k++)
+                        anno.markup = anno.markup.replace(reg[k], repl[k].replacement);
                     note += zz.str_format(format_markup, {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri});
                 }
                 // add to note text
                 if(anno.content && anno.content != "" &&
                   (!anno.markup || this.strDistance(anno.content,anno.markup)>0.15 )) {                    
                     var content = anno.content.replace(/(\r\n|\n|\r)/gm,"<br>");
-                    '<p><i>%(content) (<a href="%(uri)">note on p.%(page)</a>)</i></p><br>'
+                    // '<p><i>%(content) (<a href="%(uri)">note on p.%(page)</a>)</i></p><br>'
                     note += zz.str_format(format_note, {'content': content, 'cite': link, 'page': page, 'uri': uri});
                 }
             }

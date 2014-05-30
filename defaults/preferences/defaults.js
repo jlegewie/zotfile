@@ -56,7 +56,7 @@ pref("extensions.zotfile.tablet.tagParentPull_tag", "_ANNOTATED");
 pref("extensions.zotfile.tablet.confirmRepush", true);
 pref("extensions.zotfile.tablet.storeCopyOfFile", false);
 pref("extensions.zotfile.tablet.storeCopyOfFile_suffix", "_annotated");
-pref("extensions.zotfile.tablet.subfolders", "[]");
+pref("extensions.zotfile.tablet.subfolders", '[]');
 pref("extensions.zotfile.tablet.projectFolders", 0);
 pref("extensions.zotfile.tablet.projectFolders01", false);
 pref("extensions.zotfile.tablet.projectFolders01_folder", "");
@@ -127,5 +127,6 @@ pref("extensions.zotfile.pdfExtraction.formatNoteTitle", "<p><b>%(title) (%(date
 pref("extensions.zotfile.pdfExtraction.formatAnnotationNote", '<p><i>%(content) (<a href="%(uri)">note on p.%(page)</a>)</i></p><br>');
 pref("extensions.zotfile.pdfExtraction.formatAnnotationHighlight", '<p>"%(content)" (%(cite))</p>');
 pref("extensions.zotfile.pdfExtraction.formatAnnotationUnderline", '<p>"<u>%(content)</u>" (%(cite))</p>');
+pref("extensions.zotfile.pdfExtraction.replacements", '[]');
 pref("extensions.zotfile.pdfExtraction.localeDateInNote", true);
 //pref("extensions.zotfile.pdfExtraction.format", '"<p>%(markup)s" %(cite)s</p><br><p>%(note)s</p><br>');
