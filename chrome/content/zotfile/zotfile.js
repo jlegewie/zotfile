@@ -3111,20 +3111,40 @@ Zotero.ZotFile = {
                             .createInstance(Components.interfaces.nsIWindowsRegKey);
 
         //get handler for PDFs
-        var success = false;
-        var tryKeys = ['.pdf', '.PDF']
-        for(var i=0; !success && i<tryKeys.length; i++) {
+        var tryKeys = [
+        	{
+        		root: wrk.ROOT_KEY_CURRENT_USER,
+        		path: 'Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.pdf\\UserChoice',
+        		value: 'Progid'
+        	},
+        	{
+        		root: wrk.ROOT_KEY_CURRENT_USER,
+        		path: 'Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.PDF\\UserChoice',
+        		value: 'Progid'
+        	},
+        	{
+        		root: wrk.ROOT_KEY_CLASSES_ROOT,
+        		path: '.pdf',
+        		value: ''
+        	},
+        	{
+        		root: wrk.ROOT_KEY_CLASSES_ROOT,
+        		path: '.PDF',
+        		value: ''
+        	}
+        ];
+        var progId;
+        for(var i=0; !progId && i<tryKeys.length; i++) {
             try {
-                wrk.open(wrk.ROOT_KEY_CLASSES_ROOT,
-                     tryKeys[i],
+                wrk.open(tryKeys[i].root,
+                     tryKeys[i].path,
                      wrk.ACCESS_READ);
-                success = true;
+                progId = wrk.readStringValue(tryKeys[i].value);
             } catch(e) {}
         }
 
-        if(!success) return;
-
-        var progId = wrk.readStringValue('');
+        if(!progId) return;
+        
         //get version specific handler, if it exists
         try {
             wrk.open(wrk.ROOT_KEY_CLASSES_ROOT,
@@ -3134,8 +3154,13 @@ Zotero.ZotFile = {
         } catch(e) {}
 
         //get command
-        success = false;
-        tryKeys = [progId + '\\shell\\Read\\command', progId + '\\Shell\\Read\\command', progId + '\\shell\\Open\\command', progId + '\\Shell\\Read\\command'];
+        var success = false;
+        tryKeys = [
+        	progId + '\\shell\\Read\\command',
+        	progId + '\\Shell\\Read\\command',
+        	progId + '\\shell\\Open\\command',
+        	progId + '\\Shell\\Read\\command'
+        ];
         for(var i=0; !success && i<tryKeys.length; i++) {
             try {
                 wrk.open(wrk.ROOT_KEY_CLASSES_ROOT,
