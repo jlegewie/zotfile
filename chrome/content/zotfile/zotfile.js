@@ -3171,6 +3171,8 @@ Zotero.ZotFile = {
             // get attachment item, parent and file
             this.atts  = Zotero.Items.get(attIDs)
                 .filter(function(att) {
+                    if(!att.isAttachment())
+                        return false;
                     return att.isAttachment() && att.getFile().exists() && att.attachmentMIMEType.indexOf('pdf') != -1;
                 });
             if (this.atts.length==0)
