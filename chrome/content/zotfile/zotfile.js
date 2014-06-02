@@ -3118,18 +3118,8 @@ Zotero.ZotFile = {
         		value: 'Progid'
         	},
         	{
-        		root: wrk.ROOT_KEY_CURRENT_USER,
-        		path: 'Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.PDF\\UserChoice',
-        		value: 'Progid'
-        	},
-        	{
         		root: wrk.ROOT_KEY_CLASSES_ROOT,
         		path: '.pdf',
-        		value: ''
-        	},
-        	{
-        		root: wrk.ROOT_KEY_CLASSES_ROOT,
-        		path: '.PDF',
         		value: ''
         	}
         ];
@@ -3143,7 +3133,10 @@ Zotero.ZotFile = {
             } catch(e) {}
         }
 
-        if(!progId) return;
+        if(!progId) {
+        	wrk.close();
+        	return;
+        }
         
         //get version specific handler, if it exists
         try {
@@ -3157,9 +3150,7 @@ Zotero.ZotFile = {
         var success = false;
         tryKeys = [
         	progId + '\\shell\\Read\\command',
-        	progId + '\\Shell\\Read\\command',
-        	progId + '\\shell\\Open\\command',
-        	progId + '\\Shell\\Read\\command'
+        	progId + '\\shell\\Open\\command'
         ];
         for(var i=0; !success && i<tryKeys.length; i++) {
             try {
@@ -3170,9 +3161,15 @@ Zotero.ZotFile = {
             } catch(e) {}
         }
 
-        if(!success) return;
+        if(!success) {
+        	wrk.close();
+        	return;
+        }
 
         var command = wrk.readStringValue('').match(/^(?:".+?"|[^"]\S+)/);
+        
+        wrk.close();
+        
         if(!command) return;
         return command[0].replace(/"/g, '');
     },
