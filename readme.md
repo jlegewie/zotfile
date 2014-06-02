@@ -50,6 +50,8 @@ Contributions preferably through pull requests are welcome!
 
     WARNING: I removed the old settings. You will have to change the new settings if you want to customize the format of the note with extracted annotations.
   
+- Improved default PDF reader detection on Windows (thanks to aurimasv)
+- Hidden option `pdfExtraction.replacements` for custom, regular expression-based replacements in extracted annotations. This can be useful because some pdfs contain 'broken' characters. For example, `[{"regex":" ?\u00f0", "replacement": " ("}]` replaces the unicode character `ð` with `(` to fix a problem in pdfs from a certain publisher. In this case, `ð` is a problem with the pdf and not with zotfile's extraction. The hidden option can be used to fix it.
 - Information for attachments on the tablet is now hidden in the attachment note
 
 
