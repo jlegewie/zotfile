@@ -1344,6 +1344,17 @@ Zotero.ZotFile = {
     },
 
     wildcardTable: function(item) {
+        var getCollectionPathsOfItem = function(item) {
+            var getCollectionPath = function(collectionID) {
+                var collection = Zotero.Collections.get(collectionID);
+                if (collection.parent == null)  return collection.name
+
+                return getCollectionPath(collection.parent) + "/" + collection.name;
+            };
+
+            return item.getCollections().map(getCollectionPath);
+        };
+
         // item type
         var item_type = item.getType();
         var item_type_name = Zotero.ItemTypes.getName(item_type);
@@ -1358,7 +1369,8 @@ Zotero.ZotFile = {
             'authorInitials': authors[2],
             'editor': authors[3],
             'editorLastF': authors[4],
-            'editorInitials': authors[5]
+            'editorInitials': authors[5],
+            'collectionPaths': getCollectionPathsOfItem(item)
         };
         // define transform functions
         var itemtypeWildcard = function(item, map) {
@@ -1432,18 +1444,6 @@ Zotero.ZotFile = {
             // add element to wildcards table
             table['%' + key] = value;
         }
-
-        var getCollectionPathsOfItem = function(item) {
-            var getCollectionPath = function(collectionID) {
-                var collection = Zotero.Collections.get(collectionID);
-                if (collection.parent == null)  return collection.name
-
-                return getCollectionPath(collection.parent) + "/" + collection.name;
-            };
-
-            return item.getCollections().map(getCollectionPath);
-        };
-        table['%c'] = getCollectionPathsOfItem(item);
 
         // return
         return table;
@@ -1521,8 +1521,10 @@ Zotero.ZotFile = {
             str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
             // add content of wildcard
             var wildcard = rule.substr(wildcards[j], 2);
-            if (wildcard === '%c') {
-                var getCollectionPathFromTable = function (table) {
+            lookup = table[wildcard];
+            // if it is a collectionPath field. we need to select one element from the array.
+            if (lookup && lookup instanceof Array) {
+                var getCollectionPathFromTable = function () {
                     var selectFromList = function(items, message, title) {
                         var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                             .getService(Components.interfaces.nsIPromptService);
@@ -1533,7 +1535,7 @@ Zotero.ZotFile = {
                         return selected.value;
                     };
 
-                    var collectionPaths = table['%c'];
+                    var collectionPaths = lookup;
                     if (collectionPaths.length === 0)  return "";
                     if (collectionPaths.length === 1)  return collectionPaths[0];
 
@@ -1546,9 +1548,7 @@ Zotero.ZotFile = {
                         message: 'this batch rename operation is canceled by user.'
                     };
                 };
-                lookup = getCollectionPathFromTable(table);
-            } else {
-                lookup = table[wildcard];
+                lookup = getCollectionPathFromTable();
             }
             if (lookup === "" || typeof(lookup) === "undefined") complete = false;
             else str.push(lookup);
