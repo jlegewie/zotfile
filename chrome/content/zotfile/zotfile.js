@@ -1473,6 +1473,17 @@ Zotero.ZotFile = {
     },
 
     wildcardTable: function(item) {
+        var getCollectionPathsOfItem = function(item) {
+            var getCollectionPath = function(collectionID) {
+                var collection = Zotero.Collections.get(collectionID);
+                if (collection.parent == null)  return collection.name
+
+                return getCollectionPath(collection.parent) + "/" + collection.name;
+            };
+
+            return item.getCollections().map(getCollectionPath);
+        };
+
         // item type
         var item_type = item.getType();
         var item_type_name = Zotero.ItemTypes.getName(item_type);
@@ -1487,7 +1498,8 @@ Zotero.ZotFile = {
             'authorInitials': authors[2],
             'editor': authors[3],
             'editorLastF': authors[4],
-            'editorInitials': authors[5]
+            'editorInitials': authors[5],
+            'collectionPaths': getCollectionPathsOfItem(item)
         };
         // define transform functions
         var itemtypeWildcard = function(item, map) {
@@ -1561,6 +1573,7 @@ Zotero.ZotFile = {
             // add element to wildcards table
             table['%' + key] = value;
         }
+
         // return
         return table;
     },
@@ -1636,7 +1649,36 @@ Zotero.ZotFile = {
             // add rule content before wildcard
             str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
             // add content of wildcard
-            lookup = table[rule.substr(wildcards[j], 2)];
+            var wildcard = rule.substr(wildcards[j], 2);
+            lookup = table[wildcard];
+            // if it is a collectionPath field. we need to select one element from the array.
+            if (lookup && lookup instanceof Array) {
+                var getCollectionPathFromTable = function () {
+                    var selectFromList = function(items, message, title) {
+                        var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                            .getService(Components.interfaces.nsIPromptService);
+                        var selected = {};
+                        var result = prompts.select(null, title, message, items.length, items, selected);
+                        if (!result)  return -1;
+
+                        return selected.value;
+                    };
+
+                    var collectionPaths = lookup;
+                    if (collectionPaths.length === 0)  return "";
+                    if (collectionPaths.length === 1)  return collectionPaths[0];
+
+                    var title = table['%t'];
+                    var idx = selectFromList(collectionPaths, title);
+                    if (idx >= 0)  return collectionPaths[idx];
+
+                    throw {
+                        name: 'UserAbortion',
+                        message: 'this batch rename operation is canceled by user.'
+                    };
+                };
+                lookup = getCollectionPathFromTable();
+            }
             if (lookup === "" || typeof(lookup) === "undefined") complete = false;
             else str.push(lookup);
         }
@@ -1688,6 +1730,7 @@ Zotero.ZotFile = {
             filename = obj.leafName;
         } else {
             if(typeof(obj)=="number") obj = Zotero.Items.get(obj);
+            if (obj.attachmentLinkMode === Zotero.Attachments.LINK_MODE_LINKED_URL)  return false;
             filename = obj.getFilename();
         }
         // check
