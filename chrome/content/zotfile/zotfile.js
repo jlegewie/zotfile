@@ -1652,7 +1652,7 @@ Zotero.ZotFile = {
             var wildcard = rule.substr(wildcards[j], 2);
             lookup = table[wildcard];
             // if it is a collectionPath field. we need to select one element from the array.
-            if (lookup && lookup instanceof Array) {
+            if (lookup && Array.isArray(lookup)) {
                 var getCollectionPathFromTable = function () {
                     var selectFromList = function(items, message, title) {
                         var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
