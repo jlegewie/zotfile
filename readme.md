@@ -48,9 +48,13 @@ Contributions preferably through pull requests are welcome!
 
 - **Improved Extraction of Annotations** (mainly for wrong word spacing)
 
-- Improved customization of note for extracted annotations with hidden options (`formatNoteTitle`, `formatAnnotationNote`, `formatAnnotationHighlight`, `formatAnnotationUnderline`)
+- Improved formatting of extracted annotations with hidden options (`formatNoteTitle`, `formatAnnotationNote`, `formatAnnotationHighlight`, `formatAnnotationUnderline`)
 
     WARNING: I removed the old settings. You will have to change the new settings if you want to customize the format of the note with extracted annotations.
+
+- Option to use annotation color for formatting of extracted annotations
+
+    The annotation color can now be used to format extracted annotations. Just add some css styling to the hidden options for formatting. For example, change `formatAnnotationHighlight` to `<p style="background-color:%(color);">"%(content)" (%(cite))</p>`. The wildcard `%(color)` is replaced by the annotation color. This styling has the same effect but looks a little better: `<p><span style="background-color:%(color);">"%(content)"</span> (%(cite))</p>`
   
 - Improved default PDF reader detection on Windows (thanks to aurimasv)
 - Hidden option `pdfExtraction.replacements` for custom, regular expression-based replacements in extracted annotations. This can be useful because some pdfs contain 'broken' characters. For example, `[{"regex":" ?\u00f0", "replacement": " ("}]` replaces the unicode character `ð` with `(` to fix a problem in pdfs from a certain publisher. In this case, `ð` is a problem with the pdf and not with zotfile's extraction. The hidden option can be used to fix it.

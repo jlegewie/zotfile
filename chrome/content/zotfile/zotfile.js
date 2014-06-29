@@ -3644,13 +3644,14 @@ Zotero.ZotFile = {
                     catch(err) {}
                 }
                 // link
-                var link = '<a href="' + uri + '">' + cite + page + '</a>';
+                var link = '<a href="' + uri + '">' + cite + page + '</a>',
+                    color = ('color' in anno) ? ('rgb(' + anno.color.join(',') + ')') : 'rgb(255,255,255)';
                 // add markup to note
                 if(anno.markup && anno.markup != "") {       
                     var format_markup = anno.subtype == "Highlight" ? format_highlight : format_underline;
                     for (var k = 0; k < repl.length; k++)
                         anno.markup = anno.markup.replace(reg[k], repl[k].replacement);
-                    note += zz.str_format(format_markup, {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri});
+                    note += zz.str_format(format_markup, {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'color': color});
                 }
                 // add to note text
                 if(anno.content && anno.content != "" &&

@@ -60,6 +60,13 @@ PDFJS.getPDFAnnotations = function(url, removeHyphens, progress, debug) {
                         legacyPromise ? promise.resolve(obj) : resolve(obj);
                     }
                 };
+                // function to convert deviceRGB to RGB
+                var convertDeviceRGBtoRGB = function(dr, dg, db) {
+                    var r = Math.round(dr*255);
+                    var g = Math.round(dg*255);
+                    var b = Math.round(db*255);
+                    return [r, g, b];
+                };
                 // get annotations
                 page.getAnnotations().then(function extractAnno(annos) {
                     // compatibility for old pdf.js version and filter for supported annotations
@@ -92,6 +99,7 @@ PDFJS.getPDFAnnotations = function(url, removeHyphens, progress, debug) {
                         // clean markup
                         annos = annos.map(function(anno) {
                             anno.page = page.pageNumber;
+                            anno.color = convertDeviceRGBtoRGB(anno.color[0],anno.color[1],anno.color[2]);
                             // clean markup
                             if(anno.markup) {
                                 anno.markup = anno.markup
