@@ -3658,7 +3658,7 @@ Zotero.ZotFile = {
                   (!anno.markup || this.strDistance(anno.content,anno.markup)>0.15 )) {                    
                     var content = anno.content.replace(/(\r\n|\n|\r)/gm,"<br>");
                     // '<p><i>%(content) (<a href="%(uri)">note on p.%(page)</a>)</i></p><br>'
-                    note += zz.str_format(format_note, {'content': content, 'cite': link, 'page': page, 'uri': uri});
+                    note += zz.str_format(format_note, {'content': content, 'cite': link, 'page': page, 'uri': uri,'color': color});
                 }
             }
             return note;
