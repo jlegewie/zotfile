@@ -52,7 +52,7 @@ Contributions preferably through pull requests are welcome!
 
     WARNING: I removed the old settings. You will have to change the new settings if you want to customize the format of the note with extracted annotations.
 
-- Option to use annotation color for formatting of extracted annotations
+- Option to use annotation color for formatting of extracted annotations (thanks to [RAG2ko](https://github.com/RAG2ko))
 
     The annotation color can now be used to format extracted annotations. Just add some css styling to the hidden options for formatting. For example, change `formatAnnotationHighlight` to `<p style="background-color:%(color);">"%(content)" (%(cite))</p>`. The wildcard `%(color)` is replaced by the annotation color. This styling has the same effect but looks a little better: `<p><span style="background-color:%(color);">"%(content)"</span> (%(cite))</p>`
   
