@@ -3611,6 +3611,40 @@ Zotero.ZotFile = {
         },
 
         getNoteContent: function(annotations, item, att, method) {
+            var getColorCategory = function (r,g,b) {
+                // convert RGB to HSL   
+                r /= 255; g /= 255; b /= 255;
+                var max = Math.max(r, g, b), min = Math.min(r, g, b);
+                var h, s, l = (max + min) / 2;
+                if(max == min) {
+                    h = s = 0; // achromatic
+                }
+                else {
+                    var d = max - min;
+                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                    switch(max){
+                        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                        case g: h = (b - r) / d + 2; break;
+                        case b: h = (r - g) / d + 4; break;
+                    }
+                    h*=60;
+                    if (h < 0) {
+                        h +=360;
+                    }
+                }
+                // define color category based on HSL    
+                if (l < 0.12) return "Black";
+                if (l > 0.98) return "White";
+                if (s < 0.2) return "Gray";
+                if (h < 15) return "Red";
+                if (h < 45) return "Orange";
+                if (h < 65) return "Yellow";
+                if (h < 170) return "Green";
+                if (h < 190) return "Cyan";
+                if (h < 270) return "Blue";
+                if (h < 335) return "Magenta";
+                return "Red";
+            };
             var zz = Zotero.ZotFile,
                 lib = att.libraryID===null ? 0 : att.libraryID,
                 format_uri = 'zotero://open-pdf/%(lib)_%(key)/%(page)',
@@ -3618,6 +3652,7 @@ Zotero.ZotFile = {
                 format_note = zz.prefs.getCharPref("pdfExtraction.formatAnnotationNote"),
                 format_highlight = zz.prefs.getCharPref("pdfExtraction.formatAnnotationHighlight"),
                 format_underline = zz.prefs.getCharPref("pdfExtraction.formatAnnotationUnderline"),
+                settings_colors = JSON.parse(zz.prefs.getCharPref("pdfExtraction.colorCategories")),
                 cite = zz.prefs.getBoolPref("pdfExtraction.NoteFullCite") ? zz.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ") : "p. ",
                 repl = JSON.parse(zz.prefs.getCharPref("pdfExtraction.replacements")),
                 reg = repl.map(function(obj) {
@@ -3645,13 +3680,15 @@ Zotero.ZotFile = {
                 }
                 // link
                 var link = '<a href="' + uri + '">' + cite + page + '</a>',
-                    color = ('color' in anno) ? ('rgb(' + anno.color.join(',') + ')') : 'rgb(255,255,255)';
+                    color = ('color' in anno) ? ('rgb(' + anno.color.join(',') + ')') : 'rgb(255,255,255)',
+                    color_category = getColorCategory(anno.color[0], anno.color[1], anno.color[2]),
+                    color_category_hex = settings_colors[color_category];
                 // add markup to note
                 if(anno.markup && anno.markup != "") {       
                     var format_markup = anno.subtype == "Highlight" ? format_highlight : format_underline;
                     for (var k = 0; k < repl.length; k++)
                         anno.markup = anno.markup.replace(reg[k], repl[k].replacement);
-                    note += zz.str_format(format_markup, {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'color': color});
+                    note += zz.str_format(format_markup, {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'color': color, 'color_category': color_category_hex});
                 }
                 // add to note text
                 if(anno.content && anno.content != "" &&
