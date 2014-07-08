@@ -3587,14 +3587,25 @@ Zotero.ZotFile = {
 
         createNote: function(annotations, item, att, method) {
             var note_content = this.getNoteContent(annotations, item, att, method);
-            var note = new Zotero.Item("note");
-            note.libraryID = item._libraryID;
-            // note.setNote(Zotero.Utilities.text2html(note_content));
-            note.setNote(note_content);
-            note.setSource(item.id);
-            var noteID = note.save();
-            /*if (method=="pdf.js" && Zotero.ZotFile.prefs.getBoolPref('pdfExtraction.debug'))
-                this.debugExtraction(item, annotations);*/
+            if(typeof note_content == 'string') {
+                var note = new Zotero.Item("note");
+                note.libraryID = item._libraryID;
+                // note.setNote(Zotero.Utilities.text2html(note_content));
+                note.setNote(note_content);
+                note.setSource(item.id);
+                var noteID = note.save();
+                /*if (method=="pdf.js" && Zotero.ZotFile.prefs.getBoolPref('pdfExtraction.debug'))
+                    this.debugExtraction(item, annotations);*/
+            }
+            else {
+                for(var type in note_content) {
+                    var note = new Zotero.Item("note");
+                    note.libraryID = item._libraryID;
+                    note.setNote(note_content[type]);
+                    note.setSource(item.id);
+                    var noteID = note.save();
+                }
+            }
         },
 
         debugExtraction: function(item, annotations) {
@@ -3648,11 +3659,14 @@ Zotero.ZotFile = {
             var zz = Zotero.ZotFile,
                 lib = att.libraryID===null ? 0 : att.libraryID,
                 format_uri = 'zotero://open-pdf/%(lib)_%(key)/%(page)',
+                str_title = zz.ZFgetString('extraction.noteTitle'),
                 format_title = zz.prefs.getCharPref("pdfExtraction.formatNoteTitle"),
+                format_title_color = zz.prefs.getCharPref("pdfExtraction.formatNoteTitleColor"),
                 format_note = zz.prefs.getCharPref("pdfExtraction.formatAnnotationNote"),
                 format_highlight = zz.prefs.getCharPref("pdfExtraction.formatAnnotationHighlight"),
                 format_underline = zz.prefs.getCharPref("pdfExtraction.formatAnnotationUnderline"),
                 settings_colors = JSON.parse(zz.prefs.getCharPref("pdfExtraction.colorCategories")),
+                separate_color_notes = zz.prefs.getBoolPref("pdfExtraction.colorNotes"),
                 cite = zz.prefs.getBoolPref("pdfExtraction.NoteFullCite") ? zz.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ") : "p. ",
                 repl = JSON.parse(zz.prefs.getCharPref("pdfExtraction.replacements")),
                 reg = repl.map(function(obj) {
@@ -3661,12 +3675,14 @@ Zotero.ZotFile = {
                 });
             // add note title
             var date_str = zz.prefs.getBoolPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString(),
-                title = zz.str_format(format_title, {'title': zz.ZFgetString('extraction.noteTitle'), 'date': date_str}),
+                title = zz.str_format(format_title, {'title': str_title, 'date': date_str}),
                 note = title;
             if (zz.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler"))
                 note += ' ' + method;
+            if(separate_color_notes) note = {};
             // iterature through annotations
             for (var i=0; i < annotations.length; i++) {
+            // annotations.map(function(anno) {
                 var anno = annotations[i],
                     page = anno.page,
                     uri = zz.str_format(format_uri, {'lib': lib, 'key': att.key, 'page': anno.page});
@@ -3688,14 +3704,28 @@ Zotero.ZotFile = {
                     var format_markup = anno.subtype == "Highlight" ? format_highlight : format_underline;
                     for (var k = 0; k < repl.length; k++)
                         anno.markup = anno.markup.replace(reg[k], repl[k].replacement);
-                    note += zz.str_format(format_markup, {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'color': color, 'color_category': color_category_hex});
+                    var markup_formated = zz.str_format(format_markup, {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'color': color, 'color_category': color_category_hex});
+                    if(!separate_color_notes)
+                        note += markup_formated;
+                    else {
+                        if(!(color_category in note))
+                            note[color_category] = zz.str_format(format_title_color, {'title': str_title, 'date': date_str, 'color': color_category});
+                        note[color_category] += markup_formated;
+                    }
                 }
                 // add to note text
                 if(anno.content && anno.content != "" &&
                   (!anno.markup || this.strDistance(anno.content,anno.markup)>0.15 )) {                    
                     var content = anno.content.replace(/(\r\n|\n|\r)/gm,"<br>");
                     // '<p><i>%(content) (<a href="%(uri)">note on p.%(page)</a>)</i></p><br>'
-                    note += zz.str_format(format_note, {'content': content, 'cite': link, 'page': page, 'uri': uri,'color': color});
+                    var content_formated = zz.str_format(format_note, {'content': content, 'cite': link, 'page': page, 'uri': uri,'color': color, 'color_category': color_category_hex});
+                    if(!separate_color_notes)
+                        note += content_formated;
+                    else {
+                        if(!(color_category in note))
+                            note[color_category] = zz.str_format(format_title_color, {'title': str_title, 'date': date_str, 'color': color_category});
+                        note[color_category] += content_formated;
+                    }
                 }
             }
             return note;
