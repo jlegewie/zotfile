@@ -14,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* globals PDFJS, shadow, isWorker, assert, warn, bytesToString, globalScope */
+/* globals PDFJS, shadow, isWorker, assert, warn, bytesToString, string32, 
+           globalScope */
 
 'use strict';
 
@@ -90,6 +91,9 @@ var FontLoader = {
       return true;
     }
     // TODO other browsers
+    if (userAgent === 'node') {
+      return true;
+    }
     return false;
   })(),
 
@@ -163,16 +167,9 @@ var FontLoader = {
                (data.charCodeAt(offset + 3) & 0xff);
       }
 
-      function string32(value) {
-        return String.fromCharCode((value >> 24) & 0xff) +
-               String.fromCharCode((value >> 16) & 0xff) +
-               String.fromCharCode((value >> 8) & 0xff) +
-               String.fromCharCode(value & 0xff);
-      }
-
       function spliceString(s, offset, remove, insert) {
-        var chunk1 = data.substr(0, offset);
-        var chunk2 = data.substr(offset + remove);
+        var chunk1 = s.substr(0, offset);
+        var chunk2 = s.substr(offset + remove);
         return chunk1 + insert + chunk2;
       }
 
@@ -297,7 +294,7 @@ var FontFace = (function FontFaceClosure() {
         return null;
       }
 
-      var data = bytesToString(this.data);
+      var data = bytesToString(new Uint8Array(this.data));
       var fontName = this.loadedName;
 
       // Add the font-face rule to the document

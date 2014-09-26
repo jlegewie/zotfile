@@ -17,14 +17,15 @@
 /* globals Ascii85Stream, AsciiHexStream, CCITTFaxStream, Cmd, Dict, error,
            FlateStream, isArray, isCmd, isDict, isInt, isName, isNum, isRef,
            isString, Jbig2Stream, JpegStream, JpxStream, LZWStream, Name,
-           NullStream, PredictorStream, Ref, RunLengthStream, warn, info */
+           NullStream, PredictorStream, Ref, RunLengthStream, warn, info,
+           StreamType, MissingDataException, assert */
 
 'use strict';
 
 var EOF = {};
 
 function isEOF(v) {
-  return (v == EOF);
+  return (v === EOF);
 }
 
 var Parser = (function ParserClosure() {
@@ -55,55 +56,58 @@ var Parser = (function ParserClosure() {
       }
     },
     getObj: function Parser_getObj(cipherTransform) {
-      if (isCmd(this.buf1, 'BI')) { // inline image
-        this.shift();
-        return this.makeInlineImage(cipherTransform);
-      }
-      if (isCmd(this.buf1, '[')) { // array
-        this.shift();
-        var array = [];
-        while (!isCmd(this.buf1, ']') && !isEOF(this.buf1)) {
-          array.push(this.getObj(cipherTransform));
-        }
-        if (isEOF(this.buf1)) {
-          error('End of file inside array');
-        }
-        this.shift();
-        return array;
-      }
-      if (isCmd(this.buf1, '<<')) { // dictionary or stream
-        this.shift();
-        var dict = new Dict(this.xref);
-        while (!isCmd(this.buf1, '>>') && !isEOF(this.buf1)) {
-          if (!isName(this.buf1)) {
-            info('Malformed dictionary: key must be a name object');
+      var buf1 = this.buf1;
+      this.shift();
+
+      if (buf1 instanceof Cmd) {
+        switch (buf1.cmd) {
+          case 'BI': // inline image
+            return this.makeInlineImage(cipherTransform);
+          case '[': // array
+            var array = [];
+            while (!isCmd(this.buf1, ']') && !isEOF(this.buf1)) {
+              array.push(this.getObj(cipherTransform));
+            }
+            if (isEOF(this.buf1)) {
+              error('End of file inside array');
+            }
             this.shift();
-            continue;
-          }
+            return array;
+          case '<<': // dictionary or stream
+            var dict = new Dict(this.xref);
+            while (!isCmd(this.buf1, '>>') && !isEOF(this.buf1)) {
+              if (!isName(this.buf1)) {
+                info('Malformed dictionary: key must be a name object');
+                this.shift();
+                continue;
+              }
 
-          var key = this.buf1.name;
-          this.shift();
-          if (isEOF(this.buf1)) {
-            break;
-          }
-          dict.set(key, this.getObj(cipherTransform));
-        }
-        if (isEOF(this.buf1)) {
-          error('End of file inside dictionary');
-        }
+              var key = this.buf1.name;
+              this.shift();
+              if (isEOF(this.buf1)) {
+                break;
+              }
+              dict.set(key, this.getObj(cipherTransform));
+            }
+            if (isEOF(this.buf1)) {
+              error('End of file inside dictionary');
+            }
 
-        // Stream objects are not allowed inside content streams or
-        // object streams.
-        if (isCmd(this.buf2, 'stream')) {
-          return (this.allowStreams ?
-                  this.makeStream(dict, cipherTransform) : dict);
+            // Stream objects are not allowed inside content streams or
+            // object streams.
+            if (isCmd(this.buf2, 'stream')) {
+              return (this.allowStreams ?
+                      this.makeStream(dict, cipherTransform) : dict);
+            }
+            this.shift();
+            return dict;
+          default: // simple object
+            return buf1;
         }
-        this.shift();
-        return dict;
       }
-      if (isInt(this.buf1)) { // indirect reference or integer
-        var num = this.buf1;
-        this.shift();
+
+      if (isInt(buf1)) { // indirect reference or integer
+        var num = buf1;
         if (isInt(this.buf1) && isCmd(this.buf2, 'R')) {
           var ref = new Ref(num, this.buf1);
           this.shift();
@@ -112,9 +116,9 @@ var Parser = (function ParserClosure() {
         }
         return num;
       }
-      if (isString(this.buf1)) { // string
-        var str = this.buf1;
-        this.shift();
+
+      if (isString(buf1)) { // string
+        var str = buf1;
         if (cipherTransform) {
           str = cipherTransform.decryptString(str);
         }
@@ -122,16 +126,14 @@ var Parser = (function ParserClosure() {
       }
 
       // simple object
-      var obj = this.buf1;
-      this.shift();
-      return obj;
+      return buf1;
     },
     makeInlineImage: function Parser_makeInlineImage(cipherTransform) {
       var lexer = this.lexer;
       var stream = lexer.stream;
 
       // parse dictionary
-      var dict = new Dict();
+      var dict = new Dict(null);
       while (!isCmd(this.buf1, 'ID') && !isEOF(this.buf1)) {
         if (!isName(this.buf1)) {
           error('Dictionary key must be a name object');
@@ -150,32 +152,33 @@ var Parser = (function ParserClosure() {
 
       // searching for the /EI\s/
       var state = 0, ch, i, ii;
-      while (state != 4 && (ch = stream.getByte()) !== -1) {
-        switch (ch | 0) {
-          case 0x20:
-          case 0x0D:
-          case 0x0A:
-            // let's check next five bytes to be ASCII... just be sure
-            var followingBytes = stream.peekBytes(5);
-            for (i = 0, ii = followingBytes.length; i < ii; i++) {
+      var E = 0x45, I = 0x49, SPACE = 0x20, NL = 0xA, CR = 0xD;
+      while ((ch = stream.getByte()) !== -1) {
+        if (state === 0) {
+          state = (ch === E) ? 1 : 0;
+        } else if (state === 1) {
+          state = (ch === I) ? 2 : 0;
+        } else {
+          assert(state === 2);
+          if (ch === SPACE || ch === NL || ch === CR) {
+            // Let's check the next five bytes are ASCII... just be sure.
+            var n = 5;
+            var followingBytes = stream.peekBytes(n);
+            for (i = 0; i < n; i++) {
               ch = followingBytes[i];
-              if (ch !== 0x0A && ch !== 0x0D && (ch < 0x20 || ch > 0x7F)) {
-                // not a LF, CR, SPACE or any visible ASCII character
+              if (ch !== NL && ch !== CR && (ch < SPACE || ch > 0x7F)) {
+                // Not a LF, CR, SPACE or any visible ASCII character, i.e.
+                // it's binary stuff. Resetting the state.
                 state = 0;
-                break; // some binary stuff found, resetting the state
+                break;
               }
             }
-            state = (state === 3 ? 4 : 0);
-            break;
-          case 0x45:
-            state = 2;
-            break;
-          case 0x49:
-            state = (state === 2 ? 3 : 0);
-            break;
-          default:
+            if (state === 2) {
+              break;  // finished!
+            }
+          } else {
             state = 0;
-            break;
+          }
         }
       }
 
@@ -192,7 +195,7 @@ var Parser = (function ParserClosure() {
 
         var a = 1;
         var b = 0;
-        for (var i = 0, ii = imageBytes.length; i < ii; ++i) {
+        for (i = 0, ii = imageBytes.length; i < ii; ++i) {
           a = (a + (imageBytes[i] & 0xff)) % 65521;
           b = (b + a) % 65521;
         }
@@ -261,11 +264,14 @@ var Parser = (function ParserClosure() {
         var ENDSTREAM_SIGNATURE_LENGTH = 9;
         var ENDSTREAM_SIGNATURE = [0x65, 0x6E, 0x64, 0x73, 0x74, 0x72, 0x65,
                                    0x61, 0x6D];
-        var skipped = 0, found = false;
+        var skipped = 0, found = false, i, j;
         while (stream.pos < stream.end) {
           var scanBytes = stream.peekBytes(SCAN_BLOCK_SIZE);
           var scanLength = scanBytes.length - ENDSTREAM_SIGNATURE_LENGTH;
-          var found = false, i, j;
+          if (scanLength <= 0) {
+            break;
+          }
+          found = false;
           for (i = 0, j = 0; i < scanLength; i++) {
             var b = scanBytes[i];
             if (b !== ENDSTREAM_SIGNATURE[j]) {
@@ -339,48 +345,85 @@ var Parser = (function ParserClosure() {
       if (stream.dict.get('Length') === 0) {
         return new NullStream(stream);
       }
-      if (name == 'FlateDecode' || name == 'Fl') {
+      try {
         if (params) {
-          return new PredictorStream(new FlateStream(stream, maybeLength),
-                                     maybeLength, params);
+          params = this.fetchIfRef(params);
         }
-        return new FlateStream(stream, maybeLength);
-      }
-      if (name == 'LZWDecode' || name == 'LZW') {
-        var earlyChange = 1;
-        if (params) {
-          if (params.has('EarlyChange')) {
-            earlyChange = params.get('EarlyChange');
+        var xrefStreamStats = this.xref.stats.streamTypes;
+        if (name === 'FlateDecode' || name === 'Fl') {
+          xrefStreamStats[StreamType.FLATE] = true;
+          if (params) {
+            return new PredictorStream(new FlateStream(stream, maybeLength),
+                                       maybeLength, params);
           }
-          return new PredictorStream(
-            new LZWStream(stream, maybeLength, earlyChange),
-                          maybeLength, params);
+          return new FlateStream(stream, maybeLength);
         }
-        return new LZWStream(stream, maybeLength, earlyChange);
+        if (name === 'LZWDecode' || name === 'LZW') {
+          xrefStreamStats[StreamType.LZW] = true;
+          var earlyChange = 1;
+          if (params) {
+            if (params.has('EarlyChange')) {
+              earlyChange = params.get('EarlyChange');
+            }
+            return new PredictorStream(
+              new LZWStream(stream, maybeLength, earlyChange),
+              maybeLength, params);
+          }
+          return new LZWStream(stream, maybeLength, earlyChange);
+        }
+        if (name === 'DCTDecode' || name === 'DCT') {
+          // According to the specification: for inline images, the ID operator
+          // shall be followed by a single whitespace character (unless it uses
+          // ASCII85Decode or ASCIIHexDecode filters).
+          // In practice this only seems to be followed for inline JPEG images,
+          // and generally ignoring the first byte of the stream if it is a
+          // whitespace char can even *cause* issues (e.g. in the CCITTFaxDecode
+          // filters used in issue2984.pdf).
+          // Hence when the first byte of the stream of an inline JPEG image is
+          // a whitespace character, we thus simply skip over it.
+          if (isCmd(this.buf1, 'ID')) {
+            var firstByte = stream.peekByte();
+            if (firstByte === 0x0A /* LF */ || firstByte === 0x0D /* CR */ ||
+                firstByte === 0x20 /* SPACE */) {
+              stream.skip();
+            }
+          }
+          xrefStreamStats[StreamType.DCT] = true;
+          return new JpegStream(stream, maybeLength, stream.dict, this.xref);
+        }
+        if (name === 'JPXDecode' || name === 'JPX') {
+          xrefStreamStats[StreamType.JPX] = true;
+          return new JpxStream(stream, maybeLength, stream.dict);
+        }
+        if (name === 'ASCII85Decode' || name === 'A85') {
+          xrefStreamStats[StreamType.A85] = true;
+          return new Ascii85Stream(stream, maybeLength);
+        }
+        if (name === 'ASCIIHexDecode' || name === 'AHx') {
+          xrefStreamStats[StreamType.AHX] = true;
+          return new AsciiHexStream(stream, maybeLength);
+        }
+        if (name === 'CCITTFaxDecode' || name === 'CCF') {
+          xrefStreamStats[StreamType.CCF] = true;
+          return new CCITTFaxStream(stream, maybeLength, params);
+        }
+        if (name === 'RunLengthDecode' || name === 'RL') {
+          xrefStreamStats[StreamType.RL] = true;
+          return new RunLengthStream(stream, maybeLength);
+        }
+        if (name === 'JBIG2Decode') {
+          xrefStreamStats[StreamType.JBIG] = true;
+          return new Jbig2Stream(stream, maybeLength, stream.dict);
+        }
+        warn('filter "' + name + '" not supported yet');
+        return stream;
+      } catch (ex) {
+        if (ex instanceof MissingDataException) {
+          throw ex;
+        }
+        warn('Invalid stream: \"' + ex + '\"');
+        return new NullStream(stream);
       }
-      if (name == 'DCTDecode' || name == 'DCT') {
-        return new JpegStream(stream, maybeLength, stream.dict, this.xref);
-      }
-      if (name == 'JPXDecode' || name == 'JPX') {
-        return new JpxStream(stream, maybeLength, stream.dict);
-      }
-      if (name == 'ASCII85Decode' || name == 'A85') {
-        return new Ascii85Stream(stream, maybeLength);
-      }
-      if (name == 'ASCIIHexDecode' || name == 'AHx') {
-        return new AsciiHexStream(stream, maybeLength);
-      }
-      if (name == 'CCITTFaxDecode' || name == 'CCF') {
-        return new CCITTFaxStream(stream, maybeLength, params);
-      }
-      if (name == 'RunLengthDecode' || name == 'RL') {
-        return new RunLengthStream(stream, maybeLength);
-      }
-      if (name == 'JBIG2Decode') {
-        return new Jbig2Stream(stream, maybeLength, stream.dict);
-      }
-      warn('filter "' + name + '" not supported yet');
-      return stream;
     }
   };
 
@@ -451,7 +494,7 @@ var Lexer = (function LexerClosure() {
       return (this.currentChar = this.stream.getByte());
     },
     peekChar: function Lexer_peekChar() {
-      return this.stream.peekBytes(1)[0];
+      return this.stream.peekByte();
     },
     getNumber: function Lexer_getNumber() {
       var ch = this.currentChar;
@@ -503,7 +546,6 @@ var Lexer = (function LexerClosure() {
         } else if (ch === 0x45 || ch === 0x65) { // 'E', 'e'
           // 'E' can be either a scientific notation or the beginning of a new
           // operator
-          var hasE = true;
           ch = this.peekChar();
           if (ch === 0x2B || ch === 0x2D) { // '+', '-'
             powerValueSign = (ch === 0x2D) ? -1 : 1;
@@ -628,9 +670,9 @@ var Lexer = (function LexerClosure() {
         if (ch === 0x23) { // '#'
           ch = this.nextChar();
           var x = toHexDigit(ch);
-          if (x != -1) {
+          if (x !== -1) {
             var x2 = toHexDigit(this.nextChar());
-            if (x2 == -1) {
+            if (x2 === -1) {
               error('Illegal digit in hex char in name: ' + x2);
             }
             strBuf.push(String.fromCharCode((x << 4) | x2));
@@ -696,7 +738,7 @@ var Lexer = (function LexerClosure() {
           return EOF;
         }
         if (comment) {
-          if (ch === 0x0A || ch == 0x0D) { // LF, CR
+          if (ch === 0x0A || ch === 0x0D) { // LF, CR
             comment = false;
           }
         } else if (ch === 0x25) { // '%'
@@ -755,33 +797,32 @@ var Lexer = (function LexerClosure() {
       // command
       var str = String.fromCharCode(ch);
       var knownCommands = this.knownCommands;
-      var knownCommandFound = knownCommands && (str in knownCommands);
+      var knownCommandFound = knownCommands && knownCommands[str] !== undefined;
       while ((ch = this.nextChar()) >= 0 && !specialChars[ch]) {
         // stop if known command is found and next character does not make
         // the str a command
         var possibleCommand = str + String.fromCharCode(ch);
-        if (knownCommandFound && !(possibleCommand in knownCommands)) {
+        if (knownCommandFound && knownCommands[possibleCommand] === undefined) {
           break;
         }
-        if (str.length == 128) {
+        if (str.length === 128) {
           error('Command token too long: ' + str.length);
         }
         str = possibleCommand;
-        knownCommandFound = knownCommands && (str in knownCommands);
+        knownCommandFound = knownCommands && knownCommands[str] !== undefined;
       }
-      if (str == 'true') {
+      if (str === 'true') {
         return true;
       }
-      if (str == 'false') {
+      if (str === 'false') {
         return false;
       }
-      if (str == 'null') {
+      if (str === 'null') {
         return null;
       }
       return Cmd.get(str);
     },
     skipToNextLine: function Lexer_skipToNextLine() {
-      var stream = this.stream;
       var ch = this.currentChar;
       while (ch >= 0) {
         if (ch === 0x0D) { // CR
@@ -802,75 +843,51 @@ var Lexer = (function LexerClosure() {
   return Lexer;
 })();
 
-var Linearization = (function LinearizationClosure() {
-  function Linearization(stream) {
-    this.parser = new Parser(new Lexer(stream), false, null);
-    var obj1 = this.parser.getObj();
-    var obj2 = this.parser.getObj();
-    var obj3 = this.parser.getObj();
-    this.linDict = this.parser.getObj();
-    if (isInt(obj1) && isInt(obj2) && isCmd(obj3, 'obj') &&
-        isDict(this.linDict)) {
-      var obj = this.linDict.get('Linearized');
-      if (!(isNum(obj) && obj > 0)) {
-        this.linDict = null;
-      }
-    }
-  }
-
-  Linearization.prototype = {
-    getInt: function Linearization_getInt(name) {
-      var linDict = this.linDict;
-      var obj;
-      if (isDict(linDict) && isInt(obj = linDict.get(name)) && obj > 0) {
+var Linearization = {
+  create: function LinearizationCreate(stream) {
+    function getInt(name, allowZeroValue) {
+      var obj = linDict.get(name);
+      if (isInt(obj) && (allowZeroValue ? obj >= 0 : obj > 0)) {
         return obj;
       }
-      error('"' + name + '" field in linearization table is invalid');
-    },
-    getHint: function Linearization_getHint(index) {
-      var linDict = this.linDict;
-      var obj1, obj2;
-      if (isDict(linDict) && isArray(obj1 = linDict.get('H')) &&
-          obj1.length >= 2 && isInt(obj2 = obj1[index]) && obj2 > 0) {
-        return obj2;
-      }
-      error('Hints table in linearization table is invalid: ' + index);
-    },
-    get length() {
-      if (!isDict(this.linDict)) {
-        return 0;
-      }
-      return this.getInt('L');
-    },
-    get hintsOffset() {
-      return this.getHint(0);
-    },
-    get hintsLength() {
-      return this.getHint(1);
-    },
-    get hintsOffset2() {
-      return this.getHint(2);
-    },
-    get hintsLenth2() {
-      return this.getHint(3);
-    },
-    get objectNumberFirst() {
-      return this.getInt('O');
-    },
-    get endFirst() {
-      return this.getInt('E');
-    },
-    get numPages() {
-      return this.getInt('N');
-    },
-    get mainXRefEntriesOffset() {
-      return this.getInt('T');
-    },
-    get pageFirst() {
-      return this.getInt('P');
+      throw new Error('The "' + name + '" parameter in the linearization ' +
+                      'dictionary is invalid.');
     }
-  };
-
-  return Linearization;
-})();
-
+    function getHints() {
+      var hints = linDict.get('H'), hintsLength, item;
+      if (isArray(hints) &&
+          ((hintsLength = hints.length) === 2 || hintsLength === 4)) {
+        for (var index = 0; index < hintsLength; index++) {
+          if (!(isInt(item = hints[index]) && item > 0)) {
+            throw new Error('Hint (' + index +
+                            ') in the linearization dictionary is invalid.');
+          }
+        }
+        return hints;
+      }
+      throw new Error('Hint array in the linearization dictionary is invalid.');
+    }
+    var parser = new Parser(new Lexer(stream), false, null);
+    var obj1 = parser.getObj();
+    var obj2 = parser.getObj();
+    var obj3 = parser.getObj();
+    var linDict = parser.getObj();
+    var obj, length;
+    if (!(isInt(obj1) && isInt(obj2) && isCmd(obj3, 'obj') && isDict(linDict) &&
+          isNum(obj = linDict.get('Linearized')) && obj > 0)) {
+      return null; // No valid linearization dictionary found.
+    } else if ((length = getInt('L')) !== stream.length) {
+      throw new Error('The "L" parameter in the linearization dictionary ' +
+                      'does not equal the stream length.');
+    }
+    return {
+      length: length,
+      hints: getHints(),
+      objectNumberFirst: getInt('O'),
+      endFirst: getInt('E'),
+      numPages: getInt('N'),
+      mainXRefEntriesOffset: getInt('T'),
+      pageFirst: (linDict.has('P') ? getInt('P', true) : 0)
+    };
+  }
+};

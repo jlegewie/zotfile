@@ -52,7 +52,7 @@ Zotero.ZotFile = {
 
     versionChanges: function (currentVersion) {
         // open webpage
-        var open_page = ["3.3", "3.2", "3.1", "2.0", "2.3"];
+        var open_page = ["4.0", "3.3", "3.2", "3.1", "2.0", "2.3"];
 
         if(this.prefs.getCharPref("version")==="" || open_page.indexOf(currentVersion) != -1) {
             if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL); });

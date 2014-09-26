@@ -84,11 +84,11 @@ var ColorSpace = (function ColorSpaceClosure() {
       var count = originalWidth * originalHeight;
       var rgbBuf = null;
       var numComponentColors = 1 << bpc;
-      var needsResizing = originalHeight != height || originalWidth != width;
+      var needsResizing = originalHeight !== height || originalWidth !== width;
+      var i, ii;
 
       if (this.isPassthrough(bpc)) {
         rgbBuf = comps;
-
       } else if (this.numComps === 1 && count > numComponentColors &&
           this.name !== 'DeviceGray' && this.name !== 'DeviceRGB') {
         // Optimization: create a color map when there is just one component and
@@ -102,18 +102,20 @@ var ColorSpace = (function ColorSpaceClosure() {
         // we are reparsing colorspaces too much?).
         var allColors = bpc <= 8 ? new Uint8Array(numComponentColors) :
                                    new Uint16Array(numComponentColors);
-        for (var i = 0; i < numComponentColors; i++) {
+        var key;
+        for (i = 0; i < numComponentColors; i++) {
           allColors[i] = i;
         }
         var colorMap = new Uint8Array(numComponentColors * 3);
         this.getRgbBuffer(allColors, 0, numComponentColors, colorMap, 0, bpc,
                           /* alpha01 = */ 0);
 
+        var destPos, rgbPos;
         if (!needsResizing) {
           // Fill in the RGB values directly into |dest|.
-          var destPos = 0;
-          for (var i = 0; i < count; ++i) {
-            var key = comps[i] * 3;
+          destPos = 0;
+          for (i = 0; i < count; ++i) {
+            key = comps[i] * 3;
             dest[destPos++] = colorMap[key];
             dest[destPos++] = colorMap[key + 1];
             dest[destPos++] = colorMap[key + 2];
@@ -121,9 +123,9 @@ var ColorSpace = (function ColorSpaceClosure() {
           }
         } else {
           rgbBuf = new Uint8Array(count * 3);
-          var rgbPos = 0;
-          for (var i = 0; i < count; ++i) {
-            var key = comps[i] * 3;
+          rgbPos = 0;
+          for (i = 0; i < count; ++i) {
+            key = comps[i] * 3;
             rgbBuf[rgbPos++] = colorMap[key];
             rgbBuf[rgbPos++] = colorMap[key + 1];
             rgbBuf[rgbPos++] = colorMap[key + 2];
@@ -143,16 +145,17 @@ var ColorSpace = (function ColorSpaceClosure() {
 
       if (rgbBuf) {
         if (needsResizing) {
-          rgbBuf = PDFImage.resize(rgbBuf, bpc, 3, originalWidth,
-                                   originalHeight, width, height);
-        }
-        var rgbPos = 0;
-        var destPos = 0;
-        for (var i = 0, ii = width * actualHeight; i < ii; i++) {
-          dest[destPos++] = rgbBuf[rgbPos++];
-          dest[destPos++] = rgbBuf[rgbPos++];
-          dest[destPos++] = rgbBuf[rgbPos++];
-          destPos += alpha01;
+          PDFImage.resize(rgbBuf, bpc, 3, originalWidth, originalHeight, width,
+                          height, dest, alpha01);
+        } else {
+          rgbPos = 0;
+          destPos = 0;
+          for (i = 0, ii = width * actualHeight; i < ii; i++) {
+            dest[destPos++] = rgbBuf[rgbPos++];
+            dest[destPos++] = rgbBuf[rgbPos++];
+            dest[destPos++] = rgbBuf[rgbPos++];
+            destPos += alpha01;
+          }
         }
       }
     },
@@ -174,6 +177,7 @@ var ColorSpace = (function ColorSpaceClosure() {
 
   ColorSpace.fromIR = function ColorSpace_fromIR(IR) {
     var name = isArray(IR) ? IR[0] : IR;
+    var whitePoint, blackPoint, gamma;
 
     switch (name) {
       case 'DeviceGrayCS':
@@ -183,10 +187,16 @@ var ColorSpace = (function ColorSpaceClosure() {
       case 'DeviceCmykCS':
         return this.singletons.cmyk;
       case 'CalGrayCS':
-        var whitePoint = IR[1].WhitePoint;
-        var blackPoint = IR[1].BlackPoint;
-        var gamma = IR[1].Gamma;
+        whitePoint = IR[1].WhitePoint;
+        blackPoint = IR[1].BlackPoint;
+        gamma = IR[1].Gamma;
         return new CalGrayCS(whitePoint, blackPoint, gamma);
+      case 'CalRGBCS':
+        whitePoint = IR[1].WhitePoint;
+        blackPoint = IR[1].BlackPoint;
+        gamma = IR[1].Gamma;
+        var matrix = IR[1].Matrix;
+        return new CalRGBCS(whitePoint, blackPoint, gamma, matrix);
       case 'PatternCS':
         var basePatternCS = IR[1];
         if (basePatternCS) {
@@ -206,12 +216,12 @@ var ColorSpace = (function ColorSpaceClosure() {
         return new AlternateCS(numComps, ColorSpace.fromIR(alt),
                                 PDFFunction.fromIR(tintFnIR));
       case 'LabCS':
-        var whitePoint = IR[1].WhitePoint;
-        var blackPoint = IR[1].BlackPoint;
+        whitePoint = IR[1].WhitePoint;
+        blackPoint = IR[1].BlackPoint;
         var range = IR[1].Range;
         return new LabCS(whitePoint, blackPoint, range);
       default:
-        error('Unkown name ' + name);
+        error('Unknown name ' + name);
     }
     return null;
   };
@@ -252,6 +262,7 @@ var ColorSpace = (function ColorSpaceClosure() {
     } else if (isArray(cs)) {
       mode = cs[0].name;
       this.mode = mode;
+      var numComps, params;
 
       switch (mode) {
         case 'DeviceGray':
@@ -264,19 +275,20 @@ var ColorSpace = (function ColorSpaceClosure() {
         case 'CMYK':
           return 'DeviceCmykCS';
         case 'CalGray':
-          var params = cs[1].getAll();
+          params = cs[1].getAll();
           return ['CalGrayCS', params];
         case 'CalRGB':
-          return 'DeviceRgbCS';
+          params = cs[1].getAll();
+          return ['CalRGBCS', params];
         case 'ICCBased':
           var stream = xref.fetchIfRef(cs[1]);
           var dict = stream.dict;
-          var numComps = dict.get('N');
-          if (numComps == 1) {
+          numComps = dict.get('N');
+          if (numComps === 1) {
             return 'DeviceGrayCS';
-          } else if (numComps == 3) {
+          } else if (numComps === 3) {
             return 'DeviceRgbCS';
-          } else if (numComps == 4) {
+          } else if (numComps === 4) {
             return 'DeviceCmykCS';
           }
           break;
@@ -298,7 +310,7 @@ var ColorSpace = (function ColorSpaceClosure() {
         case 'Separation':
         case 'DeviceN':
           var name = cs[1];
-          var numComps = 1;
+          numComps = 1;
           if (isName(name)) {
             numComps = 1;
           } else if (isArray(name)) {
@@ -308,7 +320,7 @@ var ColorSpace = (function ColorSpaceClosure() {
           var tintFnIR = PDFFunction.getIR(xref, xref.fetchIfRef(cs[3]));
           return ['AlternateCS', numComps, alt, tintFnIR];
         case 'Lab':
-          var params = cs[1].getAll();
+          params = cs[1].getAll();
           return ['LabCS', params];
         default:
           error('unimplemented color space object "' + mode + '"');
@@ -337,7 +349,7 @@ var ColorSpace = (function ColorSpaceClosure() {
       return true;
     }
     for (var i = 0, ii = decode.length; i < ii; i += 2) {
-      if (decode[i] !== 0 || decode[i + 1] != 1) {
+      if (decode[i] !== 0 || decode[i + 1] !== 1) {
         return false;
       }
     }
@@ -375,18 +387,16 @@ var AlternateCS = (function AlternateCSClosure() {
     }
     this.base = base;
     this.tintFn = tintFn;
+    this.tmpBuf = new Float32Array(base.numComps);
   }
 
   AlternateCS.prototype = {
     getRgb: ColorSpace.prototype.getRgb,
     getRgbItem: function AlternateCS_getRgbItem(src, srcOffset,
                                                 dest, destOffset) {
-      var baseNumComps = this.base.numComps;
-      var input = 'subarray' in src ?
-        src.subarray(srcOffset, srcOffset + this.numComps) :
-        Array.prototype.slice.call(src, srcOffset, srcOffset + this.numComps);
-      var tinted = this.tintFn(input);
-      this.base.getRgbItem(tinted, 0, dest, destOffset);
+      var tmpBuf = this.tmpBuf;
+      this.tintFn(src, srcOffset, tmpBuf, 0);
+      this.base.getRgbItem(tmpBuf, 0, dest, destOffset);
     },
     getRgbBuffer: function AlternateCS_getRgbBuffer(src, srcOffset, count,
                                                     dest, destOffset, bits,
@@ -403,16 +413,24 @@ var AlternateCS = (function AlternateCSClosure() {
       var numComps = this.numComps;
 
       var scaled = new Float32Array(numComps);
-      for (var i = 0; i < count; i++) {
-        for (var j = 0; j < numComps; j++) {
-          scaled[j] = src[srcOffset++] * scale;
-        }
-        var tinted = tintFn(scaled);
-        if (usesZeroToOneRange) {
-          for (var j = 0; j < baseNumComps; j++) {
+      var tinted = new Float32Array(baseNumComps);
+      var i, j;
+      if (usesZeroToOneRange) {
+        for (i = 0; i < count; i++) {
+          for (j = 0; j < numComps; j++) {
+            scaled[j] = src[srcOffset++] * scale;
+          }
+          tintFn(scaled, 0, tinted, 0);
+          for (j = 0; j < baseNumComps; j++) {
             baseBuf[pos++] = tinted[j] * 255;
           }
-        } else {
+        }
+      } else {
+        for (i = 0; i < count; i++) {
+          for (j = 0; j < numComps; j++) {
+            scaled[j] = src[srcOffset++] * scale;
+          }
+          tintFn(scaled, 0, tinted, 0);
           base.getRgbItem(tinted, 0, baseBuf, pos);
           pos += baseNumComps;
         }
@@ -594,7 +612,7 @@ var DeviceRgbCS = (function DeviceRgbCSClosure() {
       return (inputLength * (3 + alpha01) / 3) | 0;
     },
     isPassthrough: function DeviceRgbCS_isPassthrough(bits) {
-      return bits == 8;
+      return bits === 8;
     },
     fillRgb: ColorSpace.prototype.fillRgb,
     isDefaultDecode: function DeviceRgbCS_isDefaultDecode(decodeMap) {
@@ -619,31 +637,31 @@ var DeviceCmykCS = (function DeviceCmykCSClosure() {
     var k = src[srcOffset + 3] * srcScale;
 
     var r =
-      c * (-4.387332384609988 * c + 54.48615194189176 * m +
-           18.82290502165302 * y + 212.25662451639585 * k +
-           -285.2331026137004) +
-      m * (1.7149763477362134 * m - 5.6096736904047315 * y +
-           -17.873870861415444 * k - 5.497006427196366) +
-      y * (-2.5217340131683033 * y - 21.248923337353073 * k +
-           17.5119270841813) +
-      k * (-21.86122147463605 * k - 189.48180835922747) + 255;
+      (c * (-4.387332384609988 * c + 54.48615194189176 * m +
+            18.82290502165302 * y + 212.25662451639585 * k +
+            -285.2331026137004) +
+       m * (1.7149763477362134 * m - 5.6096736904047315 * y +
+            -17.873870861415444 * k - 5.497006427196366) +
+       y * (-2.5217340131683033 * y - 21.248923337353073 * k +
+            17.5119270841813) +
+       k * (-21.86122147463605 * k - 189.48180835922747) + 255) | 0;
     var g =
-      c * (8.841041422036149 * c + 60.118027045597366 * m +
-           6.871425592049007 * y + 31.159100130055922 * k +
-           -79.2970844816548) +
-      m * (-15.310361306967817 * m + 17.575251261109482 * y +
-           131.35250912493976 * k - 190.9453302588951) +
-      y * (4.444339102852739 * y + 9.8632861493405 * k - 24.86741582555878) +
-      k * (-20.737325471181034 * k - 187.80453709719578) + 255;
+      (c * (8.841041422036149 * c + 60.118027045597366 * m +
+            6.871425592049007 * y + 31.159100130055922 * k +
+            -79.2970844816548) +
+       m * (-15.310361306967817 * m + 17.575251261109482 * y +
+            131.35250912493976 * k - 190.9453302588951) +
+       y * (4.444339102852739 * y + 9.8632861493405 * k - 24.86741582555878) +
+       k * (-20.737325471181034 * k - 187.80453709719578) + 255) | 0;
     var b =
-      c * (0.8842522430003296 * c + 8.078677503112928 * m +
-           30.89978309703729 * y - 0.23883238689178934 * k +
-           -14.183576799673286) +
-      m * (10.49593273432072 * m + 63.02378494754052 * y +
-           50.606957656360734 * k - 112.23884253719248) +
-      y * (0.03296041114873217 * y + 115.60384449646641 * k +
-           -193.58209356861505) +
-      k * (-22.33816807309886 * k - 180.12613974708367) + 255;
+      (c * (0.8842522430003296 * c + 8.078677503112928 * m +
+            30.89978309703729 * y - 0.23883238689178934 * k +
+            -14.183576799673286) +
+       m * (10.49593273432072 * m + 63.02378494754052 * y +
+            50.606957656360734 * k - 112.23884253719248) +
+       y * (0.03296041114873217 * y + 115.60384449646641 * k +
+            -193.58209356861505) +
+       k * (-22.33816807309886 * k - 180.12613974708367) + 255) | 0;
 
     dest[destOffset] = r > 255 ? 255 : r < 0 ? 0 : r;
     dest[destOffset + 1] = g > 255 ? 255 : g < 0 ? 0 : g;
@@ -741,25 +759,15 @@ var CalGrayCS = (function CalGrayCSClosure() {
     var A = src[srcOffset] * scale;
     var AG = Math.pow(A, cs.G);
 
-    // Computes intermediate variables M, L, N as per spec.
+    // Computes L as per spec. ( = cs.YW * AG )
     // Except if other than default BlackPoint values are used.
-    var M = cs.XW * AG;
     var L = cs.YW * AG;
-    var N = cs.ZW * AG;
-
-    // Decode XYZ, as per spec.
-    var X = M;
-    var Y = L;
-    var Z = N;
-
     // http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html, Ch 4.
-    // This yields values in range [0, 100].
-    var Lstar = Math.max(116 * Math.pow(Y, 1 / 3) - 16, 0);
-
     // Convert values to rgb range [0, 255].
-    dest[destOffset] = Lstar * 255 / 100;
-    dest[destOffset + 1] = Lstar * 255 / 100;
-    dest[destOffset + 2] = Lstar * 255 / 100;
+    var val = Math.max(295.8 * Math.pow(L, 0.333333333333333333) - 40.8, 0) | 0;
+    dest[destOffset] = val;
+    dest[destOffset + 1] = val;
+    dest[destOffset + 2] = val;
   }
 
   CalGrayCS.prototype = {
@@ -790,6 +798,309 @@ var CalGrayCS = (function CalGrayCSClosure() {
     usesZeroToOneRange: true
   };
   return CalGrayCS;
+})();
+
+//
+// CalRGBCS: Based on "PDF Reference, Sixth Ed", p.247
+//
+var CalRGBCS = (function CalRGBCSClosure() {
+
+  // See http://www.brucelindbloom.com/index.html?Eqn_ChromAdapt.html for these
+  // matrices.
+  var BRADFORD_SCALE_MATRIX = new Float32Array([
+    0.8951, 0.2664, -0.1614,
+    -0.7502, 1.7135, 0.0367,
+    0.0389, -0.0685, 1.0296]);
+
+  var BRADFORD_SCALE_INVERSE_MATRIX = new Float32Array([
+    0.9869929, -0.1470543, 0.1599627,
+    0.4323053, 0.5183603, 0.0492912,
+    -0.0085287, 0.0400428, 0.9684867]);
+
+  // See http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html.
+  var SRGB_D65_XYZ_TO_RGB_MATRIX = new Float32Array([
+    3.2404542, -1.5371385, -0.4985314,
+    -0.9692660, 1.8760108, 0.0415560,
+    0.0556434, -0.2040259, 1.0572252]);
+
+  var FLAT_WHITEPOINT_MATRIX = new Float32Array([1, 1, 1]);
+
+  var tempNormalizeMatrix = new Float32Array(3);
+  var tempConvertMatrix1 = new Float32Array(3);
+  var tempConvertMatrix2 = new Float32Array(3);
+
+  var DECODE_L_CONSTANT = Math.pow(((8 + 16) / 116), 3) / 8.0;
+
+  function CalRGBCS(whitePoint, blackPoint, gamma, matrix) {
+    this.name = 'CalRGB';
+    this.numComps = 3;
+    this.defaultColor = new Float32Array(3);
+
+    if (!whitePoint) {
+      error('WhitePoint missing - required for color space CalRGB');
+    }
+    blackPoint = blackPoint || new Float32Array(3);
+    gamma = gamma || new Float32Array([1, 1, 1]);
+    matrix = matrix || new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]);
+
+    // Translate arguments to spec variables.
+    var XW = whitePoint[0];
+    var YW = whitePoint[1];
+    var ZW = whitePoint[2];
+    this.whitePoint = whitePoint;
+
+    var XB = blackPoint[0];
+    var YB = blackPoint[1];
+    var ZB = blackPoint[2];
+    this.blackPoint = blackPoint;
+
+    this.GR = gamma[0];
+    this.GG = gamma[1];
+    this.GB = gamma[2];
+
+    this.MXA = matrix[0];
+    this.MYA = matrix[1];
+    this.MZA = matrix[2];
+    this.MXB = matrix[3];
+    this.MYB = matrix[4];
+    this.MZB = matrix[5];
+    this.MXC = matrix[6];
+    this.MYC = matrix[7];
+    this.MZC = matrix[8];
+
+    // Validate variables as per spec.
+    if (XW < 0 || ZW < 0 || YW !== 1) {
+      error('Invalid WhitePoint components for ' + this.name +
+            ', no fallback available');
+    }
+
+    if (XB < 0 || YB < 0 || ZB < 0) {
+      info('Invalid BlackPoint for ' + this.name + ' [' + XB + ', ' + YB +
+           ', ' + ZB + '], falling back to default');
+      this.blackPoint = new Float32Array(3);
+    }
+
+    if (this.GR < 0 || this.GG < 0 || this.GB < 0) {
+      info('Invalid Gamma [' + this.GR + ', ' + this.GG + ', ' + this.GB +
+           '] for ' + this.name + ', falling back to default');
+      this.GR = this.GG = this.GB = 1;
+    }
+
+    if (this.MXA < 0 || this.MYA < 0 || this.MZA < 0 ||
+        this.MXB < 0 || this.MYB < 0 || this.MZB < 0 ||
+        this.MXC < 0 || this.MYC < 0 || this.MZC < 0) {
+      info('Invalid Matrix for ' + this.name + ' [' +
+           this.MXA + ', ' + this.MYA + ', ' + this.MZA +
+           this.MXB + ', ' + this.MYB + ', ' + this.MZB +
+           this.MXC + ', ' + this.MYC + ', ' + this.MZC +
+           '], falling back to default');
+      this.MXA = this.MYB = this.MZC = 1;
+      this.MXB = this.MYA = this.MZA = this.MXC = this.MYC = this.MZB = 0;
+    }
+  }
+
+  function matrixProduct(a, b, result) {
+      result[0] = a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+      result[1] = a[3] * b[0] + a[4] * b[1] + a[5] * b[2];
+      result[2] = a[6] * b[0] + a[7] * b[1] + a[8] * b[2];
+  }
+
+  function convertToFlat(sourceWhitePoint, LMS, result) {
+      result[0] = LMS[0] * 1 / sourceWhitePoint[0];
+      result[1] = LMS[1] * 1 / sourceWhitePoint[1];
+      result[2] = LMS[2] * 1 / sourceWhitePoint[2];
+  }
+
+  function convertToD65(sourceWhitePoint, LMS, result) {
+    var D65X = 0.95047;
+    var D65Y = 1;
+    var D65Z = 1.08883;
+
+    result[0] = LMS[0] * D65X / sourceWhitePoint[0];
+    result[1] = LMS[1] * D65Y / sourceWhitePoint[1];
+    result[2] = LMS[2] * D65Z / sourceWhitePoint[2];
+  }
+
+  function sRGBTransferFunction(color) {
+    // See http://en.wikipedia.org/wiki/SRGB.
+    if (color <= 0.0031308){
+      return adjustToRange(0, 1, 12.92 * color);
+    }
+
+    return adjustToRange(0, 1, (1 + 0.055) * Math.pow(color, 1 / 2.4) - 0.055);
+  }
+
+  function adjustToRange(min, max, value) {
+    return Math.max(min, Math.min(max, value));
+  }
+
+  function decodeL(L) {
+    if (L < 0) {
+      return -decodeL(-L);
+    }
+
+    if (L > 8.0) {
+      return Math.pow(((L + 16) / 116), 3);
+    }
+
+    return L * DECODE_L_CONSTANT;
+  }
+
+  function compensateBlackPoint(sourceBlackPoint, XYZ_Flat, result) {
+
+    // In case the blackPoint is already the default blackPoint then there is
+    // no need to do compensation.
+    if (sourceBlackPoint[0] === 0 &&
+        sourceBlackPoint[1] === 0 &&
+        sourceBlackPoint[2] === 0) {
+      result[0] = XYZ_Flat[0];
+      result[1] = XYZ_Flat[1];
+      result[2] = XYZ_Flat[2];
+      return;
+    }
+
+    // For the blackPoint calculation details, please see
+    // http://www.adobe.com/content/dam/Adobe/en/devnet/photoshop/sdk/
+    // AdobeBPC.pdf.
+    // The destination blackPoint is the default blackPoint [0, 0, 0].
+    var zeroDecodeL = decodeL(0);
+
+    var X_DST = zeroDecodeL;
+    var X_SRC = decodeL(sourceBlackPoint[0]);
+
+    var Y_DST = zeroDecodeL;
+    var Y_SRC = decodeL(sourceBlackPoint[1]);
+
+    var Z_DST = zeroDecodeL;
+    var Z_SRC = decodeL(sourceBlackPoint[2]);
+
+    var X_Scale = (1 - X_DST) / (1 - X_SRC);
+    var X_Offset = 1 - X_Scale;
+
+    var Y_Scale = (1 - Y_DST) / (1 - Y_SRC);
+    var Y_Offset = 1 - Y_Scale;
+
+    var Z_Scale = (1 - Z_DST) / (1 - Z_SRC);
+    var Z_Offset = 1 - Z_Scale;
+
+    result[0] = XYZ_Flat[0] * X_Scale + X_Offset;
+    result[1] = XYZ_Flat[1] * Y_Scale + Y_Offset;
+    result[2] = XYZ_Flat[2] * Z_Scale + Z_Offset;
+  }
+
+  function normalizeWhitePointToFlat(sourceWhitePoint, XYZ_In, result) {
+
+    // In case the whitePoint is already flat then there is no need to do
+    // normalization.
+    if (sourceWhitePoint[0] === 1 && sourceWhitePoint[2] === 1) {
+      result[0] = XYZ_In[0];
+      result[1] = XYZ_In[1];
+      result[2] = XYZ_In[2];
+      return;
+    }
+
+    var LMS = result;
+    matrixProduct(BRADFORD_SCALE_MATRIX, XYZ_In, LMS);
+
+    var LMS_Flat = tempNormalizeMatrix;
+    convertToFlat(sourceWhitePoint, LMS, LMS_Flat);
+
+    matrixProduct(BRADFORD_SCALE_INVERSE_MATRIX, LMS_Flat, result);
+  }
+
+  function normalizeWhitePointToD65(sourceWhitePoint, XYZ_In, result) {
+
+    var LMS = result;
+    matrixProduct(BRADFORD_SCALE_MATRIX, XYZ_In, LMS);
+
+    var LMS_D65 = tempNormalizeMatrix;
+    convertToD65(sourceWhitePoint, LMS, LMS_D65);
+
+    matrixProduct(BRADFORD_SCALE_INVERSE_MATRIX, LMS_D65, result);
+  }
+
+  function convertToRgb(cs, src, srcOffset, dest, destOffset, scale) {
+    // A, B and C represent a red, green and blue components of a calibrated
+    // rgb space.
+    var A = adjustToRange(0, 1, src[srcOffset] * scale);
+    var B = adjustToRange(0, 1, src[srcOffset + 1] * scale);
+    var C = adjustToRange(0, 1, src[srcOffset + 2] * scale);
+
+    // A <---> AGR in the spec
+    // B <---> BGG in the spec
+    // C <---> CGB in the spec
+    var AGR = Math.pow(A, cs.GR);
+    var BGG = Math.pow(B, cs.GG);
+    var CGB = Math.pow(C, cs.GB);
+
+    // Computes intermediate variables L, M, N as per spec.
+    // To decode X, Y, Z values map L, M, N directly to them.
+    var X = cs.MXA * AGR + cs.MXB * BGG + cs.MXC * CGB;
+    var Y = cs.MYA * AGR + cs.MYB * BGG + cs.MYC * CGB;
+    var Z = cs.MZA * AGR + cs.MZB * BGG + cs.MZC * CGB;
+
+    // The following calculations are based on this document:
+    // http://www.adobe.com/content/dam/Adobe/en/devnet/photoshop/sdk/
+    // AdobeBPC.pdf.
+    var XYZ = tempConvertMatrix1;
+    XYZ[0] = X;
+    XYZ[1] = Y;
+    XYZ[2] = Z;
+    var XYZ_Flat = tempConvertMatrix2;
+
+    normalizeWhitePointToFlat(cs.whitePoint, XYZ, XYZ_Flat);
+
+    var XYZ_Black = tempConvertMatrix1;
+    compensateBlackPoint(cs.blackPoint, XYZ_Flat, XYZ_Black);
+
+    var XYZ_D65 = tempConvertMatrix2;
+    normalizeWhitePointToD65(FLAT_WHITEPOINT_MATRIX, XYZ_Black, XYZ_D65);
+
+    var SRGB = tempConvertMatrix1;
+    matrixProduct(SRGB_D65_XYZ_TO_RGB_MATRIX, XYZ_D65, SRGB);
+
+    var sR = sRGBTransferFunction(SRGB[0]);
+    var sG = sRGBTransferFunction(SRGB[1]);
+    var sB = sRGBTransferFunction(SRGB[2]);
+
+    // Convert the values to rgb range [0, 255].
+    dest[destOffset] = Math.round(sR * 255);
+    dest[destOffset + 1] = Math.round(sG * 255);
+    dest[destOffset + 2] = Math.round(sB * 255);
+  }
+
+  CalRGBCS.prototype = {
+    getRgb: function CalRGBCS_getRgb(src, srcOffset) {
+      var rgb = new Uint8Array(3);
+      this.getRgbItem(src, srcOffset, rgb, 0);
+      return rgb;
+    },
+    getRgbItem: function CalRGBCS_getRgbItem(src, srcOffset,
+                                             dest, destOffset) {
+      convertToRgb(this, src, srcOffset, dest, destOffset, 1);
+    },
+    getRgbBuffer: function CalRGBCS_getRgbBuffer(src, srcOffset, count,
+                                                 dest, destOffset, bits,
+                                                 alpha01) {
+      var scale = 1 / ((1 << bits) - 1);
+
+      for (var i = 0; i < count; ++i) {
+        convertToRgb(this, src, srcOffset, dest, destOffset, scale);
+        srcOffset += 3;
+        destOffset += 3 + alpha01;
+      }
+    },
+    getOutputLength: function CalRGBCS_getOutputLength(inputLength, alpha01) {
+      return (inputLength * (3 + alpha01) / 3) | 0;
+    },
+    isPassthrough: ColorSpace.prototype.isPassthrough,
+    fillRgb: ColorSpace.prototype.fillRgb,
+    isDefaultDecode: function CalRGBCS_isDefaultDecode(decodeMap) {
+      return ColorSpace.isDefaultDecode(decodeMap, this.numComps);
+    },
+    usesZeroToOneRange: true
+  };
+  return CalRGBCS;
 })();
 
 //
@@ -923,6 +1234,7 @@ var LabCS = (function LabCSClosure() {
       return (inputLength * (3 + alpha01) / 3) | 0;
     },
     isPassthrough: ColorSpace.prototype.isPassthrough,
+    fillRgb: ColorSpace.prototype.fillRgb,
     isDefaultDecode: function LabCS_isDefaultDecode(decodeMap) {
       // XXX: Decoding is handled with the lab conversion because of the strange
       // ranges that are used.
@@ -932,4 +1244,3 @@ var LabCS = (function LabCSClosure() {
   };
   return LabCS;
 })();
-
