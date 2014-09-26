@@ -6,7 +6,7 @@ RELEASE:=$(shell grep em:version install.rdf | head -n 1 | sed -e 's/ *<em:versi
 
 zotfile.xpi: FORCE
 	rm -rf $@
-	zip -r $@ chrome chrome.manifest defaults install.rdf
+	zip -r $@ chrome chrome.manifest defaults install.rdf -x \*.DS_Store
 
 zotfile-%-fx.xpi: zotfile.xpi
 	mv $< $@
