@@ -34,7 +34,15 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
-#### Changes in 3.3
+#### Changes in 4.0
+
+- **Goto annotation in pdf**
+
+    This is not really a new feature but with two recent changes in Zotero (see [this](https://github.com/zotero/zotero/pull/450) and [this](https://github.com/zotero/zotero/pull/452) pull request), it became much more useful! Simply click on the link that is part of your extracted annotations, and zotfile will open the pdf on the page with the annotation. The feature now works on Windows as well (thanks to aurimasv) and I have added support for Skim on Mac. Check out the [documentation](http://zotfile.com/index.html#extract-pdf-annotations) for some more details.
+
+- **Improved extraction of annotation**
+
+    This version includes three improvements for the extraction of annotations. First, the extraction is now based on the most recent pdf.js version ([here](https://github.com/jlegewie/pdf.js/tree/extract-v3) is my fork with the modified version of [pdf.js](https://github.com/mozilla/pdf.js) used in zotfile). With this update, zotfile should work with more pdfs. Second, the extraction is now about 40-60% faster (depending on the pdf) thanks to some improvements in the extraction code. Third, the extraction now runs in the background so that Zotero is not blocked while annotations are extracted. 
 
 - **Get Table of Contents from PDF**
 
@@ -45,8 +53,6 @@ Contributions preferably through pull requests are welcome!
 - **Tablet status is now shown in right-pane with other attachment information**
 
     The right pane now includes a row with the current tablet status such as `No` for files that are not on the tablet or `[Basefolder]` for files that are in the tablet base-folder. Click on this information to change the tablet status and open or reveal the file on the tablet (very convenient because double-clicking on the attachment opens the imported zotero attachment and not the file on the tablet).
-
-- **Improved Extraction of Annotations** (mainly for wrong word spacing)
 
 - **Extract Annotation Color** (thanks to [RAG2ko](https://github.com/RAG2ko))
 
@@ -59,23 +65,11 @@ Contributions preferably through pull requests are welcome!
 - Improved default PDF reader detection on Windows (thanks to aurimasv)
 - Hidden option `pdfExtraction.replacements` for custom, regular expression-based replacements in extracted annotations. This can be useful because some pdfs contain 'broken' characters. For example, `[{"regex":" ?\u00f0", "replacement": " ("}]` replaces the unicode character `ð` with `(` to fix a problem in pdfs from a certain publisher. In this case, `ð` is a problem with the pdf and not with zotfile's extraction. The hidden option can be used to fix it.
 - Information for attachments on the tablet is now hidden in the attachment note
-
-
-
-#### Changes in 3.2
-
-- **Goto annotation in pdf**
-
-    This is not really a new feature but with two recent changes in Zotero (see [this](https://github.com/zotero/zotero/pull/450) and [this](https://github.com/zotero/zotero/pull/452) pull request), it became much more useful! Simply click on the link that is part of your extracted annotations, and zotfile will open the pdf on the page with the annotation. The feature now works on Windows as well (thanks to aurimasv) and I have added support for Skim on Mac. Check out the [documentation](http://zotfile.com/index.html#extract-pdf-annotations) for some more details.
-
-- **Improved extraction of annotation**
-
-    This version includes three improvements for the extraction of annotations. First, the extraction is now based on the most recent pdf.js version ([here](https://github.com/jlegewie/pdf.js/tree/extract-v3) is my fork with the modified version of [pdf.js](https://github.com/mozilla/pdf.js) used in zotfile). With this update, zotfile should work with more pdfs. Second, the extraction is now about 40-60% faster (depending on the pdf) thanks to some improvements in the extraction code. Third, the extraction now runs in the background so that Zotero is not blocked while annotations are extracted. 
-
 - Improved information windows
 - Improved renaming function (avoids re-indexing of linked attachments)
 - New wildcards for editors (`%d`, `%D`, `%L`, `%l`)
 - Fix bug with unnecessary suffix after multiple renames of same file
+
 
 #### Changes in 3.1
 
