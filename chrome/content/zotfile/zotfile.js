@@ -1290,7 +1290,7 @@ Zotero.ZotFile = {
 
         // truncate title after : . and ?
         if(this.prefs.getBoolPref("truncate_title")) {
-            var truncate = title.search(/:|\.|\?/);
+            var truncate = title.search(/:|\.|\?|\!/);
             if(truncate!=-1) title = title.substr(0,truncate);
         }
 
