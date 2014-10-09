@@ -99,7 +99,8 @@ PDFJS.getPDFAnnotations = function(url, removeHyphens, progress, debug) {
                         // clean markup
                         annos = annos.map(function(anno) {
                             anno.page = page.pageNumber;
-                            anno.color = convertDeviceRGBtoRGB(anno.color[0],anno.color[1],anno.color[2]);
+                            if('color' in anno)
+                                anno.color = convertDeviceRGBtoRGB(anno.color[0],anno.color[1],anno.color[2]);
                             // clean markup
                             if(anno.markup) {
                                 anno.markup = anno.markup

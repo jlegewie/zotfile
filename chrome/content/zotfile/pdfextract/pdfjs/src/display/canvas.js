@@ -1365,11 +1365,10 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         lastChar = annot.chars.slice(-1)[0];
         if(!isSpace && lastCharSpace && typeof lastChar.charDims.x !== 'undefined' &&
             lastChar.charDims.x/*-charDims.spaceWidth*/>charDims.x+charDims.spaceWidth) {
-            // lastChar.charDims.x/*-charDims.spaceWidth*/>charDims.x+charDims.width) {
-          // 'test6' benefits from removing out this line
-          annot.markup[quad] = annot.markup[quad].substring(0, markupEnd);
+          if(lastChar.isSpace)
+            annot.markup[quad] = annot.markup[quad].substring(0, markupEnd);
           annot.chars = annot.chars.splice(0,annot.chars.length-1);
-          lastChar = annot.chars.slice(-1)[0];
+          lastChar = annot.chars.slice(-2)[0];
           annot.markupGeom[quad].brx = lastChar.charDims.x + lastChar.charDims.width;
           // reset markupEnd and lastCharSpace
           markupEnd = annot.markup[quad].length - 1;
@@ -1377,8 +1376,10 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         }
 
         // insert space if ...
+        // var spaceWidth = charDims.spaceWidth;
+        var spaceWidth = annot.spaces.n>0 ? annot.spaces.sumWidth/annot.spaces.n : charDims.spaceWidth*0.85;
         if (!isSpace && !lastCharSpace && (charDims.spaceWidth !== 0 || /^[\u201C\(]*$/.test(character) ) &&
-          charDims.x > annot.markupGeom[quad].brx + charDims.spaceWidth) {
+          charDims.x > annot.markupGeom[quad].brx + spaceWidth) {
           // last char (a-z or digits)
           lastChar = this.getLastAZChar(annot);
           // do not add 'mini' or comparatively small spaces
@@ -1404,12 +1405,12 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
           annot.markup[quad] += character;
           charInfo.character = character;
           annot.chars.push(charInfo);
+          if(character===' ') {
+            annot.spaces.sumWidth = annot.spaces.sumWidth + charDims.width;
+            annot.spaces.n++;
+          }
         }
         // add space but exclude mini spaces
-        // TWO VERSIONS IN CONFLICT ABOUT Lee-2008 and Penner-2008
-        // Should I use charDims.spaceWidth instead of charDims.width?
-        // What to add to brx below?
-        // if (isSpace && (annot.markupGeom[quad].brx < charDims.x + charDims.spaceWidth)) {
         if (isSpace && (annot.markupGeom[quad].brx < charDims.x + lastChar.charDims.width)) {
           charInfo.character = character;
           // last char (a-z or digits)
@@ -2076,7 +2077,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
 
       maskCtx.restore();
 
-      this.paintInlineImageXObject(maskCanvas.canvas);
+      // this.paintInlineImageXObject(maskCanvas.canvas);
     },
 
     paintImageMaskXObjectRepeat:
@@ -2152,7 +2153,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         return;
       }
 
-      this.paintInlineImageXObject(imgData);
+      // this.paintInlineImageXObject(imgData);
     },
 
     paintImageXObjectRepeat:
@@ -2171,7 +2172,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         map.push({transform: [scaleX, 0, 0, scaleY, positions[i],
                  positions[i + 1]], x: 0, y: 0, w: width, h: height});
       }
-      this.paintInlineImageXObjectGroup(imgData, map);
+      // this.paintInlineImageXObjectGroup(imgData, map);
     },
 
     paintInlineImageXObject:
