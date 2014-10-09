@@ -34,6 +34,11 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 4.1
+
+- improved extraction of annotations
+- truncate title after '!'
+
 #### Changes in 4.0
 
 - **Goto annotation in pdf**
