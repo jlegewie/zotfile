@@ -53,6 +53,8 @@ Zotero.ZotFile = {
     versionChanges: function (currentVersion) {
         // open webpage
         var open_page = ["4.0", "3.3", "3.2", "3.1", "2.0", "2.3"];
+        var i, j;
+        var searches, conditions;
 
         if(this.prefs.getCharPref("version")==="" || open_page.indexOf(currentVersion) != -1) {
             if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL); });
@@ -61,7 +63,7 @@ Zotero.ZotFile = {
         // version 3
         // - add tags to parent items for attachments on tablet
         // - transfer project folder preferences to JSON format
-        if(this.prefs.getCharPref("version")!=="" && currentVersion.indexOf('3')==0 &&
+        if(this.prefs.getCharPref("version")!=="" && currentVersion.indexOf('3')===0 &&
             !this.prefs.getBoolPref("zotfile3update")) {
 
             // updated to version 3
@@ -73,7 +75,7 @@ Zotero.ZotFile = {
 
             // change tablet tags
             var atts = this.getAttachmentsOnTablet();
-            for (var j=0; j < atts.length; j++) {
+            for (j=0; j < atts.length; j++) {
                 // if attachment on tablet, add tag for modified tablet item and remove tablet tag
                 if(!this.getTabletStatusModified(atts[j])) {
                     this.addTabletTag(atts[j], this.tag);
@@ -84,10 +86,10 @@ Zotero.ZotFile = {
                 }
             }
             // change saved searches
-            var searches=Zotero.Searches.getAll();
-            for(var i=0; i<searches.length;i++ ) {
-                var conditions=searches[i].getSearchConditions();
-                for(var j=1; j<conditions.length;j++ ) {
+            searches=Zotero.Searches.getAll();
+            for(i=0; i<searches.length;i++ ) {
+                conditions=searches[i].getSearchConditions();
+                for(j=1; j<conditions.length;j++ ) {
                     if(conditions[j].condition=="tag" && conditions[j].value=="_tablet") {
                         searches[i].updateCondition(conditions[j].id,'tag','contains','_tablet');
                         searches[i].save();
@@ -127,10 +129,10 @@ Zotero.ZotFile = {
             }
 
             // change saved searches
-            var searches=Zotero.Searches.getAll();
-            for(var i=0; i<searches.length;i++ ) {
-                var conditions=searches[i].getSearchConditions();
-                for(var j=1; j<conditions.length;j++ ) {
+            searches=Zotero.Searches.getAll();
+            for(i=0; i<searches.length;i++ ) {
+                conditions=searches[i].getSearchConditions();
+                for(j=1; j<conditions.length;j++ ) {
                     if(conditions[j].condition=="tag" && conditions[j].value=="_READ") {
                         searches[i].updateCondition(conditions[j].id,'tag',conditions[j].operator,'_tablet');
                         searches[i].save();
@@ -311,12 +313,12 @@ Zotero.ZotFile = {
                     // itemRecognizer._items
                 }
                 setTimeout(test,2000);*/
-            }
+            };
             // get selected items
             var win = zz.wm.getMostRecentWindow("navigator:browser");
             var items = win.ZoteroPane.getSelectedItems();
             // continue if nothing is selected
-            if(items.length==0) {
+            if(items.length===0) {
                 recognizePDF(file);
                 return;
             }
@@ -444,7 +446,7 @@ Zotero.ZotFile = {
                         }
                         // skip if file already has correct filename
                         var filename = item.getFilename().replace(/\.[^/.]+$/, "");
-                        if(filename.indexOf(zz.getFilename(parent,filename))==0) continue;
+                        if(filename.indexOf(zz.getFilename(parent,filename))===0) continue;
                         // exclude current key for next event
                         zz.excludeAutorenameKeys.push(key);
                         // ask user
