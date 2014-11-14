@@ -34,12 +34,7 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
-#### Changes in 4.1
-
-- improved extraction of annotations
-- truncate title after '!'
-
-#### Changes in 4.0
+#### Changes in 4.0 and 4.1
 
 - **Goto annotation in pdf**
 
@@ -74,7 +69,8 @@ Contributions preferably through pull requests are welcome!
 - Improved renaming function (avoids re-indexing of linked attachments)
 - New wildcards for editors (`%d`, `%D`, `%L`, `%l`)
 - Fix bug with unnecessary suffix after multiple renames of same file
-
+- improved extraction of annotations
+- truncate title after '!'
 
 #### Changes in 3.1
 
