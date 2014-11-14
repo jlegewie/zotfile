@@ -259,7 +259,7 @@ Zotero.ZotFile.ProgressWindow = function(_window){
 	});
 
 	this.ItemProgress.prototype.setTitle = _deferUntilWindowLoad(function(title) {
-		this._itemText.innerHTML = title;
+		this._itemText.textContent = title;
 	});
 
 	this.ItemProgress.prototype.complete = _deferUntilWindowLoad(function(title, icon) {

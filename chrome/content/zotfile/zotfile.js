@@ -44,6 +44,7 @@ Zotero.ZotFile = {
     tagMod:null,
     renameNotifierID:null,
     outlineNotifierID:null,
+    xhtml:'http://www.w3.org/1999/xhtml',
 
 
     // ========================= //
@@ -2234,24 +2235,60 @@ Zotero.ZotFile = {
     // FUNCTIONS: TABLET FUNCTIONS //
     // =========================== //
 
+    // https://developer.mozilla.org/en-US/Add-ons/Overlay_Extensions/XUL_School/DOM_Building_and_HTML_Insertion#Safely_Using_Remote_HTML
+    /**
+     * Safely parse an HTML fragment, removing any executable
+     * JavaScript, and return a document fragment.
+     *
+     * @param {Document} doc The document in which to create the
+     *     returned DOM tree.
+     * @param {string} html The HTML fragment to parse.
+     * @param {boolean} allowStyle If true, allow <style> nodes and
+     *     style attributes in the parsed fragment. Gecko 14+ only.
+     * @param {nsIURI} baseURI The base URI relative to which resource
+     *     URLs should be processed. Note that this will not work for
+     *     XML fragments.
+     * @param {boolean} isXML If true, parse the fragment as XML.
+     */
+    parseHTML: function(html) {
+        var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                        .getService(Components.interfaces.nsIIOService);
+        var allowStyle = true,
+            baseURI = ioService.newURI(this.xhtml, null, null),
+            isXML = false,
+            PARSER_UTILS = "@mozilla.org/parserutils;1";
+
+        // User the newer nsIParserUtils on versions that support it.
+        if (PARSER_UTILS in Components.classes) {
+            var parser = Components.classes[PARSER_UTILS]
+                                   .getService(Components.interfaces.nsIParserUtils);
+            if ("parseFragment" in parser)
+                return parser.parseFragment(html, allowStyle ? parser.SanitizerAllowStyle : 0,
+                                            !!isXML, baseURI, document.documentElement);
+        }
+
+        return Components.classes["@mozilla.org/feed-unescapehtml;1"]
+                         .getService(Components.interfaces.nsIScriptableUnescapeHTML)
+                         .parseFragment(html, !!isXML, baseURI, document.documentElement);
+    },
+
     clearInfo: function (att) {        
         try {
-            // remove new info
-            var content = att.getNote(),
-                note = document.createElement('div');
-            note.innerHTML = content;
+            var win = this.wm.getMostRecentWindow("navigator:browser"),
+                content = att.getNote().replace(/zotero:\/\//g, 'http://zotfile.com/'),
+                fragment = this.parseHTML(content),
+                note = win.document.createElementNS(this.xhtml, 'div');
+            note.appendChild(fragment);
             var p = note.querySelector("#zotfile-data");
             if (p!==null)
                 note.removeChild(p);
-            // remove old info
-            p = note.querySelectorAll("p");
-            for (var i = 0; i < p.length; i++) {
-                if(p[i].innerHTML.indexOf('lastmod{')!=-1)
-                    note.removeChild(p[i]);
-            }
-            note.innerHTML = note.innerHTML.replace(/(lastmod|mode|location|projectFolder)\{.*?\};?/g,'');
-            // save note
-            att.setNote(note.innerHTML);
+            // save content back to note
+            content = note.innerHTML
+                // remove old zotfile data
+                .replace(/(lastmod|mode|location|projectFolder)\{.*?\};?/g,'')
+                // replace links with zotero links
+                .replace(/http:\/\/zotfile.com\//g, 'zotero://');
+            att.setNote(content);
             att.save();
         }
         catch(e) {
@@ -2261,21 +2298,21 @@ Zotero.ZotFile = {
     },
 
     getInfo: function (att, key) {
+        var win = this.wm.getMostRecentWindow("navigator:browser"),
+            note = win.document.createElementNS(this.xhtml, 'div'),
+            content = att.getNote(),
+            value;
         try {
-            // create element with note content
-            var content = att.getNote(),
-                note = document.createElement('div'),
-                value;
             try {
-                note.innerHTML = content;
+                note.appendChild(this.parseHTML(content));
             }
-            catch (e){
+            catch(e) {
                 var match = content.match(/<p id="zotfile-data".+<\/p>/);
                 if (match===null)
                     match = content.match(/lastmod{.+}/);
                 if (match===null)
                     return '';
-                note.innerHTML = match[0];
+                note.appendChild(this.parseHTML(match[0]));
             }
             // get zotfile data
             var p = note.querySelector("#zotfile-data");
@@ -2301,22 +2338,17 @@ Zotero.ZotFile = {
 
     addInfo: function(att, key, value) {
         // get current content of note
-        var content = att.getNote(),
-            note = document.createElement('div'),
-            data = {},
-            htmlEncode = function(str) {
-                return document.createElement('a').appendChild( 
-                    document.createTextNode(str)).parentNode.innerHTML;
-            };
+        var win = this.wm.getMostRecentWindow("navigator:browser"),
+            content = att.getNote().replace(/zotero:\/\//g, 'http://zotfile.com/'),
+            note = win.document.createElementNS(this.xhtml, 'div'),
+            data = {};
         try {
-            note.innerHTML = content;
+            note.appendChild(this.parseHTML(content));
         }
         catch (e){
             var match = content.match(/<p id="zotfile-data".+<\/p>/);
-            if (match===null)
-                note.innerHTML = '';
-            else
-                note.innerHTML = match[0];
+            if (match!==null)
+                note.appendChild(this.parseHTML(match[0]));
         }
         // for location tag: replace destination folder with [BaseFolder]
         if(key=="location" && this.prefs.getBoolPref("tablet.dest_dir_relativePath"))
@@ -2324,13 +2356,13 @@ Zotero.ZotFile = {
         // get zotfile element
         var p = note.querySelector("#zotfile-data");
         // doesn't exists...
-        if (p===null) {            
+        if (p===null) {
             data[key] = value;
-            p = document.createElement("p");
+            p = win.document.createElementNS(this.xhtml, 'p');
             p.setAttribute('id', 'zotfile-data');
             p.setAttribute('style', 'color: #cccccc;');
             p.setAttribute('title', JSON.stringify(data));
-            p.innerHTML = '(hidden zotfile data)';
+            p.textContent = '(hidden zotfile data)';
             note.appendChild(p);
         }
         // already exists...
@@ -2338,10 +2370,9 @@ Zotero.ZotFile = {
             data = JSON.parse(p.getAttribute('title'));
             data[key] = value;
             p.setAttribute('title', JSON.stringify(data));
-            // if(key=='projectFolder') p.innerHTML = htmlEncode('(Attachment stored in tablet folder "[Basefolder]' + value + '")');
         }
         // save changes in zotero note
-        att.setNote(note.innerHTML);
+        att.setNote(note.innerHTML.replace(/http:\/\/zotfile.com\//g, 'zotero://'));
         att.save();
     },
 
@@ -3284,7 +3315,8 @@ Zotero.ZotFile = {
                 return;
             }            
             // create toc from outline
-            var toc = document.createElement('ul'),
+            var win = zz.wm.getMostRecentWindow("navigator:browser"),
+                toc = win.document.createElementNS(zz.xhtml, 'ul'),
                 key = att.key,
                 lib = att.libraryID===null ? 0 : att.libraryID,
                 href = 'zotero://open-pdf/%(lib)_%(key)/%(page)',
@@ -3295,20 +3327,20 @@ Zotero.ZotFile = {
             toc.setAttribute('style', 'list-style-type: none; padding-left:0px');
             toc.setAttribute('id', 'toc');
             var create_toc = function(entry) {
-                var li = document.createElement('li'),
-                    a  = document.createElement('a');
+                var li = win.document.createElementNS(zz.xhtml, 'li'),
+                    a  = win.document.createElementNS(zz.xhtml, 'a');
                 if (!firstElement)
                     li.setAttribute('style', entry.items.length>0 ? 'padding-top:8px' : 'padding-top:4px');
                 firstElement = false;
                 a.setAttribute('href', zz.str_format(href, {'lib': lib, 'key': key, 'page': entry.page + 1}));
-                a.innerHTML = Zotero.Utilities.htmlSpecialChars(entry.title);
+                a.textContent = Zotero.Utilities.htmlSpecialChars(entry.title);
                 if(entry.page!==undefined)
                     li.appendChild(a);
                 if(entry.page!==undefined && entry.items.length>0)
                     lvl++;
                 // add subitems
                 if(entry.items.length>0 && lvl <= zz.prefs.getIntPref('pdfOutline.tocDepth')) {
-                    var ul = document.createElement('ul');
+                    var ul = win.document.createElementNS(zz.xhtml, 'ul');
                     ul.setAttribute('style', zz.str_format(style, {'padding': 12*(lvl-1)}));        
                     entry.items.forEach(create_toc, ul);
                     li.appendChild(ul);
@@ -3319,22 +3351,15 @@ Zotero.ZotFile = {
             };
             outline.forEach(create_toc, toc);
             // add toc to note
-            var note = document.createElement('div'),
-                title = document.createElement('p'),
-                content = att.getNote();
-            try {
-                note.innerHTML = content;
-            }
-            catch (e){
-                var match = content.match(/<p id="zotfile-data".+<\/p>/);
-                if (match===null)
-                    note.innerHTML = '';
-                else
-                    note.innerHTML = match[0];
-            }
+            var note = win.document.createElementNS(zz.xhtml, 'div'),
+                title = win.document.createElementNS(zz.xhtml, 'p'),
+                content = att.getNote().replace(/zotero:\/\//g, 'http://zotfile.com/');
+            note.appendChild(zz.parseHTML(content));
             // title
             title.setAttribute('id', 'title');
-            title.innerHTML = '<strong>Contents</strong>'
+            var txt = win.document.createElementNS(zz.xhtml, 'strong');
+            txt.textContent = 'Contents';
+            title.appendChild(txt);
             // remove previous title and toc
             var pre_toc = note.querySelector('#toc');
             if (pre_toc!==null) note.removeChild(pre_toc);
@@ -3344,7 +3369,7 @@ Zotero.ZotFile = {
             note.insertBefore(toc, note.firstChild);
             note.insertBefore(title, note.firstChild);
             // save toc in note
-            att.setNote(note.innerHTML);
+            att.setNote(note.innerHTML.replace(/http:\/\/zotfile.com\//g, 'zotero://'));
             att.save();
             // done with this att...            
             itemProgress.setIcon('chrome://zotero/skin/tick.png');
