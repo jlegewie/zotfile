@@ -17,8 +17,9 @@
 /* globals PDFJS, isArrayBuffer, error, combineUrl, createPromiseCapability,
            StatTimer, globalScope, MessageHandler, info, FontLoader, Util, warn,
            Promise, PasswordResponses, PasswordException, InvalidPDFException,
-           MissingPDFException, UnknownErrorException, FontFace, loadJpegStream,
-           createScratchCanvas, CanvasGraphics, UnexpectedResponseException */
+           MissingPDFException, UnknownErrorException, FontFaceObject,
+           loadJpegStream, createScratchCanvas, CanvasGraphics,
+           UnexpectedResponseException */
 
 'use strict';
 
@@ -292,9 +293,19 @@ var PDFDocumentProxy = (function PDFDocumentProxyClosure() {
     /**
      * @return {Promise} A promise that is resolved with a lookup table for
      * mapping named destinations to reference numbers.
+     *
+     * This can be slow for large documents: use getDestination instead
      */
     getDestinations: function PDFDocumentProxy_getDestinations() {
       return this.transport.getDestinations();
+    },
+    /**
+     * @param {string} id The named destination to get.
+     * @return {Promise} A promise that is resolved with all information
+     * of the given named destination.
+     */
+    getDestination: function PDFDocumentProxy_getDestination(id) {
+      return this.transport.getDestination(id);
     },
     /**
      * @return {Promise} A promise that is resolved with a lookup table for
@@ -963,7 +974,7 @@ var WorkerTransport = (function WorkerTransportClosure() {
               this.commonObjs.resolve(id, error);
               break;
             } else {
-              font = new FontFace(exportedData);
+              font = new FontFaceObject(exportedData);
             }
 
             FontLoader.bind(
@@ -1076,6 +1087,7 @@ var WorkerTransport = (function WorkerTransportClosure() {
 
     fetchDocument: function WorkerTransport_fetchDocument(source) {
       source.disableAutoFetch = PDFJS.disableAutoFetch;
+      source.disableStream = PDFJS.disableStream;
       source.chunkedViewerLoading = !!this.pdfDataRangeTransport;
       this.messageHandler.send('GetDocRequest', {
         source: source,
@@ -1125,6 +1137,10 @@ var WorkerTransport = (function WorkerTransportClosure() {
 
     getDestinations: function WorkerTransport_getDestinations() {
       return this.messageHandler.sendWithPromise('GetDestinations', null);
+    },
+
+    getDestination: function WorkerTransport_getDestination(id) {
+      return this.messageHandler.sendWithPromise('GetDestination', { id: id } );
     },
 
     getAttachments: function WorkerTransport_getAttachments() {

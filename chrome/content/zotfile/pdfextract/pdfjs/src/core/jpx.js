@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /* globals ArithmeticDecoder, globalScope, log2, readUint16, readUint32,
-           warn */
+           info, warn */
 
 'use strict';
 
@@ -63,17 +63,51 @@ var JpxImage = (function JpxImageClosure() {
         var dataLength = lbox - headerSize;
         var jumpDataLength = true;
         switch (tbox) {
-          case 0x6A501A1A: // 'jP\032\032'
-            // TODO
-            break;
           case 0x6A703268: // 'jp2h'
             jumpDataLength = false; // parsing child boxes
             break;
           case 0x636F6C72: // 'colr'
-            // TODO
+            // Colorspaces are not used, the CS from the PDF is used.
+            var method = data[position];
+            var precedence = data[position + 1];
+            var approximation = data[position + 2];
+            if (method === 1) {
+              // enumerated colorspace
+              var colorspace = readUint32(data, position + 3);
+              switch (colorspace) {
+                case 16: // this indicates a sRGB colorspace
+                case 17: // this indicates a grayscale colorspace
+                case 18: // this indicates a YUV colorspace
+                  break;
+                default:
+                  warn('Unknown colorspace ' + colorspace);
+                  break;
+              }
+            } else if (method === 2) {
+              info('ICC profile not supported');
+            }
             break;
           case 0x6A703263: // 'jp2c'
             this.parseCodestream(data, position, position + dataLength);
+            break;
+          case 0x6A502020: // 'jP\024\024'
+            if (0x0d0a870a !== readUint32(data, position)) {
+              warn('Invalid JP2 signature');
+            }
+            break;
+          // The following header types are valid but currently not used:
+          case 0x6A501A1A: // 'jP\032\032'
+          case 0x66747970: // 'ftyp'
+          case 0x72726571: // 'rreq'
+          case 0x72657320: // 'res '
+          case 0x69686472: // 'ihdr'
+            break;
+          default:
+            var headerType = String.fromCharCode((tbox >> 24) & 0xFF,
+                                                 (tbox >> 16) & 0xFF,
+                                                 (tbox >> 8) & 0xFF,
+                                                 tbox & 0xFF);
+            warn('Unsupported header type ' + tbox + ' (' + headerType + ')');
             break;
         }
         if (jumpDataLength) {
@@ -446,6 +480,23 @@ var JpxImage = (function JpxImageClosure() {
     // Section B.6 Division resolution to precincts
     var precinctWidth = 1 << dimensions.PPx;
     var precinctHeight = 1 << dimensions.PPy;
+    // Jasper introduces codeblock groups for mapping each subband codeblocks
+    // to precincts. Precinct partition divides a resolution according to width
+    // and height parameters. The subband that belongs to the resolution level
+    // has a different size than the level, unless it is the zero resolution.
+
+    // From Jasper documentation: jpeg2000.pdf, section K: Tier-2 coding:
+    // The precinct partitioning for a particular subband is derived from a
+    // partitioning of its parent LL band (i.e., the LL band at the next higher
+    // resolution level)... The LL band associated with each resolution level is
+    // divided into precincts... Each of the resulting precinct regions is then
+    // mapped into its child subbands (if any) at the next lower resolution
+    // level. This is accomplished by using the coordinate transformation
+    // (u, v) = (ceil(x/2), ceil(y/2)) where (x, y) and (u, v) are the
+    // coordinates of a point in the LL band and child subband, respectively.
+    var isZeroRes = resolution.resLevel === 0;
+    var precinctWidthInSubband = 1 << (dimensions.PPx + (isZeroRes ? 0 : -1));
+    var precinctHeightInSubband = 1 << (dimensions.PPy + (isZeroRes ? 0 : -1));
     var numprecinctswide = (resolution.trx1 > resolution.trx0 ?
       Math.ceil(resolution.trx1 / precinctWidth) -
       Math.floor(resolution.trx0 / precinctWidth) : 0);
@@ -453,18 +504,15 @@ var JpxImage = (function JpxImageClosure() {
       Math.ceil(resolution.try1 / precinctHeight) -
       Math.floor(resolution.try0 / precinctHeight) : 0);
     var numprecincts = numprecinctswide * numprecinctshigh;
-    var precinctXOffset = Math.floor(resolution.trx0 / precinctWidth) *
-                          precinctWidth;
-    var precinctYOffset = Math.floor(resolution.try0 / precinctHeight) *
-                          precinctHeight;
+
     resolution.precinctParameters = {
-      precinctXOffset: precinctXOffset,
-      precinctYOffset: precinctYOffset,
       precinctWidth: precinctWidth,
       precinctHeight: precinctHeight,
       numprecinctswide: numprecinctswide,
       numprecinctshigh: numprecinctshigh,
-      numprecincts: numprecincts
+      numprecincts: numprecincts,
+      precinctWidthInSubband: precinctWidthInSubband,
+      precinctHeightInSubband: precinctHeightInSubband
     };
   }
   function buildCodeblocks(context, subband, dimensions) {
@@ -491,21 +539,29 @@ var JpxImage = (function JpxImageClosure() {
           tbx1: codeblockWidth * (i + 1),
           tby1: codeblockHeight * (j + 1)
         };
-        // calculate precinct number
-        var pi = Math.floor((codeblock.tbx0 -
-                 precinctParameters.precinctXOffset) /
-                 precinctParameters.precinctWidth);
-        var pj = Math.floor((codeblock.tby0 -
-                 precinctParameters.precinctYOffset) /
-                 precinctParameters.precinctHeight);
-        precinctNumber = pj + pi * precinctParameters.numprecinctswide;
+
         codeblock.tbx0_ = Math.max(subband.tbx0, codeblock.tbx0);
         codeblock.tby0_ = Math.max(subband.tby0, codeblock.tby0);
         codeblock.tbx1_ = Math.min(subband.tbx1, codeblock.tbx1);
         codeblock.tby1_ = Math.min(subband.tby1, codeblock.tby1);
+
+        // Calculate precinct number for this codeblock, codeblock position
+        // should be relative to its subband, use actual dimension and position
+        // See comment about codeblock group width and height
+        var pi = Math.floor((codeblock.tbx0_ - subband.tbx0) /
+          precinctParameters.precinctWidthInSubband);
+        var pj = Math.floor((codeblock.tby0_ - subband.tby0) /
+          precinctParameters.precinctHeightInSubband);
+        precinctNumber = pi + (pj * precinctParameters.numprecinctswide);
+
         codeblock.precinctNumber = precinctNumber;
         codeblock.subbandType = subband.type;
         codeblock.Lblock = 3;
+
+        if (codeblock.tbx1_ <= codeblock.tbx0_ ||
+            codeblock.tby1_ <= codeblock.tby0_) {
+          continue;
+        }
         codeblocks.push(codeblock);
         // building precinct for the sub-band
         var precinct = precincts[precinctNumber];
@@ -662,6 +718,7 @@ var JpxImage = (function JpxImageClosure() {
         resolution.try0 = Math.ceil(component.tcy0 / scale);
         resolution.trx1 = Math.ceil(component.tcx1 / scale);
         resolution.try1 = Math.ceil(component.tcy1 / scale);
+        resolution.resLevel = r;
         buildPrecincts(context, resolution, blocksDimensions);
         resolutions.push(resolution);
 
@@ -788,11 +845,11 @@ var JpxImage = (function JpxImageClosure() {
     var tile = context.tiles[tileIndex];
     var packetsIterator = tile.packetsIterator;
     while (position < dataLength) {
-      var packet = packetsIterator.nextPacket();
+      alignToByte();
       if (!readBits(1)) {
-        alignToByte();
         continue;
       }
+      var packet = packetsIterator.nextPacket();
       var layerNumber = packet.layerNumber;
       var queue = [], codeblock;
       for (var i = 0, ii = packet.codeblocks.length; i < ii; i++) {
@@ -803,13 +860,13 @@ var JpxImage = (function JpxImageClosure() {
         var codeblockIncluded = false;
         var firstTimeInclusion = false;
         var valueReady;
-        if ('included' in codeblock) {
+        if (codeblock['included'] !== undefined) {
           codeblockIncluded = !!readBits(1);
         } else {
           // reading inclusion tree
           precinct = codeblock.precinct;
           var inclusionTree, zeroBitPlanesTree;
-          if ('inclusionTree' in precinct) {
+          if (precinct['inclusionTree'] !== undefined) {
             inclusionTree = precinct.inclusionTree;
           } else {
             // building inclusion and zero bit-planes trees
@@ -874,7 +931,7 @@ var JpxImage = (function JpxImageClosure() {
       while (queue.length > 0) {
         var packetItem = queue.shift();
         codeblock = packetItem.codeblock;
-        if (!('data' in codeblock)) {
+        if (codeblock['data'] === undefined) {
           codeblock.data = [];
         }
         codeblock.data.push({
@@ -904,7 +961,7 @@ var JpxImage = (function JpxImageClosure() {
       if (blockWidth === 0 || blockHeight === 0) {
         continue;
       }
-      if (!('data' in codeblock)) {
+      if (codeblock['data'] === undefined) {
         continue;
       }
 
@@ -1159,10 +1216,10 @@ var JpxImage = (function JpxImageClosure() {
     var tile = context.tiles[tileIndex];
     for (var c = 0; c < componentsCount; c++) {
       var component = tile.components[c];
-      var qcdOrQcc = (c in context.currentTile.QCC ?
+      var qcdOrQcc = (context.currentTile.QCC[c] !== undefined ?
         context.currentTile.QCC[c] : context.currentTile.QCD);
       component.quantizationParameters = qcdOrQcc;
-      var codOrCoc = (c in context.currentTile.COC ?
+      var codOrCoc = (context.currentTile.COC[c] !== undefined  ?
         context.currentTile.COC[c] : context.currentTile.COD);
       component.codingStyleParameters = codOrCoc;
     }
@@ -1191,7 +1248,7 @@ var JpxImage = (function JpxImageClosure() {
         while (currentLevel < this.levels.length) {
           level = this.levels[currentLevel];
           var index = i + j * level.width;
-          if (index in level.items) {
+          if (level.items[index] !== undefined) {
             value = level.items[index];
             break;
           }

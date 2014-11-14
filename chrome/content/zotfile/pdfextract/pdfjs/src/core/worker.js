@@ -138,7 +138,7 @@ var WorkerMessageHandler = PDFJS.WorkerMessageHandler = {
           }
         },
 
-        onProgressiveData: PDFJS.disableStream ? null :
+        onProgressiveData: source.disableStream ? null :
             function onProgressiveData(chunk) {
           if (!pdfManager) {
             cachedChunks.push(chunk);
@@ -322,6 +322,12 @@ var WorkerMessageHandler = PDFJS.WorkerMessageHandler = {
     handler.on('GetDestinations',
       function wphSetupGetDestinations(data) {
         return pdfManager.ensureCatalog('destinations');
+      }
+    );
+
+    handler.on('GetDestination',
+      function wphSetupGetDestination(data) {
+        return pdfManager.ensureCatalog('getDestination', [ data.id ]);
       }
     );
 
