@@ -69,7 +69,7 @@ Contributions preferably through pull requests are welcome!
 - Improved renaming function (avoids re-indexing of linked attachments)
 - New wildcards for editors (`%d`, `%D`, `%L`, `%l`)
 - Fix bug with unnecessary suffix after multiple renames of same file
-- improved extraction of annotations
+- further improvements for the extraction of annotations in 4.1
 - truncate title after '!'
 
 #### Changes in 3.1
