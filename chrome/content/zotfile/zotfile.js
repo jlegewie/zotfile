@@ -3742,7 +3742,7 @@ Zotero.ZotFile = {
                     var format_markup = anno.subtype == "Highlight" ? format_highlight : format_underline;
                     for (var k = 0; k < repl.length; k++)
                         anno.markup = anno.markup.replace(reg[k], repl[k].replacement);
-                    var markup_formated = zz.str_format(format_markup, {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'color': color, 'color_category': color_category_hex});
+                    var markup_formated = zz.str_format(format_markup, {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title, 'color': color, 'color_category': color_category_hex});
                     if(!separate_color_notes)
                         note += markup_formated;
                     else {
@@ -3756,12 +3756,12 @@ Zotero.ZotFile = {
                   (!anno.markup || this.strDistance(anno.content,anno.markup)>0.15 )) {                    
                     var content = anno.content.replace(/(\r\n|\n|\r)/gm,"<br>");
                     // '<p><i>%(content) (<a href="%(uri)">note on p.%(page)</a>)</i></p><br>'
-                    var content_formated = zz.str_format(format_note, {'content': content, 'cite': link, 'page': page, 'uri': uri,'color': color, 'color_category': color_category_hex});
+                    var content_formated = zz.str_format(format_note, {'content': content, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title,'color': color, 'color_category': color_category_hex});
                     if(!separate_color_notes)
                         note += content_formated;
                     else {
                         if(!(color_category in note))
-                            note[color_category] = zz.str_format(format_title_color, {'title': str_title, 'date': date_str, 'color': color_category});
+                            note[color_category] = zz.str_format(format_title_color, {'title': str_title, 'date': date_str, 'label': anno.title, 'color': color_category});
                         note[color_category] += content_formated;
                     }
                 }

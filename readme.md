@@ -58,10 +58,10 @@ Contributions preferably through pull requests are welcome!
 
     Zotfile now extracts the color of annotations. The color can be used in two ways: (a) To format extracted annotations: Just add some css styling to the hidden options for formatting. For example, change `formatAnnotationHighlight` to `<p style="background-color:%(color);">"%(content)" (%(cite))</p>`. The wildcard `%(color)` is replaced by the annotation color (you can also use %(color_category) for the color category---reddish is red etc). This styling has the same effect but looks a little better: `<p><span style="background-color:%(color);">"%(content)"</span> (%(cite))</p>` (b) To create separate notes for color categories: The hidden option `pdfExtraction.colorNotes` allows you to create a separate note for each color category (yellow, red, green etc annotations).
 
-- Improved formatting of extracted annotations with hidden options (`formatNoteTitle`, `formatAnnotationNote`, `formatAnnotationHighlight`, `formatAnnotationUnderline`)
+- **Improved formatting of extracted annotations with hidden options** (`formatNoteTitle`, `formatAnnotationNote`, `formatAnnotationHighlight`, `formatAnnotationUnderline`)
 
-    WARNING: I removed the old settings. You will have to change the new settings if you want to customize the format of the note with extracted annotations.
-  
+    The available wildcards are `%(content)` for the highlights text, `%(cite)` for the in-text citation of the zotero item, `%(page)` for the page of the annotation, `%(uri)` for the uri that open the pdf on the correct page, `%(label)` for the text label displayed in the title bar of the annotation pop-up commonly used for the user who added the annotation, and `%(color)`/`%(color_category)` for the annotation color as described above. The default for `formatAnnotationHighlight` is `<p>"%(content)" (%(cite))</p>`. WARNING: I removed the old settings. You will have to change the new settings if you want to customize the format of the note with extracted annotations.
+
 - Improved default PDF reader detection on Windows (thanks to aurimasv)
 - Hidden option `pdfExtraction.replacements` for custom, regular expression-based replacements in extracted annotations. This can be useful because some pdfs contain 'broken' characters. For example, `[{"regex":" ?\u00f0", "replacement": " ("}]` replaces the unicode character `ð` with `(` to fix a problem in pdfs from a certain publisher. In this case, `ð` is a problem with the pdf and not with zotfile's extraction. The hidden option can be used to fix it.
 - Information for attachments on the tablet is now hidden in the attachment note
