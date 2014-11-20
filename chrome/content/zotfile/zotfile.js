@@ -1506,7 +1506,7 @@ Zotero.ZotFile = {
         // define additional fields
         var addFields = {
             'itemType': Zotero.ItemTypes.getLocalizedString(item_type),
-            'titleFormated': this.truncateTitle(item.getField("title")),
+            'titleFormated': this.truncateTitle(item.getField("title", false, true)),
             'author': authors[0],
             'authorLastF': authors[1],
             'authorInitials': authors[2],
@@ -1520,7 +1520,7 @@ Zotero.ZotFile = {
             var value = '',
                 property = (item_type_name in map) ? map[item_type_name] : map['default'];
             if(typeof(property)=='string')
-                value = (property in addFields) ? addFields[property] : item.getField(property);
+                value = (property in addFields) ? addFields[property] : item.getField(property, false, true);
             if(typeof(property)=='object')
                 value = regexWildcard(item, property);
             return value;
@@ -1531,7 +1531,7 @@ Zotero.ZotFile = {
                 output = '';
             // get field
             if (typeof(field)=='string')
-                output = (field in addFields) ? addFields[field] : item.getField(field);
+                output = (field in addFields) ? addFields[field] : item.getField(field, false, true);
             if (typeof(field)=='object')
                 output = itemtypeWildcard(item, field);
             // operations
@@ -1576,7 +1576,7 @@ Zotero.ZotFile = {
                 value = '';
             // if string, get field from zotero or using additional fields
             if(typeof(property)=='string')
-                value = (property in addFields) ? addFields[property] : item.getField(property);
+                value = (property in addFields) ? addFields[property] : item.getField(property, false, true);
             if(typeof(property)=='object') {
                 // javascript object with item type specific field names (e.g. '%w')
                    /* Note: 'default' key defines default, only include item types that are different */
