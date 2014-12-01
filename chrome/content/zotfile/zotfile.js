@@ -2339,6 +2339,9 @@ Zotero.ZotFile = {
             }
             // for location tag: replace [BaseFolder] with destination folder
             if(key=="location") value = value.replace("[BaseFolder]",this.prefs.getCharPref("tablet.dest_dir"));
+            // for location tag: correct window/mac file system
+            if(key=="location" && Zotero.isWin) value = value.replace('/', '\\');
+            if(key=="location" && (Zotero.isMac || Zotero.isLinux)) value = value.replace('\\', '/');
             // return
             return(value);
         }
