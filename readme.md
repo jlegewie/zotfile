@@ -116,6 +116,7 @@ Other small fixes mainly for Italian translation, restriction of saved searches 
 - Fix alert window (headline was missing in Zotero 4)
 - Fix automatic renaming option "Only ask if..."
 - Fix for zotfile item menu on Zotero as a tab
+- Fix problem with sending/getting files from tablet when using both unix/mac and windows
 
 #### Changes in 2.3.4
 - compatible with Zotero 4.0
