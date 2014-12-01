@@ -2440,8 +2440,17 @@ Zotero.ZotFile = {
     getTabletFile: function(att) {
         try {
             // get file depending on mode
-            var file=this.getInfo(att,"mode")==1 ? this.createFile(this.getInfo(att,"location")) : att.getFile();
-            return(file);
+            if(this.getInfo(att, "mode")==1) {
+                var loc = this.getInfo(att, "location");
+                if(!this.fileExists(loc)) {
+                    this.infoWindow('ZotFile Error', 'The file "' + loc + '" does not exists.');
+                    return(false);
+                }
+                return(this.createFile(loc));
+            }
+            else {
+                return(att.getFile());
+            }
         }
         catch (err) {
             return(false);
