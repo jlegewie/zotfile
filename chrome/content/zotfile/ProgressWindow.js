@@ -45,7 +45,7 @@ Zotero.ZotFile.ProgressWindow = function(_window){
 		_progressWindow.addEventListener("load", _onWindowLoaded, false);
 		// _progressWindow.addEventListener("mouseover", _onMouseOver, false);
 		// _progressWindow.addEventListener("mouseout", _onMouseOut, false);
-		// _progressWindow.addEventListener("mouseup", _onMouseUp, false);
+		_progressWindow.addEventListener("mouseup", _onMouseUp, false);
 		
 		_windowLoading = true;
 		
