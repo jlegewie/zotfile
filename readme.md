@@ -34,7 +34,7 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
-#### Changes in 4.0 and 4.1
+#### Changes in 4.x (4.0, 4.1 and 4.1.1)
 
 - **Goto annotation in pdf**
 
@@ -71,6 +71,7 @@ Contributions preferably through pull requests are welcome!
 - Fix bug with unnecessary suffix after multiple renames of same file
 - further improvements for the extraction of annotations in 4.1
 - truncate title after '!'
+- Add .docx files to the default file types
 
 #### Changes in 3.1
 

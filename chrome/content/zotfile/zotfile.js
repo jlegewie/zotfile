@@ -53,7 +53,7 @@ Zotero.ZotFile = {
 
     versionChanges: function (currentVersion) {
         // open webpage
-        var open_page = ["4.1", "4.0", "3.3", "3.2", "3.1", "2.0", "2.3"];
+        var open_page = ["4.1.1", "4.1", "4.0", "3.3", "3.2", "3.1", "2.0", "2.3"];
         var i, j;
         var searches, conditions;
 
