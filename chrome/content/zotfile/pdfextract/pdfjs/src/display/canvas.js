@@ -1666,12 +1666,10 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       var textHScale = current.textHScale * fontDirection;
       var fontMatrix = current.fontMatrix || FONT_IDENTITY_MATRIX;
       var glyphsLength = glyphs.length;
-      var isTextInvisible =
-        current.textRenderingMode === TextRenderingMode.INVISIBLE;
       var i, glyph, width;
       var sw, spaceWidthProj, font2dev = [];
 
-      if (isTextInvisible || fontSize === 0) {
+      if (fontSize === 0) {
         return;
       }
 
