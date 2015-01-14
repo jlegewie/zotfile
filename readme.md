@@ -34,29 +34,7 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
-#### Changes in 3.3
-
-- **Get Table of Contents from PDF**
-
-    Similar to [Mendeley](http://blog.mendeley.com/progress-update/desktop-contents-tables-and-figures/), ZotFile can now get the table of contents from PDF and save it with links to the correct page in attachment notes. Simply click on the the desired section and zotfile opens the pdf on the correct page. Zotfile automatically extracts the table of content for all newly added pdf attachments (disable with `zotfile.pdfOutline.getToc` setting) or you can manually extract the toc using 'Manage Attachments->Get Table of Contents' (remove menu item with `zotfile.pdfOutline.menuItem` setting). This feature only works for pdfs that have an embedded table of content. Unfortunately, many don't. 
-
-- **Tablet status is now shown in right-pane with other attachment information**
-
-    The right pane now includes a row with the current tablet status such as `No` for files that are not on the tablet or `[Basefolder]` for files that are in the tablet base-folder. Click on this information to change the tablet status and open or reveal the file on the tablet (very convenient because double-clicking on the attachment opens the imported zotero attachment and not the file on the tablet).
-
-- **Improved Extraction of Annotations** (mainly for wrong word spacing)
-
-- Improved customization of note for extracted annotations with hidden options (`formatNoteTitle`, `formatAnnotationNote`, `formatAnnotationHighlight`, `formatAnnotationUnderline`)
-
-    WARNING: I removed the old settings. You will have to change the new settings if you want to customize the format of the note with extracted annotations.
-  
-- Improved default PDF reader detection on Windows (thanks to aurimasv)
-- Hidden option `pdfExtraction.replacements` for custom, regular expression-based replacements in extracted annotations. This can be useful because some pdfs contain 'broken' characters. For example, `[{"regex":" ?\u00f0", "replacement": " ("}]` replaces the unicode character `ð` with `(` to fix a problem in pdfs from a certain publisher. In this case, `ð` is a problem with the pdf and not with zotfile's extraction. The hidden option can be used to fix it.
-- Information for attachments on the tablet is now hidden in the attachment note
-
-
-
-#### Changes in 3.2
+#### Changes in 4.x (4.0, 4.1 and 4.1.1)
 
 - **Goto annotation in pdf**
 
@@ -64,12 +42,36 @@ Contributions preferably through pull requests are welcome!
 
 - **Improved extraction of annotation**
 
-    This version includes three improvements for the extraction of annotations. First, the extraction is now based on the most recent pdf.js version ([here](https://github.com/jlegewie/pdf.js/tree/extract-v3) is my fork with the modified version of [pdf.js](https://github.com/mozilla/pdf.js) used in zotfile). With this update, zotfile should work with more pdfs. Second, the extraction is now about 40-60% faster (depending on the pdf) thanks to some improvements in the extraction code. Third, the extraction now runs in the background so that Zotero is not blocked while annotations are extracted. 
+    This version includes four improvements for the extraction of annotations. First, the new version greatly improves the detection of correct spaces between words. Second, the extraction is now based on the most recent pdf.js version ([here](https://github.com/jlegewie/pdf.js/tree/extract-v3) is my fork with the modified version of [pdf.js](https://github.com/mozilla/pdf.js) used in zotfile). With this update, zotfile should work with more pdfs. Second, the extraction is now about 40-60% faster (depending on the pdf) thanks to some improvements in the extraction code. Third, the extraction now runs in the background so that Zotero is not blocked while annotations are extracted. 
 
+- **Get Table of Contents from PDF**
+
+    Similar to [Mendeley](http://blog.mendeley.com/progress-update/desktop-contents-tables-and-figures/), ZotFile can now get the table of contents from PDF and save it with links to the correct page in attachment notes. Simply click on the the desired section and zotfile opens the pdf on the correct page. Zotfile automatically extracts the table of content for all newly added pdf attachments (disable with `zotfile.pdfOutline.getToc` setting) or you can manually extract the toc using 'Manage Attachments->Get Table of Contents' (remove menu item with `zotfile.pdfOutline.menuItem` setting). This feature only works for pdfs that have an embedded table of content. Unfortunately, many don't. 
+
+- **Support for sub-folders based on collection path** (via wildcard %c) (thanks to [simpzan](https://github.com/simpzan))
+
+- **Tablet status is now shown in right-pane with other attachment information**
+
+    The right pane now includes a row with the current tablet status such as `No` for files that are not on the tablet or `[Basefolder]` for files that are in the tablet base-folder. Click on this information to change the tablet status and open or reveal the file on the tablet (very convenient because double-clicking on the attachment opens the imported zotero attachment and not the file on the tablet).
+
+- **Extract Annotation Color** (thanks to [RAG2ko](https://github.com/RAG2ko))
+
+    Zotfile now extracts the color of annotations. The color can be used in two ways: (a) To format extracted annotations: Just add some css styling to the hidden options for formatting. For example, change `formatAnnotationHighlight` to `<p style="background-color:%(color);">"%(content)" (%(cite))</p>`. The wildcard `%(color)` is replaced by the annotation color (you can also use %(color_category) for the color category---reddish is red etc). This styling has the same effect but looks a little better: `<p><span style="background-color:%(color);">"%(content)"</span> (%(cite))</p>` (b) To create separate notes for color categories: The hidden option `pdfExtraction.colorNotes` allows you to create a separate note for each color category (yellow, red, green etc annotations).
+
+- **Improved formatting of extracted annotations with hidden options** (`formatNoteTitle`, `formatAnnotationNote`, `formatAnnotationHighlight`, `formatAnnotationUnderline`)
+
+    The available wildcards are `%(content)` for the highlights text, `%(cite)` for the in-text citation of the zotero item, `%(page)` for the page of the annotation, `%(uri)` for the uri that open the pdf on the correct page, `%(label)` for the text label displayed in the title bar of the annotation pop-up commonly used for the user who added the annotation, and `%(color)`/`%(color_category)` for the annotation color as described above. The default for `formatAnnotationHighlight` is `<p>"%(content)" (%(cite))</p>`. WARNING: I removed the old settings. You will have to change the new settings if you want to customize the format of the note with extracted annotations.
+
+- Improved default PDF reader detection on Windows (thanks to aurimasv)
+- Hidden option `pdfExtraction.replacements` for custom, regular expression-based replacements in extracted annotations. This can be useful because some pdfs contain 'broken' characters. For example, `[{"regex":" ?\u00f0", "replacement": " ("}]` replaces the unicode character `ð` with `(` to fix a problem in pdfs from a certain publisher. In this case, `ð` is a problem with the pdf and not with zotfile's extraction. The hidden option can be used to fix it.
+- Information for attachments on the tablet is now hidden in the attachment note
 - Improved information windows
 - Improved renaming function (avoids re-indexing of linked attachments)
 - New wildcards for editors (`%d`, `%D`, `%L`, `%l`)
 - Fix bug with unnecessary suffix after multiple renames of same file
+- further improvements for the extraction of annotations in 4.1
+- truncate title after '!'
+- Add .docx files to the default file types
 
 #### Changes in 3.1
 
@@ -115,6 +117,7 @@ Other small fixes mainly for Italian translation, restriction of saved searches 
 - Fix alert window (headline was missing in Zotero 4)
 - Fix automatic renaming option "Only ask if..."
 - Fix for zotfile item menu on Zotero as a tab
+- Fix problem with sending/getting files from tablet when using both unix/mac and windows
 
 #### Changes in 2.3.4
 - compatible with Zotero 4.0

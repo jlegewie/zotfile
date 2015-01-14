@@ -43,8 +43,8 @@ Zotero.ZotFile.ProgressWindow = function(_window){
 				"", "chrome,dialog=no,titlebar=no,popup=yes", null);
 		}
 		_progressWindow.addEventListener("load", _onWindowLoaded, false);
-		_progressWindow.addEventListener("mouseover", _onMouseOver, false);
-		_progressWindow.addEventListener("mouseout", _onMouseOut, false);
+		// _progressWindow.addEventListener("mouseover", _onMouseOver, false);
+		// _progressWindow.addEventListener("mouseout", _onMouseOut, false);
 		_progressWindow.addEventListener("mouseup", _onMouseUp, false);
 		
 		_windowLoading = true;
@@ -259,7 +259,7 @@ Zotero.ZotFile.ProgressWindow = function(_window){
 	});
 
 	this.ItemProgress.prototype.setTitle = _deferUntilWindowLoad(function(title) {
-		this._itemText.innerHTML = title;
+		this._itemText.textContent = title;
 	});
 
 	this.ItemProgress.prototype.complete = _deferUntilWindowLoad(function(title, icon) {

@@ -7,7 +7,7 @@ RELEASE:=$(shell xsltproc version.xsl install.xml)
 zotfile-fx.xpi: FORCE
 	rm -rf $@
 	xsltproc removeupdateurl.xsl install.xml > install.rdf
-	zip -r $@ chrome chrome.manifest defaults install.rdf
+	zip -r $@ chrome chrome.manifest defaults install.rdf -x \*.DS_Store
 
 zotfile-github.xpi: FORCE
 	rm -rf $@

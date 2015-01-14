@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* globals assertWellFormed, calculateMD5, Catalog, Dict, error, info, isArray,
-           isArrayBuffer, isName, isStream, isString, LegacyPromise,
+/* globals assert, calculateMD5, Catalog, Dict, error, info, isArray,
+           isArrayBuffer, isName, isStream, isString, createPromiseCapability,
            Linearization, NullStream, PartialEvaluator, shadow, Stream, Lexer,
            StreamsSequenceStream, stringToPDFString, stringToBytes, Util, XRef,
            MissingDataException, Promise, Annotation, ObjectLoader, OperatorList
@@ -68,7 +68,7 @@ var Page = (function PageClosure() {
       // present, but can be empty. Some document omit it still. In this case
       // return an empty dictionary:
       if (value === undefined) {
-        value = new Dict();
+        value = Dict.empty;
       }
       return shadow(this, 'resources', value);
     },
@@ -141,32 +141,21 @@ var Page = (function PageClosure() {
       return stream;
     },
 
-    loadResources: function(keys) {
+    loadResources: function Page_loadResources(keys) {
       if (!this.resourcesPromise) {
         // TODO: add async getInheritedPageProp and remove this.
         this.resourcesPromise = this.pdfManager.ensure(this, 'resources');
       }
-      var promise = new LegacyPromise();
-      this.resourcesPromise.then(function resourceSuccess() {
+      return this.resourcesPromise.then(function resourceSuccess() {
         var objectLoader = new ObjectLoader(this.resources.map,
                                             keys,
                                             this.xref);
-        objectLoader.load().then(function objectLoaderSuccess() {
-          promise.resolve();
-        });
+        return objectLoader.load();
       }.bind(this));
-      return promise;
     },
 
     getOperatorList: function Page_getOperatorList(handler, intent) {
       var self = this;
-      var promise = new LegacyPromise();
-
-      function reject(e) {
-        promise.reject(e);
-      }
-
-      var pageListPromise = new LegacyPromise();
 
       var pdfManager = this.pdfManager;
       var contentStreamPromise = pdfManager.ensure(this, 'getContentStream',
@@ -188,9 +177,8 @@ var Page = (function PageClosure() {
                                                   this.idCounters,
                                                   this.fontCache);
 
-      var dataPromises = Promise.all([contentStreamPromise, resourcesPromise],
-                                     reject);
-      dataPromises.then(function(data) {
+      var dataPromises = Promise.all([contentStreamPromise, resourcesPromise]);
+      var pageListPromise = dataPromises.then(function(data) {
         var contentStream = data[0];
         var opList = new OperatorList(intent, handler, self.pageIndex);
 
@@ -199,30 +187,30 @@ var Page = (function PageClosure() {
           pageIndex: self.pageIndex,
           intent: intent
         });
-        partialEvaluator.getOperatorList(contentStream, self.resources, opList);
-        pageListPromise.resolve(opList);
+        return partialEvaluator.getOperatorList(contentStream, self.resources,
+          opList).then(function () {
+            return opList;
+          });
       });
 
       var annotationsPromise = pdfManager.ensure(this, 'annotations');
-      Promise.all([pageListPromise, annotationsPromise]).then(function(datas) {
+      return Promise.all([pageListPromise, annotationsPromise]).then(
+          function(datas) {
         var pageOpList = datas[0];
         var annotations = datas[1];
 
         if (annotations.length === 0) {
           pageOpList.flush(true);
-          promise.resolve(pageOpList);
-          return;
+          return pageOpList;
         }
 
         var annotationsReadyPromise = Annotation.appendToOperatorList(
           annotations, pageOpList, pdfManager, partialEvaluator, intent);
-        annotationsReadyPromise.then(function () {
+        return annotationsReadyPromise.then(function () {
           pageOpList.flush(true);
-          promise.resolve(pageOpList);
-        }, reject);
-      }, reject);
-
-      return promise;
+          return pageOpList;
+        });
+      });
     },
 
     extractTextContent: function Page_extractTextContent() {
@@ -232,8 +220,6 @@ var Page = (function PageClosure() {
       };
 
       var self = this;
-
-      var textContentPromise = new LegacyPromise();
 
       var pdfManager = this.pdfManager;
       var contentStreamPromise = pdfManager.ensure(this, 'getContentStream',
@@ -247,7 +233,7 @@ var Page = (function PageClosure() {
 
       var dataPromises = Promise.all([contentStreamPromise,
                                       resourcesPromise]);
-      dataPromises.then(function(data) {
+      return dataPromises.then(function(data) {
         var contentStream = data[0];
         var partialEvaluator = new PartialEvaluator(pdfManager, self.xref,
                                                     handler, self.pageIndex,
@@ -255,12 +241,9 @@ var Page = (function PageClosure() {
                                                     self.idCounters,
                                                     self.fontCache);
 
-        var bidiTexts = partialEvaluator.getTextContent(contentStream,
-                                                        self.resources);
-        textContentPromise.resolve(bidiTexts);
+        return partialEvaluator.getTextContent(contentStream,
+                                               self.resources);
       });
-
-      return textContentPromise;
     },
 
     getAnnotationsData: function Page_getAnnotationsData() {
@@ -279,7 +262,7 @@ var Page = (function PageClosure() {
         return 0;
       }
       annotationsData.sort(sortAnnotations);
-      // return annotations
+      // return annotations      
       return annotationsData;
     },
 
@@ -319,7 +302,7 @@ var PDFDocument = (function PDFDocumentClosure() {
   }
 
   function init(pdfManager, stream, password) {
-    assertWellFormed(stream.length > 0, 'stream must have data');
+    assert(stream.length > 0, 'stream must have data');
     this.pdfManager = pdfManager;
     this.stream = stream;
     var xref = new XRef(this.stream, password, pdfManager);
@@ -339,7 +322,7 @@ var PDFDocument = (function PDFDocumentClosure() {
     var str = strBuf.join('');
     stream.pos = pos;
     var index = backwards ? str.lastIndexOf(needle) : str.indexOf(needle);
-    if (index == -1) {
+    if (index === -1) {
       return false; /* not found */
     }
     stream.pos += index;
@@ -386,22 +369,15 @@ var PDFDocument = (function PDFDocumentClosure() {
     },
 
     get linearization() {
-      var length = this.stream.length;
-      var linearization = false;
-      if (length) {
+      var linearization = null;
+      if (this.stream.length) {
         try {
-          linearization = new Linearization(this.stream);
-          if (linearization.length != length) {
-            linearization = false;
-          }
+          linearization = Linearization.create(this.stream);
         } catch (err) {
           if (err instanceof MissingDataException) {
             throw err;
           }
-
-          info('The linearization data is not available ' +
-               'or unreadable PDF data is found');
-          linearization = false;
+          info(err);
         }
       }
       // shadow the prototype getter with a data property
