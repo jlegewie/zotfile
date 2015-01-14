@@ -63,5 +63,6 @@
     <em:creator>Joscha Legewie</em:creator>
     <em:homepageURL>http://www.zotfile.com</em:homepageURL>
     <em:optionsURL>chrome://zotfile/content/options.xul</em:optionsURL>
+    <em:updateURL>https://raw.githubusercontent.com/jlegewie/zotfile/master/update.rdf</em:updateURL>
   </Description>
 </RDF>
