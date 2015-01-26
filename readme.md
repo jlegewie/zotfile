@@ -34,6 +34,10 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 4.1.2
+
+- fix for problem with poppler-based extraction and annotation color
+
 #### Changes in 4.x (4.0, 4.1 and 4.1.1)
 
 - **Goto annotation in pdf**

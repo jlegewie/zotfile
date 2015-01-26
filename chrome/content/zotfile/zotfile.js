@@ -3549,6 +3549,10 @@ Zotero.ZotFile = {
                             var outputFile=file.path.replace(".pdf",".txt");
                             Zotero.ZotFile.runProcess(this.popplerExtractorPath, [file.path, outputFile]);
                             var annotations = this.popplerExtractorGetAnnotationsFromFile(outputFile);
+                            annotations = annotations.map(function(anno) {
+                                anno.color = [0, 0, 0];
+                                return anno;
+                            });
                             if(annotations.length!=0) this.createNote(annotations, item, att, "poppler");
 
                             // delete output text file
