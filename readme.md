@@ -34,6 +34,10 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 4.1.3
+
+- fix problem with location of tablet files
+
 #### Changes in 4.1.2
 
 - fix for problem with poppler-based extraction and annotation color
