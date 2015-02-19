@@ -1926,14 +1926,16 @@ Zotero.ZotFile = {
               // create a nslFile Object of the destination folder
               var dir = this.createFile(destination);
               // move file to new location
-              if(destination.trim() == "/") { 
-              	//if there's no destination, then the file will be renamed in-place
-              	alert("You have not set the location to move the file. File will only be renamed.");
-		file.moveTo(null, filename);
-	      }
-	      else {
-	      	file.moveTo(dir, filename);
-	      }
+              if(destination.trim() == "/")
+							{
+									this.infoWindow(this.ZFgetString('general.warning'), 
+										'No location is mentioned to move the attachment. File will only be renamed.');
+									file.moveTo(null, filename);
+							}
+							else
+							{
+									file.moveTo(dir, filename);
+							}
             }
             catch(err) {
                 if(err.name == "NS_ERROR_FILE_IS_LOCKED")
