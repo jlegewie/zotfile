@@ -1926,8 +1926,7 @@ Zotero.ZotFile = {
               // create a nslFile Object of the destination folder
               var dir = this.createFile(destination);
               // move file to new location
-<<<<<<< HEAD
-							if(destination.trim() == "/")
+	      			if(destination.trim() == "/")
 							{
 									this.infoWindow(this.ZFgetString('general.warning'), 'No location is mentioned to move the attachment. File will only be renamed.');
 									file.moveTo(null, filename);
@@ -1936,9 +1935,6 @@ Zotero.ZotFile = {
 							{
 						       	file.moveTo(dir, filename);
 							}
-=======
-              file.moveTo(dir, filename);
->>>>>>> 3a0739a6bb14f0f0998a0f117c43d16f7e8599f4
             }
             catch(err) {
                 if(err.name == "NS_ERROR_FILE_IS_LOCKED")
@@ -3067,11 +3063,7 @@ Zotero.ZotFile = {
         var filename = rename ? Zotero.ZotFile.getFilename(item, file.leafName) : file.leafName,
             location = this.getLocation(item,dest_dir,subfolder,subfolderFormat);
         // (a) LINKED TO IMPORTED ATTACHMENT
-<<<<<<< HEAD
         if (linkmode==Zotero.Attachments.LINK_MODE_LINKED_FILE && import_att) {
-=======
-        if (linkmode==Zotero.Attachments.LINK_MODE_LINKED_FILE && import_att) {                
->>>>>>> 3a0739a6bb14f0f0998a0f117c43d16f7e8599f4
             try {
                 var win = this.wm.getMostRecentWindow("navigator:browser"),
                     selection = win.ZoteroPane.itemsView.saveSelection();
@@ -3131,10 +3123,6 @@ Zotero.ZotFile = {
             if (!newfile_path) 
                 return newAttID;
             // recreate the outfile nslFile Object
-<<<<<<< HEAD
-			alert("New File Path:"+newfile_path);
-=======
->>>>>>> 3a0739a6bb14f0f0998a0f117c43d16f7e8599f4
             file = this.createFile(newfile_path);
             // create linked attachment
             newAttID = Zotero.Attachments.linkFromFile(file, itemID, item.libraryID);
@@ -3661,10 +3649,6 @@ Zotero.ZotFile = {
 
         createNote: function(annotations, item, att, method) {
             var note_content = this.getNoteContent(annotations, item, att, method);
-<<<<<<< HEAD
-			//alert("notecontent:\n" + note_content);
-=======
->>>>>>> 3a0739a6bb14f0f0998a0f117c43d16f7e8599f4
             if(typeof note_content == 'string') {
                 var note = new Zotero.Item("note");
                 note.libraryID = item._libraryID;
@@ -3756,9 +3740,7 @@ Zotero.ZotFile = {
                 title = zz.str_format(format_title, {'title': str_title, 'date': date_str}),
                 note = title;
             if (zz.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler"))
-                note += ' ' + method;
-<<<<<<< HEAD
-			
+                note += ' ' + method;			
             if(separate_color_notes) note = {};
             
 			var page = -2; //Initializing page number so that we can track it.
@@ -3772,20 +3754,11 @@ Zotero.ZotFile = {
 										if(page != -2)
 											note += "</ol>"; //for the first page no page number
 										page = anno.page;
-										note += '<b>Page number: ' + page + '</b><ol>'; //Notes are categorized in pages and they are numbered
+										note += '<b>Page number: ' + page + '</b><ol>'; //annotations are categorized in pages and they are numbered
 								}
-								note += '<li>';
+								note += '<li>'; //annotations is ordered-list
 								                
 								var uri = zz.str_format(format_uri, {'lib': lib, 'key': att.key, 'page': anno.page});
-=======
-            if(separate_color_notes) note = {};
-            // iterature through annotations
-            for (var i=0; i < annotations.length; i++) {
-            // annotations.map(function(anno) {
-                var anno = annotations[i],
-                    page = anno.page,
-                    uri = zz.str_format(format_uri, {'lib': lib, 'key': att.key, 'page': anno.page});
->>>>>>> 3a0739a6bb14f0f0998a0f117c43d16f7e8599f4
                 // get page
                 if(zz.prefs.getBoolPref("pdfExtraction.NoteTruePage")) {
                     try {
@@ -3827,14 +3800,10 @@ Zotero.ZotFile = {
                         note[color_category] += content_formated;
                     }
                 }
-<<<<<<< HEAD
 								note += '</li>';
             }
-			
-			note += '</ol>'; //note numbering ends
-=======
+						note += '</ol>'; //note numbering ends
             }
->>>>>>> 3a0739a6bb14f0f0998a0f117c43d16f7e8599f4
             return note;
         },
 
