@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://zotfile/locale/options-projects.dtd">
+
+<prefwindow 
+	id="zotfile-tablet-subfolders-window" 
+	title="&zotfile-tablet-subfolders-window;" 
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"  
+	onload="buildFolderList();"
+	onunload="updateSubfolderPreferences();">
+      
+		<prefpane label="&configuration-subfolders;" id="zotfile-tablet-subfolders">
+			<preferences>
+				<preference id="pref-zotfile-tablet-projectFolders01" name="extensions.zotfile.tablet.projectFolders01" type="bool"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders01_folder" name="extensions.zotfile.tablet.projectFolders01_folder" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders01_label" name="extensions.zotfile.tablet.projectFolders01_label" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders02" name="extensions.zotfile.tablet.projectFolders02" type="bool"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders02_folder" name="extensions.zotfile.tablet.projectFolders02_folder" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders02_label" name="extensions.zotfile.tablet.projectFolders02_label" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders03" name="extensions.zotfile.tablet.projectFolders03" type="bool"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders03_folder" name="extensions.zotfile.tablet.projectFolders03_folder" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders03_label" name="extensions.zotfile.tablet.projectFolders03_label" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders04" name="extensions.zotfile.tablet.projectFolders04" type="bool"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders04_folder" name="extensions.zotfile.tablet.projectFolders04_folder" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders04_label" name="extensions.zotfile.tablet.projectFolders04_label" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders05" name="extensions.zotfile.tablet.projectFolders05" type="bool"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders05_folder" name="extensions.zotfile.tablet.projectFolders05_folder" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders05_label" name="extensions.zotfile.tablet.projectFolders05_label" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders06" name="extensions.zotfile.tablet.projectFolders06" type="bool"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders06_folder" name="extensions.zotfile.tablet.projectFolders06_folder" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders06_label" name="extensions.zotfile.tablet.projectFolders06_label" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders07" name="extensions.zotfile.tablet.projectFolders07" type="bool"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders07_folder" name="extensions.zotfile.tablet.projectFolders07_folder" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders07_label" name="extensions.zotfile.tablet.projectFolders07_label" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders08" name="extensions.zotfile.tablet.projectFolders08" type="bool"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders08_folder" name="extensions.zotfile.tablet.projectFolders08_folder" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders08_label" name="extensions.zotfile.tablet.projectFolders08_label" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders09" name="extensions.zotfile.tablet.projectFolders09" type="bool"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders09_folder" name="extensions.zotfile.tablet.projectFolders09_folder" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders09_label" name="extensions.zotfile.tablet.projectFolders09_label" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders10" name="extensions.zotfile.tablet.projectFolders10" type="bool"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders10_folder" name="extensions.zotfile.tablet.projectFolders10_folder" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders10_label" name="extensions.zotfile.tablet.projectFolders10_label" type="string"/>
+				<preference id="pref-zotfile-tablet-projectFolders11" name="extensions.zotfile.tablet.projectFolders11" type="bool"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders11_folder" name="extensions.zotfile.tablet.projectFolders11_folder" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders11_label" name="extensions.zotfile.tablet.projectFolders11_label" type="string"/>
+				<preference id="pref-zotfile-tablet-projectFolders12" name="extensions.zotfile.tablet.projectFolders12" type="bool"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders12_folder" name="extensions.zotfile.tablet.projectFolders12_folder" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders12_label" name="extensions.zotfile.tablet.projectFolders12_label" type="string"/>
+				<preference id="pref-zotfile-tablet-projectFolders13" name="extensions.zotfile.tablet.projectFolders13" type="bool"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders13_folder" name="extensions.zotfile.tablet.projectFolders13_folder" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders13_label" name="extensions.zotfile.tablet.projectFolders13_label" type="string"/>
+				<preference id="pref-zotfile-tablet-projectFolders14" name="extensions.zotfile.tablet.projectFolders14" type="bool"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders14_folder" name="extensions.zotfile.tablet.projectFolders14_folder" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders14_label" name="extensions.zotfile.tablet.projectFolders14_label" type="string"/>
+				<preference id="pref-zotfile-tablet-projectFolders15" name="extensions.zotfile.tablet.projectFolders15" type="bool"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders15_folder" name="extensions.zotfile.tablet.projectFolders15_folder" type="string"/>                       
+				<preference id="pref-zotfile-tablet-projectFolders15_label" name="extensions.zotfile.tablet.projectFolders15_label" type="string"/>
+			</preferences>  
+			
+            <tree flex="1" id="id-zotfile-tablet-projectFolders-tree" hidecolumnpicker="true" rows="10" seltype="single"
+				ondblclick="editSubfolderSetting(this.currentIndex)" context="id-zotfile-tablet-projectFolders-menu">
+				<treecols>
+					<treecol id="quickCopy-urlColumn" label="&label;" flex="1"/>
+					<treecol id="quickCopy-formatColumn" label="&folder;" flex="2"/>
+				</treecols>
+				<treechildren id="id-zotfile-tablet-projectFolders-rows"/>
+			</tree>
+				
+				<grid>
+				  <columns>
+					  <column/>								    
+				    <column flex="1"/>
+				    <column flex="100"/>
+				    <column flex="1"/>
+				      </columns>
+				  <rows>
+					  <row>         
+						<hbox pack="end">    
+							<button label="&move-down;" onclick="moveSelectedSubfolderDown()"/>
+							<button label="&move-up;" onclick="moveSelectedSubfolderUp()"/>
+						</hbox>
+						<label value=""/>														   					    							    
+						<hbox pack="end">    
+							<button label="-" onclick="deleteSelectedSubfolder()"/>
+							<button label="+" onclick="editSubfolderSetting()"/>								
+						</hbox>   							   			   																										
+				    </row>				
+				  </rows>
+				</grid>            
+		        
+		</prefpane> 
+		
+		<popupset>
+			<menupopup id="id-zotfile-tablet-projectFolders-menu">
+				<menuitem label="Edit Folder" oncommand="editSubfolderSetting('rightclickmenu')"/>
+				<menuitem label="&show-folder;" oncommand="showSelectedSubfolder()"/>
+				<menuitem label="&delete-folder;" oncommand="deleteSelectedSubfolder()"/>
+				<menuseparator/>				
+				<menuitem label="&move-up;" oncommand="moveSelectedSubfolderUp()"/>
+				<menuitem label="&move-down;" oncommand="moveSelectedSubfolderDown()"/>
+			</menupopup>
+		</popupset>
+		
+		<script src="options.js"/> 
+		<script src="chrome://zotero/content/include.js"/>
+		<script src="chrome://zotfile/content/include.js"/>	
+		
+		
+		
+</prefwindow>  

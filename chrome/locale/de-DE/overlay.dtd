@@ -1,0 +1,24 @@
+<!ENTITY zotfile-attach-file.label "Neue Datei anhängen">
+<!ENTITY zotfile-attach-file.tooltiptext "Die zuletzt in den benutzerdefinierten Ordner hinzugefügte Datei verschieben und an das ausgewählte Zotero Objekt anhängen">
+<!ENTITY zotfile-manage-attachments.label "Anhänge verwalten">
+<!ENTITY warning.label "Warnung">
+<!ENTITY renameSelectedAttachments.label "Anhänge umbennen">
+<!ENTITY renameSelectedAttachments.tooltiptext "Vorhandene Anhänge des ausgewählten Zotero Objekts verschieben und umbennen">
+<!ENTITY extract-annotations.label "Annotationen herauskopieren">
+<!ENTITY extract-annotations.tooltiptext "Annotationen und hervorgehobenen Text aus PDF Datei herauskopieren">
+<!ENTITY pdf-outline.label "Inhaltsverzeichnis herauskopieren">
+<!ENTITY pdf-outline.tooltiptext "Inhaltsverzeichnis aus PDF Datei herauskopieren">
+<!ENTITY send-to-tablet "An Tablet PC schicken">
+<!ENTITY send-attachment-file-to-tablet "Angehängte Datei an Tablet PC schicken.">
+<!ENTITY update-file-modification-time "Datei Zeit der letzten Änderung aktualisieren">
+<!ENTITY sync-attachment-file "Angehängte Datei auf dem Tablet mit jener in Zotero synchronisieren.">
+<!ENTITY get-from-tablet "Vom Tablet holen">
+<!ENTITY get-attachment-file-from-tablet "Angehängte Datei von Tablet holen.">
+<!ENTITY send-to-subfolder-on-tablet "An Unterordner auf Tablet PC senden">
+<!ENTITY change-subfolders "Unterordner ändern...">
+<!ENTITY add-and-delete-subfolders "Menü-Unterordner hinzufügen oder löschen.">
+<!ENTITY zotfile-options.label "ZotFile Einstellungen...">
+<!ENTITY saved-search-all "Zeige Anhänge aus allen Unterordnern">
+<!ENTITY saved-search-restrict "Begrenze gespeicherte Suche auf Unterordner">
+<!ENTITY restrict-subfolder "Begrenze aus Unterordner...">
+<!ENTITY restrict-basefolder "Unfiled Attachments">
