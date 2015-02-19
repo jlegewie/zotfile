@@ -1928,6 +1928,7 @@ Zotero.ZotFile = {
               // move file to new location
               if(destination.trim() == "/")
 							{
+									//no place to move the file, so rename it in-place
 									this.infoWindow(this.ZFgetString('general.warning'), 
 										'No location is mentioned to move the attachment. File will only be renamed.');
 									file.moveTo(null, filename);
