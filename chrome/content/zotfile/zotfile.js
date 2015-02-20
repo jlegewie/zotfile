@@ -423,7 +423,7 @@ Zotero.ZotFile = {
                     zz.handleErrors();
                 };
                 // iterate through added attachments
-                for (var item in items){
+                for each(var item in items){
                     try {
                         // Is the item an (imported) attachment?
                         if(!item.isAttachment()) continue;
@@ -3080,7 +3080,7 @@ Zotero.ZotFile = {
                 // change title of attachment item
                 att.setField('title', filename);
                 if(note!="") att.setNote(note);
-                if(tags) for (var tag in tags) att.addTag(tag);
+                if(tags) for each(var tag in tags) att.addTag(tag);
                 att.save();
                 // restore selection
                 selection = this.arrayReplace(selection, attID, newAttID);
@@ -3135,7 +3135,7 @@ Zotero.ZotFile = {
             // change title of attachment item
             att.setField('title', filename);
             if(note!="") att.setNote(note);
-            if(tags) for (var tag in tags) att.addTag(tag);
+            if(tags) for each(var tag in tags) att.addTag(tag);
             att.save();
             // restore selection
             selection = this.arrayReplace(selection, attID, newAttID);
