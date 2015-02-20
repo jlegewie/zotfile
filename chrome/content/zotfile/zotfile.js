@@ -423,7 +423,7 @@ Zotero.ZotFile = {
                     zz.handleErrors();
                 };
                 // iterate through added attachments
-                for each(var item in items){
+                for (var item in items){
                     try {
                         // Is the item an (imported) attachment?
                         if(!item.isAttachment()) continue;
@@ -1926,7 +1926,7 @@ Zotero.ZotFile = {
               // create a nslFile Object of the destination folder
               var dir = this.createFile(destination);
               // move file to new location
-	      			if(destination.trim() == "/")
+	      			if(destination.trim() == this.folderSep)
 							{
 									this.infoWindow(this.ZFgetString('general.warning'), 'No location is mentioned to move the attachment. File will only be renamed.');
 									file.moveTo(null, filename);
@@ -3080,7 +3080,7 @@ Zotero.ZotFile = {
                 // change title of attachment item
                 att.setField('title', filename);
                 if(note!="") att.setNote(note);
-                if(tags) for each(var tag in tags) att.addTag(tag);
+                if(tags) for (var tag in tags) att.addTag(tag);
                 att.save();
                 // restore selection
                 selection = this.arrayReplace(selection, attID, newAttID);
@@ -3135,7 +3135,7 @@ Zotero.ZotFile = {
             // change title of attachment item
             att.setField('title', filename);
             if(note!="") att.setNote(note);
-            if(tags) for each(var tag in tags) att.addTag(tag);
+            if(tags) for (var tag in tags) att.addTag(tag);
             att.save();
             // restore selection
             selection = this.arrayReplace(selection, attID, newAttID);
@@ -3743,8 +3743,8 @@ Zotero.ZotFile = {
                 note += ' ' + method;			
             if(separate_color_notes) note = {};
             
-			var page = -2; //Initializing page number so that we can track it.
-			// iterature through annotations
+						var page = -2; //Initializing page number so that we can track it.
+						// iterature through annotations
             for (var i=0; i < annotations.length; i++) {
             // annotations.map(function(anno) {
                 var anno = annotations[i];
@@ -3803,8 +3803,7 @@ Zotero.ZotFile = {
 								note += '</li>';
             }
 						note += '</ol>'; //note numbering ends
-            }
-            return note;
+						return note;
         },
 
         trim: function(str) {
