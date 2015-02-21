@@ -3743,30 +3743,32 @@ Zotero.ZotFile = {
                 note += ' ' + method;			
             if(separate_color_notes) note = {};
             
-						var page = -2; //Initializing page number so that we can track it.
+						var pdfPageNumber = -2, page = -2; //Initializing page number so that we can track it.
 						// iterature through annotations
             for (var i=0; i < annotations.length; i++) {
             // annotations.map(function(anno) {
                 var anno = annotations[i];
 
-								if(anno.page != page)
+								if(anno.page != pdfPageNumber)
 								{
-										if(page != -2)
+										if(pdfPageNumber != -2)
 											note += "</ol>"; //for the first page no page number
+										pdfPageNumber = anno.page;
 										page = anno.page;
+										// get page
+						        if(zz.prefs.getBoolPref("pdfExtraction.NoteTruePage")) {
+						            try {
+						                var itemPages = item.getField('pages');
+						                if(itemPages) page = parseInt(itemPages.split('-')[0],10) + page - 1;
+						            }
+						            catch(err) {}
+						        }
 										note += '<b>Page number: ' + page + '</b><ol>'; //annotations are categorized in pages and they are numbered
 								}
 								note += '<li>'; //annotations is ordered-list
 								                
 								var uri = zz.str_format(format_uri, {'lib': lib, 'key': att.key, 'page': anno.page});
-                // get page
-                if(zz.prefs.getBoolPref("pdfExtraction.NoteTruePage")) {
-                    try {
-                        var itemPages = item.getField('pages');
-                        if(itemPages) page = parseInt(itemPages.split('-')[0],10) + page - 1;
-                    }
-                    catch(err) {}
-                }
+                
                 // link
                 var link = '<a href="' + uri + '">' + cite + page + '</a>',
                     color = ('color' in anno) ? ('rgb(' + anno.color.join(',') + ')') : 'rgb(255,255,255)',
