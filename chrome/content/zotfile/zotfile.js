@@ -3763,7 +3763,7 @@ Zotero.ZotFile = {
 						            }
 						            catch(err) {}
 						        }
-										note += '<b>Page number: ' + page + '</b><ol>'; //annotations are categorized in pages and they are numbered
+										note += '<br><b>Page number: ' + page + '</b><ol>'; //annotations are categorized in pages and they are numbered
 								}
 								note += '<li>'; //annotations is ordered-list
 								                
