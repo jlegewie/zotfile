@@ -34,6 +34,10 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 4.1.4
+
+- Rename file at current location if "Custom Location" is not specified (thanks to [Soham Sinha](https://github.com/sohamm17))
+
 #### Changes in 4.1.3
 
 - fix problem with location of tablet files
