@@ -1922,21 +1922,18 @@ Zotero.ZotFile = {
             }
             filename=filename_temp;
 
+            // move file to new location
             try {
-              // create a nslFile Object of the destination folder
-              var dir = this.createFile(destination);
-              // move file to new location
-              if(destination.trim() == this.folderSep)
-							{
-									//no place to move the file, so rename it in-place
-									this.infoWindow(this.ZFgetString('general.warning'), 
-										'No location is mentioned to move the attachment. File is renamed only.');
-									file.moveTo(null, filename);
-							}
-							else
-							{
-									file.moveTo(dir, filename);
-							}
+                if(destination.trim() == this.folderSep) {
+                    //no place to move the file, so rename it in-place
+                    this.infoWindow(this.ZFgetString('general.warning'), 'Custom location for files not set. File is renamed only.');
+                    file.moveTo(null, filename);
+                }
+                else {
+                    // create a nslFile Object of the destination folder
+                    var dir = this.createFile(destination);
+                    file.moveTo(dir, filename);
+                }
             }
             catch(err) {
                 if(err.name == "NS_ERROR_FILE_IS_LOCKED")
