@@ -1309,8 +1309,7 @@ Zotero.ZotFile = {
         }
 
         // truncate if to long
-        var title_length =  title.length;
-        if (title_length>this.prefs.getIntPref("max_titlelength")) {
+        if (title.length > this.prefs.getIntPref("max_titlelength")) {
             var max_titlelength=this.prefs.getIntPref("max_titlelength");
             var before_trunc_char = title.substr(max_titlelength,1);
 
@@ -1905,44 +1904,53 @@ Zotero.ZotFile = {
     },
 
     moveFile: function(file, destination, filename, att_name){
-    /* moves 'file' to 'destination' path an renames it to 'filename'; 'att_name' is the attachment title used in error messages
-     * -> returns the path to the new (created) file, in case of an error returns false
-     */
+        /* moves 'file' to 'destination' path an renames it to 'filename'; 'att_name' is the attachment title used in error messages
+        * -> returns the path to the new (created) file, in case of an error returns false
+        */
 
-        //  file.path!= this.createFile(this.completePath(location, filename)).path
-        if(file.path!=this.completePath(destination,filename)) {
-            var filename_temp=filename;
-            var k=2;
-            while(this.fileExists(destination, filename_temp)) {
-                filename_temp = this.addSuffix(filename,k);
-                k++;
-                if(k>99)  break;
-                //TODO There should be a prompt window which let the user choose a name
-                // If not, it would create an error like file exists or more severe: it will override the existing file
-            }
-            filename=filename_temp;
+        //if the destination is only "/" or "\" then destination should be the file's parent directory
+        if(destination.trim() == this.folderSep) {
+            if(file.isFile())                   
+                destination = file.parent.path;
+            else
+                destination = file.path; //if file is a directory then destination should be that directory
+        }
 
-            // move file to new location
-            try {
-                if(destination.trim() == this.folderSep) {
-                    //no place to move the file, so rename it in-place
-                    this.infoWindow(this.ZFgetString('general.warning'), 'Custom location for files not set. File is renamed only.');
-                    file.moveTo(null, filename);
-                }
-                else {
-                    // create a nslFile Object of the destination folder
-                    var dir = this.createFile(destination);
-                    file.moveTo(dir, filename);
-                }
+        if(file.path == this.completePath(destination,filename))
+            return(file.path);
+
+        var filename_temp = filename;
+        var k = 2;
+        while(this.fileExists(destination, filename_temp)) {
+            filename_temp = this.addSuffix(filename,k);
+            k++;
+            if(k>99) break;
+            //TODO There should be a prompt window which let the user choose a name
+            // If not, it would create an error like file exists or more severe: it will override the existing file
+        }
+        filename = filename_temp;
+
+        // move file to new location
+        try {
+            if(destination.trim() == this.folderSep) {
+                //no place to move the file, so rename it in-place
+                this.infoWindow(this.ZFgetString('general.warning'), 'Custom location for files not set. File is renamed only.');
+                file.moveTo(null, filename);
             }
-            catch(err) {
-                if(err.name == "NS_ERROR_FILE_IS_LOCKED")
-                    this.messages_error.push(this.ZFgetString('error.movingFileLocked', [att_name]));
-                else
-                    this.messages_error.push(this.ZFgetString('error.movingFileGeneral', [att_name, err]));
-                return false;
+            else {
+                // create a nslFile Object of the destination folder
+                var dir = this.createFile(destination);
+                file.moveTo(dir, filename);
             }
         }
+        catch(err) {
+            if(err.name == "NS_ERROR_FILE_IS_LOCKED")
+                this.messages_error.push(this.ZFgetString('error.movingFileLocked', [att_name]));
+            else
+                this.messages_error.push(this.ZFgetString('error.movingFileGeneral', [att_name, err]));
+            return false;
+        }
+
         return(file.path);
     },
 
