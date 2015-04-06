@@ -1909,7 +1909,14 @@ Zotero.ZotFile = {
      * -> returns the path to the new (created) file, in case of an error returns false
      */
 
-        //  file.path!= this.createFile(this.completePath(location, filename)).path
+				//if the destination is only "/" or "\" then destination should be the file's parent directory
+				if(destination.trim() == this.folderSep) {
+					if(file.isFile())					
+						destination = file.parent.path;
+					else
+						destination = file.path; //if file is a directory then destination should be that directory
+				}
+				//  file.path!= this.createFile(this.completePath(location, filename)).path
         if(file.path!=this.completePath(destination,filename)) {
             var filename_temp=filename;
             var k=2;
@@ -1928,8 +1935,9 @@ Zotero.ZotFile = {
               // move file to new location
 	      			if(destination.trim() == this.folderSep)
 							{
-									this.infoWindow(this.ZFgetString('general.warning'), 'No location is mentioned to move the attachment. File will only be renamed.');
-									file.moveTo(null, filename);
+										alert(filename);
+										this.infoWindow(this.ZFgetString('general.warning'), 'No location is mentioned to move the attachment. File will only be renamed.');
+										//file.moveTo(null, filename);
 							}
 							else
 							{
