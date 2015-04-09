@@ -2650,6 +2650,7 @@ Zotero.ZotFile = {
                     att.renameAttachmentFile(filename);
                     att.setField('title', filename);
                     att.save();
+                    file = att.getFile();
                 }
             }
             // create copy of file on tablet and catch errors
