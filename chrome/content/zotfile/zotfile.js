@@ -2616,7 +2616,7 @@ Zotero.ZotFile = {
         // restrict to unfiled items (basefolder)
         if(which==0) {
             searches.forEach(function(search) {
-                search.addCondition('note', 'contains', 'projectFolder{}');
+                search.addCondition('note', 'contains', '&quot;projectFolder&quot;:&quot;&quot;');
                 search.save();
                 var win = this.wm.getMostRecentWindow("navigator:browser");
                 win.ZoteroPane.onCollectionSelected();
