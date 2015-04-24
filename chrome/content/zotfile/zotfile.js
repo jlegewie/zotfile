@@ -1965,13 +1965,11 @@ Zotero.ZotFile = {
     moveLinkedAttachmentFile: function(att, location, filename, overwrite) {
         if (!att.isAttachment() || att.attachmentLinkMode!==Zotero.Attachments.LINK_MODE_LINKED_FILE)
             return false;
-
+        // get file
         var file = att.getFile();
-        if (!file)
-            return false;
-        
+        if (!file) return false;
         var origModDate = file.lastModifiedTime;
-        try {       
+        try {
             if(location.trim() == this.folderSep) {
                 //no place to move the file, so rename it in-place
                 this.infoWindow(this.ZFgetString('general.warning'), 'Custom location for files not set. File is renamed only.');
