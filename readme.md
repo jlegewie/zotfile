@@ -34,6 +34,11 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 4.1.5
+
+- Fix problem when renaming files in place
+- Fix problem with "Restrict saved search"
+
 #### Changes in 4.1.4
 
 - Rename file at current location if "Custom Location" is not specified (thanks to [Soham Sinha](https://github.com/sohamm17))
