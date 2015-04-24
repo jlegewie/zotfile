@@ -1972,6 +1972,11 @@ Zotero.ZotFile = {
         
         var origModDate = file.lastModifiedTime;
         try {       
+            if(location.trim() == this.folderSep) {
+                //no place to move the file, so rename it in-place
+                this.infoWindow(this.ZFgetString('general.warning'), 'Custom location for files not set. File is renamed only.');
+                location = file.parent.path;
+            }
             var dest = this.createFile(location);
             dest.append(filename);
 
