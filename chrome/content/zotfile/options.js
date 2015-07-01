@@ -661,33 +661,25 @@ function getInstalledVersion () {
 }
 
 function downloadPDFTool() {
-    
-    var ioService = Components.classes["@mozilla.org/network/io-service;1"]
-                        .getService(Components.interfaces.nsIIOService);
-                        
-    var fileName=Zotero.ZotFile.pdfAnnotations.popplerExtractorFileName;
-
-    var url = Zotero.ZotFile.pdfAnnotations.popplerExtractorBaseURL + fileName+ ".zip";
-    var uri = ioService.newURI(url, null, null);
-
+    Components.utils.import("resource://gre/modules/Downloads.jsm");
+    // url
+    var fileName = Zotero.ZotFile.pdfAnnotations.popplerExtractorFileName;
+    var url = Zotero.ZotFile.pdfAnnotations.popplerExtractorBaseURL + fileName + ".zip";
+    // target
     var file = Zotero.getZoteroDirectory();
-    var zotero_dir=file.path;
-    file.append(fileName+ ".zip");
-    var fileURL = ioService.newFileURI(file);
-
-    const nsIWBP = Components.interfaces.nsIWebBrowserPersist;
-    var wbp = Components.classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"].createInstance(nsIWBP);
-
-    var progressListener = new Zotero.WebProgressFinishListener(function () {
-
-        try {
+    var zotero_dir = file.path;
+    file.append(fileName + ".zip");
+    // create download object
+    var download = Downloads.createDownload({source: url, target: file});
+    // start download
+    download.then(function success(d) {
+        d.start().then(function success(p) {
             // extract zip file
             var proc = Components.classes["@mozilla.org/process/util;1"].
-                        createInstance(Components.interfaces.nsIProcess);
+                createInstance(Components.interfaces.nsIProcess);
             proc.init(Zotero.ZotFile.createFile("/usr/bin/unzip"));
             // define arguments
-            var args = ["-o","-q",file.path,"-d"  + zotero_dir + "/ExtractPDFAnnotations"];
-
+            var args = ["-o","-q", file.path, "-d"  + zotero_dir + "/ExtractPDFAnnotations"];
             // run process
             if (!Zotero.isFx36) {
                 proc.runw(true, args, args.length);
@@ -695,7 +687,6 @@ function downloadPDFTool() {
             else {
                 proc.run(true, args, args.length);
             }
-
             // Set permissions to 755
             var extractorFile=Zotero.ZotFile.createFile(Zotero.ZotFile.pdfAnnotations.popplerExtractorPath);
             if (Zotero.isMac) {
@@ -704,30 +695,17 @@ function downloadPDFTool() {
             else if (Zotero.isLinux) {
                 extractorFile.permissions = 493;
             }
-            
             // set ZotFile variable
             Zotero.ZotFile.pdfAnnotations.popplerExtractorTool=true;
-
             // enable poppler extractor option
             document.getElementById('id-zotfile-pdfExtraction-UsePDFJS-false').disabled=false;
-            
-        }
-        catch(e) {
-            Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.error'),Zotero.ZotFile.ZFgetString('extraction.unableToDwnldPoppler', [e.name, e.message]),8000);
-        }
-
-        // update settings
-        updatePDFToolsStatus();
-
-
-    });
-    
-    document.getElementById('pdf-annotations-extractor-update-button').disabled = true;
-    document.getElementById('pdf-annotations-extractor-update-button').setAttribute('label', Zotero.ZotFile.ZFgetString('extraction.dowwloadingPoppler'));
-    
-    wbp.progressListener = progressListener;
-    wbp.saveURI(uri, null, null, null, null, fileURL, null);
-            
+            // update settings
+            updatePDFToolsStatus();
+        }, function(e) {
+            // Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.error'), Zotero.ZotFile.ZFgetString('extraction.unableToDwnldPoppler', [e.name, e.message]),8000);
+            Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.error'), "Unable to download poppler.", 8000);
+        });
+    });     
 }
       
    
