@@ -24,14 +24,6 @@
 			<em:maxVersion>4.*</em:maxVersion>
 		</Description>
 	</em:targetApplication>
-	<em:requires>
-	   <Description>
-	     <em:id>zotero@chnm.gmu.edu</em:id>
-	     <em:minVersion>1.*</em:minVersion>
-	     <em:maxVersion>4.*</em:maxVersion>
-	   </Description>
-	 </em:requires>
-    <!-- Front End MetaData -->
     <em:localized>
       <Description>
 	<em:locale>en-US</em:locale>
