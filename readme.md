@@ -34,6 +34,10 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 4.1.6
+
+- Fixed problem with downloading of poppler-based extraction tool
+
 #### Changes in 4.1.5
 
 - Fix problem when renaming files in place
