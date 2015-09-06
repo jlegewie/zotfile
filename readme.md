@@ -34,6 +34,10 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 4.1.7
+
+- Add wildcard %g for author's full name (thanks to [QingQYang](https://github.com/QingQYang))
+
 #### Changes in 4.1.6
 
 - Fixed problem with downloading of poppler-based extraction tool
