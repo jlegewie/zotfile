@@ -1365,7 +1365,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         if (isSpace && lastCharSpace) return;
         // exclude previous space if it is further right then current character
         lastChar = annot.chars.slice(-1)[0];
-        if(!isSpace && lastCharSpace && typeof lastChar.charDims.x !== 'undefined' &&
+        if(annot.chars.length > 1 && !isSpace && lastCharSpace && typeof lastChar.charDims.x !== 'undefined' &&
             lastChar.charDims.x/*-charDims.spaceWidth*/>charDims.x+charDims.spaceWidth) {
           if(lastChar.isSpace)
             annot.markup[quad] = annot.markup[quad].substring(0, markupEnd);
