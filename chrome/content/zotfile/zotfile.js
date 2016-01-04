@@ -1269,7 +1269,7 @@ Zotero.ZotFile = {
             if(row) row.setAttribute('hidden', 'true');
             return;
         }
-        // add row if it does not exists
+        // add row if it does not exist
         if(!row) row = zz.attboxAddTabletRow();
         // pdf attachment
         row.setAttribute('hidden', 'false');
@@ -2471,7 +2471,7 @@ Zotero.ZotFile = {
             if(this.getInfo(att, "mode")==1) {
                 var loc = this.getInfo(att, "location");
                 if(!this.fileExists(loc)) {
-                    this.infoWindow('ZotFile Error', 'The file "' + loc + '" does not exists.');
+                    this.infoWindow('ZotFile Error', 'The file "' + loc + '" does not exist.');
                     return(false);
                 }
                 return(this.createFile(loc));
