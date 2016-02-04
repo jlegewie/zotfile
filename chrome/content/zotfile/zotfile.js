@@ -1464,10 +1464,10 @@ Zotero.ZotFile = {
             author_lastg = author_lastg + this.prefs.getCharPref("etal");
         }
         //create last (senior) author string
-        lastAuthor = creators[creators.length - 1].ref.lastName;
-        lastAuthor_lastf = creators[creators.length - 1].ref.lastName + creators[creators.length - 1].ref.firstName.substr(0, 1).toUpperCase();
-        lastAuthor_initials = creators[creators.length - 1].ref.firstName.substr(0, 1).toUpperCase() + creators[creators.length - 1].ref.lastName.substr(0, 1).toUpperCase();
-        lastAuthor_lastInitial = creators[creators.length - 1].ref.lastName.substr(0, 1).toUpperCase();
+        var lastAuthor = creators[creators.length - 1].ref.lastName;
+        var lastAuthor_lastf = creators[creators.length - 1].ref.lastName + creators[creators.length - 1].ref.firstName.substr(0, 1).toUpperCase();
+        var lastAuthor_initials = creators[creators.length - 1].ref.firstName.substr(0, 1).toUpperCase() + creators[creators.length - 1].ref.lastName.substr(0, 1).toUpperCase();
+        var lastAuthor_lastInitial = creators[creators.length - 1].ref.lastName.substr(0, 1).toUpperCase();
         // get creator and create editors string
         var editorType = [3,4,5,27,29];
         var editor = "", editor_lastf="", editor_initials="";
@@ -1491,7 +1491,7 @@ Zotero.ZotFile = {
                 j=j+1;
             }
         }
-        return([author, author_lastf, author_initials, editor, editor_lastf, editor_initials, author_lastg,]);
+        return([author, author_lastf, author_initials, editor, editor_lastf, editor_initials, author_lastg, lastAuthor, lastAuthor_lastInitial, lastAuthor_lastf, lastAuthor_initials]);
     },
 
     wildcardTable: function(item) {
@@ -1522,7 +1522,11 @@ Zotero.ZotFile = {
             'editorLastF': authors[4],
             'editorInitials': authors[5],
             'authorLastG': authors[6],
-	    'collectionPaths': getCollectionPathsOfItem(item)
+            "lastAuthor": authors[7],
+            "lastAuthor_lastInitial": authors[8],
+            "lastAuthor_lastf": authors[9],
+            "lastAuthor_initials": authors[10],
+	        "collectionPaths": getCollectionPathsOfItem(item)
         };
         // define transform functions
         var itemtypeWildcard = function(item, map) {
