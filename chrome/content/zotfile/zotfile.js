@@ -3394,6 +3394,7 @@ Zotero.ZotFile = {
                 firstElement = false;
                 a.setAttribute('href', zz.str_format(href, {'lib': lib, 'key': key, 'page': entry.page + 1}));
                 a.textContent = Zotero.Utilities.htmlSpecialChars(entry.title);
+                a.textContent = a.textContent.replace(/&apos;/g, "'");
                 if(entry.page!==undefined)
                     li.appendChild(a);
                 if(entry.page!==undefined && entry.items.length>0)
