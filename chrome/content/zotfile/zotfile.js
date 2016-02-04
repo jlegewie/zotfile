@@ -1526,7 +1526,7 @@ Zotero.ZotFile = {
             "lastAuthor_lastInitial": authors[8],
             "lastAuthor_lastf": authors[9],
             "lastAuthor_initials": authors[10],
-	        "collectionPaths": getCollectionPathsOfItem(item)
+            "collectionPaths": getCollectionPathsOfItem(item)
         };
         // define transform functions
         var itemtypeWildcard = function(item, map) {
