@@ -1770,8 +1770,16 @@ Zotero.ZotFile = {
 
     addSuffix: function(filename,k) {
         var temp = [];
-        temp = filename.split('.');
-        return(temp[0] + k + "." + this.getFiletype(filename));
+        // If filename includes an extension split on last dot
+        // otherwise keep the filename untouched and add "k"
+        // Fixes GitHub issue #171
+        var i = filename.lastIndexOf('.');
+        if (i === -1) {
+          temp = filename;
+        } else {
+          temp = filename.slice(0, i);
+        }
+        return(temp + "_" + k + "." + this.getFiletype(filename));
     },
 
     getFilename: function(item,filename_org,rename_format){
