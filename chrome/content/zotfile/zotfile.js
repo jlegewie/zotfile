@@ -2096,6 +2096,10 @@ Zotero.ZotFile = {
         // As well as zotero's internal directory
         var zotero_storage_dir = Zotero.getStorageDirectory().path;
 
+        // Only delete folders if the file is located in the default zotero
+        // storage dir or the custom location specified in zotfile settings
+        if (! (f.path.startsWith(zotero_storage_dir) || f.path.startsWith(source_dir))) return;
+
         // Try to remove the original dir recursively until a non empty folder is found
         while(true) {
             if (f.isDirectory() && f.path !== source_dir && f.path !== zotero_storage_dir) {
