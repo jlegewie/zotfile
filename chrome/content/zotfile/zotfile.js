@@ -1769,7 +1769,7 @@ Zotero.ZotFile = {
 
     completePath: function(location,filename) {
         var path = location.charAt(location.length-1)==this.folderSep ? location + filename : location + this.folderSep + filename;
-        return (path);
+        return OS.Path.normalize(path);
     },
 
     addSuffix: function(filename,k) {
