@@ -42,7 +42,7 @@ var OpenPDFExtension = new function(){
                     return;
                 }
                 // open pdf file
-                zz.runProcess('/usr/bin/open', ['-a', '"' + open_with + '"', path]);
+                zz.runProcess('/usr/bin/open', ['-a', open_with, path]);
                 // go to page using applescript
                 args = [
                   '-e', 'tell app "' + open_with + '" to activate', 
