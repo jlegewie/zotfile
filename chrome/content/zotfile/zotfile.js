@@ -54,9 +54,6 @@ Zotero.ZotFile = {
     versionChanges: function (currentVersion) {
         // open webpage
         var open_page = ["4.1.1", "4.1", "4.0", "3.3", "3.2", "3.1", "2.0", "2.3"];
-        var i, j;
-        var searches, conditions;
-
         if(this.prefs.getCharPref("version")==="" || open_page.indexOf(currentVersion) != -1) {
             if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL); });
             if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.changelogURL); });
@@ -66,92 +63,8 @@ Zotero.ZotFile = {
             this.prefs.setCharPref("pdfExtraction.openPdfMac", "Skim");
         }
 
-        // version 3
-        // - add tags to parent items for attachments on tablet
-        // - transfer project folder preferences to JSON format
-        if(this.prefs.getCharPref("version")!=="" && currentVersion.indexOf('3')===0 &&
-            !this.prefs.getBoolPref("zotfile3update")) {
-
-            // updated to version 3
-            this.prefs.setBoolPref("zotfile3update", true);
-
-            // show change log
-            if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL); });
-            if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.changelogURL); });
-
-            // change tablet tags
-            var atts = this.getAttachmentsOnTablet();
-            for (j=0; j < atts.length; j++) {
-                // if attachment on tablet, add tag for modified tablet item and remove tablet tag
-                if(!this.getTabletStatusModified(atts[j])) {
-                    this.addTabletTag(atts[j], this.tag);
-                }
-                // attachment on tablet (modified)
-                else {
-                    this.addTabletTag(atts[j], this.tagMod);
-                }
-            }
-            // change saved searches
-            searches=Zotero.Searches.getAll();
-            for(i=0; i<searches.length;i++ ) {
-                conditions=searches[i].getSearchConditions();
-                for(j=1; j<conditions.length;j++ ) {
-                    if(conditions[j].condition=="tag" && conditions[j].value=="_tablet") {
-                        searches[i].updateCondition(conditions[j].id,'tag','contains','_tablet');
-                        searches[i].save();
-                    }
-                }
-            }
-            // transfer project folder preferences to JSON format
-            if(this.prefs.getCharPref("tablet.subfolders")=="[]") {
-                var subfolders = [],
-                    projectNr= new Array("01","02","03","04","05","06","07","08","09","10","11","12","13","14","15");
-                for (i=0;i<this.projectMax;i++) {
-                    var used = this.prefs.getBoolPref("tablet.projectFolders"+projectNr[i]);
-                    var folder = this.prefs.getCharPref("tablet.projectFolders"+projectNr[i]+"_folder");
-                    var label = this.prefs.getCharPref("tablet.projectFolders"+projectNr[i]+"_label");
-                    if(used) subfolders.push({'label':label,'path':folder});
-                }
-                this.prefs.setCharPref("tablet.subfolders",JSON.stringify(subfolders));
-            }
-        }
-
-        // add saved search and change tag when upgrading to 2.1
-        if(currentVersion=="2.1" && this.prefs.getBoolPref("tablet")) {
-            // create saved search for modified tablet items
-            this.createSavedSearch("tablet_modified");
-
-            if(Zotero.Tags.getID("_READ",0)!==false) {
-                try {
-                    // change tablet tag
-                    Zotero.Tags.rename(Zotero.Tags.getID("_READ",0), "_tablet");
-
-                    // show message
-                    this.infoWindow(this.ZFgetString('general.warning'),this.ZFgetString('tablet.oldTagName'));
-
-                } catch (ex) {
-                    alert("Warning: ZotFile has changed the tag for attachments on the tablet from '_READ' to '_tablet' but was unable to automatically change the existing tag. Please make the changes manually or ask for help in the zotfile thread on the zotero forum.");
-                }
-            }
-
-            // change saved searches
-            searches=Zotero.Searches.getAll();
-            for(i=0; i<searches.length;i++ ) {
-                conditions=searches[i].getSearchConditions();
-                for(j=1; j<conditions.length;j++ ) {
-                    if(conditions[j].condition=="tag" && conditions[j].value=="_READ") {
-                        searches[i].updateCondition(conditions[j].id,'tag',conditions[j].operator,'_tablet');
-                        searches[i].save();
-                    }
-                }
-            }
-        }
-
         // set current version
         this.prefs.setCharPref("version",currentVersion);
-
-//      code for specific version upgrades
-//      if(currentVersion=="2.1" && oldVersion!="2.1")
 
     },
 
