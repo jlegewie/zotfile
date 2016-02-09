@@ -34,9 +34,15 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
-#### Changes in 4.1.7
+#### Changes in 4.2
 
 - Add wildcard %g for author's full name (thanks to [QingQYang](https://github.com/QingQYang))
+- Support for PDF Expert and other PDF readers on mac to open links in Zotero notes (the hidden option `pdfExtraction.openPdfMac_skim` changed to `pdfExtraction.openPdfMac`. `openPdfMac` is a string with the exact name of the application such as "Preview", "Skim" or "PDF Expert").
+- Wild-cards for (senior) last author (`q`, `Q`, `u`, and `U`) (thanks to [bwiernik](https://github.com/bwiernik))
+- Fix: Small fixes for extraction of annotations
+- Fix: Delete folder(s) if no last file is moved out (thanks to [Renato Alves](https://github.com/Unode))
+- Fix: Renaming same file a second time truncates and indexes filename (thanks to [Renato Alves](https://github.com/Unode))
+- Fix: Better handle spacial character in TOC
 
 #### Changes in 4.1.6
 
