@@ -1774,7 +1774,7 @@ Zotero.ZotFile = {
 
     completePath: function(location,filename) {
         var path = location.charAt(location.length-1)==this.folderSep ? location + filename : location + this.folderSep + filename;
-        return (path);
+        return OS.Path.normalize(path);
     },
 
     addSuffix: function(filename,k) {
@@ -1947,6 +1947,7 @@ Zotero.ZotFile = {
             return(file.path);
 
         var filename_temp = filename;
+        var original_filename = file.path;
         var k = 2;
         while(this.fileExists(destination, filename_temp)) {
             filename_temp = this.addSuffix(filename,k);
@@ -1977,6 +1978,10 @@ Zotero.ZotFile = {
                 this.messages_error.push(this.ZFgetString('error.movingFileGeneral', [att_name, err]));
             return false;
         }
+
+        // If after moving we leave behind empty folders, try to remove them
+        var original_dir = this.createFile(OS.Path.dirname(original_filename));
+        this.removeEmptyFolders(original_dir);
 
         return(file.path);
     },
@@ -2086,6 +2091,35 @@ Zotero.ZotFile = {
             }
             catch(err){
                 if(f.isDirectory()) this.infoWindow(this.ZFgetString('general.report'),this.ZFgetString('file.removeFolderFailed'));
+            }
+        }
+    },
+
+    removeEmptyFolders: function(f) {
+        // Keep track of what is the current source directory as we don't want to remove it
+        var source_dir = this.prefs.getCharPref("dest_dir");
+        // As well as zotero's internal directory
+        var zotero_storage_dir = Zotero.getStorageDirectory().path;
+
+        // Only delete folders if the file is located in the default zotero
+        // storage dir or the custom location specified in zotfile settings
+        if (! (f.path.startsWith(zotero_storage_dir) || f.path.startsWith(source_dir))) return;
+
+        // Try to remove the original dir recursively until a non empty folder is found
+        while(true) {
+            if (f.isDirectory() && f.path !== source_dir && f.path !== zotero_storage_dir) {
+                this.removeFile(f);
+
+                // Stop if the directory was not removed
+                if (f.exists()) break;
+
+                // Try the parent of the current folder too
+                f = this.createFile(OS.Path.dirname(f.path));
+
+            } else {
+                // Also break if f is not a directory or if it is the same
+                // directory as the source/zotero folder
+                break;
             }
         }
     },
