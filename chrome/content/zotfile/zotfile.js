@@ -60,7 +60,12 @@ Zotero.ZotFile = {
         if(this.prefs.getCharPref("version")==="" || open_page.indexOf(currentVersion) != -1) {
             if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL); });
             if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.changelogURL); });
-        }        
+        }
+
+        if(currentVersion=="4.2" && this.prefs.getBoolPref("pdfExtraction.openPdfMac_skim")) {
+            this.prefs.setCharPref("pdfExtraction.openPdfMac", "Skim");
+        }
+
         // version 3
         // - add tags to parent items for attachments on tablet
         // - transfer project folder preferences to JSON format

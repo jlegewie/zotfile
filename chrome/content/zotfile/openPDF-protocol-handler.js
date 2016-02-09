@@ -31,25 +31,25 @@ var OpenPDFExtension = new function(){
             if(filename.toLowerCase().indexOf('.pdf')==-1) return;
             // open pdf and go to page (system specific)
             if(Zotero.isMac) {
-                if(zz.prefs.getBoolPref('pdfExtraction.openPdfMac_skim')) {
+                var open_with = zz.prefs.getCharPref('pdfExtraction.openPdfMac');
+                if(open_with == "Skim") {
                     args = [
                         '-e', 'tell app "Skim" to activate', 
                         '-e', 'tell app "Skim" to open "' + path + '"'];
                     if (page)
                         args.push('-e', 'tell document "' + filename + '" of application "Skim" to go to page ' + page);
                     zz.runProcess('/usr/bin/osascript', args, false);
+                    return;
                 }
-                else {
-                    // open pdf file
-                    zz.runProcess('/usr/bin/open', ['-a', 'Preview', path]);
-                    // go to page using applescript
-                    args = [
-                      '-e', 'tell app "Preview" to activate', 
-                      '-e', 'tell app "System Events" to keystroke "g" using {option down, command down}', 
-                      '-e', 'tell app "System Events" to keystroke "' + page + '"',
-                      '-e', 'tell app "System Events" to keystroke return'];
-                    if (page) zz.runProcess('/usr/bin/osascript', args, false);
-                }
+                // open pdf file
+                zz.runProcess('/usr/bin/open', ['-a', '"' + open_with + '"', path]);
+                // go to page using applescript
+                args = [
+                  '-e', 'tell app "' + open_with + '" to activate', 
+                  '-e', 'tell app "System Events" to keystroke "g" using {option down, command down}', 
+                  '-e', 'tell app "System Events" to keystroke "' + page + '"',
+                  '-e', 'tell app "System Events" to keystroke return'];
+                if (page) zz.runProcess('/usr/bin/osascript', args, false);
             }
             if(Zotero.isWin) {
                 // get path to PDF Reader
