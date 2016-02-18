@@ -34,6 +34,10 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 4.2.1
+
+- Fix: Renaming attachments without author failed
+
 #### Changes in 4.2
 
 - Add wildcard %g for author's full name (thanks to [QingQYang](https://github.com/QingQYang))

@@ -1382,10 +1382,13 @@ Zotero.ZotFile = {
             author_lastg = author_lastg + this.prefs.getCharPref("etal");
         }
         //create last (senior) author string
-        var lastAuthor = creators[creators.length - 1].ref.lastName;
-        var lastAuthor_lastf = creators[creators.length - 1].ref.lastName + creators[creators.length - 1].ref.firstName.substr(0, 1).toUpperCase();
-        var lastAuthor_initials = creators[creators.length - 1].ref.firstName.substr(0, 1).toUpperCase() + creators[creators.length - 1].ref.lastName.substr(0, 1).toUpperCase();
-        var lastAuthor_lastInitial = creators[creators.length - 1].ref.lastName.substr(0, 1).toUpperCase();
+        var lastAuthor = "", lastAuthor_lastf= "", lastAuthor_initials= "", lastAuthor_lastInitial = "";
+        if (creators.length > 0) {
+            lastAuthor = creators[creators.length - 1].ref.lastName;
+            lastAuthor_lastf = creators[creators.length - 1].ref.lastName + creators[creators.length - 1].ref.firstName.substr(0, 1).toUpperCase();
+            lastAuthor_initials = creators[creators.length - 1].ref.firstName.substr(0, 1).toUpperCase() + creators[creators.length - 1].ref.lastName.substr(0, 1).toUpperCase();
+            lastAuthor_lastInitial = creators[creators.length - 1].ref.lastName.substr(0, 1).toUpperCase();
+        }
         // get creator and create editors string
         var editorType = [3,4,5,27,29];
         var editor = "", editor_lastf="", editor_initials="";
