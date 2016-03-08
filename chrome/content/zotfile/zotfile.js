@@ -2012,18 +2012,20 @@ Zotero.ZotFile = {
     },
 
     removeEmptyFolders: function(f) {
-        // Keep track of what is the current source directory as we don't want to remove it
-        var source_dir = this.prefs.getCharPref("dest_dir");
-        // As well as zotero's internal directory
-        var zotero_storage_dir = Zotero.getStorageDirectory().path;
+        // Keep track of current source and destination directory as we don't want to remove it
+        var source_dir = OS.Path.normalize(this.getSourceDir(true));
+        var dest_dir = OS.Path.normalize(this.prefs.getCharPref("dest_dir"));
+        // and zotero's internal directory
+        var zotero_storage_dir = OS.Path.normalize(Zotero.getStorageDirectory().path);
 
         // Only delete folders if the file is located in the default zotero
-        // storage dir or the custom location specified in zotfile settings
-        if (! (f.path.startsWith(zotero_storage_dir) || f.path.startsWith(source_dir))) return;
+        // storage dir, the custom location specified in zotfile settings
+        // or the custom source location also in zotfile settings
+        if (! (f.path.startsWith(zotero_storage_dir) || f.path.startsWith(source_dir) || f.path.startsWith(dest_dir))) return;
 
         // Try to remove the original dir recursively until a non empty folder is found
         while(true) {
-            if (f.isDirectory() && f.path !== source_dir && f.path !== zotero_storage_dir) {
+            if (f.isDirectory() && f.path !== zotero_storage_dir && f.path !== source_dir && f.path !== dest_dir) {
                 this.removeFile(f);
 
                 // Stop if the directory was not removed

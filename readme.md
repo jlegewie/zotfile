@@ -34,6 +34,11 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 4.2.2
+
+- Fix: %c wildcard on Windows
+- Fix: Problem with deleting empty folders
+
 #### Changes in 4.2.1
 
 - Fix: Renaming attachments without author failed
