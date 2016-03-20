@@ -36,8 +36,10 @@ Contributions preferably through pull requests are welcome!
 
 #### Changes in 4.2.3
 
+- Support for non ascii characters in source, destination and tablet directory
 - Fix: regression from 4.2.2
 - Fix: Error reporting for better debugging
+- Fix: Correct parsing of page number from Zotero item for extracted annotations
 
 #### Changes in 4.2.2
 
