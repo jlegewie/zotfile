@@ -3752,7 +3752,10 @@ Zotero.ZotFile = {
                 if(zz.prefs.getBoolPref("pdfExtraction.NoteTruePage")) {
                     try {
                         var itemPages = item.getField('pages');
-                        if(itemPages) page = parseInt(itemPages.split('-')[0],10) + page - 1;
+                        if(itemPages) {
+                            var page_parsed = typeof itemPages == "string" ? parseInt(itemPages.split('-')[0], 10) : itemPages;                            
+                            page = isNaN(page_parsed) ? page : page_parsed + page - 1;
+                        }
                     }
                     catch(err) {}
                 }
