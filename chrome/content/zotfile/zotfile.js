@@ -726,7 +726,17 @@ Zotero.ZotFile = {
             errors.lines.push(this.ZFgetString('error.unknown'));
             errors.txt = this.ZFgetString('error.clickToCopy');
             // prepare error message for clipboard
-            var errors_str = this.messages_fatalError.map(function(e) {return typeof e=='object' ? JSON.stringify(e) : e;});
+            var format_error = function(e) {
+                var name = e.name ? e.name : "Error",
+                    message = e.message ? e.message : "undefined message",
+                    fileName = e.fileName ? e.fileName : (e.filename ? e.filename : "undefined file"),
+                    lineNumber = e.lineNumber ? e.lineNumber : "undefined line number";
+                return name + ": " + message + " \n(" + fileName + ", " + lineNumber + ")";
+            };
+            var errors_str = this.messages_fatalError.map(function(e) {
+                if (typeof e == 'object') Zotero.logError(e);
+                return typeof e == 'object' ? format_error(e) : e;
+            });
             errors_str = this.removeDuplicates(errors_str).join("\n\n");
             on_click = function() {
                 Zotero.ZotFile.copy2Clipboard(errors_str);
@@ -2527,7 +2537,7 @@ Zotero.ZotFile = {
                 }
             }
             catch(e) {
-                this.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
+                this.messages_fatalError.push(e);
             }
         }
         // show messages and handle errors
@@ -2784,7 +2794,7 @@ Zotero.ZotFile = {
                 }
             }
             catch(e) {
-                this.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
+                this.messages_fatalError.push(e);
             }
         }
 
