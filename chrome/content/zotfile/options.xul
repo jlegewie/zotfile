@@ -100,12 +100,12 @@
 							   <separator/>
 							
 							    <caption label="&attachments-source-folder;"/>                               								
-								<radiogroup id="id-zotfile-source_dir_ff" preference="pref-zotfile-source_dir_ff" oncommand="if(document.getElementById('pref-zotfile-source_dir_ff').value) if(document.getElementById('pref-zotfile-source_dir').value=='') {Zotero.ZotFile.prefs.setCharPref('source_dir',Zotero.ZotFile.chooseDirectory()); updateFolderIcon('source',true);}">
+								<radiogroup id="id-zotfile-source_dir_ff" preference="pref-zotfile-source_dir_ff" oncommand="if(document.getElementById('pref-zotfile-source_dir_ff').value) if(document.getElementById('pref-zotfile-source_dir').value=='') {var str = Components.classes['@mozilla.org/supports-string;1'].createInstance(Components.interfaces.nsISupportsString); str.data = Zotero.ZotFile.chooseDirectory(); Zotero.ZotFile.prefs.setComplexValue('source_dir', Components.interfaces.nsISupportsString, str); updateFolderIcon('source', true);}">
 									<radio id="id-zotfile-source_dir_ff-true" label="&use-firefox-download-folder;" value="true" oncommand="updatePreferenceWindow('source');"/>
 									<hbox  style="margin: 0"  align="center">									
 									 	<radio label="&custom-source-folder;" value="false"  oncommand="updatePreferenceWindow('source');" />										
 										<textbox id="id-zotfile-source_dir" preference="pref-zotfile-source_dir" flex="1" onchange="updateFolderIcon('source',false); "/>
-										<button id="id-zotfile-source_dir-button" label="&choose;" oncommand="var folder=Zotero.ZotFile.chooseDirectory(); if(folder!='') {Zotero.ZotFile.prefs.setCharPref('source_dir',folder);updateFolderIcon('source',false);}"/>
+										<button id="id-zotfile-source_dir-button" label="&choose;" oncommand="var folder = Zotero.ZotFile.chooseDirectory(); if(folder != '') {var str = Components.classes['@mozilla.org/supports-string;1'].createInstance(Components.interfaces.nsISupportsString); str.data = folder; Zotero.ZotFile.prefs.setComplexValue('source_dir', Components.interfaces.nsISupportsString, str); updateFolderIcon('source', false);}"/>
 										<image id="id-zotfile-source_dir-clear" width='16' height='16' hidden="false"/>										    
 									    <image id="id-zotfile-source_dir-ok" src="chrome://zotfile/skin/accept.png" hidden="true"/>	
 									    <image id="id-zotfile-source_dir-error" src="chrome://zotfile/skin/exclamation.png" hidden="true"/>
@@ -121,12 +121,12 @@
 			                    <description style="width: 420px">&target-location-desc;</description>											
 								<separator/>
 
-							   	<radiogroup id="id-zotfile-import" preference="pref-zotfile-import" oncommand="if(document.getElementById('pref-zotfile-import').value) if(document.getElementById('pref-zotfile-dest_dir').value=='') {Zotero.ZotFile.prefs.setCharPref('dest_dir',Zotero.ZotFile.chooseDirectory()); updateFolderIcon('dest',true);}">
+							   	<radiogroup id="id-zotfile-import" preference="pref-zotfile-import" oncommand="if(document.getElementById('pref-zotfile-import').value) if(document.getElementById('pref-zotfile-dest_dir').value=='') {var str = Components.classes['@mozilla.org/supports-string;1'].createInstance(Components.interfaces.nsISupportsString); str.data = Zotero.ZotFile.chooseDirectory(); Zotero.ZotFile.prefs.setComplexValue('dest_dir', Components.interfaces.nsISupportsString, str); updateFolderIcon('dest',true);}">
 									<radio label="&attach-stored-copy;" value="true" oncommand="updatePreferenceWindow('dest');"/>
 									<hbox  style="margin: 0"  align="center">
 										<radio label="&custom-location;" value="false" oncommand="updatePreferenceWindow('dest');"/>		
 										<textbox id="id-zotfile-dest_dir" preference="pref-zotfile-dest_dir" flex="1" onchange="updateFolderIcon('dest',false);"/>
-										<button id="id-zotfile-dest_dir-button" label="&choose;" oncommand="var folder=Zotero.ZotFile.chooseDirectory(); if(folder!='') {Zotero.ZotFile.prefs.setCharPref('dest_dir',folder);updateFolderIcon('dest',false);}"/>
+										<button id="id-zotfile-dest_dir-button" label="&choose;" oncommand="var folder = Zotero.ZotFile.chooseDirectory(); if(folder != '') {var str = Components.classes['@mozilla.org/supports-string;1'].createInstance(Components.interfaces.nsISupportsString); str.data = folder; Zotero.ZotFile.prefs.setComplexValue('dest_dir', Components.interfaces.nsISupportsString, str); updateFolderIcon('dest', false);}"/>
 										<image id="id-zotfile-dest_dir-clear" width='16' height='16' hidden="false"/>										    
 									    <image id="id-zotfile-dest_dir-ok" src="chrome://zotfile/skin/accept.png" hidden="true"/>	
 									    <image id="id-zotfile-dest_dir-error" src="chrome://zotfile/skin/exclamation.png" hidden="true"/>		
@@ -168,7 +168,7 @@
 						   <label id="id-zotfile-tablet-baseFolder" value="&base-folder;" control="id-zotfile-tablet-dest_dir"/>					
 						   <hbox style="margin: 0" align="center">					
 							   <textbox id="id-zotfile-tablet-dest_dir" preference="pref-zotfile-tablet-dest_dir" flex="1" onchange="updateFolderIcon('tablet');"/>								
-							   <button id="id-zotfile-tablet-dest_dir-button" label="&choose;" oncommand="var folder=Zotero.ZotFile.chooseDirectory(); if(folder!='') {Zotero.ZotFile.prefs.setCharPref('tablet.dest_dir',folder);updateFolderIcon('tablet',false);}"/>
+							   <button id="id-zotfile-tablet-dest_dir-button" label="&choose;" oncommand="var folder=Zotero.ZotFile.chooseDirectory(); if(folder!='') {var str = Components.classes['@mozilla.org/supports-string;1'].createInstance(Components.interfaces.nsISupportsString); str.data = folder; Zotero.ZotFile.prefs.setComplexValue('tablet.dest_dir', Components.interfaces.nsISupportsString, str);updateFolderIcon('tablet',false);}"/>
 							   <button id="id-zotfile-tablet-dest_dir-show" label="&show-folder;" oncommand="Zotero.ZotFile.showFolder(Zotero.ZotFile.getTabletLocationFile());"/>
 							   <image id="id-zotfile-tablet-ok" src="chrome://zotfile/skin/accept.png" hidden="true"/>	 
 							   <image id="id-zotfile-tablet-error" src="chrome://zotfile/skin/exclamation.png" hidden="true"/>									

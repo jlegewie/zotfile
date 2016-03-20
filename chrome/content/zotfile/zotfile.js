@@ -300,7 +300,7 @@ Zotero.ZotFile = {
                         // Rename the file (linked attachment)
                         if(!prefs.getBoolPref("import")) {
                             // rename and move attachment
-                            var id_item = zz.renameAttachment(parent, item, true, prefs.getBoolPref("import"),prefs.getCharPref("dest_dir"), prefs.getBoolPref("subfolder"), prefs.getCharPref("subfolderFormat"), false);
+                            var id_item = zz.renameAttachment(parent, item, true, prefs.getBoolPref("import"), prefs.getComplexValue("dest_dir", Components.interfaces.nsISupportsString).data, prefs.getBoolPref("subfolder"), prefs.getCharPref("subfolderFormat"), false);
                             // set flag for notification
                             file_renamed = true;
                             // get new attachment file
@@ -937,8 +937,8 @@ Zotero.ZotFile = {
         }
 
         // check whether destination folder is defined (and valid)
-        var dest_dir_valid=this.fileExists(this.prefs.getCharPref("tablet.dest_dir"));
-//      if(this.prefs.getCharPref("tablet.dest_dir")!="") var dest_dir_valid=1;
+        var dest_dir_valid=this.fileExists(this.prefs.getComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString).data);
+//      if(this.prefs.getComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString).data!="") var dest_dir_valid=1;
 
         // warnings
         if(!oneItem) {
@@ -984,7 +984,7 @@ Zotero.ZotFile = {
                     show.push(m.push2reader,m.pullreader);
 
                     // set tooltip for base folder
-                    menu.childNodes[m.push2reader].setAttribute('tooltiptext',this.ZFgetString('menu.sendAttToBaseFolder',[this.prefs.getCharPref("tablet.dest_dir")]));
+                    menu.childNodes[m.push2reader].setAttribute('tooltiptext',this.ZFgetString('menu.sendAttToBaseFolder',[this.prefs.getComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString).data]));
 
                     if(!onePushed) disable.push(m.pullreader);
 
@@ -2024,9 +2024,9 @@ Zotero.ZotFile = {
     removeEmptyFolders: function(f) {
         // Keep track of zotero's internal directory, current source and destination directory
         var base_folders = [Zotero.getStorageDirectory().path];
-        var source_dir = this.getSourceDir(false);
-            dest_dir = this.prefs.getCharPref("dest_dir");
-        if (source_dir != -1 & source_dir != "") base_folders.push(source_dir);
+        var source_dir = this.getSourceDir(false),
+            dest_dir = this.prefs.getComplexValue("dest_dir", Components.interfaces.nsISupportsString).data;
+        if (source_dir != -1 && source_dir != "") base_folders.push(source_dir);
         if (dest_dir != "") base_folders.push(dest_dir);
         base_folders = base_folders.map(OS.Path.normalize);
         // Only delete folders if the file is located in any of the base folders
@@ -2168,8 +2168,8 @@ Zotero.ZotFile = {
     getSourceDir: function(message) {
         var source_dir="";
 
-        if ( this.prefs.getBoolPref("source_dir_ff")) source_dir=this.getFFDownloadFolder();
-        if (!this.prefs.getBoolPref("source_dir_ff")) source_dir=this.prefs.getCharPref("source_dir");
+        if ( this.prefs.getBoolPref("source_dir_ff")) source_dir = this.getFFDownloadFolder();
+        if (!this.prefs.getBoolPref("source_dir_ff")) source_dir = this.prefs.getComplexValue("source_dir", Components.interfaces.nsISupportsString).data;
 
         // test whether valid source dir
         if (source_dir!="" && this.fileExists(source_dir)) {
@@ -2193,7 +2193,7 @@ Zotero.ZotFile = {
         }
         // Rename and Move Attachment
         var att = Zotero.Items.get(attID);
-        var newAttID = this.renameAttachment(item, att, true, this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),false);
+        var newAttID = this.renameAttachment(item, att, true, this.prefs.getBoolPref("import"), this.prefs.getComplexValue("dest_dir", Components.interfaces.nsISupportsString).data, this.prefs.getBoolPref("subfolder"), this.prefs.getCharPref("subfolderFormat"), false);
         return Zotero.Items.get(newAttID);
     },
 
@@ -2213,7 +2213,10 @@ Zotero.ZotFile = {
             // check whether valid FF default download folder
             if(this.prefs.getBoolPref('source_dir_ff') &&  this.getSourceDir(false)==-1) {
                 this.prefs.setBoolPref('source_dir_ff',false);
-                this.prefs.setCharPref('source_dir',prompt(this.ZFgetString('general.downloadFolder.prompt')));
+                var str = Components.classes["@mozilla.org/supports-string;1"]
+                    .createInstance(Components.interfaces.nsISupportsString);
+                str.data = prompt(this.ZFgetString('general.downloadFolder.prompt'));
+                this.prefs.setComplexValue("source_dir", Components.interfaces.nsISupportsString, str);
                 return;
             }
 
@@ -2344,7 +2347,7 @@ Zotero.ZotFile = {
                 value = data[key]===undefined ? '' : data[key];
             }
             // for location tag: replace [BaseFolder] with destination folder
-            if(key=="location") value = value.replace("[BaseFolder]",this.prefs.getCharPref("tablet.dest_dir"));
+            if(key=="location") value = value.replace("[BaseFolder]",this.prefs.getComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString).data);
             // for location tag: correct window/mac file system
             if(key=="location" && Zotero.isWin) value = value.replace(/\//g, '\\');
             if(key=="location" && (Zotero.isMac || Zotero.isLinux)) value = value.replace(/\\/g, '/');
@@ -2372,7 +2375,7 @@ Zotero.ZotFile = {
         }
         // for location tag: replace destination folder with [BaseFolder]
         if(key=="location" && this.prefs.getBoolPref("tablet.dest_dir_relativePath"))
-            value = value.replace(this.prefs.getCharPref("tablet.dest_dir"),"[BaseFolder]");
+            value = value.replace(this.prefs.getComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString).data,"[BaseFolder]");
         // get zotfile element
         var p = note.querySelector("#zotfile-data");
         // doesn't exists...
@@ -2465,7 +2468,7 @@ Zotero.ZotFile = {
 
     getTabletLocationFile: function(subfolder) {
         if(subfolder==null) subfolder="";
-        return(this.createFile(this.prefs.getCharPref("tablet.dest_dir")+subfolder));
+        return(this.createFile(this.prefs.getComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString).data+subfolder));
     },
 
     getAttachmentsOnTablet: function(subfolder) {
@@ -2625,7 +2628,7 @@ Zotero.ZotFile = {
         // settings
         var tablet_mode = this.prefs.getIntPref("tablet.mode"),
             tablet_rename = this.prefs.getBoolPref("tablet.rename"),
-            tablet_dest = this.prefs.getCharPref("tablet.dest_dir")+projectFolder,
+            tablet_dest = this.prefs.getComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString).data+projectFolder,
             tablet_subfolder = this.prefs.getBoolPref("tablet.subfolder"),
             tablet_subfolderFormat = this.prefs.getCharPref("tablet.subfolderFormat");
 
@@ -2891,18 +2894,18 @@ Zotero.ZotFile = {
             // get note content
             var note = att.getNote();
             // rename and move attachment
-            attID=this.renameAttachment(item, att, this.prefs.getBoolPref("tablet.rename"), this.prefs.getBoolPref("import"),this.prefs.getCharPref("dest_dir"),this.prefs.getBoolPref("subfolder"),this.prefs.getCharPref("subfolderFormat"),false);
+            attID = this.renameAttachment(item, att, this.prefs.getBoolPref("tablet.rename"), this.prefs.getBoolPref("import"), this.prefs.getComplexValue("dest_dir", Components.interfaces.nsISupportsString).data, this.prefs.getBoolPref("subfolder"), this.prefs.getCharPref("subfolderFormat"), false);
             // get new attachment object
             att = Zotero.Items.get(attID);
             // finish up
-            itemPulled=true;
+            itemPulled = true;
             option = time_zotero>time_saved ? 0 : 2;
             // add note content
             att.setNote(note);
             att.save();
         }
         // remove subfolder if empty
-        if(!folder.equals(this.createFile(this.prefs.getCharPref('tablet.dest_dir'))))
+        if(!folder.equals(this.createFile(this.prefs.getComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString).data)))
             this.removeFile(folder);
 
         // post-processing if attachment has been removed & it's not a fake-pull
@@ -3171,7 +3174,7 @@ Zotero.ZotFile = {
         var progressWin = this.progressWindow(this.ZFgetString('renaming.renamed'));
         // settings
         var imported = this.prefs.getBoolPref("import"),
-            dest_dir = this.prefs.getCharPref("dest_dir"),
+            dest_dir = this.prefs.getComplexValue("dest_dir", Components.interfaces.nsISupportsString).data,
             subfolder = this.prefs.getBoolPref("subfolder"),
             subfolderFormat = this.prefs.getCharPref("subfolderFormat"),
             addDescription = false;
