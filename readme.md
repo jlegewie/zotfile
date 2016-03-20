@@ -34,6 +34,11 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 4.2.3
+
+- Fix: regression from 4.2.2
+- Fix: Error reporting for better debugging
+
 #### Changes in 4.2.2
 
 - Fix: %c wildcard on Windows
