@@ -202,7 +202,7 @@ function updateFolderIcon(which,revert) {
             icon_ok.setAttribute('hidden', true);
             icon_error.setAttribute('hidden', false);
         }
-        if(which!="all") changedBasefolder(Zotero.ZotFile.prefs.getCharPref("tablet.dest_dir"),Zotero.ZotFile.prefs.getCharPref("tablet.dest_dir"));
+        if(which!="all") changedBasefolder(Zotero.ZotFile.prefs.getCharPref("tablet.dest_dir"));
     }
 }
 
