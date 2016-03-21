@@ -2234,36 +2234,32 @@ Zotero.ZotFile = {
     },
 
     getLastFileInFolder: function(dir_path){
-        var return_files=[];
+        var return_files = [];
         // create a nslFile Object for the dir
         try {
-            var dir = this.createFile(dir_path);
-            var lastfile_date=0;
-            var lastfile_path="";
-            var success=0;
+            var dir = this.createFile(dir_path),
+                lastfile_date = 0,
+                lastfile_path = "",
+                success = 0;
 
             // go through all the files in the dir
-            var i=0;
             var files = dir.directoryEntries;
             while (files.hasMoreElements()) {
                 // get one after the other file
                 var file = files.getNext();
                 file.QueryInterface(Components.interfaces.nsIFile);
-                // only look at files which are neither folders nor hidden
-                if(!file.isDirectory() && !file.isHidden()) {
-                    // now we want to check which filetype we are looking at
-                    // we only want to consider pdfs, docs, ...
-                    if (this.checkFileType(file)) {
-                        var modtime = file.lastModifiedTime;
-                        i=i+1;
-                        // finally, we set return_files to the file with the most recent modification
-                        if (modtime>lastfile_date){
-                            lastfile_date=modtime;
-                            return_files[0]=file;
-    //                      lastfile=file;
-                            success=1;
-                        }
-                    }
+                // continue if file is folder or hidden
+                if(file.isDirectory() || file.isHidden())
+                    continue;
+                // continue if filetype not included
+                if (!this.checkFileType(file)) 
+                    continue;
+                // finally, we set return_files to the file with the most recent modification
+                var modtime = file.lastModifiedTime;
+                if (modtime > lastfile_date) {
+                    lastfile_date = modtime;
+                    return_files[0] = file;
+                    success = 1;
                 }
             }
             if (success==1) return(return_files);
