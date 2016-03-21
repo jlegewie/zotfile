@@ -554,6 +554,134 @@ Zotero.ZotFile = {
        });
     },
 
+    /**
+     * Normalize a path by removing any unneeded characters
+     * Adopted from OS.Path module
+     * https://dxr.mozilla.org/mozilla-central/source/toolkit/components/osfile/modules/ospath_unix.jsm
+     * https://dxr.mozilla.org/mozilla-central/source/toolkit/components/osfile/modules/ospath_win.jsm
+     */
+    normalize_path: function (path) {
+        var normalize_path_win = function(path) {
+            var winGetDrive = function(path) {
+                if (path == null) {
+                    throw new TypeError("path is invalid");
+                }
+
+                if (path.startsWith("\\\\")) {
+                // UNC path
+                if (path.length == 2) {
+                    return null;
+                }
+                let index = path.indexOf("\\", 2);
+                if (index == -1) {
+                    return path;
+                }
+                return path.slice(0, index);
+                }
+                // Non-UNC path
+                let index = path.indexOf(":");
+                if (index <= 0) return null;
+                return path.slice(0, index + 1);
+            };
+
+            var winIsAbsolute = function(path) {
+                let index = path.indexOf(":");
+                return path.length > index + 1 && path[index + 1] == "\\";
+            };
+        
+            let stack = [];
+
+            if (!path.startsWith("\\\\")) {
+                // Normalize "/" to "\\"
+                path = path.replace(/\//g, "\\");
+            }
+
+            // Remove the drive (we will put it back at the end)
+            let root = winGetDrive(path);
+            if (root) {
+                path = path.slice(root.length);
+            }
+
+            // Remember whether we need to restore a leading "\\" or drive name.
+            let absolute = winIsAbsolute(path);
+
+            // And now, fill |stack| from the components,
+            // popping whenever there is a ".."
+            path.split("\\").forEach(function loop(v) {
+                switch (v) {
+                    case "":  case ".": // Ignore
+                        break;
+                    case "..":
+                        if (stack.length == 0) {
+                        if (absolute) {
+                          throw new Error("Path is ill-formed: attempting to go past root");
+                        } else {
+                         stack.push("..");
+                        }
+                        } else {
+                        if (stack[stack.length - 1] == "..") {
+                          stack.push("..");
+                        } else {
+                          stack.pop();
+                        }
+                        }
+                        break;
+                    default:
+                        stack.push(v);
+                }
+            });
+
+            // Put everything back together
+            let result = stack.join("\\");
+            if (absolute || root) {
+                result = "\\" + result;
+            }
+            if (root) {
+                result = root + result;
+            }
+            return result;
+        };
+
+        var normalize_path_unix = function(path) {
+            let stack = [];
+            let absolute;
+            if (path.length >= 0 && path[0] == "/") {
+                absolute = true;
+            } else {
+                absolute = false;
+            }
+            path.split("/").forEach(function(v) {
+                switch (v) {
+                    case "":  case ".":// fallthrough
+                        break;
+                    case "..":
+                    if (stack.length == 0) {
+                        if (absolute) {
+                            throw new Error("Path is ill-formed: attempting to go past root");
+                        } else {
+                            stack.push("..");
+                        }
+                        } else {
+                        if (stack[stack.length - 1] == "..") {
+                            stack.push("..");
+                        } else {
+                            stack.pop();
+                        }
+                    }
+                    break;
+                    default:
+                      stack.push(v);
+                }
+            });
+            let string = stack.join("/");
+            return absolute ? "/" + string : string;
+        };
+
+        if (Zotero.isWin) path = normalize_path_win(path);
+        if (!Zotero.isWin) path = normalize_path_unix(path);
+        return(path)
+    },
+
     // check whether valid attachment
     // argument: zotero item, or item ID
     validAttachment: function (att, warning) {
@@ -1431,7 +1559,7 @@ Zotero.ZotFile = {
                 var collection = Zotero.Collections.get(collectionID);
                 if (collection.parent == null)  return collection.name
 
-                return OS.Path.normalize(getCollectionPath(collection.parent) + Zotero.ZotFile.folderSep + collection.name);
+                return this.normalize_path(getCollectionPath(collection.parent) + Zotero.ZotFile.folderSep + collection.name);
             };
 
             return item.getCollections().map(getCollectionPath);
@@ -1700,7 +1828,7 @@ Zotero.ZotFile = {
 
     completePath: function(location,filename) {
         var path = location.charAt(location.length-1)==this.folderSep ? location + filename : location + this.folderSep + filename;
-        return OS.Path.normalize(path);
+        return this.normalize_path(path);
     },
 
     addSuffix: function(filename,k) {
@@ -2028,7 +2156,7 @@ Zotero.ZotFile = {
             dest_dir = this.prefs.getComplexValue("dest_dir", Components.interfaces.nsISupportsString).data;
         if (source_dir != -1 && source_dir != "") base_folders.push(source_dir);
         if (dest_dir != "") base_folders.push(dest_dir);
-        base_folders = base_folders.map(OS.Path.normalize);
+        base_folders = base_folders.map(this.normalize_path);
         // Only delete folders if the file is located in any of the base folders
         if (!base_folders.map(dir => f.path.startsWith(dir)).some(x => x === true)) return;
 
