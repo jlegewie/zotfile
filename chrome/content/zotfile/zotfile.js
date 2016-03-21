@@ -2570,13 +2570,15 @@ Zotero.ZotFile = {
         Zotero.launchFile(file);
     },
 
-    getTabletFile: function(att) {
+    getTabletFile: function(att, verbose) {
+        var verbose = typeof verbose !== 'undefined' ?  verbose : true;
         try {
             // get file depending on mode
             if(this.getInfo(att, "mode")==1) {
                 var loc = this.getInfo(att, "location");
                 if(!this.fileExists(loc)) {
-                    this.infoWindow('ZotFile Error', 'The file "' + loc + '" does not exist.');
+                    if (verbose)
+                        this.infoWindow('ZotFile Error', 'The file "' + loc + '" does not exist.');
                     return(false);
                 }
                 return(this.createFile(loc));
