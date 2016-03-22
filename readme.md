@@ -36,7 +36,7 @@ Contributions preferably through pull requests are welcome!
 
 #### Changes in 4.2.4
 
-- fix regression with from 4.2.3
+- fix regression from 4.2.3
 
 #### Changes in 4.2.3
 
