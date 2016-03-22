@@ -1559,7 +1559,7 @@ Zotero.ZotFile = {
                 var collection = Zotero.Collections.get(collectionID);
                 if (collection.parent == null)  return collection.name
 
-                return this.normalize_path(getCollectionPath(collection.parent) + Zotero.ZotFile.folderSep + collection.name);
+                return Zotero.ZotFile.normalize_path(getCollectionPath(collection.parent) + Zotero.ZotFile.folderSep + collection.name);
             };
 
             return item.getCollections().map(getCollectionPath);
