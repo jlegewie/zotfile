@@ -34,6 +34,10 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 4.2.4
+
+- fix regression with from 4.2.3
+
 #### Changes in 4.2.3
 
 - Support for non ascii characters in source, destination and tablet directory
