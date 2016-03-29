@@ -34,6 +34,10 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 4.2.5
+
+- Compatibility with [Juris-M](https://juris-m.github.io/)
+
 #### Changes in 4.2.4
 
 - fix regression from 4.2.3
