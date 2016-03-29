@@ -25,6 +25,13 @@
 			<em:maxVersion>4.*</em:maxVersion>
 		</Description>
 	</em:targetApplication>
+	<em:targetApplication>
+		<Description>
+			<em:id>juris-m@juris-m.github.io</em:id>
+			<em:minVersion>3.0b1</em:minVersion>
+			<em:maxVersion>4.*</em:maxVersion>
+		</Description>
+	</em:targetApplication>
     <em:localized>
       <Description>
 	<em:locale>en-US</em:locale>
