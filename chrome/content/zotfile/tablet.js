@@ -454,8 +454,7 @@ Zotero.ZotFile.Tablet = new function() {
         var tablet_mode = Zotero.ZotFile.prefs.getIntPref("tablet.mode"),
             tablet_rename = Zotero.ZotFile.prefs.getBoolPref("tablet.rename"),
             tablet_dest = Zotero.ZotFile.prefs.getComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString).data+projectFolder,
-            tablet_subfolder = Zotero.ZotFile.prefs.getBoolPref("tablet.subfolder"),
-            tablet_subfolderFormat = Zotero.ZotFile.prefs.getCharPref("tablet.subfolderFormat");
+            tablet_subfolder = Zotero.ZotFile.prefs.getBoolPref("tablet.subfolder") ? Zotero.ZotFile.prefs.getCharPref("tablet.subfolderFormat") : '';
 
         if(!Zotero.ZotFile.fileExists(att) || !Zotero.ZotFile.checkFileType(att))
             return false;
@@ -473,7 +472,7 @@ Zotero.ZotFile.Tablet = new function() {
                 }
             }
             // create copy of file on tablet and catch errors
-            var folder = Zotero.ZotFile.getLocation(tablet_dest, item, tablet_subfolder ? tablet_subfolderFormat : '');
+            var folder = Zotero.ZotFile.getLocation(tablet_dest, item, tablet_subfolder);
             if (!tablet_status)
                 newFile = Zotero.ZotFile.copyFile(file, folder, file.leafName);
             else {
@@ -490,7 +489,7 @@ Zotero.ZotFile.Tablet = new function() {
         }
         // foreground mode: Rename and Move Attachment
         if(tablet_mode==2) {
-            var newAttID = Zotero.ZotFile.renameAttachment(item, att, tablet_rename, false, tablet_dest, tablet_subfolder, tablet_subfolderFormat, false);
+            var newAttID = Zotero.ZotFile.renameAttachment(att, false, tablet_rename, tablet_dest, tablet_subfolder, false);
             att = Zotero.Items.get(newAttID);
             newFile = att.getFile();
         }
@@ -719,7 +718,9 @@ Zotero.ZotFile.Tablet = new function() {
             // get note content
             var note = att.getNote();
             // rename and move attachment
-            attID = Zotero.ZotFile.renameAttachment(item, att, Zotero.ZotFile.prefs.getBoolPref("tablet.rename"), Zotero.ZotFile.prefs.getBoolPref("import"), Zotero.ZotFile.prefs.getComplexValue("dest_dir", Components.interfaces.nsISupportsString).data, Zotero.ZotFile.prefs.getBoolPref("subfolder"), Zotero.ZotFile.prefs.getCharPref("subfolderFormat"), false);
+            var subfolder = Zotero.ZotFile.getPref('subfolder') ? Zotero.ZotFile.getPref('subfolderFormat') : '';
+            attID = Zotero.ZotFile.renameAttachment(att, Zotero.ZotFile.getPref('import'), Zotero.ZotFile.getPref('tablet.rename'),
+                                                    Zotero.ZotFile.getPref('dest_dir'), subfolder, false);
             // get new attachment object
             att = Zotero.Items.get(attID);
             // finish up
@@ -730,7 +731,7 @@ Zotero.ZotFile.Tablet = new function() {
             att.save();
         }
         // remove subfolder if empty
-        if(!folder.equals(Zotero.ZotFile.createFile(Zotero.ZotFile.prefs.getComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString).data)))
+        if(!folder.equals(Zotero.ZotFile.createFile(Zotero.ZotFile.getPref('tablet.dest_dir'))))
             Zotero.ZotFile.removeFile(folder);
 
         // post-processing if attachment has been removed & it's not a fake-pull

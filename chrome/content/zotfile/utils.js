@@ -8,6 +8,7 @@ Zotero.ZotFile.Utils = new function() {
     this.removeDuplicates = removeDuplicates;
     this.arrayReplace = arrayReplace;
     this.addSuffix = addSuffix;
+    this.getFiletype = getFiletype;
     this.str_format = str_format;
     this.normalize_path = normalize_path;
     this.copy2Clipboard = copy2Clipboard;
