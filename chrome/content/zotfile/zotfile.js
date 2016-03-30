@@ -1353,59 +1353,47 @@ Zotero.ZotFile = {
         }
     },
 
-    moveFile: function(file, destination, filename, att_name){
-        /* moves 'file' to 'destination' path an renames it to 'filename'; 'att_name' is the attachment title used in error messages
-        * -> returns the path to the new (created) file, in case of an error returns false
-        */
-
-        //if the destination is only "/" or "\" then destination should be the file's parent directory
-        if(destination.trim() == this.folderSep) {
-            if(file.isFile())                   
-                destination = file.parent.path;
-            else
-                destination = file.path; //if file is a directory then destination should be that directory
-        }
-
-        if(file.path == this.completePath(destination,filename))
-            return(file.path);
-
-        var filename_temp = filename;
-        var original_filename = file.path;
+    /**
+     * Move file to new location
+     * @param  {nsIFile} file    File to move.
+     * @param  {string} target   Target directory.
+     * @param  {string} filename Name of file.
+     * @return {string}          Path to new location of file.
+     */
+    moveFile: function(file, target, filename) {
+        // check arguments
+        if (file instanceof Components.interfaces.nsIFile) throw("moveFile: 'file' is not nsIFile object.")
+        if (!file.exists()) throw("moveFile: 'file' does not exists.")
+        // if target is '/' or '\', use file's parent directory
+        if(target.trim() == this.folderSep)
+            target = file.isFile() ? file.parent.path : file.path;
+        // define variables
+        var path = OS.Path.join(target, filename),
+            target = this.createFile(target),
+            file_dirname = OS.Path.dirname(file.path);
+        // return if already at target
+        if(file.path == path) return(file.path);
+        // add suffix if target path exists
         var k = 2;
-        while(this.fileExists(destination, filename_temp)) {
-            filename_temp = this.Utils.addSuffix(filename,k);
+        while(this.fileExists(destination, filename)) {
+            filename = this.Utils.addSuffix(filename, k);
             k++;
-            if(k>999) break;
-            //TODO There should be a prompt window which let the user choose a name
-            // If not, it would create an error like file exists or more severe: it will override the existing file
+            if(k > 999) throw("'moveFile': Filename with 999 suffix already exists.");
         }
-        filename = filename_temp;
-
         // move file to new location
         try {
-            if(destination.trim() == this.folderSep) {
-                //no place to move the file, so rename it in-place
-                this.infoWindow(this.ZFgetString('general.warning'), 'Custom location for files not set. File is renamed only.');
-                file.moveTo(null, filename);
-            }
-            else {
-                // create a nslFile Object of the destination folder
-                var dir = this.createFile(destination);
-                file.moveTo(dir, filename);
-            }
+            file.moveTo(target, filename);
         }
         catch(err) {
             if(err.name == "NS_ERROR_FILE_IS_LOCKED")
-                this.messages_error.push(this.ZFgetString('error.movingFileLocked', [att_name]));
+                this.messages_error.push(this.ZFgetString('error.movingFileLocked', [file.leafName]));
             else
-                this.messages_error.push(this.ZFgetString('error.movingFileGeneral', [att_name, err]));
+                this.messages_error.push(this.ZFgetString('error.movingFileGeneral', [file.leafName, err]));
             return false;
         }
-
-        // If after moving we leave behind empty folders, try to remove them
-        var original_dir = this.createFile(OS.Path.dirname(original_filename));
-        this.removeEmptyFolders(original_dir);
-
+        // delete empty folders after moving file
+        this.removeEmptyFolders(this.createFile(file_dirname));
+        // return path to new location
         return(file.path);
     },
 
@@ -1442,7 +1430,7 @@ Zotero.ZotFile = {
             // Update mod time first, because it may fail for read-only files on Windows
             file.lastModifiedTime = new Date();
             // file.moveTo(null, newName);
-            var newfile_path = this.moveFile(file, location, filename, att.getDisplayTitle());
+            var newfile_path = this.moveFile(file, location, filename);
             if (!newfile_path) 
                 return false;
             dest = this.createFile(newfile_path);
@@ -1480,7 +1468,7 @@ Zotero.ZotFile = {
             var k=2;
 
             while(this.fileExists(destination,filename_temp)) {
-                filename_temp = this.addSuffix(filename,k);
+                filename_temp = this.Utils.addSuffix(filename,k);
                 k++;
                 if(k>99) break;
             }
@@ -1739,6 +1727,10 @@ Zotero.ZotFile = {
         this.handleErrors();
     },
 
+    /**
+     * dest_dir argument
+     * subfolder/subfolderFormat argument
+     */
     renameAttachment2: function(att, verbose) {
         // default arguments
         verbose = typeof verbose !== 'undefined' ?  verbose : true;
@@ -1802,7 +1794,7 @@ Zotero.ZotFile = {
         // (c) imported to linked attachment (only if library is local)
         if (att.isImportedAttachment() && !pref_import && !item.libraryID) {
             // move pdf file
-            var path = this.moveFile(file, location, filename, att.getDisplayTitle());
+            var path = this.moveFile(file, location, filename);
             if (!path) return att_id;
             // recreate the outfile nslFile Object
             file = this.createFile(path);
@@ -1912,7 +1904,7 @@ Zotero.ZotFile = {
             var win = this.wm.getMostRecentWindow("navigator:browser"),
                 selection = win.ZoteroPane.itemsView.saveSelection();
             // move pdf file
-            var newfile_path = this.moveFile(file, location, filename, att.getDisplayTitle());
+            var newfile_path = this.moveFile(file, location, filename);
             if (!newfile_path) 
                 return newAttID;
             // recreate the outfile nslFile Object
