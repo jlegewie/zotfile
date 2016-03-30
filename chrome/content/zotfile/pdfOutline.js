@@ -85,7 +85,7 @@ Zotero.ZotFile.pdfOutline = {
             if (!firstElement)
                 li.setAttribute('style', entry.items.length>0 ? 'padding-top:8px' : 'padding-top:4px');
             firstElement = false;
-            a.setAttribute('href', zz.str_format(href, {'lib': lib, 'key': key, 'page': entry.page + 1}));
+            a.setAttribute('href', zz.Utils.str_format(href, {'lib': lib, 'key': key, 'page': entry.page + 1}));
             a.textContent = Zotero.Utilities.htmlSpecialChars(entry.title);
             a.textContent = a.textContent.replace(/&apos;/g, "'");
             if(entry.page!==undefined)
@@ -95,7 +95,7 @@ Zotero.ZotFile.pdfOutline = {
             // add subitems
             if(entry.items.length>0 && lvl <= zz.prefs.getIntPref('pdfOutline.tocDepth')) {
                 var ul = win.document.createElementNS(zz.xhtml, 'ul');
-                ul.setAttribute('style', zz.str_format(style, {'padding': 12*(lvl-1)}));        
+                ul.setAttribute('style', zz.Utils.str_format(style, {'padding': 12*(lvl-1)}));        
                 entry.items.forEach(create_toc, ul);
                 li.appendChild(ul);
             }
@@ -108,7 +108,7 @@ Zotero.ZotFile.pdfOutline = {
         var note = win.document.createElementNS(zz.xhtml, 'div'),
             title = win.document.createElementNS(zz.xhtml, 'p'),
             content = att.getNote().replace(/zotero:\/\//g, 'http://zotfile.com/');
-        note.appendChild(zz.parseHTML(content));
+        note.appendChild(zz.Utils.parseHTML(content));
         // title
         title.setAttribute('id', 'title');
         var txt = win.document.createElementNS(zz.xhtml, 'strong');

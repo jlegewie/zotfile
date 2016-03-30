@@ -244,7 +244,7 @@ function changedBasefolder(dest_dir) {
 
     // only proceed if folder has changed and the old location was valid
     if(baseFolderOld!=baseFolder && baseFolderOldValid) {
-        var atts=Zotero.ZotFile.getAttachmentsOnTablet();
+        var atts=Zotero.ZotFile.Tablet.getAttachmentsOnTablet();
         
         // change from valid to invalid subfolder
         if(!baseFolderValid) {
@@ -423,11 +423,11 @@ function deleteSelectedSubfolder () {
 function deleteSubfolder (subfolder) {
     
     //create folder file
-    var folder=Zotero.ZotFile.getTabletLocationFile(subfolder);
+    var folder=Zotero.ZotFile.Tablet.getTabletLocationFile(subfolder);
     
     if(folder.exists()) {
         // get attachments in old subfolder
-        var attInFolder=Zotero.ZotFile.getAttachmentsOnTablet(subfolder);
+        var attInFolder=Zotero.ZotFile.Tablet.getAttachmentsOnTablet(subfolder);
         
         // iterate through attachments in folder
         if (attInFolder.length>0) {
@@ -444,7 +444,7 @@ function deleteSubfolder (subfolder) {
                     try {
                         var att  = attInFolder[i];
                         var item = Zotero.Items.get(att.getSource());
-                        var attID=Zotero.ZotFile.getAttachmentFromTablet(item,att,false);
+                        var attID=Zotero.ZotFile.Tablet.getAttachmentFromTablet(item,att,false);
                     }
                     catch (e) {
                         Zotero.ZotFile.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
@@ -456,7 +456,7 @@ function deleteSubfolder (subfolder) {
             }
 
             // move attachments to base folder
-            if(userInput==2) Zotero.ZotFile.setTabletFolder(attInFolder,"");
+            if(userInput==2) Zotero.ZotFile.Tablet.setTabletFolder(attInFolder,"");
             
             // return false if user canceled
             if(userInput==1) return(false);
@@ -474,9 +474,9 @@ function deleteSubfolder (subfolder) {
 
 function changedSubfolder (projectFolderOld,projectFolderNew) {
     // get attachments in old subfolder
-    var attInFolder=Zotero.ZotFile.getAttachmentsOnTablet(projectFolderOld);
+    var attInFolder=Zotero.ZotFile.Tablet.getAttachmentsOnTablet(projectFolderOld);
     // create file file old subfolder
-    var file=Zotero.ZotFile.getTabletLocationFile(projectFolderOld);
+    var file=Zotero.ZotFile.Tablet.getTabletLocationFile(projectFolderOld);
     // move attachments to new subfolder
     var confirmed=0;
     if(attInFolder.length>0) confirmed=confirm(Zotero.ZotFile.ZFgetString('tablet.moveAttsToNewSubfolder', [attInFolder.length, projectFolderOld, projectFolderNew]));
@@ -568,7 +568,7 @@ function showSelectedSubfolder() {
     var folder = treerow.childNodes[1].getAttribute('label');
     
     // get folder object
-    var folderFile=Zotero.ZotFile.getTabletLocationFile(folder);
+    var folderFile=Zotero.ZotFile.Tablet.getTabletLocationFile(folder);
 
     // show folder
     Zotero.ZotFile.showFolder(folderFile);

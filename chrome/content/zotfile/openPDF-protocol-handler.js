@@ -54,7 +54,7 @@ var OpenPDFExtension = new function(){
             if(Zotero.isWin) {
                 // get path to PDF Reader
                 var pdf_reader = zz.prefs.getCharPref('pdfExtraction.openPdfWin');
-                pdf_reader = pdf_reader==='' ? zz.getPDFReader() : pdf_reader;
+                pdf_reader = pdf_reader==='' ? zz.Utils.getPDFReader() : pdf_reader;
                 if (!zz.fileExists(pdf_reader)) {
                     zz.infoWindow(zz.ZFgetString('general.error'), 'Unable to find path for PDF Reader. Please set path manually in hidden preferences (see zotfile documentation).');
                     return;

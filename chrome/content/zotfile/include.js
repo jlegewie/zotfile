@@ -1,12 +1,9 @@
 // Only create main object once
 if (!Zotero.ZotFile) {
-	var zotfileLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-					.getService(Components.interfaces.mozIJSSubScriptLoader);
-	zotfileLoader.loadSubScript("chrome://zotfile/content/zotfile.js");
-	zotfileLoader.loadSubScript("chrome://zotfile/content/pdfAnnotations.js");
-	zotfileLoader.loadSubScript("chrome://zotfile/content/pdfOutline.js");
-	zotfileLoader.loadSubScript("chrome://zotfile/content/wildcards.js");
-	zotfileLoader.loadSubScript("chrome://zotfile/content/openPDF-protocol-handler.js");
+    var zotfileLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                    .getService(Components.interfaces.mozIJSSubScriptLoader);
+    var scripts = ['zotfile', 'pdfAnnotations', 'pdfOutline', 'wildcards', 'tablet', 'utils', 'openPDF-protocol-handler'];
+    scripts.forEach(s => zotfileLoader.loadSubScript("chrome://zotfile/content/" + s + ".js"));
 }
 
 window.addEventListener('load', function(e) {
@@ -20,6 +17,6 @@ window.addEventListener('load', function(e) {
 		// add event listener for zotfile collection menu
 		window.ZoteroPane.document.getElementById('zotero-collectionmenu').addEventListener('popupshowing', Zotero.ZotFile.showCollectionMenu, false);
 		// add event listener to update saved search for modified tablet attachments
-		window.ZoteroPane.document.getElementById('zotero-collections-tree').addEventListener('click', Zotero.ZotFile.updateModifiedAttachmentsSearch, false);
-	}
+        window.ZoteroPane.document.getElementById('zotero-collections-tree').addEventListener('click', Zotero.ZotFile.Tablet.updateModifiedAttachmentsSearch, false);
+    }
 }, false);

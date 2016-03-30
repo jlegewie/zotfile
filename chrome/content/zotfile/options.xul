@@ -169,7 +169,7 @@
 						   <hbox style="margin: 0" align="center">					
 							   <textbox id="id-zotfile-tablet-dest_dir" preference="pref-zotfile-tablet-dest_dir" flex="1" onchange="updateFolderIcon('tablet');"/>								
 							   <button id="id-zotfile-tablet-dest_dir-button" label="&choose;" oncommand="var folder=Zotero.ZotFile.chooseDirectory(); if(folder!='') {var str = Components.classes['@mozilla.org/supports-string;1'].createInstance(Components.interfaces.nsISupportsString); str.data = folder; Zotero.ZotFile.prefs.setComplexValue('tablet.dest_dir', Components.interfaces.nsISupportsString, str);updateFolderIcon('tablet',false);}"/>
-							   <button id="id-zotfile-tablet-dest_dir-show" label="&show-folder;" oncommand="Zotero.ZotFile.showFolder(Zotero.ZotFile.getTabletLocationFile());"/>
+							   <button id="id-zotfile-tablet-dest_dir-show" label="&show-folder;" oncommand="Zotero.ZotFile.showFolder(Zotero.ZotFile.Tablet.getTabletLocationFile());"/>
 							   <image id="id-zotfile-tablet-ok" src="chrome://zotfile/skin/accept.png" hidden="true"/>	 
 							   <image id="id-zotfile-tablet-error" src="chrome://zotfile/skin/exclamation.png" hidden="true"/>									
 						   </hbox> 

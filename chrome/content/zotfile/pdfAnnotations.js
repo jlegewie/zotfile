@@ -85,13 +85,13 @@ Zotero.ZotFile.pdfAnnotations = {
                 var item = Zotero.Items.get(att.getSource());
 
                 // if file is on tablet in background mode, take the one which was modified
-                if(Zotero.ZotFile.getTabletStatus(att) && Zotero.ZotFile.getInfo(att,"mode")==1) {
+                if(Zotero.ZotFile.Tablet.getTabletStatus(att) && Zotero.ZotFile.Tablet.getInfo(att,"mode")==1) {
                     var file_zotero=att.getFile();
-                    var file_reader=Zotero.ZotFile.getTabletFile(att);
+                    var file_reader=Zotero.ZotFile.Tablet.getTabletFile(att);
 
                     // get times
                     var time_reader = Zotero.ZotFile.fileExists(file_reader) ? parseInt(file_reader.lastModifiedTime+"",10) : 0;
-                    var time_saved  = parseInt(Zotero.ZotFile.getInfo(att,"lastmod"),10);
+                    var time_saved  = parseInt(Zotero.ZotFile.Tablet.getInfo(att,"lastmod"),10);
                     var time_zotero = (file_zotero!=false) ? parseInt(file_zotero.lastModifiedTime+"",10) : 0;
 
                     if (time_reader!=0 || time_zotero!=0) {
@@ -313,7 +313,7 @@ Zotero.ZotFile.pdfAnnotations = {
             });
         // add note title
         var date_str = zz.prefs.getBoolPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString(),
-            title = zz.str_format(format_title, {'title': str_title, 'date': date_str}),
+            title = zz.Utils.str_format(format_title, {'title': str_title, 'date': date_str}),
             note = title;
         if (zz.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler"))
             note += ' ' + method;
@@ -323,7 +323,7 @@ Zotero.ZotFile.pdfAnnotations = {
         // annotations.map(function(anno) {
             var anno = annotations[i],
                 page = anno.page,
-                uri = zz.str_format(format_uri, {'lib': lib, 'key': att.key, 'page': anno.page});
+                uri = zz.Utils.str_format(format_uri, {'lib': lib, 'key': att.key, 'page': anno.page});
             // get page
             if(zz.prefs.getBoolPref("pdfExtraction.NoteTruePage")) {
                 try {
@@ -345,12 +345,12 @@ Zotero.ZotFile.pdfAnnotations = {
                 var format_markup = anno.subtype == "Highlight" ? format_highlight : format_underline;
                 for (var k = 0; k < repl.length; k++)
                     anno.markup = anno.markup.replace(reg[k], repl[k].replacement);
-                var markup_formated = zz.str_format(format_markup, {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title, 'color': color, 'color_category': color_category_hex});
+                var markup_formated = zz.Utils.str_format(format_markup, {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title, 'color': color, 'color_category': color_category_hex});
                 if(!separate_color_notes)
                     note += markup_formated;
                 else {
                     if(!(color_category in note))
-                        note[color_category] = zz.str_format(format_title_color, {'title': str_title, 'date': date_str, 'color': color_category});
+                        note[color_category] = zz.Utils.str_format(format_title_color, {'title': str_title, 'date': date_str, 'color': color_category});
                     note[color_category] += markup_formated;
                 }
             }
@@ -359,12 +359,12 @@ Zotero.ZotFile.pdfAnnotations = {
               (!anno.markup || this.strDistance(anno.content,anno.markup)>0.15 )) {                    
                 var content = anno.content.replace(/(\r\n|\n|\r)/gm,"<br>");
                 // '<p><i>%(content) (<a href="%(uri)">note on p.%(page)</a>)</i></p><br>'
-                var content_formated = zz.str_format(format_note, {'content': content, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title,'color': color, 'color_category': color_category_hex});
+                var content_formated = zz.Utils.str_format(format_note, {'content': content, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title,'color': color, 'color_category': color_category_hex});
                 if(!separate_color_notes)
                     note += content_formated;
                 else {
                     if(!(color_category in note))
-                        note[color_category] = zz.str_format(format_title_color, {'title': str_title, 'date': date_str, 'label': anno.title, 'color': color_category});
+                        note[color_category] = zz.Utils.str_format(format_title_color, {'title': str_title, 'date': date_str, 'label': anno.title, 'color': color_category});
                     note[color_category] += content_formated;
                 }
             }
