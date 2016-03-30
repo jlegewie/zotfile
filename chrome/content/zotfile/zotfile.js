@@ -1257,13 +1257,13 @@ Zotero.ZotFile = {
 
     /**
      * Format subfolder based on rule
-     * @param  {zitem}  item Zotero item for metadata
-     * @param  {string} rule Rule to construct subfolder with wildcards (e.g. '%j/%y')
-     * @return {string}      Formatted subfolder such as 'Author/2010'
+     * @param  {zitem}  item   Zotero item for metadata
+     * @param  {string} format Rule to construct subfolder with wildcards (e.g. '%j/%y')
+     * @return {string}        Formatted subfolder such as 'Author/2010'
      */
-    formatSubfolder: function(item, rule) {
-        if (rule == '') return '';
-        var subfolder = this.Wildcards.replaceWildcard(item, rule);
+    formatSubfolder: function(item, format) {
+        if (format == '') return '';
+        var subfolder = this.Wildcards.replaceWildcard(item, format);
         if (subfolder[0] == this.folderSep) subfolder = subfolder.slice(1);
         // replace invalid characters        
         subfolder = OS.Path.split(subfolder).components
@@ -1277,16 +1277,16 @@ Zotero.ZotFile = {
      * Function to get location of file based on zotero item metadata
      * @param  {string} basefolder Basefolder
      * @param  {zitem}  item       Zotero item  for metadata
-     * @param  {string} rule       Rule to construct subfolder with wildcards (e.g. '%j/%y')
+     * @param  {string} format     Rule to construct subfolder with wildcards (e.g. '%j/%y')
      * @return {string}            Folder path
      */
-    getLocation: function(basefolder, item, rule) {
+    getLocation: function(basefolder, item, format) {
         // check function arguments
         if (!item.isRegularItem()) throw('getLocation: Not regular zotero item.');
         if (typeof basefolder != 'string') throw("getLocation: 'basefolder' not string.");
-        if (typeof rule != 'string') throw("getLocation: 'rule' not string.");
+        if (typeof format != 'string') throw("getLocation: 'format' not string.");
         // combine folder and subfolder
-        var subfolder = this.formatSubfolder(item, rule);
+        var subfolder = this.formatSubfolder(item, format);
         return OS.Path.join(OS.Path.normalize(basefolder), subfolder);
     },
 
