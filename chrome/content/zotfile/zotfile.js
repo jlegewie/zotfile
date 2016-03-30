@@ -1265,25 +1265,26 @@ Zotero.ZotFile = {
         return(filename);
     },
 
-    getLocation: function(zitem, dest_dir,subfolder, rule) {
-        var subfolderFormat="";
-        if(subfolder) {
-            // get subfolder
-            subfolderFormat=this.Wildcards.replaceWildcard(zitem, rule);
-            // correct for missing fields
-            if (!Zotero.isWin) subfolderFormat=subfolderFormat.replace('//','/undefined/');
-            if ( Zotero.isWin) subfolderFormat=subfolderFormat.replace('\\\\','\\undefined\\');
-            // replace invalid characters
-            subfolderFormat = subfolderFormat.split(this.folderSep);
-            for (var i = 0; i < subfolderFormat.length; i++) {
-                if(subfolderFormat[i]!=="") subfolderFormat[i] = Zotero.File.getValidFileName(subfolderFormat[i]);
-            }
-            subfolderFormat = subfolderFormat.join(this.folderSep);
-        }
-        // complete folder and return
-        dest_dir = (dest_dir.substr(-1)!=this.folderSep) ? dest_dir : dest_dir.substr(0,dest_dir.length-1);
-        var folder = dest_dir + this.folderSep + subfolderFormat;
-        return(folder);
+    formatSubfolder: function(item, rule) {
+        if (rule == "") return "";
+        var subfolder = this.Wildcards.replaceWildcard(item, rule);
+        // replace invalid characters        
+        subfolder = OS.Path.split(subfolder).components
+            .filter(s => s !== "undefined" && s !== "")
+            .map(s => Zotero.File.getValidFileName(s))
+            .join(this.folderSep);
+        if (subfolder[0] == this.folderSep) subfolder = subfolder.slice(1);
+        return OS.Path.normalize(subfolder);
+    },
+
+    getLocation: function(basefolder, item, rule) {
+        // check function arguments
+        if (!item.isRegularItem()) throw("getLocation: Not regular zotero item.");
+        if (typeof basefolder != 'string') throw("getLocation: 'basefolder' not string.");
+        if (typeof rule != 'string') throw("getLocation: 'rule' not string.");
+        // combine folder and subfolder
+        var subfolder = this.formatSubfolder(item, rule);
+        return OS.Path.join(OS.Path.normalize(basefolder), subfolder);;
     },
 
     createFile: function(path) {
@@ -1759,7 +1760,7 @@ Zotero.ZotFile = {
             return att_id;
         // get filename and location
         var filename = this.getFilename2(item, att.getFilename()),
-            location = this.getLocation(item);
+            location = this.getLocation(dest_dir, item, subfolder ? subfolderFormat : '');
         // (a) linked to imported attachment
         if (pref_import && linkmode == Zotero.Attachments.LINK_MODE_LINKED_FILE) {
             // attach file to selected Zotero item
@@ -1850,7 +1851,7 @@ Zotero.ZotFile = {
             return attID;
         // create file name using ZotFile rules
         var filename = rename ? Zotero.ZotFile.getFilename(item, file.leafName) : file.leafName,
-            location = this.getLocation(item,dest_dir,subfolder,subfolderFormat);
+            location = this.getLocation(dest_dir, item, subfolder ? subfolderFormat : '');
         // (a) LINKED TO IMPORTED ATTACHMENT
         if (linkmode==Zotero.Attachments.LINK_MODE_LINKED_FILE && import_att) {                
             try {

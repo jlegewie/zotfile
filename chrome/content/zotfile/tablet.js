@@ -473,7 +473,7 @@ Zotero.ZotFile.Tablet = new function() {
                 }
             }
             // create copy of file on tablet and catch errors
-            var folder = Zotero.ZotFile.getLocation(item, tablet_dest, tablet_subfolder, tablet_subfolderFormat);
+            var folder = Zotero.ZotFile.getLocation(tablet_dest, item, tablet_subfolder ? tablet_subfolderFormat : '');
             if (!tablet_status)
                 newFile = Zotero.ZotFile.copyFile(file, folder, file.leafName);
             else {
