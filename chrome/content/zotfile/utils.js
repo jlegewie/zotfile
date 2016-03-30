@@ -26,14 +26,19 @@ Zotero.ZotFile.Utils = new function() {
         return(y);
     }
 
-    //  search and replace in array
-    function arrayReplace(x,search, replace) {
-        for(var i=0; i<x.length;i++ ) {
-            if(x[i]==search) x.splice(i,1,replace);
+    /**
+     * Search and replace string elements in array
+     * @param  {array}  x
+     * @param  {string} search  Search terms
+     * @param  {string} replace Replace with
+     * @return {array}          Updated array
+     */
+    function arrayReplace(x, search, replace) {
+        for(var i = 0; i < x.length; i++) {
+            if(x[i] == search) x.splice(i, 1, replace);
         }
         return(x);
     }
-
 
     // format array using named placeholders such as '%(test)'
     function str_format() {
