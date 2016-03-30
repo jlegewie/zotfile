@@ -5,6 +5,7 @@ if (!Zotero.ZotFile) {
 	zotfileLoader.loadSubScript("chrome://zotfile/content/zotfile.js");
 	zotfileLoader.loadSubScript("chrome://zotfile/content/pdfAnnotations.js");
 	zotfileLoader.loadSubScript("chrome://zotfile/content/pdfOutline.js");
+	zotfileLoader.loadSubScript("chrome://zotfile/content/wildcards.js");
 	zotfileLoader.loadSubScript("chrome://zotfile/content/openPDF-protocol-handler.js");
 }
 
