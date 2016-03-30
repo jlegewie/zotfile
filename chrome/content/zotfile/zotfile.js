@@ -1338,7 +1338,7 @@ Zotero.ZotFile = {
             return obj.exists();
         // string
         if (typeof obj == 'string') {
-            if (filename !== null) obj = OS.Path.join(obj, filename);
+            if (typeof filename == 'string') obj = OS.Path.join(obj, filename);
             return this.createFile(obj).exists();
         }
         // Zotero attachment item
