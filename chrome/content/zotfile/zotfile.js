@@ -1265,26 +1265,39 @@ Zotero.ZotFile = {
         return(filename);
     },
 
+    /**
+     * Format subfolder based on rule
+     * @param  {zitem}  item Zotero item for metadata
+     * @param  {string} rule Rule to construct subfolder with wildcards (e.g. '%j/%y')
+     * @return {string}      Formatted subfolder such as 'Author/2010'
+     */
     formatSubfolder: function(item, rule) {
-        if (rule == "") return "";
+        if (rule == '') return '';
         var subfolder = this.Wildcards.replaceWildcard(item, rule);
+        if (subfolder[0] == this.folderSep) subfolder = subfolder.slice(1);
         // replace invalid characters        
         subfolder = OS.Path.split(subfolder).components
-            .filter(s => s !== "undefined" && s !== "")
+            .map(s => s == '' ? 'undefined' : s)
             .map(s => Zotero.File.getValidFileName(s))
             .join(this.folderSep);
-        if (subfolder[0] == this.folderSep) subfolder = subfolder.slice(1);
         return OS.Path.normalize(subfolder);
     },
 
+    /**
+     * Function to get location of file based on zotero item metadata
+     * @param  {string} basefolder Basefolder
+     * @param  {zitem}  item       Zotero item  for metadata
+     * @param  {string} rule       Rule to construct subfolder with wildcards (e.g. '%j/%y')
+     * @return {string}            Folder path
+     */
     getLocation: function(basefolder, item, rule) {
         // check function arguments
-        if (!item.isRegularItem()) throw("getLocation: Not regular zotero item.");
+        if (!item.isRegularItem()) throw('getLocation: Not regular zotero item.');
         if (typeof basefolder != 'string') throw("getLocation: 'basefolder' not string.");
         if (typeof rule != 'string') throw("getLocation: 'rule' not string.");
         // combine folder and subfolder
         var subfolder = this.formatSubfolder(item, rule);
-        return OS.Path.join(OS.Path.normalize(basefolder), subfolder);;
+        return OS.Path.join(OS.Path.normalize(basefolder), subfolder);
     },
 
     createFile: function(path) {
