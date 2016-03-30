@@ -1224,41 +1224,45 @@ Zotero.ZotFile = {
         return(temp + "_" + k + "." + this.getFiletype(filename));
     },
 
-    getFilename: function(item, current_filename, rename_format) {
+    /**
+     * Get filename based on metadata from zotero item
+     * @param  {zitem}  item   Zotero item for metadata
+     * @param  {string} name   Current filename as fallback and for extension
+     * @param  {string} format Formatting rules based on wildcards
+     * @return {string}        Formatted filename with extension
+     */
+    getFilename: function(item, name, format) {
         // check function arguments
         if (!item.isRegularItem()) throw('getFilename: Not regular zotero item.');
         // check whether renaming is disabled
-        if(this.prefs.getBoolPref("disable_renaming")) return(current_filename);
+        if(this.prefs.getBoolPref('disable_renaming')) return(name);
         // rename format
-        var filename = "",
+        var filename = '',
             item_type =  item.getType(),
-            rename_format_default = item_type == 19 ? this.prefs.getCharPref("renameFormat_patent") : this.prefs.getCharPref("renameFormat");
-        rename_format = typeof rename_format !== 'undefined' ? rename_format : rename_format_default;
+            format_default = item_type == 19 ? this.prefs.getCharPref("renameFormat_patent") : this.prefs.getCharPref("renameFormat");
+        format = typeof format !== 'undefined' ? format : format_default;
         // create the new filename from the selected item
-        if (!this.prefs.getBoolPref("useZoteroToRename")) {
-            filename = this.Wildcards.replaceWildcard(item, rename_format);
-            // Strip potentially invalid characters
-            // (code line adopted from Zotero, modified to accept periods)
+        if (!this.prefs.getBoolPref('useZoteroToRename')) {
+            filename = this.Wildcards.replaceWildcard(item, format);
+            // Strip invalid characters (adopted from Zotero, modified to accept periods)
             filename = filename.replace(/[\/\\\?\*:|"<>]/g, '');
             // replace multiple blanks in filename with single blank & remove whitespace
             filename = Zotero.Utilities.trimInternal(filename);
-            // remove periods
-            if (this.prefs.getBoolPref("removePeriods")) filename = filename.replace(/\./g, '');
-            // replace blanks with '_'
-            if (this.prefs.getBoolPref("replace_blanks"))  filename = filename.replace(/ /g, '_');
-            // set to lower case
-            if (this.prefs.getBoolPref("lower_case")) filename = filename.toLowerCase();
+            // remove periods, replace blanks with '_', convert to lower case
+            if (this.prefs.getBoolPref('removePeriods')) filename = filename.replace(/\./g, '');
+            if (this.prefs.getBoolPref('replace_blanks'))  filename = filename.replace(/ /g, '_');
+            if (this.prefs.getBoolPref('lower_case')) filename = filename.toLowerCase();
             // remove all the accents and other strange characters from filename
-            if (Zotero.version[0] >= 3 && this.prefs.getBoolPref("removeDiacritics"))
+            if (Zotero.version[0] >= 3 && this.prefs.getBoolPref('removeDiacritics'))
                 filename = Zotero.Utilities.removeDiacritics(filename);
         }
         // Use Zotero to get filename
-        if (this.prefs.getBoolPref("useZoteroToRename")) filename = Zotero.Attachments.getFileBaseNameFromItem(item.itemID);
+        if (this.prefs.getBoolPref('useZoteroToRename')) filename = Zotero.Attachments.getFileBaseNameFromItem(item.itemID);
         // Add user input to filename
-        if(this.prefs.getBoolPref("userInput")) filename = this.addUserInput(filename, current_filename);
+        if(this.prefs.getBoolPref('userInput')) filename = this.addUserInput(filename, name);
         // add filetype to filename
-        var filetype = this.getFiletype(current_filename);
-        if(filetype != '') filename = filename + "." + filetype;
+        var filetype = this.getFiletype(name);
+        if(filetype != '') filename = filename + '.' + filetype;
         // valid zotero name
         filename = Zotero.File.getValidFileName(filename);
         // return
