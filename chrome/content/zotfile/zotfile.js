@@ -1326,31 +1326,27 @@ Zotero.ZotFile = {
         }
     },
 
-    // function to check whether a file exists
-    // argument: path as string (with optional filename), zotero att, or file obj
-    fileExists: function  (arg, filename) {
-        var file;
-        // when undefined
-        if (arg===undefined)
-            return(false);
-        // when string is passed
-        if(typeof(arg)=='string') {
-            if(filename!=null) arg=this.completePath(arg,filename);
-            file=this.createFile(arg);
+    /**
+     * Check whether file exists
+     * @param  {nslFile|string|zitem} obj      nslFile, path to directory or string (string) or Zotero attachment item
+     * @param  {string}               filename Filename if obj is string
+     * @return {bool}
+     */
+    fileExists: function(obj, filename) {
+        // nsIFile object
+        if (obj instanceof Components.interfaces.nsIFile)
+            return obj.exists();
+        // string
+        if (typeof obj == 'string') {
+            if (filename !== null) obj = OS.Path.join(obj, filename);
+            return this.createFile(obj).exists();
         }
-        // when object (i.e. zotero attachment item) is passed
-        if(typeof(arg)=='object') {
-            if( arg.getFile) file=arg.getFile();
-            if(!arg.getFile) file=arg;
-        }
-
-        // check whether the file exsists
-        try {
-            return(file.exists());
-        }
-        catch (err) {
-            return(false);
-        }
+        // Zotero attachment item
+        if (typeof obj == 'object')
+            if (obj.isAttachment())
+                return obj.fileExists();
+        // return false
+        return false;
     },
 
     /**
