@@ -1290,16 +1290,23 @@ Zotero.ZotFile = {
         return OS.Path.join(OS.Path.normalize(basefolder), subfolder);
     },
 
+    /**
+     * Create nsIFile from path (https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIFile)
+     * @param  {string}  path Valid file path.
+     * @return {nsIFile}      nsIFile file object
+     */
     createFile: function(path) {
         try {
             var file = Components.classes["@mozilla.org/file/local;1"].
                 createInstance(Components.interfaces.nsIFile);
-                file.initWithPath(path);
-            return(file);
+            file.initWithPath(path);
         }
         catch (err) {
-            return(-1);
+            if(err.name == "NS_ERROR_FILE_UNRECOGNIZED_PATH")
+                throw("Zotero.ZotFile.createFile(): 'path' not an absolute file path.")
+            throw("Zotero.ZotFile.createFile(): Unkown error.")
         }
+        return(file);
     },
 
     runProcess: function(command, args, blocking) {
