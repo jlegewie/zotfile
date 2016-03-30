@@ -7,6 +7,7 @@ Zotero.ZotFile.Utils = new function() {
 
     this.removeDuplicates = removeDuplicates;
     this.arrayReplace = arrayReplace;
+    this.addSuffix = addSuffix;
     this.str_format = str_format;
     this.normalize_path = normalize_path;
     this.copy2Clipboard = copy2Clipboard;
@@ -38,6 +39,15 @@ Zotero.ZotFile.Utils = new function() {
             if(x[i] == search) x.splice(i, 1, replace);
         }
         return(x);
+    }
+
+    /**
+     * Add suffix to filename
+     * @param {string}  filename The filename
+     * @param {integer} k        The suffix
+     */
+    function addSuffix(filename, k) {
+        return filename.replace(/(\d{1,3})?(\.[\w\d]*)$/i, k + "$2");
     }
 
     // format array using named placeholders such as '%(test)'

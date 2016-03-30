@@ -681,7 +681,7 @@ Zotero.ZotFile.Tablet = new function() {
                 if (Zotero.ZotFile.prefs.getBoolPref("tablet.storeCopyOfFile"))  {
                     // only if reader file was modified
                     if(option!=2) {
-                        var filename=Zotero.ZotFile.addSuffix(file_zotero.leafName,Zotero.ZotFile.prefs.getCharPref("tablet.storeCopyOfFile_suffix"));
+                        var filename=Zotero.ZotFile.Utils.addSuffix(file_zotero.leafName,Zotero.ZotFile.prefs.getCharPref("tablet.storeCopyOfFile_suffix"));
 
                         //add linked attachment
                         if (!item.libraryID && !Zotero.ZotFile.prefs.getBoolPref("import")) {

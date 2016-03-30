@@ -1210,20 +1210,6 @@ Zotero.ZotFile = {
         return this.Utils.normalize_path(path);
     },
 
-    addSuffix: function(filename,k) {
-        var temp = [];
-        // If filename includes an extension split on last dot
-        // otherwise keep the filename untouched and add "k"
-        // Fixes GitHub issue #171
-        var i = filename.lastIndexOf('.');
-        if (i === -1) {
-          temp = filename;
-        } else {
-          temp = filename.slice(0, i);
-        }
-        return(temp + "_" + k + "." + this.getFiletype(filename));
-    },
-
     /**
      * Get filename based on metadata from zotero item
      * @param  {zitem}  item   Zotero item for metadata
@@ -1387,7 +1373,7 @@ Zotero.ZotFile = {
         var original_filename = file.path;
         var k = 2;
         while(this.fileExists(destination, filename_temp)) {
-            filename_temp = this.addSuffix(filename,k);
+            filename_temp = this.Utils.addSuffix(filename,k);
             k++;
             if(k>999) break;
             //TODO There should be a prompt window which let the user choose a name
