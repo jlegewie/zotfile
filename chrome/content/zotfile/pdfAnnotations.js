@@ -117,7 +117,7 @@ Zotero.ZotFile.pdfAnnotations = {
                     file = att.getFile();
                 }                    
                 // extract annotations from pdf and create note with annotations
-                if(Zotero.ZotFile.getFiletype(file.leafName)=="pdf") {
+                if(Zotero.ZotFile.Utils.getFiletype(file.leafName)=="pdf") {
                     if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS") || Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler")) {
                         var a = {};
                         a.attachment = att;

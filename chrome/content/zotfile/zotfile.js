@@ -1179,13 +1179,6 @@ Zotero.ZotFile = {
             }
         }
         return arr;
-    },    
-
-    // filename.substr(filename.lastIndexOf('.') + 1)
-    getFiletype: function(filename) {
-        if (typeof filename != 'string') throw('getFiletype: Not a string.')
-        var pos = filename.lastIndexOf('.');
-        return pos == -1 ? '' : filename.substr(pos + 1);
     },
 
     checkFileType: function (obj) {
@@ -1199,7 +1192,7 @@ Zotero.ZotFile = {
             filename = obj.getFilename();
         }
         // check
-        var filetype = this.getFiletype(filename).toLowerCase(),
+        var filetype = this.Utils.getFiletype(filename).toLowerCase(),
             regex = this.prefs.getCharPref("filetypes").toLowerCase().replace(/,/gi,"|");
         // return value
         return filetype.search(new RegExp(regex))>=0 ? true : false;
@@ -1247,7 +1240,7 @@ Zotero.ZotFile = {
         // Add user input to filename
         if(this.prefs.getBoolPref('userInput')) filename = this.addUserInput(filename, name);
         // add filetype to filename
-        var filetype = this.getFiletype(name);
+        var filetype = this.Utils.getFiletype(name);
         if(filetype != '') filename = filename + '.' + filetype;
         // valid zotero name
         filename = Zotero.File.getValidFileName(filename);

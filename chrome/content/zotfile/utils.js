@@ -50,6 +50,18 @@ Zotero.ZotFile.Utils = new function() {
         return filename.replace(/(\d{1,3})?(\.[\w\d]*)$/i, k + "$2");
     }
 
+    /**
+     * Get the file type from a filename
+     * @param  {string} filename Filename with file extension.
+     * @return {string}          File type.
+     */
+    function getFiletype(filename) {
+        if (typeof filename != 'string')
+            throw("Zotero.ZotFile.Utils.getFiletype(): 'path' is not a string.")
+        var pos = filename.lastIndexOf('.');
+        return pos == -1 ? '' : filename.substr(pos + 1);
+    }
+
     // format array using named placeholders such as '%(test)'
     function str_format() {
         var args = arguments;
