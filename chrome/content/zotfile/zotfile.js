@@ -533,20 +533,40 @@ Zotero.ZotFile = {
     },
 
     /**
-     * Get preference value
-     * @param  {string} name     Name of preference in 'extensions.zotfile' branch
-     * @return {string|int|bool} Value of preference.     
+     * Get preference value in 'extensions.zotfile' branch
+     * @param  {string} pref     Name of preference in 'extensions.zotfile' branch
+     * @return {string|int|bool} Value of preference.
      */
-    getPref: function(name) {
-        var type = this.prefs.getPrefType(name);
+    getPref: function(pref) {
+        var type = this.prefs.getPrefType(pref);
         if (type == 0)
-            throw("Zotero.ZotFile.getPref(): Invalid preference value for '" + name + "'")
-        if (type == 32)
-            return this.prefs.getComplexValue(name, Components.interfaces.nsISupportsString).data;
-        if (type == 64)
-            return this.prefs.getIntPref(name);
-        if (type == 128)
-            return this.prefs.getBoolPref(name);
+            throw("Zotero.ZotFile.getPref(): Invalid preference value for '" + pref + "'")
+        if (type == this.prefs.PREF_STRING)
+            return this.prefs.getComplexValue(pref, Components.interfaces.nsISupportsString).data;
+        if (type == this.prefs.PREF_INT)
+            return this.prefs.getIntPref(pref);
+        if (type == this.prefs.PREF_BOOL)
+            return this.prefs.getBoolPref(pref);
+    },
+
+    /**
+     * Set preference value in 'extensions.zotfile' branch
+     * @param {string}          pref  Name of preference in 'extensions.zotfile' branch
+     * @param {string|int|bool} value Value of preference
+     */
+    setPref: function(pref, value) {        
+        switch (this.prefs.getPrefType(pref)) {
+            case this.prefs.PREF_BOOL:
+                return this.prefs.setBoolPref(pref, value);
+            case this.prefs.PREF_STRING:
+                var str = Components.classes["@mozilla.org/supports-string;1"]
+                    .createInstance(Components.interfaces.nsISupportsString);
+                str.data = value;
+                return this.prefs.setComplexValue(pref, Components.interfaces.nsISupportsString, str);
+            case this.prefs.PREF_INT:
+                return this.prefs.setIntPref(pref, value);
+        }
+        throw('Zotero.ZotFile.setPref(): Unable to set preference.')
     },
 
     getParent: function(att) {
