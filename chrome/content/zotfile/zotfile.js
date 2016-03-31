@@ -513,26 +513,23 @@ Zotero.ZotFile = {
         }
     },
 
-    // check whether valid attachment
-    // argument: zotero item, or item ID
+    /**
+     * Check whether attachment is valid for zotfile (not top-level item, file exists and not a web attachment)
+     * @param  {ztime}  att     Zotero attachment item or ID of item
+     * @param  {bool}   warning Show warning message (default is true)
+     * @return {bool}
+     */
     validAttachment: function (att, warning) {
         // set default setting
         warning = typeof warning !== 'undefined' ? warning : true;
-        // get item if passed itemID
-        if(typeof(att)=="number") att=Zotero.Items.get(att);
+        att = typeof att == 'number' ? Zotero.Items.get(att) : att;
         // check whether attachment is valid (not top-level item, file exists and not a web attachment)
-        if(att.isAttachment()) {
-            var file = att.getFile();
-            if (!att.isTopLevelItem() && this.fileExists(file) && Zotero.File.getExtension(file) != "html")
-                return(true);
-            else {
-                // show warning
-                if(warning) this.messages_warning.push("'" + att.getField("title") + "'");
-                // return false
-                return(false);
-            }
+        if(!att.isAttachment()) return false;
+        if (att.isTopLevelItem() || !att.fileExists() || Zotero.File.getExtension(att.getFile()) == "html") {
+            if(warning) this.messages_warning.push("'" + att.getField('title') + "'");
+            return false;
         }
-        return(false);
+        return true;
     },
 
     /**
