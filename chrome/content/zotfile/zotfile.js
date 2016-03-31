@@ -554,44 +554,27 @@ Zotero.ZotFile = {
         return Zotero.Items.get(id_parent);
     },
 
+    /**
+     * Get array of select attachment IDs including all attachments for selected regular items
+     * @param  {bool} all Get all attachments or only valid attachments (default is false)
+     * @return {array}    Array with attachment ids
+     */
     getSelectedAttachments: function (all) {
         all = typeof all !== 'undefined' ? all : false;
         // get selected items
         var win = this.wm.getMostRecentWindow("navigator:browser");
-        var items = win.ZoteroPane.getSelectedItems();
-        // create array of attachments from selection
-        var attIDs=[];
-        for (var i=0; i < items.length; i++) {
-            var item = items[i];
-            // regular item
-            if(item.isRegularItem()) {
-                // get all attachments
-                var attachments = item.getAttachments();
-                // go through all attachments and add those with a tag
-                for (var j=0; j < attachments.length; j++) {
-                    if (attachments[j].attachmentLinkMode == Zotero.Attachments.LINK_MODE_LINKED_URL)
-                        continue;
-                    if (!all) if(this.validAttachment(attachments[j])) 
-                        attIDs.push(attachments[j]);
-                    if (all && this.checkFileType(attachments[j]))
-                        attIDs.push(attachments[j]);
-                }
-            }
-            // attachment item that is not top level
-            if(item.isAttachment()) {
-                if (item.attachmentLinkMode == Zotero.Attachments.LINK_MODE_LINKED_URL)
-                    continue;
-                if (!all) if(this.validAttachment(item))
-                    attIDs.push(item.id);
-                if (all && this.checkFileType(item))
-                    attIDs.push(item.id);
-            }
-        }
-
+        var attachments = win.ZoteroPane.getSelectedItems()
+            .map(item => item.isRegularItem() ? item.getAttachments() : item)
+            .reduce((a, b) => a.concat(b), [])
+            .map(item => typeof item == 'number' ? Zotero.Items.get(item) : item)
+            .filter(item => item.isAttachment())
+            .filter(att => att.attachmentLinkMode != Zotero.Attachments.LINK_MODE_LINKED_URL)
+            .filter(att => (!all && this.validAttachment(att)) || (all && this.checkFileType(att)))
+            .map(att => att.getID());
         // remove duplicate elements
-        if(attIDs.length>0) attIDs=this.Utils.removeDuplicates(attIDs);
-        // return array of attachment IDs
-        return(attIDs);
+        if(attachments.length > 0) attachments = this.Utils.removeDuplicates(attachments);
+        // return array with attachment ids
+        return attachments;
     },
 
     futureRun: function(aFunc) {
