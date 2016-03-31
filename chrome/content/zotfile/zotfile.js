@@ -1835,55 +1835,56 @@ Zotero.ZotFile = {
         return att.getID();
     },
 
-    // FUNCTION: Rename & Move Existing Attachments
-    renameSelectedAttachments: function(){
+    /**
+     * Rename select attachments
+     * @return {}
+     */
+    renameSelectedAttachments: function() {
         // get selected attachments
-        var attIDs = this.getSelectedAttachments(true);
-        if (attIDs.length===0) {
+        var atts = this.getSelectedAttachments(true);
+        if (atts.length === 0) {
             this.infoWindow('Zotfile: Renaming Attachments...', this.ZFgetString('general.warning.skippedAtt.msg'));
             return;
         }
         // confirm renaming
-        if (this.prefs.getBoolPref("confirmation_batch_ask") && attIDs.length>=this.prefs.getIntPref("confirmation_batch")) 
-            if(!confirm(this.ZFgetString('renaming.moveRename', [attIDs.length])))
+        if (this.getPref('confirmation_batch_ask') && atts.length >= this.getPref('confirmation_batch')) 
+            if(!confirm(this.ZFgetString('renaming.moveRename', [atts.length])))
                 return;
         // show infoWindow        
-        var progressWin = this.progressWindow(this.ZFgetString('renaming.renamed')),
-            addDescription = false;
+        var progress_win = this.progressWindow(this.ZFgetString('renaming.renamed')),
+            description = false;
         // rename attachments
-        for (var i=0; i < attIDs.length; i++) {
+        for (var i = 0; i < atts.length; i++) {
             // get attachment and add line to infoWindow
-            var att = Zotero.Items.get(attIDs[i]),
-                attProgress = new progressWin.ItemProgress(att.getImageSrc(), att.getField('title'));
+            var att = Zotero.Items.get(atts[i]),
+                progress = new progress_win.ItemProgress(att.getImageSrc(), att.getField('title'));
             try {
-                // Rename and Move Attachment
-                if(this.fileExists(att) && !att.isTopLevelItem() && !this.Tablet.getTabletStatus(att)) {
-                    var item = Zotero.Items.get(att.getSource()),
-                        file = att.getFile();
-                    // move & rename
-                    var attID = this.renameAttachment(att);
-                    att = Zotero.Items.get(attID);
-                    if(!att) {
-                        attProgress.setError();
-                        continue;
-                    }
-                    // update progress window
-                    attProgress.complete(att.getFilename(), att.getImageSrc());
-                }                
-                else {
-                    addDescription = true;
-                    attProgress.setError();
+                // check attachment
+                if(!att.fileExists() || att.isTopLevelItem() || this.Tablet.getTabletStatus(att)) {
+                    description = true;
+                    progress.setError();
+                    continue;
                 }
+                // Rename and Move Attachment
+                var item = Zotero.Items.get(att.getSource()),
+                    file = att.getFile();
+                var id = this.renameAttachment(att);
+                att = Zotero.Items.get(id);
+                if(!att) {
+                    progress.setError();
+                    continue;
+                }
+                // update progress window
+                progress.complete(att.getFilename(), att.getImageSrc());
             }
             catch(e) {
-                attProgress.setError();
+                progress.setError();
                 this.messages_fatalError.push(e);
             }
         }
         // show messages and handle errors
-        if(addDescription)
-            progressWin.addDescription(this.ZFgetString('general.warning.skippedAtt.msg'));
-        progressWin.startCloseTimer(this.prefs.getIntPref("info_window_duration"));
+        if(description) progress_win.description(this.ZFgetString('general.warning.skippedAtt.msg'));
+        progress_win.startCloseTimer(this.getPref("info_window_duration"));
         this.handleErrors();
     }
 };
