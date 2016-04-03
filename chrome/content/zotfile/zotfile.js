@@ -1690,39 +1690,34 @@ Zotero.ZotFile = {
     },
 
     // FUNCTION: Attach New File(s) from Download Folder
-    attachNewFile: function(){
+    attachNewFile: function() {
         // get selected items
         var win = this.wm.getMostRecentWindow("navigator:browser"),
             item = win.ZoteroPane.getSelectedItems()[0];
-        //check whether it really is an bibliographic item (no Attachment, note or collection)
+        // if not top-level item, get parent
+        item = !item.isTopLevelItem() ? Zotero.Items.get(item.getSource()) : item;
+        // check whether regular item
         if (!item.isRegularItem()) {
-            // show messages and handle errors
             this.messages_error.push(this.ZFgetString('renaming.renameAttach.wrongItem'));
             this.handleErrors();
             return;
         }
         try {
             // check whether valid FF default download folder
-            if(this.prefs.getBoolPref('source_dir_ff') &&  this.getSourceDir(false)==-1) {
-                this.prefs.setBoolPref('source_dir_ff',false);
-                var str = Components.classes["@mozilla.org/supports-string;1"]
-                    .createInstance(Components.interfaces.nsISupportsString);
-                str.data = prompt(this.ZFgetString('general.downloadFolder.prompt'));
-                this.prefs.setComplexValue("source_dir", Components.interfaces.nsISupportsString, str);
+            if(this.getPref('source_dir_ff') && this.getSourceDir(false) == -1) {
+                this.setPref('source_dir_ff', false);
+                this.setPref('source_dir', prompt(this.ZFgetString('general.downloadFolder.prompt')));
                 return;
             }
-
             // get source dir
-            var source_dir=this.getSourceDir(true);
-            if (source_dir==-1) return;
-
+            var source_dir = this.getSourceDir(true);
+            if (source_dir == -1) return;
             // get files from source dir
-            if (!this.prefs.getBoolPref("allFiles")) file=this.getLastFileInFolder(source_dir);
-            if ( this.prefs.getBoolPref("allFiles")) file=this.getAllFilesInFolder(source_dir);
-
+            if (!this.getPref("allFiles")) file = this.getLastFileInFolder(source_dir);
+            if ( this.getPref("allFiles")) file = this.getAllFilesInFolder(source_dir);
             // attach them
             if(file!=-1 && file!=-2) {
-                if (this.prefs.getBoolPref("confirmation"))
+                if (this.getPref("confirmation"))
                     if(!confirm(this.ZFgetString('renaming.renameAttach.confirm', [file[0].leafName])))
                         return;
                 var progressWin = this.progressWindow(this.ZFgetString('general.newAttachmentsAdded'));
