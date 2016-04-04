@@ -179,8 +179,8 @@ Zotero.ZotFile = {
         if(!zz.prefs.getBoolPref('watch_folder')) return;
         // get source dir
         // JSON.parse('[1, 5, "false"]') JSON.parse(zz.getCharPref('watch_folder_list'))
-        var source_dir=zz.getSourceDir(true);
-        if (source_dir==-1) return;
+        var source_dir = zz.getSourceDir(true);
+        if (!source_dir) return;
         // get last modified file in source folder
         var file = zz.getLastFileInFolder(source_dir)[0];
         if(!file) return;
@@ -1526,7 +1526,7 @@ Zotero.ZotFile = {
         var base_folders = [Zotero.getStorageDirectory().path];
         var source_dir = this.getSourceDir(false),
             dest_dir = this.prefs.getComplexValue("dest_dir", Components.interfaces.nsISupportsString).data;
-        if (source_dir != -1 && source_dir != "") base_folders.push(source_dir);
+        if (source_dir) base_folders.push(source_dir);
         if (dest_dir != "") base_folders.push(dest_dir);
         base_folders = base_folders.map(this.Utils.normalize_path);
         // Only delete folders if the file is located in any of the base folders
@@ -1657,20 +1657,19 @@ Zotero.ZotFile = {
         return(path);
     },
 
+    /**
+     * Get zotfile's source directory
+     * @param  {bool} message Show error message if invalid source directory
+     * @return {string}       Path for directory of 'undefined' if invalid directory
+     */
     getSourceDir: function(message) {
-        var source_dir="";
-
-        if ( this.prefs.getBoolPref("source_dir_ff")) source_dir = this.getFFDownloadFolder();
-        if (!this.prefs.getBoolPref("source_dir_ff")) source_dir = this.prefs.getComplexValue("source_dir", Components.interfaces.nsISupportsString).data;
-
-        // test whether valid source dir
-        if (source_dir!="" && this.fileExists(source_dir)) {
-            return (source_dir);
-        } else {
-            if(message) this.infoWindow(this.ZFgetString('general.error'),this.ZFgetString('file.invalidSourceFolder'));
-            return(-1);
+        var source_dir = this.getPref('source_dir_ff') ? this.getFFDownloadFolder() : this.getPref('source_dir');
+        // valid source directory?
+        if (source_dir == "" || !this.fileExists(source_dir)) {
+            if(message) this.infoWindow(this.ZFgetString('general.error'), this.ZFgetString('file.invalidSourceFolder'));
+            return undefined;
         }
-
+        return source_dir;
     },
 
     attachFile: function(item, file) {
@@ -1704,14 +1703,14 @@ Zotero.ZotFile = {
         }
         try {
             // check whether valid FF default download folder
-            if(this.getPref('source_dir_ff') && this.getSourceDir(false) == -1) {
+            if(this.getPref('source_dir_ff') && !this.getSourceDir(false)) {
                 this.setPref('source_dir_ff', false);
                 this.setPref('source_dir', prompt(this.ZFgetString('general.downloadFolder.prompt')));
                 return;
             }
             // get source dir
             var source_dir = this.getSourceDir(true);
-            if (source_dir == -1) return;
+            if (!source_dir) return;
             // get files from source dir
             if (!this.getPref("allFiles")) file = this.getLastFileInFolder(source_dir);
             if ( this.getPref("allFiles")) file = this.getAllFilesInFolder(source_dir);
