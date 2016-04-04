@@ -1585,14 +1585,13 @@ Zotero.ZotFile = {
         while (files.hasMoreElements()) {
             // get next file
             var file = files.getNext().QueryInterface(Components.interfaces.nsIFile),
-                filetype = this.Utils.getFiletype(file.leafName).toLowerCase();;
+                filetype = this.Utils.getFiletype(file.leafName).toLowerCase();
             // continue if directory, hidden file or certain file types
             if (file.isDirectory() || file.isHidden() || (pref_filetypes && !filetypes.includes(filetype))) continue;
             // add file to array
             entries.push(file);
         }
         // return sorted directory entries
-        // return entries.sort((a, b) => b.lastModifiedTime - a.lastModifiedTime);
         return entries;
     },
 
@@ -1618,7 +1617,7 @@ Zotero.ZotFile = {
             if (file.isFile() && file.lastModifiedTime > lastmod.lastModifiedTime) lastmod = file;
         }
         // return sorted directory entries
-        return lastmod;
+        return lastmod.lastModifiedTime == 0 ? undefined : lastmod;
     },
 
     getFFDownloadFolder: function () {
@@ -1695,7 +1694,7 @@ Zotero.ZotFile = {
         }
         if (!source_dir) return;
         // get files from source directory
-        file = !this.getPref("allFiles") ? [this.getLastFileInFolder(source_dir)] : this.getFilesInFolder(source_dir);
+        var file = !this.getPref("allFiles") ? [this.getLastFileInFolder(source_dir)] : this.getFilesInFolder(source_dir);
         if (!file[0]) {
             this.handleErrors(this.ZFgetString('renaming.renameAttach.noFileFound'));
             return;
@@ -1829,7 +1828,7 @@ Zotero.ZotFile = {
 
     /**
      * Rename select attachments
-     * @return {}
+     * @return {void}
      */
     renameSelectedAttachments: function() {
         // get selected attachments
