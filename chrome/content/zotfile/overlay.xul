@@ -10,7 +10,7 @@
 		<menuseparator id="id-zotfile-separator"/>
 		<!-- Make sure the menu separator for utilities is visible -->
        	<!--insertafter="id-zotfile-menu" -->
-       	<menuitem id="id-zotfile-attach-file" label="&zotfile-attach-file.label;" tooltiptext="&zotfile-attach-file.tooltiptext;" oncommand="Zotero.ZotFile.attachNewFile();"/>
+       	<menuitem id="id-zotfile-attach-file" label="&zotfile-attach-file.label;" tooltiptext="&zotfile-attach-file.tooltiptext;" oncommand="Zotero.ZotFile.attachFileFromSourceDirectory();"/>
  		<menu id="id-zotfile-manage-attachments" label="&zotfile-manage-attachments.label;" > 
 			<menupopup id="id-zotfile-menu" onpopupshowing="Zotero.ZotFile.buildZotFileMenu();">
 				<menuitem label="&warning.label;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>							
@@ -48,7 +48,7 @@
 	</menupopup>
 
 	<!-- zotfile context menus for collections-->	
-	<!-- oncommand="Zotero.ZotFile.attachNewFile();" -->
+	<!-- oncommand="Zotero.ZotFile.attachFileFromSourceDirectory();" -->
 	<menupopup id="zotero-collectionmenu">
 		<menuseparator id="id-zotfile-collection-separator"/>
        	<menuitem id="id-zotfile-collection-showall" label="&saved-search-all;" oncommand="Zotero.ZotFile.Tablet.restrictTabletSearch(-1);"/>

@@ -1689,8 +1689,11 @@ Zotero.ZotFile = {
         return Zotero.Items.get(newAttID);
     },
 
-    // FUNCTION: Attach New File(s) from Download Folder
-    attachNewFile: function() {
+    /**
+     * Attach last file (or all files) from source directory
+     * @return {}
+     */
+    attachFileFromSourceDirectory: function() {
         // get selected items
         var win = this.wm.getMostRecentWindow("navigator:browser"),
             item = win.ZoteroPane.getSelectedItems()[0];
@@ -1698,43 +1701,36 @@ Zotero.ZotFile = {
         item = !item.isTopLevelItem() ? Zotero.Items.get(item.getSource()) : item;
         // check whether regular item
         if (!item.isRegularItem()) {
-            this.messages_error.push(this.ZFgetString('renaming.renameAttach.wrongItem'));
-            this.handleErrors();
+            this.handleErrors(this.ZFgetString('renaming.renameAttach.wrongItem'));
             return;
         }
-        try {
-            // check whether valid FF default download folder
-            if(this.getPref('source_dir_ff') && !this.getSourceDir(false)) {
-                this.setPref('source_dir_ff', false);
-                this.setPref('source_dir', prompt(this.ZFgetString('general.downloadFolder.prompt')));
+        // get source dir
+        var source_dir = this.getSourceDir(false);
+        // invalid source folder
+        if (this.getPref('source_dir_ff') && !source_dir) {
+            this.setPref('source_dir_ff', false);
+            this.setPref('source_dir', prompt(this.ZFgetString('general.downloadFolder.prompt')));
+            return;
+        }
+        if (!source_dir) return;
+        // get files from source directory
+        file = !this.getPref("allFiles") ? this.getLastFileInFolder(source_dir) : this.getAllFilesInFolder(source_dir);
+        if (file == -1 || file == -2) {
+            this.handleErrors(this.ZFgetString('renaming.renameAttach.noFileFound'));
+            return;
+        }
+        // confirmation
+        if (this.getPref("confirmation"))
+            if(!confirm(this.ZFgetString('renaming.renameAttach.confirm', [file[0].leafName])))
                 return;
-            }
-            // get source dir
-            var source_dir = this.getSourceDir(true);
-            if (!source_dir) return;
-            // get files from source dir
-            if (!this.getPref("allFiles")) file = this.getLastFileInFolder(source_dir);
-            if ( this.getPref("allFiles")) file = this.getAllFilesInFolder(source_dir);
-            // attach them
-            if(file!=-1 && file!=-2) {
-                if (this.getPref("confirmation"))
-                    if(!confirm(this.ZFgetString('renaming.renameAttach.confirm', [file[0].leafName])))
-                        return;
-                var progressWin = this.progressWindow(this.ZFgetString('general.newAttachmentsAdded'));
-                for (var i=0; i < file.length; i++) {
-                    var att = this.attachFile(item, file[i]);
-                    progress = new progressWin.ItemProgress(att.getImageSrc(), att.getField('title'));
-                    progress.setProgress(100);
-                }
-                progressWin.startCloseTimer(this.prefs.getIntPref("info_window_duration"));
-            }
-            else this.messages_error.push(this.ZFgetString('renaming.renameAttach.noFileFound'));
+        // attach files
+        var progress_win = this.progressWindow(this.ZFgetString('general.newAttachmentsAdded'));
+        for (var i = 0; i < file.length; i++) {
+            var att = this.attachFile(item, file[i]);
+            progress = new progress_win.ItemProgress(att.getImageSrc(), att.getField('title'));
+            progress.setProgress(100);
         }
-        catch(e) {
-            this.messages_fatalError.push(e);
-        }
-        // show messages and handle errors
-        this.handleErrors();
+        progress_win.startCloseTimer(this.prefs.getIntPref("info_window_duration"));
     },
 
     /**
