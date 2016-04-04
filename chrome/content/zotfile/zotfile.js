@@ -687,7 +687,8 @@ Zotero.ZotFile = {
         this.messages_warning = [];
     },
 
-    handleErrors: function() {
+    handleErrors: function(error_message) {
+        if (error_message !== undefined) this.messages_error.push(error_message);
         var errors = {lines:this.messages_error},
             on_click = null,
             duration = this.prefs.getIntPref("info_window_duration");
