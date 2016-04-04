@@ -182,9 +182,8 @@ Zotero.ZotFile = {
         var source_dir = zz.getSourceDir(true);
         if (!source_dir) return;
         // get last modified file in source folder
-        var file = zz.getLastFileInFolder(source_dir)[0];
+        var file = zz.getLastFileInFolder(source_dir);
         if(!file) return;
-        if(file==-1 || file==-2) return;
         if (zz.lastModifiedFile===null) zz.lastModifiedFile=file.lastModifiedTime;
         // compare to last file
         if (file.lastModifiedTime==zz.lastModifiedFile)
@@ -247,8 +246,8 @@ Zotero.ZotFile = {
                 zz.infoWindow(zz.ZFgetString('general.newAttachmentAdded'), {lines: [att.getField('title')], icons: [att.getImageSrc()]});
                 zz.handleErrors();
                 // set lastModifiedFile variable to previous file
-                file=zz.getLastFileInFolder(source_dir)[0];
-                zz.lastModifiedFile=file.lastModifiedTime;
+                file = zz.getLastFileInFolder(source_dir);
+                zz.lastModifiedFile = file ? file.lastModifiedTime : 0;
             }
             else {
                 recognizePDF(file);
@@ -1200,20 +1199,20 @@ Zotero.ZotFile = {
     },
 
     checkFileType: function (obj) {
-        if(!this.prefs.getBoolPref("useFileTypes")) return(true);
+        if(!this.getPref('useFileTypes')) return(true);
         var filename;
         if(obj.leafName) {
             filename = obj.leafName;
         } else {
-            if(typeof(obj)=="number") obj = Zotero.Items.get(obj);
+            if(typeof(obj)=='number') obj = Zotero.Items.get(obj);
             if (obj.attachmentLinkMode === Zotero.Attachments.LINK_MODE_LINKED_URL)  return false;
             filename = obj.getFilename();
         }
         // check
         var filetype = this.Utils.getFiletype(filename).toLowerCase(),
-            regex = this.prefs.getCharPref("filetypes").toLowerCase().replace(/,/gi,"|");
+            regex = this.getPref('filetypes').toLowerCase().replace(/,/gi,"|");
         // return value
-        return filetype.search(new RegExp(regex))>=0 ? true : false;
+        return filetype.search(new RegExp(regex)) >= 0 ? true : false;
     },
 
     completePath: function(location,filename) {
@@ -1571,73 +1570,55 @@ Zotero.ZotFile = {
         }
     },
 
-    getAllFilesInFolder: function(dir_path){
-        var return_files=[];
-        // create a nslFile Object for the dir
-        try {
-            var dir = this.createFile(dir_path);
-            var success=0;
-
-            // go through all the files in the dir
-            var files = dir.directoryEntries;
-            while (files.hasMoreElements()) {
-                // get one after the other file
-                var file = files.getNext();
-                file.QueryInterface(Components.interfaces.nsIFile);
-                // only look at files which are neither folders nor hidden
-                if(!file.isDirectory() && !file.isHidden()) {
-                // is this a file we want to work with?
-                    if (this.checkFileType(file)) {
-                        return_files[success]=file;
-                        success=success+1;
-                    }
-                }
-            }
-            if (success>0)  return(return_files);
-            else return(-1);
-
-        } catch (e) {
-            Components.utils.reportError(e);
-            return (-2);
+    /**
+     * Get all valid files in folder
+     * @param  {string} path Path to directory
+     * @return {array}       Array with nsIFile objects for each valid file in folder
+     */
+    getFilesInFolder: function(path) {
+        var dir = this.createFile(path);
+        if (!dir.isDirectory()) throw("Zotero.ZotFile.getSortedFilesInDirectory(): '" + path + "' is not directory.")
+        var pref_filetypes = this.getPref('useFileTypes'),
+            filetypes = this.getPref('filetypes').split(',').map(s => s.trim().toLowerCase()),
+            files = dir.directoryEntries,
+            entries = [];
+        while (files.hasMoreElements()) {
+            // get next file
+            var file = files.getNext().QueryInterface(Components.interfaces.nsIFile),
+                filetype = this.Utils.getFiletype(file.leafName).toLowerCase();;
+            // continue if directory, hidden file or certain file types
+            if (file.isDirectory() || file.isHidden() || (pref_filetypes && !filetypes.includes(filetype))) continue;
+            // add file to array
+            entries.push(file);
         }
+        // return sorted directory entries
+        // return entries.sort((a, b) => b.lastModifiedTime - a.lastModifiedTime);
+        return entries;
     },
 
-    getLastFileInFolder: function(dir_path){
-        var return_files = [];
-        // create a nslFile Object for the dir
-        try {
-            var dir = this.createFile(dir_path),
-                lastfile_date = 0,
-                lastfile_path = "",
-                success = 0;
-
-            // go through all the files in the dir
-            var files = dir.directoryEntries;
-            while (files.hasMoreElements()) {
-                // get one after the other file
-                var file = files.getNext();
-                file.QueryInterface(Components.interfaces.nsIFile);
-                // continue if file is folder or hidden
-                if(file.isDirectory() || file.isHidden())
-                    continue;
-                // continue if filetype not included
-                if (!this.checkFileType(file)) 
-                    continue;
-                // finally, we set return_files to the file with the most recent modification
-                var modtime = file.lastModifiedTime;
-                if (modtime > lastfile_date) {
-                    lastfile_date = modtime;
-                    return_files[0] = file;
-                    success = 1;
-                }
-            }
-            if (success==1) return(return_files);
-            else return(-1);
-        } catch (e) {
-            Components.utils.reportError(e);
-            return (-2);
+    /**
+     * Get the last modified file from directory
+     * @param  {string} path Path to directory
+     * @return {nsIFile}     Last modified file in folder as nsIFile or undefined.
+     */
+    getLastFileInFolder: function(path) {
+        var dir = this.createFile(path);
+        if (!dir.isDirectory()) throw("Zotero.ZotFile.getSortedFilesInDirectory(): '" + path + "' is not directory.")
+        var pref_filetypes = this.getPref('useFileTypes'),
+            filetypes = this.getPref('filetypes').split(',').map(s => s.trim().toLowerCase()),
+            files = dir.directoryEntries,
+            lastmod = {lastModifiedTime: 0};
+        while (files.hasMoreElements()) {
+            // get next file
+            var file = files.getNext().QueryInterface(Components.interfaces.nsIFile),
+                filetype = this.Utils.getFiletype(file.leafName).toLowerCase();
+            // skip if directory, hidden file or certain file types
+            if (file.isDirectory() || file.isHidden() || (pref_filetypes && !filetypes.includes(filetype))) continue;
+            // check modification time
+            if (file.isFile() && file.lastModifiedTime > lastmod.lastModifiedTime) lastmod = file;
         }
-
+        // return sorted directory entries
+        return lastmod;
     },
 
     getFFDownloadFolder: function () {
@@ -1714,8 +1695,8 @@ Zotero.ZotFile = {
         }
         if (!source_dir) return;
         // get files from source directory
-        file = !this.getPref("allFiles") ? this.getLastFileInFolder(source_dir) : this.getAllFilesInFolder(source_dir);
-        if (file == -1 || file == -2) {
+        file = !this.getPref("allFiles") ? [this.getLastFileInFolder(source_dir)] : this.getFilesInFolder(source_dir);
+        if (!file[0]) {
             this.handleErrors(this.ZFgetString('renaming.renameAttach.noFileFound'));
             return;
         }
