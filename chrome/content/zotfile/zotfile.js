@@ -1521,33 +1521,32 @@ Zotero.ZotFile = {
         }
     },
 
-    removeEmptyFolders: function(f) {
+    /**
+     * Remove empty folders recursively within zotfile directories
+     * @param  {nsIFile} folder Folder as nsIFile.
+     * @return {void}
+     */
+    removeEmptyFolders: function(folder) {
         // Keep track of zotero's internal directory, current source and destination directory
-        var base_folders = [Zotero.getStorageDirectory().path];
+        var folders_zotfile = [Zotero.getStorageDirectory().path];
         var source_dir = this.getSourceDir(false),
-            dest_dir = this.prefs.getComplexValue("dest_dir", Components.interfaces.nsISupportsString).data;
-        if (source_dir) base_folders.push(source_dir);
-        if (dest_dir != "") base_folders.push(dest_dir);
-        base_folders = base_folders.map(this.Utils.normalize_path);
+            dest_dir = this.getPref('dest_dir');
+        if (source_dir) folders_zotfile.push(source_dir);
+        if (dest_dir != '') folders_zotfile.push(dest_dir);
+        folders_zotfile = folders_zotfile.map(OS.Path.normalize);
         // Only delete folders if the file is located in any of the base folders
-        if (!base_folders.map(dir => f.path.startsWith(dir)).some(x => x === true)) return;
-
-        // Try to remove the original dir recursively until a non empty folder is found
+        if (!folders_zotfile.map(dir => folder.path.startsWith(dir)).some(x => x === true)) return;
+        // remove the original dir recursively until a non empty folder is found
         while(true) {
-            if (f.isDirectory() && base_folders.indexOf(f.path) === -1) {
-                this.removeFile(f);
-
-                // Stop if the directory was not removed
-                if (f.exists()) break;
-
-                // Try the parent of the current folder too
-                f = this.createFile(OS.Path.dirname(f.path));
-
-            } else {
-                // Also break if f is not a directory or if it is the same
-                // directory as the source/zotero folder
+            // break if folder is not a directory or if it is the same directory as the source/zotero folder
+            if (!folder.isDirectory() || folders_zotfile.indexOf(folder.path) !== -1)
                 break;
-            }
+            // remove file
+            this.removeFile(folder);
+            // Stop if the directory was not removed
+            if (folder.exists()) break;
+            // Try the parent of the current folder too
+            folder = this.createFile(OS.Path.dirname(folder.path));
         }
     },
 
