@@ -1653,25 +1653,30 @@ Zotero.ZotFile = {
         return source_dir;
     },
 
+    /**
+     * Attach file to zotero items
+     * @param  {zitem}   item Regular zotero item.
+     * @param  {nsIFile} file File object.
+     * @return {int}          Zotero attachment id.
+     */
     attachFile: function(item, file) {
-        var attID;
-        // create linked attachment if local library
-        if (!item.libraryID) attID=Zotero.Attachments.linkFromFile(file, item.itemID,item.libraryID);
-
-        // import attachment if cloud library
-        if (item.libraryID) {
-            attID=Zotero.Attachments.importFromFile(file, item.itemID,item.libraryID);
-            this.removeFile(file);
-        }
-        // Rename and Move Attachment
-        var att = Zotero.Items.get(attID);
-        var newAttID = this.renameAttachment(att);
-        return Zotero.Items.get(newAttID);
+        if (!item.isRegularItem()) throw("Zotero.ZotFile.attachFile(): 'item' is not a regular zotero attachment item.");
+        // create linked or imported attachment from file
+        var att_id = this.getPref('import') || item.libraryID ?
+                Zotero.Attachments.importFromFile(file, item.getID(), item.libraryID) :
+                Zotero.Attachments.linkFromFile(file, item.getID(), item.libraryID);
+        // rename and move attachment
+        var att = Zotero.Items.get(att_id);
+        var att_id = this.renameAttachment(att);
+        // remove file
+        if (file.exists()) this.removeFile(file);
+        // return attachment item
+        return Zotero.Items.get(att_id_new);
     },
 
     /**
      * Attach last file (or all files) from source directory
-     * @return {}
+     * @return {void}
      */
     attachFileFromSourceDirectory: function() {
         // get selected items
