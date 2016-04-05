@@ -1498,26 +1498,29 @@ Zotero.ZotFile = {
 
     },
 
-    removeFile: function(f) {
-        if(f.exists()) {
-            try {
-                if(!f.isDirectory()) {
-                    f.remove(false);
+    /**
+     * Delete file or folder
+     * @param  {nsIFile} file File or folder to be removed as nsIFile object
+     * @return {void}
+     */
+    removeFile: function(file) {
+        if (!file.exists())
+            return;
+        try {
+            // remove file
+            if(!file.isDirectory()) file.remove(false);
+            // ... for directories, remove them if no non-hidden files are inside
+            if(file.isDirectory())
+                var files = file.directoryEntries;
+                while (files.hasMoreElements()) {
+                    var f = files.getNext().QueryInterface(Components.interfaces.nsIFile);
+                    if (!f.isHidden()) return;
                 }
-                // for directories, remove them them if no non-hidden files are inside
-                else {
-                    var files = f.directoryEntries;
-                    while (files.hasMoreElements()) {
-                        var file = files.getNext();
-                        file.QueryInterface(Components.interfaces.nsIFile);
-                        if (!file.isHidden()) return;
-                    }
-                    f.remove(true);
-                }
+                file.remove(true);
             }
-            catch(err){
-                if(f.isDirectory()) this.infoWindow(this.ZFgetString('general.report'),this.ZFgetString('file.removeFolderFailed'));
-            }
+        }
+        catch(err) {
+            if(file.isDirectory()) this.infoWindow(this.ZFgetString('general.report'), this.ZFgetString('file.removeFolderFailed'));
         }
     },
 
