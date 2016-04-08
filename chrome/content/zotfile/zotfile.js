@@ -45,17 +45,17 @@ Zotero.ZotFile = {
     versionChanges: function (currentVersion) {
         // open webpage
         var open_page = ["4.1.1", "4.1", "4.0", "3.3", "3.2", "3.1", "2.0", "2.3"];
-        if(this.prefs.getCharPref("version")==="" || open_page.indexOf(currentVersion) != -1) {
+        if(this.getPref("version")==="" || open_page.indexOf(currentVersion) != -1) {
             if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL); });
             if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.changelogURL); });
         }
 
-        if(currentVersion=="4.2" && this.prefs.getBoolPref("pdfExtraction.openPdfMac_skim")) {
-            this.prefs.setCharPref("pdfExtraction.openPdfMac", "Skim");
+        if(currentVersion=="4.2" && this.getPref("pdfExtraction.openPdfMac_skim")) {
+            this.setPref("pdfExtraction.openPdfMac", "Skim");
         }
 
         // set current version
-        this.prefs.setCharPref("version",currentVersion);
+        this.setPref("version",currentVersion);
 
     },
 
@@ -71,16 +71,16 @@ Zotero.ZotFile = {
             this.ffPrefs = Components.classes["@mozilla.org/preferences-service;1"].
                         getService(Components.interfaces.nsIPrefService).getBranch("browser.download.");
             // save some preferences
-            this.Tablet.tag = this.prefs.getCharPref("tablet.tag");
-            this.Tablet.tagMod = this.prefs.getCharPref("tablet.tagModified");
+            this.Tablet.tag = this.getPref("tablet.tag");
+            this.Tablet.tagMod = this.getPref("tablet.tagModified");
 
             this.wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
 
             // set source dir to custom folder if zotero standalone
-            if(Zotero.isStandalone && this.prefs.getBoolPref('source_dir_ff')) this.prefs.setBoolPref('source_dir_ff',false);
+            if(Zotero.isStandalone && this.getPref('source_dir_ff')) this.setPref('source_dir_ff',false);
 
             // version handeling
-            var oldVersion=this.prefs.getCharPref("version");
+            var oldVersion=this.getPref("version");
             if(!Zotero.isFx36) Components.utils.import("resource://gre/modules/AddonManager.jsm");
 
             // update current version
@@ -114,11 +114,11 @@ Zotero.ZotFile = {
                     Zotero.ZotFile.pdfAnnotations.popplerExtractorTool=Zotero.ZotFile.pdfAnnotations.popplerExtractorCheckInstalled();
 
                     // set to pdf.js if poppler is not installed
-                    if(!Zotero.ZotFile.pdfAnnotations.popplerExtractorTool) Zotero.ZotFile.prefs.setBoolPref("pdfExtraction.UsePDFJS",true);
+                    if(!Zotero.ZotFile.pdfAnnotations.popplerExtractorTool) Zotero.ZotFile.setPref("pdfExtraction.UsePDFJS",true);
                 }
 
                 // set to pdf.js if poppler is not supported
-                if(!Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported) Zotero.ZotFile.prefs.setBoolPref("pdfExtraction.UsePDFJS",true);
+                if(!Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported) Zotero.ZotFile.setPref("pdfExtraction.UsePDFJS",true);
                 
             });
         }
@@ -143,7 +143,7 @@ Zotero.ZotFile = {
             .loadSubScript("chrome://zotfile/content/ProgressWindow.js", Zotero.ZotFile);
 
         // add event listener for selecting items in zotero tree
-        if(Zotero.ZotFile.prefs.getBoolPref('tablet')) {
+        if(Zotero.ZotFile.getPref('tablet')) {
             var pane = this.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
                 tree = pane.document.getElementById('zotero-items-tree');
             tree.removeEventListener('select', Zotero.ZotFile.attboxUpdateTabletStatus);
@@ -174,9 +174,11 @@ Zotero.ZotFile = {
 		return l10n;
 	},
 
+    // https://github.com/paulmillr/chokidar
+    // https://nodejs.org/docs/latest/api/fs.html#fs_fs_watch_filename_options_listener
     watchFolder: function() {
         var zz = Zotero.ZotFile, item;
-        if(!zz.prefs.getBoolPref('watch_folder')) return;
+        if(!zz.getPref('watch_folder')) return;
         // get source dir
         // JSON.parse('[1, 5, "false"]') JSON.parse(zz.getCharPref('watch_folder_list'))
         var source_dir = zz.getSourceDir(true);
@@ -261,7 +263,7 @@ Zotero.ZotFile = {
                 icons: [icon],
                 txt:zz.ZFgetString('watchFolder.clickRename')
             };
-        zz.infoWindow(zz.ZFgetString('watchFolder.newFile'), message, zz.prefs.getIntPref("info_window_duration_clickable"),on_confirm);
+        zz.infoWindow(zz.ZFgetString('watchFolder.newFile'), message, zz.getPref("info_window_duration_clickable"),on_confirm);
         zz.lastModifiedFile = file.lastModifiedTime;
     },
 
@@ -403,7 +405,7 @@ Zotero.ZotFile = {
             if (type != 'item' || event != 'add')
                 return;
             var zz = Zotero.ZotFile;
-            if(!zz.prefs.getBoolPref('pdfOutline.getToc'))
+            if(!zz.getPref('pdfOutline.getToc'))
                 return;
             // get pdf outline
             setTimeout(function() {
@@ -419,7 +421,7 @@ Zotero.ZotFile = {
             var zz = Zotero.ZotFile;
             // var prefs = Zotero.ZotFile.prefs;
             // exit if tablet features are not enabled
-            if(!zz.prefs.getBoolPref("tablet")) return;
+            if(!zz.getPref("tablet")) return;
             // get item and tag id
             var changes = ids.map(function(id) {
                 var id = id.split('-');
@@ -662,7 +664,7 @@ Zotero.ZotFile = {
                 var file = fp.file;
 
                 // Set preference
-                //Zotero.ZotFile.prefs.setCharPref(pref,file.path);
+                //Zotero.ZotFile.setPref(pref,file.path);
                 return(file.path);
             }
             else {
@@ -690,10 +692,10 @@ Zotero.ZotFile = {
         if (error_message !== undefined) this.messages_error.push(error_message);
         var errors = {lines:this.messages_error},
             on_click = null,
-            duration = this.prefs.getIntPref("info_window_duration");
+            duration = this.getPref("info_window_duration");
         // fatal errors
         if(this.messages_fatalError.length>0) {
-            duration = this.prefs.getIntPref("info_window_duration_clickable");
+            duration = this.getPref("info_window_duration_clickable");
             errors.lines.push(this.ZFgetString('error.unknown'));
             errors.txt = this.ZFgetString('error.clickToCopy');
             // prepare error message for clipboard
@@ -730,7 +732,7 @@ Zotero.ZotFile = {
         main = typeof main !== 'undefined' ? main : 'title';
         message = typeof message !== 'undefined' ? message : 'message';
         callback = typeof callback !== 'undefined' ? callback : null;
-        time = typeof time !== 'undefined' ? time : this.prefs.getIntPref("info_window_duration");
+        time = typeof time !== 'undefined' ? time : this.getPref("info_window_duration");
         // show window
         var pw = new (this.ProgressWindow);
         pw.changeHeadline(main);
@@ -788,7 +790,7 @@ Zotero.ZotFile = {
         // ZoteroPane object
         var doc = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser").ZoteroPane.document;
         // check regular item or attachment selected & custom subfolders
-        var showCollectionMenu = Zotero.ZotFile.prefs.getBoolPref("tablet") && Zotero.ZotFile.Tablet.checkSelectedSearch() && Zotero.ZotFile.prefs.getIntPref("tablet.projectFolders")==2;
+        var showCollectionMenu = Zotero.ZotFile.getPref("tablet") && Zotero.ZotFile.Tablet.checkSelectedSearch() && Zotero.ZotFile.getPref("tablet.projectFolders")==2;
         // show or hide zotfile menu items
         doc.getElementById("id-zotfile-collection-separator").hidden = !showCollectionMenu;
         doc.getElementById("id-zotfile-collection-showall").hidden = !showCollectionMenu;
@@ -801,7 +803,7 @@ Zotero.ZotFile = {
         // Hide all items by default
         for (i=0;i<nodes.length;i++) nodes[i].setAttribute('hidden', true);
         // get subfolders
-        var subfolders = JSON.parse(this.prefs.getCharPref("tablet.subfolders"));
+        var subfolders = JSON.parse(this.getPref("tablet.subfolders"));
         // show basefolder
         // nodes[0].setAttribute('label', 'Unfiled Attachments');
         nodes[0].setAttribute('hidden', false);
@@ -898,8 +900,7 @@ Zotero.ZotFile = {
         }
 
         // check whether destination folder is defined (and valid)
-        var dest_dir_valid=this.fileExists(this.prefs.getComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString).data);
-//      if(this.prefs.getComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString).data!="") var dest_dir_valid=1;
+        var dest_dir_valid=this.fileExists(this.getPref('tablet.dest_dir'));
 
         // warnings
         if(!oneItem) {
@@ -923,11 +924,11 @@ Zotero.ZotFile = {
             }
 
             // add 'Extract annotations'
-            if(this.prefs.getBoolPref("pdfExtraction.MenuItem")) show.push(m.extractanno);
-            if(this.prefs.getBoolPref("pdfOutline.menuItem")) show.push(m.getoutline);
+            if(this.getPref("pdfExtraction.MenuItem")) show.push(m.extractanno);
+            if(this.getPref("pdfOutline.menuItem")) show.push(m.getoutline);
 
             // tablet menu part
-            if(this.prefs.getBoolPref("tablet") && oneAtt) {
+            if(this.getPref("tablet") && oneAtt) {
                 // add sep
                 show.push(m.sep1);
 
@@ -945,19 +946,19 @@ Zotero.ZotFile = {
                     show.push(m.push2reader,m.pullreader);
 
                     // set tooltip for base folder
-                    menu.childNodes[m.push2reader].setAttribute('tooltiptext',this.ZFgetString('menu.sendAttToBaseFolder',[this.prefs.getComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString).data]));
+                    menu.childNodes[m.push2reader].setAttribute('tooltiptext',this.ZFgetString('menu.sendAttToBaseFolder',[this.getPref('tablet.dest_dir')]));
 
                     if(!onePushed) disable.push(m.pullreader);
 
                     // add update menu item
-                    if(this.Tablet.checkSelectedSearch() || this.prefs.getBoolPref("tablet.updateAlwaysShow")) {
+                    if(this.Tablet.checkSelectedSearch() || this.getPref("tablet.updateAlwaysShow")) {
                         show.push(m.updatefile);
                         if(!onePushed) disable.push(m.updatefile);
                     }
 
                     // Collection based project folders
                     var projectsSet=0;
-                    if(this.prefs.getIntPref("tablet.projectFolders")==1) {
+                    if(this.getPref("tablet.projectFolders")==1) {
                         show.push(m.sep2,m.tablet);
 
                         // get first selected item
@@ -994,9 +995,9 @@ Zotero.ZotFile = {
                     }
 
                     // User defined project folders
-                    if(this.prefs.getIntPref("tablet.projectFolders")==2) {
+                    if(this.getPref("tablet.projectFolders")==2) {
                         show.push(m.sep2,m.tablet,m.sep3,m.menuConfigure);
-                        var subfolders = JSON.parse(this.prefs.getCharPref("tablet.subfolders"));
+                        var subfolders = JSON.parse(this.getPref("tablet.subfolders"));
                         subfolders.forEach(function(folder, i) {
                             show.push(m.subfolders[i]);
                             menu.childNodes[m.subfolders[i]].setAttribute('label', folder.label);
@@ -1006,11 +1007,11 @@ Zotero.ZotFile = {
                     }
 
                     // message that no folders are defined
-                    if(!projectsSet && this.prefs.getIntPref("tablet.projectFolders")!=0) {
+                    if(!projectsSet && this.getPref("tablet.projectFolders")!=0) {
                         var warning;
                         show.push(m.warning3);
-                        if(this.prefs.getIntPref("tablet.projectFolders")==1) warning=this.ZFgetString('menu.itemIsInNoCollection');
-                        if(this.prefs.getIntPref("tablet.projectFolders")==2) warning=this.ZFgetString('menu.noSubfoldersDefined');
+                        if(this.getPref("tablet.projectFolders")==1) warning=this.ZFgetString('menu.itemIsInNoCollection');
+                        if(this.getPref("tablet.projectFolders")==2) warning=this.ZFgetString('menu.noSubfoldersDefined');
                         menu.childNodes[m.warning3].setAttribute('label', warning);
                     }
                 }
@@ -1091,7 +1092,7 @@ Zotero.ZotFile = {
                 menupopup.appendChild(pane.document.createElement("menuseparator"));
         }
         
-        if(Zotero.ZotFile.prefs.getIntPref("tablet.projectFolders")==2) {
+        if(Zotero.ZotFile.getPref("tablet.projectFolders")==2) {
             // add seperater and heading
             menupopup.appendChild(pane.document.createElement("menuseparator"));
             var menuitem = pane.document.createElement("menuitem");
@@ -1100,7 +1101,7 @@ Zotero.ZotFile = {
             menuitem.setAttribute('style', 'font-size: 80%; background: none; -moz-appearance: none;');    
             menupopup.appendChild(menuitem);
     //         add subfolders
-            var subfolders = JSON.parse(Zotero.ZotFile.prefs.getCharPref("tablet.subfolders"));
+            var subfolders = JSON.parse(Zotero.ZotFile.getPref("tablet.subfolders"));
             subfolders.forEach(function(folder, i) {
                 var menuitem = pane.document.createElement("menuitem");
                 menuitem.setAttribute('label', folder.label);
@@ -1154,7 +1155,7 @@ Zotero.ZotFile = {
             row = pane.document.getElementById('zotfile-tablet-row');
         if(items.length!=1) return;
         var att = items[0];
-        if(!zz.prefs.getBoolPref('tablet') || !att.isAttachment() || att._attachmentMIMEType!='application/pdf') {
+        if(!zz.getPref('tablet') || !att.isAttachment() || att._attachmentMIMEType!='application/pdf') {
             if(row) row.setAttribute('hidden', 'true');
             return;
         }
@@ -1175,7 +1176,7 @@ Zotero.ZotFile = {
     },
 
     addUserInput: function(filename, original_filename){
-        var default_str = this.prefs.getCharPref("userInput_Default");
+        var default_str = this.getPref("userInput_Default");
         if (default_str=="[original filename]") default_str=original_filename;
         var filesuffix = prompt(this.ZFgetString('renaming.addUserInput.prompt', [original_filename, filename]), default_str);
         if (filesuffix != '' && filesuffix != null) {
@@ -1231,31 +1232,31 @@ Zotero.ZotFile = {
         // check function arguments
         if (!item.isRegularItem()) throw('getFilename: Not regular zotero item.');
         // check whether renaming is disabled
-        if(this.prefs.getBoolPref('disable_renaming')) return(name);
+        if(this.getPref('disable_renaming')) return(name);
         // rename format
         var filename = '',
             item_type =  item.getType(),
-            format_default = item_type == 19 ? this.prefs.getCharPref("renameFormat_patent") : this.prefs.getCharPref("renameFormat");
+            format_default = item_type == 19 ? this.getPref("renameFormat_patent") : this.getPref("renameFormat");
         format = typeof format !== 'undefined' ? format : format_default;
         // create the new filename from the selected item
-        if (!this.prefs.getBoolPref('useZoteroToRename')) {
+        if (!this.getPref('useZoteroToRename')) {
             filename = this.Wildcards.replaceWildcard(item, format);
             // Strip invalid characters (adopted from Zotero, modified to accept periods)
             filename = filename.replace(/[\/\\\?\*:|"<>]/g, '');
             // replace multiple blanks in filename with single blank & remove whitespace
             filename = Zotero.Utilities.trimInternal(filename);
             // remove periods, replace blanks with '_', convert to lower case
-            if (this.prefs.getBoolPref('removePeriods')) filename = filename.replace(/\./g, '');
-            if (this.prefs.getBoolPref('replace_blanks'))  filename = filename.replace(/ /g, '_');
-            if (this.prefs.getBoolPref('lower_case')) filename = filename.toLowerCase();
+            if (this.getPref('removePeriods')) filename = filename.replace(/\./g, '');
+            if (this.getPref('replace_blanks'))  filename = filename.replace(/ /g, '_');
+            if (this.getPref('lower_case')) filename = filename.toLowerCase();
             // remove all the accents and other strange characters from filename
-            if (Zotero.version[0] >= 3 && this.prefs.getBoolPref('removeDiacritics'))
+            if (Zotero.version[0] >= 3 && this.getPref('removeDiacritics'))
                 filename = Zotero.Utilities.removeDiacritics(filename);
         }
         // Use Zotero to get filename
-        if (this.prefs.getBoolPref('useZoteroToRename')) filename = Zotero.Attachments.getFileBaseNameFromItem(item.itemID);
+        if (this.getPref('useZoteroToRename')) filename = Zotero.Attachments.getFileBaseNameFromItem(item.itemID);
         // Add user input to filename
-        if(this.prefs.getBoolPref('userInput')) filename = this.addUserInput(filename, name);
+        if(this.getPref('userInput')) filename = this.addUserInput(filename, name);
         // add filetype to filename
         var filetype = this.Utils.getFiletype(name);
         if(filetype != '') filename = filename + '.' + filetype;
@@ -1717,7 +1718,7 @@ Zotero.ZotFile = {
             progress = new progress_win.ItemProgress(att.getImageSrc(), att.getField('title'));
             progress.setProgress(100);
         }
-        progress_win.startCloseTimer(this.prefs.getIntPref("info_window_duration"));
+        progress_win.startCloseTimer(this.getPref("info_window_duration"));
     },
 
     /**

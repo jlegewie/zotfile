@@ -19,7 +19,7 @@ function updatePreferenceWindow(which) {
     if(which=="all") {
         updatePDFToolsStatus();
         updateFolderIcon("all",false);
-        Zotero.ZotFile.temp = Zotero.ZotFile.prefs.getComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString).data;
+        Zotero.ZotFile.temp = Zotero.ZotFile.getPref('tablet.dest_dir');
         /*if(document.getElementById('pref-zotfile-tablet-mode').value==2) {
             document.getElementById('id-zotfile-tablet-storeCopyOfFile').disabled = true;
             document.getElementById('id-zotfile-tablet-storeCopyOfFile_suffix').disabled = true;
@@ -99,7 +99,7 @@ function updatePreferenceWindow(which) {
         // show alert about the tag used by zotfile
         if(which=="zotfile-tablet") {
             if(!document.getElementById('pref-zotfile-tablet').value) {
-                if(confirm(Zotero.ZotFile.ZFgetString('tablet.createSavedSearches', [Zotero.ZotFile.prefs.getCharPref("tablet.tag")]))) Zotero.ZotFile.createSavedSearch("both");
+                if(confirm(Zotero.ZotFile.ZFgetString('tablet.createSavedSearches', [Zotero.ZotFile.getPref("tablet.tag")]))) Zotero.ZotFile.createSavedSearch("both");
             }
         }
 
@@ -202,12 +202,12 @@ function updateFolderIcon(which,revert) {
             icon_ok.setAttribute('hidden', true);
             icon_error.setAttribute('hidden', false);
         }
-        if(which!="all") changedBasefolder(Zotero.ZotFile.prefs.getComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString).data);
+        if(which!='all') changedBasefolder(Zotero.ZotFile.getPref('tablet.dest_dir'));
     }
 }
 
 function checkFolderLocation(folder) {
-    var path=Zotero.ZotFile.prefs.getComplexValue(folder, Components.interfaces.nsISupportsString).data;
+    var path = Zotero.ZotFile.getPref(folder);
     if(path!="") if(Zotero.ZotFile.fileExists(path)) return(true);
     return(false);
 }
@@ -239,7 +239,7 @@ function previewFilename() {
 function changedBasefolder(dest_dir) {
     var baseFolderOld=Zotero.ZotFile.temp;
     var baseFolderOldValid=Zotero.ZotFile.fileExists(baseFolderOld);
-    var baseFolder=Zotero.ZotFile.prefs.getComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString).data;
+    var baseFolder=Zotero.ZotFile.getPref('tablet.dest_dir');
     var baseFolderValid=checkFolderLocation("tablet.dest_dir");
 
     // only proceed if folder has changed and the old location was valid
@@ -249,26 +249,19 @@ function changedBasefolder(dest_dir) {
         // change from valid to invalid subfolder
         if(!baseFolderValid) {
             if(!confirm(Zotero.ZotFile.ZFgetString('tablet.invalidFolder', [atts.length]))) {
-                var str = Components.classes["@mozilla.org/supports-string;1"]
-                    .createInstance(Components.interfaces.nsISupportsString);
-                str.data = baseFolderOld;
-                Zotero.ZotFile.prefs.setComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString, str);
+                Zotero.ZotFile.setPref('tablet.dest_dir', baseFolderOld);
                 updateFolderIcon("tablet",false);
             }
         }
         // change from valid to valid
         if(baseFolderValid && atts.length>0) {
             // prompt user
-            if(!confirm(Zotero.ZotFile.ZFgetString('tablet.baseFolderChanged.prompt', [atts.length]))) {
-                var str = Components.classes["@mozilla.org/supports-string;1"]
-                    .createInstance(Components.interfaces.nsISupportsString);
-                str.data = baseFolderOld;
-                Zotero.ZotFile.prefs.setComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString, str);
-            }
+            if(!confirm(Zotero.ZotFile.ZFgetString('tablet.baseFolderChanged.prompt', [atts.length])))
+                Zotero.ZotFile.setPref('tablet.dest_dir', baseFolderOld);
         }
     }
 
-    Zotero.ZotFile.temp=Zotero.ZotFile.prefs.getComplexValue("tablet.dest_dir", Components.interfaces.nsISupportsString).data;
+    Zotero.ZotFile.temp = Zotero.ZotFile.getPref('tablet.dest_dir');
 }
 
 
@@ -354,7 +347,7 @@ function buildFolderList () {
     var treechildren = document.getElementById('id-zotfile-tablet-projectFolders-rows');
     while (treechildren.hasChildNodes()) treechildren.removeChild(treechildren.firstChild);
     // get list of subfolders (labels and folders)
-    var subfolders = JSON.parse(zz.prefs.getCharPref("tablet.subfolders"));
+    var subfolders = JSON.parse(zz.getPref("tablet.subfolders"));
     var label = subfolders.map(function(obj) {return obj.label;});
     var folder = subfolders.map(function(obj) {return obj.path;});
    
@@ -386,7 +379,7 @@ function updateSubfolderPreferences () {
         var folder = treerow.childNodes[1].getAttribute('label');
         if (label!="" && folder!="") subfolders.push({'label':label,'path':folder});
     }
-    Zotero.ZotFile.prefs.setCharPref("tablet.subfolders", JSON.stringify(subfolders));
+    Zotero.ZotFile.setPref("tablet.subfolders", JSON.stringify(subfolders));
 }
 
 function deleteSelectedSubfolder () {
