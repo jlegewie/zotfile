@@ -651,30 +651,25 @@ Zotero.ZotFile = {
         );
     },
 
+    /**
+     * Choose directory from file picker
+     * @return {string} Path to file
+     */
     chooseDirectory: function () {
         var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
             .getService(Components.interfaces.nsIWindowMediator);
         var win = wm.getMostRecentWindow('navigator:browser');
-
         var ps = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
             .getService(Components.interfaces.nsIPromptService);
-
         var nsIFilePicker = Components.interfaces.nsIFilePicker;
         while (true) {
             var fp = Components.classes["@mozilla.org/filepicker;1"]
-                        .createInstance(nsIFilePicker);
+                .createInstance(nsIFilePicker);
             fp.init(win, Zotero.getString('dataDir.selectDir'), nsIFilePicker.modeGetFolder);
             fp.appendFilters(nsIFilePicker.filterAll);
-            if (fp.show() == nsIFilePicker.returnOK) {
-                var file = fp.file;
-
-                // Set preference
-                //Zotero.ZotFile.setPref(pref,file.path);
-                return(file.path);
-            }
-            else {
-                return("");
-            }
+            if (fp.show() != nsIFilePicker.returnOK) return '';
+            var file = fp.file;
+            return file.path;
         }
     },
 
