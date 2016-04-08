@@ -20,14 +20,10 @@ Zotero.ZotFile.pdfOutline = {
             Zotero.ZotFile.showWarningMessages(Zotero.ZotFile.ZFgetString('general.warning.skippedAtt'),Zotero.ZotFile.ZFgetString('general.warning.skippedAtt.msg'));
         }
         // get attachment item, parent and file
-        this.atts  = Zotero.Items.get(attIDs)
-            .filter(function(att) {
-                if(!att.isAttachment())
-                    return false;
-                return att.isAttachment() && att.getFile().exists() && att.attachmentMIMEType.indexOf('pdf') != -1;
-            });
-        if (this.atts.length==0)
-            return;            
+        this.atts = Zotero.Items.get(attIDs)
+            .filter(att => att.isAttachment())
+            .filter(att => att.fileExists() && att.attachmentMIMEType.indexOf('pdf') != -1);
+        if (this.atts.length==0) return;
         if (Zotero.isFx36) {
             Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.error'),Zotero.ZotFile.ZFgetString('extraction.outdatedFirefox'));
             return;

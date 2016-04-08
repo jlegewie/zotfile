@@ -2,8 +2,8 @@
 if (!Zotero.ZotFile) {
     var zotfileLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                     .getService(Components.interfaces.mozIJSSubScriptLoader);
-    var scripts = ['zotfile', 'pdfAnnotations', 'pdfOutline', 'wildcards', 'tablet', 'utils', 'openPDF-protocol-handler'];
-    scripts.forEach(s => zotfileLoader.loadSubScript("chrome://zotfile/content/" + s + ".js"));
+    var scripts = ['zotfile', 'pdfAnnotations', 'pdfOutline', 'wildcards', 'tablet', 'utils', 'notifier', 'openPDF-protocol-handler'];
+    scripts.forEach(s => zotfileLoader.loadSubScript('chrome://zotfile/content/' + s + '.js'));
 }
 
 window.addEventListener('load', function(e) {
