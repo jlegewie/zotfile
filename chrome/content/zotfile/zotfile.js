@@ -1661,7 +1661,7 @@ Zotero.ZotFile = {
         // remove file
         if (file.exists()) this.removeFile(file);
         // return attachment item
-        return Zotero.Items.get(att_id_new);
+        return Zotero.Items.get(att_id);
     },
 
     /**
