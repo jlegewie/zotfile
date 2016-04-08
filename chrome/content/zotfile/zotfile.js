@@ -243,25 +243,25 @@ Zotero.ZotFile = {
         tm.mainThread.dispatch({run: function(){fn();}},Components.interfaces.nsIThread.DISPATCH_NORMAL);
     },
 
-    openPreferenceWindow: function (paneID, action) {
-        var io = {
-            pane: paneID,
-            action: action
-        };
+    /**
+     * Open zotfile preference window
+     */
+    openPreferenceWindow: function(paneID, action) {
+        var io = {pane: paneID, action: action};
         window.openDialog('chrome://zotfile/content/options.xul',
             'zotfile-options',
-            'chrome,titlebar,toolbar,centerscreen'+ Zotero.Prefs.get('browser.preferences.instantApply', true) ? 'dialog=no' : 'modal',io
+            'chrome,titlebar,toolbar,centerscreen' + Zotero.Prefs.get('browser.preferences.instantApply', true) ? 'dialog=no' : 'modal', io
         );
     },
 
-    openSubfolderWindow: function (paneID, action) {
-        var io = {
-            pane: paneID,
-            action: action
-        };
+    /**
+     * Open subfolder window
+     */
+    openSubfolderWindow: function(paneID, action) {
+        var io = {pane: paneID, action: action};
         var prefWindow=window.openDialog('chrome://zotfile/content/options-projects.xul',
             'zotfile-tablet-subfolders',
-            'chrome,titlebar,toolbar,centerscreen'+ Zotero.Prefs.get('browser.preferences.instantApply', true) ? 'dialog=no' : 'modal',io
+            'chrome,titlebar,toolbar,centerscreen' + Zotero.Prefs.get('browser.preferences.instantApply', true) ? 'dialog=no' : 'modal', io
         );
     },
 
@@ -289,48 +289,48 @@ Zotero.ZotFile = {
 
     // show report messages
     showReportMessages: function(title){
-        if(this.messages_report.length>0) this.infoWindow(title,{lines:this.messages_report});
+        if(this.messages_report.length > 0) this.infoWindow(title, {lines: this.messages_report});
         this.messages_report = [];
     },
 
     // show warnings messages
     showWarningMessages: function(title,txt){
         // default argument
-        txt = typeof txt !== 'undefined' ? txt : "";
+        txt = typeof txt !== 'undefined' ? txt : '';
         // show warning messages
-        if(this.messages_warning.length>0) this.infoWindow(title,{lines:this.messages_warning,txt:txt});
+        if(this.messages_warning.length > 0) this.infoWindow(title, {lines: this.messages_warning, txt:txt});
         this.messages_warning = [];
     },
 
     handleErrors: function(error_message) {
         if (error_message !== undefined) this.messages_error.push(error_message);
-        var errors = {lines:this.messages_error},
+        var errors = {lines: this.messages_error},
             on_click = null,
-            duration = this.getPref("info_window_duration");
+            duration = this.getPref('info_window_duration');
         // fatal errors
-        if(this.messages_fatalError.length>0) {
-            duration = this.getPref("info_window_duration_clickable");
+        if(this.messages_fatalError.length > 0) {
+            duration = this.getPref('info_window_duration_clickable');
             errors.lines.push(this.ZFgetString('error.unknown'));
             errors.txt = this.ZFgetString('error.clickToCopy');
             // prepare error message for clipboard
             var format_error = function(e) {
-                var name = e.name ? e.name : "Error",
-                    message = e.message ? e.message : "undefined message",
-                    fileName = e.fileName ? e.fileName : (e.filename ? e.filename : "undefined file"),
-                    lineNumber = e.lineNumber ? e.lineNumber : "undefined line number";
-                return name + ": " + message + " \n(" + fileName + ", " + lineNumber + ")";
+                var name = e.name ? e.name : 'Error',
+                    message = e.message ? e.message : 'undefined message',
+                    fileName = e.fileName ? e.fileName : (e.filename ? e.filename : 'undefined file'),
+                    lineNumber = e.lineNumber ? e.lineNumber : 'undefined line number';
+                return name + ': ' + message + ' \n(' + fileName + ', ' + lineNumber + ')';
             };
             var errors_str = this.messages_fatalError.map(function(e) {
                 if (typeof e == 'object') Zotero.logError(e);
                 return typeof e == 'object' ? format_error(e) : e;
             });
-            errors_str = this.Utils.removeDuplicates(errors_str).join("\n\n");
+            errors_str = this.Utils.removeDuplicates(errors_str).join('\n\n');
             on_click = function() {
                 Zotero.ZotFile.Utils.copy2Clipboard(errors_str);
             };
         }
         // error messages
-        if(errors.lines.length>0) {
+        if(errors.lines.length > 0) {
             // remove duplicates
             errors.lines = this.Utils.removeDuplicates(errors.lines);
             // show errors
@@ -346,13 +346,13 @@ Zotero.ZotFile = {
         main = typeof main !== 'undefined' ? main : 'title';
         message = typeof message !== 'undefined' ? message : 'message';
         callback = typeof callback !== 'undefined' ? callback : null;
-        time = typeof time !== 'undefined' ? time : this.getPref("info_window_duration");
+        time = typeof time !== 'undefined' ? time : this.getPref('info_window_duration');
         // show window
         var pw = new (this.ProgressWindow);
         pw.changeHeadline(main);
-        if (main=="error") pw.changeHeadline(Zotero.getString("general.errorHasOccurred"));
+        if (main=='error') pw.changeHeadline(Zotero.getString('general.errorHasOccurred'));
 
-        if (typeof(message) == "object" && message.lines) {
+        if (typeof(message) == 'object' && message.lines) {
             for (i =0;i<message.lines.length;i++) {
                 // pw.addLines(message.lines[i]);
                 var icon = message.icons ? message.icons[i] : null;
@@ -361,7 +361,7 @@ Zotero.ZotFile = {
             }
             if (message.txt!==undefined) pw.addDescription(message.txt);
         }
-        else if(typeof(message) == "object") {
+        else if(typeof(message) == 'object') {
             pw.addDescription(JSON.stringify(message));
         }
         else
@@ -384,7 +384,7 @@ Zotero.ZotFile = {
     },
 
     promptUser: function(message,but_0,but_1_cancel,but_2) {
-        var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+        var prompts = Components.classes['@mozilla.org/embedcomp/prompt-service;1']
                     .getService(Components.interfaces.nsIPromptService);
 
         var check = {value: false};                  // default the checkbox to false
@@ -393,7 +393,7 @@ Zotero.ZotFile = {
                 prompts.BUTTON_POS_1 * prompts.BUTTON_TITLE_IS_STRING  +
                 prompts.BUTTON_POS_2 * prompts.BUTTON_TITLE_IS_STRING;
 
-        var button = prompts.confirmEx(null, "ZotFile Dialog", message,
+        var button = prompts.confirmEx(null, 'ZotFile Dialog', message,
                     flags,  but_0,but_1_cancel,but_2, null, check);
 
         return(button);
@@ -401,12 +401,12 @@ Zotero.ZotFile = {
     },    
 
     addUserInput: function(filename, original_filename){
-        var default_str = this.getPref("userInput_Default");
-        if (default_str=="[original filename]") default_str=original_filename;
+        var default_str = this.getPref('userInput_Default');
+        if (default_str=='[original filename]') default_str=original_filename;
         var filesuffix = prompt(this.ZFgetString('renaming.addUserInput.prompt', [original_filename, filename]), default_str);
         if (filesuffix != '' && filesuffix != null) {
             // add file type to the file name
-            filename = filename + " (" + filesuffix + ")";
+            filename = filename + ' (' + filesuffix + ')';
         }
         return(filename);
     },
@@ -417,21 +417,16 @@ Zotero.ZotFile = {
         if(obj.leafName) {
             filename = obj.leafName;
         } else {
-            if(typeof(obj)=='number') obj = Zotero.Items.get(obj);
+            if(typeof(obj) == 'number') obj = Zotero.Items.get(obj);
             if (obj.attachmentLinkMode === Zotero.Attachments.LINK_MODE_LINKED_URL)  return false;
             filename = obj.getFilename();
         }
         // check
         var filetype = this.Utils.getFiletype(filename).toLowerCase(),
-            regex = this.getPref('filetypes').toLowerCase().replace(/,/gi,"|");
+            regex = this.getPref('filetypes').toLowerCase().replace(/,/gi, '|');
         // return value
         return filetype.search(new RegExp(regex)) >= 0 ? true : false;
-    },
-
-    completePath: function(location,filename) {
-        var path = location.charAt(location.length-1)==this.folderSep ? location + filename : location + this.folderSep + filename;
-        return this.Utils.normalize_path(path);
-    },
+    },    
 
     /**
      * Get filename based on metadata from zotero item
@@ -690,7 +685,7 @@ Zotero.ZotFile = {
         var dir = this.createFile(destination);
 
         // check whether already exists and add name if it does
-        if(file.path!=this.completePath(destination,filename)) {
+        if(file.path!=this.Utils.joinPath(destination,filename)) {
 
             var filename_temp=filename;
             var k=2;
@@ -705,10 +700,8 @@ Zotero.ZotFile = {
             // copy file
             file.copyTo(dir, filename);
         }
-
         // return file
-        return(this.createFile(this.completePath(dir.path,filename)));
-
+        return(this.createFile(this.Utils.joinPath(dir.path,filename)));
     },
 
     /**
@@ -836,22 +829,26 @@ Zotero.ZotFile = {
         return lastmod.lastModifiedTime == 0 ? undefined : lastmod;
     },
 
+    /**
+     * Get Firefox download folder
+     * @return {string} Path to download folder
+     */
     getFFDownloadFolder: function () {
-        var path="";
+        var path = '';
         try {
             if(this.ffPrefs.getBoolPref('useDownloadDir')) {
-                var downloadManager = Components.classes["@mozilla.org/download-manager;1"]
+                var download_manager = Components.classes['@mozilla.org/download-manager;1']
                                     .getService(Components.interfaces.nsIDownloadManager);
-                path=downloadManager.userDownloadsDirectory.path;
+                path = download_manager.userDownloadsDirectory.path;
             }
-            if(!this.ffPrefs.getBoolPref('useDownloadDir') && this.ffPrefs.prefHasUserValue('lastDir') ) {
-                        path=this.ffPrefs.getCharPref('lastDir');
+            if(!this.ffPrefs.getBoolPref('useDownloadDir') && this.ffPrefs.prefHasUserValue('lastDir')) {
+                path = this.ffPrefs.getCharPref('lastDir');
             }
         }
         catch (err) {
-            path="";
+            path = '';
         }
-        return(path);
+        return path;
     },
 
     /**
