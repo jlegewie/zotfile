@@ -11,6 +11,7 @@ Zotero.ZotFile.Utils = new function() {
     this.addSuffix = addSuffix;
     this.getFiletype = getFiletype;
     this.str_format = str_format;
+    this.joinPath = joinPath;
     this.normalize_path = normalize_path;
     this.copy2Clipboard = copy2Clipboard;
     this.getPDFReader = getPDFReader;
@@ -88,6 +89,16 @@ Zotero.ZotFile.Utils = new function() {
        });
     }
 
+    /**
+     * Complete file path
+     * @param  {string} folder   Path to folder
+     * @param  {string} filename Filename
+     * @return {string}          Completed and normalized path
+     */
+    function joinPath(folder, filename) {
+        var path = folder + this.folderSep + filename;
+        return OS.Path.normalize(path);
+    }
 
      /**
      * Normalize a path by removing any unneeded characters
