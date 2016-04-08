@@ -121,12 +121,12 @@ Zotero.ZotFile = {
         }
     },
 
-	//Localization (borrowed from Zotero sourcecode)
+	// Localization (borrowed from Zotero sourcecode)
 	ZFgetString: function (name, params){
         var l10n = '';
-		this.stringsBundle = Components.classes["@mozilla.org/intl/stringbundle;1"]
+		this.stringsBundle = Components.classes['@mozilla.org/intl/stringbundle;1']
 			.getService(Components.interfaces.nsIStringBundleService)
-			.createBundle("chrome://zotfile/locale/zotfile.properties");
+			.createBundle('chrome://zotfile/locale/zotfile.properties');
 		try {
 			if (params !== undefined){
 				if (typeof params != 'object'){
@@ -233,9 +233,14 @@ Zotero.ZotFile = {
         return attachments;
     },
 
-    futureRun: function(aFunc) {
+    /**
+     * Run code in the future to reduce current work load
+     * @param  {function} aFunc Function to run
+     * @return {void}
+     */
+    futureRun: function(fn) {
         var tm = Components.classes["@mozilla.org/thread-manager;1"].getService(Components.interfaces.nsIThreadManager);
-        tm.mainThread.dispatch({run: function(){aFunc();}},Components.interfaces.nsIThread.DISPATCH_NORMAL);
+        tm.mainThread.dispatch({run: function(){fn();}},Components.interfaces.nsIThread.DISPATCH_NORMAL);
     },
 
     openPreferenceWindow: function (paneID, action) {
