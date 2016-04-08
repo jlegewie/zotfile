@@ -262,27 +262,6 @@ Zotero.ZotFile = {
         tm.mainThread.dispatch({run: function(){aFunc();}},Components.interfaces.nsIThread.DISPATCH_NORMAL);
     },
 
-    createSavedSearch: function(which) {
-        if(which=="tablet" || which=="both") {
-            var search = new Zotero.Search();
-            search.addCondition('tag', 'contains', this.Tablet.tag);
-            // search.addCondition('tag', 'is', this.Tablet.tagMod);
-            // search.addCondition('itemType', 'is', 'attachment');
-            search.addCondition('includeParentsAndChildren', 'true');
-            // search.addCondition('joinMode', 'any');
-            search.addCondition('noChildren', 'true');
-            search.setName("Tablet Files");
-            search.save();
-        }
-
-        if(which=="tablet_modified" || which=="both") {
-            var search_modified = new Zotero.Search();
-            search_modified.addCondition('tag', 'is', this.Tablet.tagMod);
-            search_modified.setName("Tablet Files (modified)");
-            search_modified.save();
-        }
-    },
-
     openPreferenceWindow: function (paneID, action) {
         var io = {
             pane: paneID,

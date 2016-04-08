@@ -7,6 +7,7 @@ Zotero.ZotFile.Tablet = new function() {
     this.blacklistTagAdd = [];
     this.blacklistTagRemove = [];
     this.addTabletTag = addTabletTag;
+    this.createSavedSearch = createSavedSearch;
     this.removeTabletTag = removeTabletTag;
     this.getSelectedAttachmentsFromTablet = getSelectedAttachmentsFromTablet;
     this.clearInfo = clearInfo;
@@ -58,6 +59,24 @@ Zotero.ZotFile.Tablet = new function() {
                     this.blacklistTagRemove.push(item.key);
                     item.removeTag(tagIDRemove);
                 }
+        }
+    }
+
+    function createSavedSearch (which) {
+        if(which=="tablet" || which=="both") {
+            var search = new Zotero.Search();
+            search.addCondition('tag', 'contains', this.tag);
+            search.addCondition('includeParentsAndChildren', 'true');
+            search.addCondition('noChildren', 'true');
+            search.setName("Tablet Files");
+            search.save();
+        }
+
+        if(which=="tablet_modified" || which=="both") {
+            var search_modified = new Zotero.Search();
+            search_modified.addCondition('tag', 'is', this.tagMod);
+            search_modified.setName("Tablet Files (modified)");
+            search_modified.save();
         }
     }
 

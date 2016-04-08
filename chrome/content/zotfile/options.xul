@@ -372,8 +372,8 @@
 					   	   </hbox> 					   	   
 					   	   <label value="&add-saved-searches;"/>
 					   	   <hbox >						   	   
-							<button id="id-zotfile-add-search" label="&attachments-on-tablet;" oncommand="Zotero.ZotFile.createSavedSearch('tablet');"/>
-							<button id="id-zotfile-add-search2" label="&modified-attachments-on-tablet;" oncommand="Zotero.ZotFile.createSavedSearch('tablet_modified');"/>
+							<button id="id-zotfile-add-search" label="&attachments-on-tablet;" oncommand="Zotero.ZotFile.Tablet.createSavedSearch('tablet');"/>
+							<button id="id-zotfile-add-search2" label="&modified-attachments-on-tablet;" oncommand="Zotero.ZotFile.Tablet.createSavedSearch('tablet_modified');"/>
 							</hbox>
 						
 						</groupbox>  																													
