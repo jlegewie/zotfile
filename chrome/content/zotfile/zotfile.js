@@ -1125,13 +1125,14 @@ Zotero.ZotFile = {
      * @return {void}
      */
     removeFile: function(file) {
-        if (!file.exists())
-            return;
+        if (!file.exists()) return;
         try {
             // remove file
-            if(!file.isDirectory()) file.remove(false);
+            if(!file.isDirectory()) {
+                file.remove(false);
+            }
             // ... for directories, remove them if no non-hidden files are inside
-            if(file.isDirectory()) {
+            else {
                 var files = file.directoryEntries;
                 while (files.hasMoreElements()) {
                     var f = files.getNext().QueryInterface(Components.interfaces.nsIFile);
