@@ -570,9 +570,14 @@ Zotero.ZotFile = {
         throw('Zotero.ZotFile.setPref(): Unable to set preference.')
     },
 
-    getParent: function(att) {
-        var id_parent = att.getSource();
-        return Zotero.Items.get(id_parent);
+    /**
+     * Get parent item
+     * @param  {zitem} item Zotero item
+     * @return {zitem}      Returns parent item
+     */
+    getParent: function(item) {
+        var id = item.getSource();
+        return Zotero.Items.get(id);
     },
 
     /**
