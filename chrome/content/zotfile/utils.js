@@ -6,6 +6,7 @@
 Zotero.ZotFile.Utils = new function() {
 
     this.removeDuplicates = removeDuplicates;
+    this.removeFromArray = removeFromArray;
     this.arrayReplace = arrayReplace;
     this.addSuffix = addSuffix;
     this.getFiletype = getFiletype;
@@ -26,6 +27,22 @@ Zotero.ZotFile.Utils = new function() {
             if (x[i-1] != x[i]) y.push(x[i]);
         }
         return(y);
+    }
+
+    /**
+     * Remove element from array
+     * @param  {array} arr Array
+     * @return {array}     Array with element removed
+     */
+    function removeFromArray (arr) {
+        var what, a = Array.prototype.slice.call(arguments).splice(1), L = a.length, ax;
+        while (L && arr.length) {
+            what = a[--L];
+            while ((ax = arr.indexOf(what)) !== -1) {
+                arr.splice(ax, 1);
+            }
+        }
+        return arr;
     }
 
     /**

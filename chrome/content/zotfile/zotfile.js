@@ -350,7 +350,7 @@ Zotero.ZotFile = {
                         var parent = Zotero.Items.get(id_parent);
                         // check whether key is excluded
                         if(zz.excludeAutorenameKeys.indexOf(key)!=-1 || zz.excludeAutorenameKeys.indexOf(parent.key)!=-1) {
-                            zz.removeFromArray(zz.excludeAutorenameKeys,parent.key);
+                            zz.Utils.removeFromArray(zz.excludeAutorenameKeys,parent.key);
                             continue;
                         }
                         // skip if file already has correct filename
@@ -441,11 +441,11 @@ Zotero.ZotFile = {
                 var not_excluded = true;
                 if(event == 'add') {
                     not_excluded = zz.Tablet.blacklistTagAdd.indexOf(obj.item.key)==-1;
-                    if (!not_excluded) zz.removeFromArray(zz.Tablet.blacklistTagAdd, obj.item.key);
+                    if (!not_excluded) zz.Utils.removeFromArray(zz.Tablet.blacklistTagAdd, obj.item.key);
                 }
                 if(event == 'remove') {
                     not_excluded = zz.Tablet.blacklistTagRemove.indexOf(obj.item.key)==-1;
-                    if (!not_excluded) zz.removeFromArray(zz.Tablet.blacklistTagRemove, obj.item.key);
+                    if (!not_excluded) zz.Utils.removeFromArray(zz.Tablet.blacklistTagRemove, obj.item.key);
                 }
                 return not_excluded &&
                     obj.tag.indexOf(zz.tag)!=-1 &&
@@ -1184,19 +1184,6 @@ Zotero.ZotFile = {
             filename = filename + " (" + filesuffix + ")";
         }
         return(filename);
-    },
-
-    // Array.prototype.remove = function() {
-    removeFromArray: function(arr) {
-        //var args = Array.prototype.slice.call(arguments).splice(1);
-        var what, a = Array.prototype.slice.call(arguments).splice(1), L = a.length, ax;
-        while (L && arr.length) {
-            what = a[--L];
-            while ((ax = arr.indexOf(what)) !== -1) {
-                arr.splice(ax, 1);
-            }
-        }
-        return arr;
     },
 
     checkFileType: function (obj) {
