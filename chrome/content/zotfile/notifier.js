@@ -1,6 +1,4 @@
 
-// MAYBE THE PROBLEM IS THAT AT EVENT TIME, att.fileExists() is not true???
-
 /**
  * Callback implementing the notify() method to pass to the Notifier
  */
