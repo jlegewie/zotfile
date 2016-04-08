@@ -143,15 +143,15 @@ Zotero.ZotFile.UI = new function() {
                         if(item.isAttachment()) if(item.getSource()) item=Zotero.Items.get(item.getSource());
                         // create folders from collections
                         var folders = [];
-                        var collections=item.getCollections();
-                        for (i=0;i<collections.length;i++) {
+                        var collections = item.getCollections();
+                        for (i = 0; i < collections.length; i++) {
                             var collection=Zotero.Collections.get(collections[i]);
-                            var folder=this.folderSep + collection.getName();
-                            var parent=collection.getParent();
+                            var folder =  this.folderSep + collection.getName();
+                            var parent = collection.getParent();
                             while (parent) {
-                                parent=Zotero.Collections.get(parent);
-                                folder=this.folderSep + parent.getName() + folder;
-                                parent=parent.getParent();
+                                parent = Zotero.Collections.get(parent);
+                                folder = this.folderSep + parent.getName() + folder;
+                                parent = parent.getParent();
                             }
                             folders.push(folder);
                         }
@@ -159,7 +159,7 @@ Zotero.ZotFile.UI = new function() {
                         if(folders.length) {
                             projects_set = true;
                             folders=folders.sort();
-                            for (i=0;i<folders.length;i++) {
+                            for (i = 0; i < folders.length; i++) {
                                 show.push(m.subfolders[i]);
                                 menu.childNodes[m.subfolders[i]].setAttribute('label',folders[i]);
                                 menu.childNodes[m.subfolders[i]].setAttribute('tooltiptext',this.ZFgetString('menu.sendAttToSubfolder',[folders[i]]));
