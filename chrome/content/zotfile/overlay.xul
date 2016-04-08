@@ -12,7 +12,7 @@
        	<!--insertafter="id-zotfile-menu" -->
        	<menuitem id="id-zotfile-attach-file" label="&zotfile-attach-file.label;" tooltiptext="&zotfile-attach-file.tooltiptext;" oncommand="Zotero.ZotFile.attachFileFromSourceDirectory();"/>
  		<menu id="id-zotfile-manage-attachments" label="&zotfile-manage-attachments.label;" > 
-			<menupopup id="id-zotfile-menu" onpopupshowing="Zotero.ZotFile.buildZotFileMenu();">
+			<menupopup id="id-zotfile-menu" onpopupshowing="Zotero.ZotFile.UI.buildZotFileMenu();">
 				<menuitem label="&warning.label;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>							
 				<menuitem label="&renameSelectedAttachments.label;" tooltiptext="&renameSelectedAttachments.tooltiptext;" oncommand="Zotero.ZotFile.renameSelectedAttachments();"/>
 				<menuitem label="&extract-annotations.label;" tooltiptext="&extract-annotations.tooltiptext;" oncommand="Zotero.ZotFile.pdfAnnotations.getAnnotations();"/>
@@ -53,7 +53,7 @@
 		<menuseparator id="id-zotfile-collection-separator"/>
        	<menuitem id="id-zotfile-collection-showall" label="&saved-search-all;" oncommand="Zotero.ZotFile.Tablet.restrictTabletSearch(-1);"/>
  		<menu id="id-zotfile-collection-restrict" label="&saved-search-restrict;" > 
-			<menupopup id="id-zotfile-collection-menu" onpopupshowing="Zotero.ZotFile.buildZotFileCollectionMenu();">
+			<menupopup id="id-zotfile-collection-menu" onpopupshowing="Zotero.ZotFile.UI.buildZotFileCollectionMenu();">
 				<menuitem id="id-zotfile-collection-subfolder-00" label="&restrict-basefolder;" hidden="true" tooltiptext="" oncommand="Zotero.ZotFile.Tablet.restrictTabletSearch(0);"/>
 				<menuseparator/>
 				<menuitem id="id-zotfile-collection-ui-note" label="&restrict-subfolder;" disabled="true" style="font-size: 80%; background: none; -moz-appearance: none;"/>
