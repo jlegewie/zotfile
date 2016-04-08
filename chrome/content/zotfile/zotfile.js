@@ -24,117 +24,96 @@ Zotero.ZotFile = {
     prefs: null,
     wm: null,
     folderSep: null,
-    projectNr: new Array("01","02","03","04","05","06","07","08","09","10","11","12","13","14","15"),
-    projectPath: new Array("","","","","","","","","","","","","","",""),
-    projectMax:15,
-    zotfileURL:"http://www.zotfile.com",
-    changelogURL:"http://zotfile.com/index.html#changelog",
-    lastModifiedFile:null,
-    temp:"",
-    messages_warning:[],
-    messages_report:[],
-    messages_error:[],
-    messages_fatalError:[],
+    projectNr: new Array('01','02','03','04','05','06','07','08','09','10','11','12','13','14','15'),
+    projectPath: new Array('','','','','','','','','','','','','','',''),
+    projectMax: 15,
+    zotfileURL: 'http://www.zotfile.com',
+    changelogURL: 'http://zotfile.com/index.html#changelog',
+    temp: '',
+    messages_warning: [],
+    messages_report: [],
+    messages_error: [],
+    messages_fatalError: [],
     excludeAutorenameKeys: [],
-    // tablet tags
     notifierID: null,
-    xhtml:'http://www.w3.org/1999/xhtml',
+    xhtml: 'http://www.w3.org/1999/xhtml',
 
-    versionChanges: function (currentVersion) {
+    /**
+     * Zotfile version changed, open webpage, make adjustments
+     * @param  {string} version Current zotfile version
+     * @return {void}
+     */
+    versionChanges: function(version) {
         // open webpage
-        var open_page = ["4.1.1", "4.1", "4.0", "3.3", "3.2", "3.1", "2.0", "2.3"];
-        if(this.getPref("version")==="" || open_page.indexOf(currentVersion) != -1) {
-            if(!Zotero.isStandalone) this.futureRun(function(){gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL); });
-            if( Zotero.isStandalone) this.futureRun(function(){ZoteroPane_Local.loadURI(Zotero.ZotFile.changelogURL); });
+        var show_changelog = ['4.3', '4.1.1', '4.1', '4.0', '3.3', '3.2', '3.1', '2.0', '2.3'];
+        if(this.getPref('version') === '' || show_changelog.includes(version)) {
+            if(!Zotero.isStandalone) this.futureRun(() => gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL));
+            if( Zotero.isStandalone) this.futureRun(() => ZoteroPane_Local.loadURI(Zotero.ZotFile.changelogURL));
         }
-
-        if(currentVersion=="4.2" && this.getPref("pdfExtraction.openPdfMac_skim")) {
-            this.setPref("pdfExtraction.openPdfMac", "Skim");
-        }
-
+        if (version == '4.2' && this.getPref('pdfExtraction.openPdfMac_skim'))
+            this.setPref('pdfExtraction.openPdfMac', 'Skim');
         // set current version
-        this.setPref("version",currentVersion);
-
+        this.setPref('version', version);
     },
 
-    init: function () {
-
+    /**
+     * Initiate zotfile
+     * @return {void}
+     */
+    init: function() {
         // only do this stuff for the first run
-        if(this.prefs===null) {
-            //get preference objects
+        if(this.prefs === null) {
+            // defined zotfile variables
+            this.wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
             this.prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                        .getService(Components.interfaces.nsIPrefService)
-                        .getBranch("extensions.zotfile.");
-
-            this.ffPrefs = Components.classes["@mozilla.org/preferences-service;1"].
-                        getService(Components.interfaces.nsIPrefService).getBranch("browser.download.");
-            // save some preferences
+                .getService(Components.interfaces.nsIPrefService).getBranch("extensions.zotfile.");
+            this.ffPrefs = Components.classes["@mozilla.org/preferences-service;1"]
+                .getService(Components.interfaces.nsIPrefService).getBranch("browser.download.");
             this.Tablet.tag = this.getPref("tablet.tag");
             this.Tablet.tagMod = this.getPref("tablet.tagModified");
-
-            this.wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
-
             // set source dir to custom folder if zotero standalone
-            if(Zotero.isStandalone && this.getPref('source_dir_ff')) this.setPref('source_dir_ff',false);
-
+            if(Zotero.isStandalone && this.getPref('source_dir_ff')) this.setPref('source_dir_ff', false);
             // version handeling
-            var oldVersion=this.getPref("version");
-            if(!Zotero.isFx36) Components.utils.import("resource://gre/modules/AddonManager.jsm");
-
-            // update current version
-            if(!Zotero.isFx36) AddonManager.getAddonByID("zotfile@columbia.edu",function(aAddon) {
-                var currentVersion=aAddon.version;
-                // if different version then previously
-                if(currentVersion!=oldVersion) Zotero.ZotFile.versionChanges(currentVersion);
+            var previous_version = this.getPref('version');
+            Components.utils.import('resource://gre/modules/AddonManager.jsm');
+            AddonManager.getAddonByID('zotfile@columbia.edu', function(addon) {
+                var version = addon.version;
+                if(version != previous_version) Zotero.ZotFile.versionChanges(version);
             });
-
-            if(Zotero.isFx36) {
-                var em = Components.classes["@mozilla.org/extensions/manager;1"].getService(Components.interfaces.nsIExtensionManager);
-                var addon = em.getItemForID("zotfile@columbia.edu");
-                if(addon.version!=oldVersion) this.versionChanges(addon.version);
-            }
-
             // run in future to not burden start-up
-            this.futureRun(function(){
+            this.futureRun(function() {
                 // determine folder seperator depending on OS
-                Zotero.ZotFile.folderSep = Zotero.isWin ? '\\' : '/';
+                this.folderSep = Zotero.isWin ? '\\' : '/';
                 // check whether extraction of annotations is supported
-                if (Zotero.ZotFile.pdfAnnotations.popplerSupportedPlatforms.join().indexOf(Zotero.platform)!=-1) Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported=true;
-
+                this.pdfAnnotations.popplerExtractorSupported = this.pdfAnnotations.popplerSupportedPlatforms.includes(Zotero.platform);
                 // set path and check whether installed
-                if (Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported) {
+                if (this.pdfAnnotations.popplerExtractorSupported) {
                     // set Extractor Path
-                    Zotero.ZotFile.pdfAnnotations.popplerExtractorSetPath();
-
+                    this.pdfAnnotations.popplerExtractorSetPath();
                     // check whether tool is installed
-                    Zotero.ZotFile.pdfAnnotations.popplerExtractorTool=Zotero.ZotFile.pdfAnnotations.popplerExtractorCheckInstalled();
-
+                    this.pdfAnnotations.popplerExtractorTool = this.pdfAnnotations.popplerExtractorCheckInstalled();
                     // set to pdf.js if poppler is not installed
-                    if(!Zotero.ZotFile.pdfAnnotations.popplerExtractorTool) Zotero.ZotFile.setPref("pdfExtraction.UsePDFJS",true);
+                    if(!this.pdfAnnotations.popplerExtractorTool) this.setPref('pdfExtraction.UsePDFJS', true);
                 }
-
                 // set to pdf.js if poppler is not supported
-                if(!Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported) Zotero.ZotFile.setPref("pdfExtraction.UsePDFJS",true);
+                if(!this.pdfAnnotations.popplerExtractorSupported) this.setPref('pdfExtraction.UsePDFJS', true);
                 
-            });
+            }.bind(this));
         }
-
         // Register callbacks in Zotero as item observers
-        if(Zotero.ZotFile.notifierID === null)
-            Zotero.ZotFile.notifierID = Zotero.Notifier.registerObserver(this.notifierCallback, ['item']);
+        if(this.notifierID === null)
+            this.notifierID = Zotero.Notifier.registerObserver(this.notifierCallback, ['item']);
         // Unregister callback when the window closes (important to avoid a memory leak)
         window.addEventListener('unload', function(e) {
             Zotero.Notifier.unregisterObserver(Zotero.ZotFile.notifierID);
             Zotero.ZotFile.notifierID = null;
         }, false);        
-
         // Load zotero.js first
         Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
             .getService(Components.interfaces.mozIJSSubScriptLoader)
             .loadSubScript("chrome://zotfile/content/ProgressWindow.js", Zotero.ZotFile);
-
         // add event listener for selecting items in zotero tree
-        if(Zotero.ZotFile.getPref('tablet')) {
+        if(this.getPref('tablet')) {
             var pane = this.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
                 tree = pane.document.getElementById('zotero-items-tree');
             tree.removeEventListener('select', Zotero.ZotFile.UI.attboxUpdateTabletStatus);
