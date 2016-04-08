@@ -23,7 +23,6 @@
 				<preference id="pref-zotfile-useFileTypes" name="extensions.zotfile.useFileTypes" type="bool"/>
 
 				<preference id="pref-zotfile-import" name="extensions.zotfile.import" type="bool"/>
-				<preference id="pref-zotfile-watch_folder" name="extensions.zotfile.watch_folder" type="bool"/>
 				<preference id="pref-zotfile-automatic_renaming" name="extensions.zotfile.automatic_renaming" type="int"/>                                                                                              				
 				<preference id="pref-zotfile-dest_dir" name="extensions.zotfile.dest_dir" type="string"/>
 
@@ -110,7 +109,6 @@
 									    <image id="id-zotfile-source_dir-ok" src="chrome://zotfile/skin/accept.png" hidden="true"/>	
 									    <image id="id-zotfile-source_dir-error" src="chrome://zotfile/skin/exclamation.png" hidden="true"/>
 									</hbox>
-									<checkbox id="id-zotfile-watch_folder" label="&watch_folder;" preference="pref-zotfile-watch_folder"/>
 								</radiogroup>	
 
 							</groupbox>
