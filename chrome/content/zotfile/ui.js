@@ -219,21 +219,21 @@ Zotero.ZotFile.UI = new function() {
             {
                 'label': 'View PDF',
                 'tooltiptext': '',
-                'command': function(e) {this.Tablet.openTabletFile();},
+                'command': function(e) {Zotero.ZotFile.Tablet.openTabletFile();},
                 'hidden': tablet ? 'false' : 'true'
             },
             {
                 'label': 'Show File',
                 'tooltiptext': '',
-                'command': function(e) {this.Tablet.showTabletFile();},
+                'command': function(e) {Zotero.ZotFile.Tablet.showTabletFile();},
                 'hidden': tablet ? 'false' : 'true'
             },
             {
                 'label': 'Send to Tablet',
                 'tooltiptext': '',
                 'command': function(e) {
-                    this.Tablet.sendSelectedAttachmentsToTablet(-1);
-                    this.UI.buildTabletMenu();
+                    Zotero.ZotFile.Tablet.sendSelectedAttachmentsToTablet(-1);
+                    Zotero.ZotFile.UI.buildTabletMenu();
                 },
                 'disabled': tablet ? 'true' : 'false'
             },
@@ -241,8 +241,8 @@ Zotero.ZotFile.UI = new function() {
                 'label': 'Get from Tablet',
                 'tooltiptext': '',
                 'command': function(e) {
-                    this.Tablet.getSelectedAttachmentsFromTablet();
-                    this.UI.buildTabletMenu();
+                    Zotero.ZotFile.Tablet.getSelectedAttachmentsFromTablet();
+                    Zotero.ZotFile.UI.buildTabletMenu();
                 },
                 'disabled': tablet ? 'false' : 'true'
             }

@@ -23,8 +23,7 @@ Zotero.ZotFile = {
 
     prefs: null,
     wm: null,
-    fileMap: {}, //maps collections to their file objects
-    folderSep:null,
+    folderSep: null,
     projectNr: new Array("01","02","03","04","05","06","07","08","09","10","11","12","13","14","15"),
     projectPath: new Array("","","","","","","","","","","","","","",""),
     projectMax:15,
@@ -98,9 +97,7 @@ Zotero.ZotFile = {
             // run in future to not burden start-up
             this.futureRun(function(){
                 // determine folder seperator depending on OS
-                Zotero.ZotFile.folderSep="/";
-                if (Zotero.isWin) Zotero.ZotFile.folderSep="\\";
-
+                Zotero.ZotFile.folderSep = Zotero.isWin ? '\\' : '/';
                 // check whether extraction of annotations is supported
                 if (Zotero.ZotFile.pdfAnnotations.popplerSupportedPlatforms.join().indexOf(Zotero.platform)!=-1) Zotero.ZotFile.pdfAnnotations.popplerExtractorSupported=true;
 

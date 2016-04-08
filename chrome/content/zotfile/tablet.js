@@ -23,7 +23,7 @@ Zotero.ZotFile.Tablet = new function() {
     this.getModifiedAttachmentsOnTablet = getModifiedAttachmentsOnTablet;
     this.setTabletFolder = setTabletFolder;
     this.checkSelectedSearch = checkSelectedSearch;
-    this.updateModifiedAttachmentsSearch = updateModifiedAttachmentsSearch;
+    this.updateModifiedAttachmentsSearch = updateModifiedAttachmentsSearch.bind(Zotero.ZotFile);
     this.restrictTabletSearch = restrictTabletSearch;
     this.sendAttachmentToTablet = sendAttachmentToTablet;
     this.sendSelectedAttachmentsToTablet = sendSelectedAttachmentsToTablet;
@@ -413,10 +413,10 @@ Zotero.ZotFile.Tablet = new function() {
 
     function updateModifiedAttachmentsSearch(event) {
         // update saved search only if 'tablet files (modified)' saved search is selected
-        if(this.checkSelectedSearch()) {
-            var atts = this.getModifiedAttachmentsOnTablet();
+        if(this.Tablet.checkSelectedSearch()) {
+            var atts = this.Tablet.getModifiedAttachmentsOnTablet();
             // add tag for modified tablet item and remove tablet tag
-            for (var j=0; j < atts.length; j++) this.addTabletTag(atts[j], this.tagMod);
+            for (var j=0; j < atts.length; j++) this.Tablet.addTabletTag(atts[j], this.Tablet.tagMod);
         }
     }
 
