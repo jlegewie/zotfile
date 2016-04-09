@@ -12,13 +12,16 @@ Zotero.ZotFile.Utils = new function() {
     this.getFiletype = getFiletype.bind(Zotero.ZotFile);
     this.str_format = str_format.bind(Zotero.ZotFile);
     this.joinPath = joinPath.bind(Zotero.ZotFile);
-    this.normalize_path = normalize_path.bind(Zotero.ZotFile);
     this.copy2Clipboard = copy2Clipboard.bind(Zotero.ZotFile);
     this.getPDFReader = getPDFReader.bind(Zotero.ZotFile);
     this.removeItemTag = removeItemTag.bind(Zotero.ZotFile);
     this.parseHTML = parseHTML.bind(Zotero.ZotFile);
 
-    // detect duplicates in array
+    /**
+     * Remove duplicate elements from array
+     * @param  {array} x Array
+     * @return {array}   Modified array.
+     */
     function removeDuplicates(x) {
         x = x.sort();
         var y = [];
@@ -81,12 +84,12 @@ Zotero.ZotFile.Utils = new function() {
         return pos == -1 ? '' : filename.substr(pos + 1);
     }
 
-    // format array using named placeholders such as '%(test)'
-    function str_format() {
-        var args = arguments;
-        return args['0'].replace(/%\((\w+)\)/g, function(match, name) {
-          return args['1'][name];
-       });
+    /**
+     * Format string using named placeholders such as '%(@name [name])'
+     * @return {[type]} [description]
+     */
+    function str_format(str, args) {
+        return str.replace(/%\((\w+)\)/g, (match, name) => args[name]);
     }
 
     /**
@@ -100,145 +103,25 @@ Zotero.ZotFile.Utils = new function() {
         return OS.Path.normalize(path);
     }
 
-     /**
-     * Normalize a path by removing any unneeded characters
-     * Adopted from OS.Path module
-     * https://dxr.mozilla.org/mozilla-central/source/toolkit/components/osfile/modules/ospath_unix.jsm
-     * https://dxr.mozilla.org/mozilla-central/source/toolkit/components/osfile/modules/ospath_win.jsm
+    /**
+     * Copy text to clipboard
+     * @param  {string} txt Text to copy to clipboard
+     * @return {void}
      */
-    function normalize_path(path) {
-        var normalize_path_win = function(path) {
-            var winGetDrive = function(path) {
-                if (path == null) {
-                    throw new TypeError("path is invalid");
-                }
-
-                if (path.startsWith("\\\\")) {
-                // UNC path
-                if (path.length == 2) {
-                    return null;
-                }
-                let index = path.indexOf("\\", 2);
-                if (index == -1) {
-                    return path;
-                }
-                return path.slice(0, index);
-                }
-                // Non-UNC path
-                let index = path.indexOf(":");
-                if (index <= 0) return null;
-                return path.slice(0, index + 1);
-            };
-
-            var winIsAbsolute = function(path) {
-                let index = path.indexOf(":");
-                return path.length > index + 1 && path[index + 1] == "\\";
-            };
-        
-            let stack = [];
-
-            if (!path.startsWith("\\\\")) {
-                // Normalize "/" to "\\"
-                path = path.replace(/\//g, "\\");
-            }
-
-            // Remove the drive (we will put it back at the end)
-            let root = winGetDrive(path);
-            if (root) {
-                path = path.slice(root.length);
-            }
-
-            // Remember whether we need to restore a leading "\\" or drive name.
-            let absolute = winIsAbsolute(path);
-
-            // And now, fill |stack| from the components,
-            // popping whenever there is a ".."
-            path.split("\\").forEach(function loop(v) {
-                switch (v) {
-                    case "":  case ".": // Ignore
-                        break;
-                    case "..":
-                        if (stack.length == 0) {
-                        if (absolute) {
-                          throw new Error("Path is ill-formed: attempting to go past root");
-                        } else {
-                         stack.push("..");
-                        }
-                        } else {
-                        if (stack[stack.length - 1] == "..") {
-                          stack.push("..");
-                        } else {
-                          stack.pop();
-                        }
-                        }
-                        break;
-                    default:
-                        stack.push(v);
-                }
-            });
-
-            // Put everything back together
-            let result = stack.join("\\");
-            if (absolute || root) {
-                result = "\\" + result;
-            }
-            if (root) {
-                result = root + result;
-            }
-            return result;
-        };
-
-        var normalize_path_unix = function(path) {
-            let stack = [];
-            let absolute;
-            if (path.length >= 0 && path[0] == "/") {
-                absolute = true;
-            } else {
-                absolute = false;
-            }
-            path.split("/").forEach(function(v) {
-                switch (v) {
-                    case "":  case ".":// fallthrough
-                        break;
-                    case "..":
-                    if (stack.length == 0) {
-                        if (absolute) {
-                            throw new Error("Path is ill-formed: attempting to go past root");
-                        } else {
-                            stack.push("..");
-                        }
-                        } else {
-                        if (stack[stack.length - 1] == "..") {
-                            stack.push("..");
-                        } else {
-                            stack.pop();
-                        }
-                    }
-                    break;
-                    default:
-                      stack.push(v);
-                }
-            });
-            let string = stack.join("/");
-            return absolute ? "/" + string : string;
-        };
-
-        if (Zotero.isWin) path = normalize_path_win(path);
-        if (!Zotero.isWin) path = normalize_path_unix(path);
-        return(path)
-    }
-
-
     function copy2Clipboard(txt) {
         const gClipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
             .getService(Components.interfaces.nsIClipboardHelper);
         gClipboardHelper.copyString(txt);
     }
 
+    /**
+     * Get path to default pdf reader application on windows
+     * @return {string} Path to default pdf reader application
+     */
     function getPDFReader() {
+        if (!Zotero.isWin) throw('Zotero.ZotFile.Utils.getPDFReader(): Function only works on windows platforms.')
         var wrk = Components.classes["@mozilla.org/windows-registry-key;1"]
-                            .createInstance(Components.interfaces.nsIWindowsRegKey);
-
+                .createInstance(Components.interfaces.nsIWindowsRegKey);
         //get handler for PDFs
         var tryKeys = [
             {
@@ -303,7 +186,12 @@ Zotero.ZotFile.Utils = new function() {
         return command[0].replace(/"/g, '');
     }
 
-    // removes item tag only if no child item has that tag
+    /**
+     * Remove item tag only if no child item has that tag
+     * @param  {zitem} item Zotero item
+     * @param  {int} tag    Zotero tag it
+     * @return {void}
+     */
     function removeItemTag(item, tag) {
         if(item.isRegularItem() && item.hasTag(tag)) {
             if(!Zotero.Items.get(item.getAttachments())
@@ -312,10 +200,10 @@ Zotero.ZotFile.Utils = new function() {
         }
     }
 
-   // https://developer.mozilla.org/en-US/Add-ons/Overlay_Extensions/XUL_School/DOM_Building_and_HTML_Insertion#Safely_Using_Remote_HTML
     /**
      * Safely parse an HTML fragment, removing any executable
      * JavaScript, and return a document fragment.
+     * https://developer.mozilla.org/en-US/Add-ons/Overlay_Extensions/XUL_School/DOM_Building_and_HTML_Insertion#Safely_Using_Remote_HTML
      *
      * @param {Document} doc The document in which to create the
      *     returned DOM tree.

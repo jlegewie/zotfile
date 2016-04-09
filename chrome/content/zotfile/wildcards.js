@@ -195,7 +195,7 @@ Zotero.ZotFile.Wildcards = new function() {
                 var collection = Zotero.Collections.get(collectionID);
                 if (collection.parent == null)  return collection.name
 
-                return Zotero.ZotFile.Utils.normalize_path(getCollectionPath(collection.parent) + Zotero.ZotFile.folderSep + collection.name);
+                return OS.Path.normalize(getCollectionPath(collection.parent) + Zotero.ZotFile.folderSep + collection.name);
             };
 
             return item.getCollections().map(getCollectionPath);
