@@ -577,6 +577,58 @@ Zotero.ZotFile = {
     },
 
     /**
+     * Move a linked attachment to a new location
+     * @param  {zitem} att        Zotero attachment to move
+     * @param  {string} location  Folder
+     * @param  {string} filename  Filename
+     * @param  {bool} overwrite   Overwrite existing files in new location
+     * @return {bool}             Indicates whether successful
+     */
+    moveLinkedAttachmentFile: function(att, location, filename, overwrite) {
+        if (!att.isAttachment() || att.attachmentLinkMode !== Zotero.Attachments.LINK_MODE_LINKED_FILE || !att.fileExists())
+            return false;
+        // get file
+        var file = att.getFile(),
+            mod_time = file.lastModifiedTime;
+        try {
+            if(location.trim() == this.folderSep) {
+                //no place to move the file, so rename it in-place
+                this.infoWindow(this.ZFgetString('general.warning'), 'Custom location for files not set. File is renamed only.');
+                location = file.parent.path;
+            }
+            // destination file path
+            var dest = this.createFile(location);
+            dest.append(filename);
+            // Ignore if no change
+            if (file.path === dest.path) return true;
+            // Update mod time and clear hash so the file syncs
+            // TODO: use an integer counter instead of mod time for change detection
+            // Update mod time first, because it may fail for read-only files on Windows
+            file.lastModifiedTime = new Date();            
+            var path = this.moveFile(file, location, filename);
+            if (!path) return false;
+            dest = this.createFile(path);
+            att.relinkAttachmentFile(dest);
+            att.setField('title', dest.leafName);
+            att.save();
+            // Zotero database
+            Zotero.DB.beginTransaction();
+            Zotero.Sync.Storage.setSyncedHash(att.id, null, false);
+            Zotero.Sync.Storage.setSyncState(att.id, Zotero.Sync.Storage.SYNC_STATE_TO_UPLOAD);
+            Zotero.DB.commitTransaction();
+        }
+        catch (e) {
+            // Restore original modification date in case we managed to change it
+            try { file.lastModifiedTime = mod_time } catch (e) {}
+            Zotero.debug(e);
+            Components.utils.reportError(e);
+            return false;
+        }
+        // return
+        return true;
+    },
+
+    /**
      * Move file to new location
      * @param  {nsIFile} file    File to move.
      * @param  {string} target   Target directory.
@@ -594,12 +646,12 @@ Zotero.ZotFile = {
         var target = this.createFile(target),
             file_dirname = OS.Path.dirname(file.path);
         // return if already at target
-        if(file.path == OS.Path.join(target.path, filename)) return(file.path);
+        if(file.path == this.Utils.joinPath(target.path, filename)) return(file.path);
         // add suffix if target path exists
         var k = 2;
         while(this.fileExists(target, filename)) {
             filename = this.Utils.addSuffix(filename, k);
-            if (file.path == OS.Path.join(target.path, filename)) return(file.path);
+            if (file.path == this.Utils.joinPath(target.path, filename)) return file.path;
             k++;
             if(k > 999) throw("'Zotero.ZotFile.moveFile()': '" + filename + "' already exists.");
         }
@@ -620,88 +672,33 @@ Zotero.ZotFile = {
         return(file.path);
     },
 
-    /*
-     * Move file associated with an link attachment
-     * Adopted from `item.renameAttachmentFile` but allows for new location
-     * 
-     * -1       Destination file exists -- use _force_ to overwrite
-     * -2       Error renaming
-     * false    Attachment file not found
+    /**
+     * Copy file to new location
+     * @param  {nsIFile} file       File to move.
+     * @param  {string} destination Target directory.
+     * @param  {string} filename    Name of file.
+     * @return {string}             Path to new location of file.
      */
-    moveLinkedAttachmentFile: function(att, location, filename, overwrite) {
-        if (!att.isAttachment() || att.attachmentLinkMode!==Zotero.Attachments.LINK_MODE_LINKED_FILE)
-            return false;
-        // get file
-        var file = att.getFile();
-        if (!file) return false;
-        var origModDate = file.lastModifiedTime;
-        try {
-            if(location.trim() == this.folderSep) {
-                //no place to move the file, so rename it in-place
-                this.infoWindow(this.ZFgetString('general.warning'), 'Custom location for files not set. File is renamed only.');
-                location = file.parent.path;
-            }
-            var dest = this.createFile(location);
-            dest.append(filename);
-
-            // Ignore if no change
-            if (file.path === dest.path)
-                return true;
-            
-            // Update mod time and clear hash so the file syncs
-            // TODO: use an integer counter instead of mod time for change detection
-            // Update mod time first, because it may fail for read-only files on Windows
-            file.lastModifiedTime = new Date();
-            // file.moveTo(null, newName);
-            var newfile_path = this.moveFile(file, location, filename);
-            if (!newfile_path) 
-                return false;
-            dest = this.createFile(newfile_path);
-            att.relinkAttachmentFile(dest);
-            att.setField('title', dest.leafName);
-            att.save();
-            
-            Zotero.DB.beginTransaction();
-            
-            Zotero.Sync.Storage.setSyncedHash(att.id, null, false);
-            Zotero.Sync.Storage.setSyncState(att.id, Zotero.Sync.Storage.SYNC_STATE_TO_UPLOAD);
-            
-            Zotero.DB.commitTransaction();
-            
-            return true;
-        }
-        catch (e) {
-            // Restore original modification date in case we managed to change it
-            try { file.lastModifiedTime = origModDate } catch (e) {}
-            Zotero.debug(e);
-            Components.utils.reportError(e);
-            return false;
-        }
-    },
-
-    copyFile: function(file, destination, filename){
-
-        // create a nslFile Object of the destination folder
-        var dir = this.createFile(destination);
-
+    copyFile: function(file, destination, filename) {
+        // check arguments
+        if (!(file instanceof Components.interfaces.nsIFile)) throw("Zotero.ZotFile.copyFile(): 'file' is not nsIFile object.")
+        if (!file.exists()) throw("Zotero.ZotFile.copyFile(): 'file' does not exists.")
+        // create a nsIFile Object of the destination folder
+        var target = this.createFile(destination);
         // check whether already exists and add name if it does
-        if(file.path!=this.Utils.joinPath(destination,filename)) {
-
-            var filename_temp=filename;
-            var k=2;
-
-            while(this.fileExists(destination,filename_temp)) {
-                filename_temp = this.Utils.addSuffix(filename,k);
-                k++;
-                if(k>99) break;
-            }
-            filename=filename_temp;
-
-            // copy file
-            file.copyTo(dir, filename);
+        if(file.path == this.Utils.joinPath(target.path, filename)) return file;
+        // add suffix if target path exists
+        var k = 2;
+        while(this.fileExists(target, filename)) {
+            filename = this.Utils.addSuffix(filename, k);
+            if (file.path == this.Utils.joinPath(target.path, filename)) return file;
+            k++;
+            if(k > 999) throw("'Zotero.ZotFile.copyFile()': '" + filename + "' already exists.");
         }
+        // copy file
+        file.copyTo(target, filename);
         // return file
-        return(this.createFile(this.Utils.joinPath(dir.path,filename)));
+        return this.createFile(this.Utils.joinPath(target.path, filename));
     },
 
     /**
