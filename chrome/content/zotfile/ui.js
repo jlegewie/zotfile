@@ -232,7 +232,7 @@ Zotero.ZotFile.UI = new function() {
                 'label': 'Send to Tablet',
                 'tooltiptext': '',
                 'command': function(e) {
-                    Zotero.ZotFile.Tablet.sendSelectedAttachmentsToTablet(-1);
+                    Zotero.ZotFile.Tablet.sendSelectedAttachmentsToTablet();
                     Zotero.ZotFile.UI.buildTabletMenu();
                 },
                 'disabled': tablet ? 'true' : 'false'

@@ -156,7 +156,7 @@ Zotero.ZotFile = {
         att = typeof att == 'number' ? Zotero.Items.get(att) : att;
         // check whether attachment is valid (not top-level item, file exists and not a web attachment)
         if(!att.isAttachment()) return false;
-        if (att.isTopLevelItem() || !att.fileExists() || Zotero.File.getExtension(att.getFile()) == "html") {
+        if (att.isTopLevelItem() || !att.getFile() || Zotero.File.getExtension(att.getFile()) == "html") {
             if(warning) this.messages_warning.push("'" + att.getField('title') + "'");
             return false;
         }
@@ -585,7 +585,7 @@ Zotero.ZotFile = {
      * @return {bool}             Indicates whether successful
      */
     moveLinkedAttachmentFile: function(att, location, filename, overwrite) {
-        if (!att.isAttachment() || att.attachmentLinkMode !== Zotero.Attachments.LINK_MODE_LINKED_FILE || !att.fileExists())
+        if (!att.isAttachment() || att.attachmentLinkMode !== Zotero.Attachments.LINK_MODE_LINKED_FILE || !att.getFile())
             return false;
         // get file
         var file = att.getFile(),
@@ -949,7 +949,7 @@ Zotero.ZotFile = {
         // check function arguments
         if (!att.isAttachment()) throw('Zotero.ZotFile.renameAttachment(): No attachment item.');
         if (att.isTopLevelItem()) throw('Zotero.ZotFile.renameAttachment(): Attachment is top-level item.');
-        if (!att.fileExists()) throw('Zotero.ZotFile.renameAttachment(): Attachment file does not exists.');
+        if (!att.getFile()) throw('Zotero.ZotFile.renameAttachment(): Attachment file does not exists.');
         // set variables
         var win = this.wm.getMostRecentWindow("navigator:browser"),
             selection = win.ZoteroPane.itemsView.saveSelection(),
@@ -1066,7 +1066,7 @@ Zotero.ZotFile = {
                 progress = new progress_win.ItemProgress(att.getImageSrc(), att.getField('title'));
             try {
                 // check attachment
-                if(!att.fileExists() || att.isTopLevelItem() || this.Tablet.getTabletStatus(att)) {
+                if(!att.getFile() || att.isTopLevelItem() || this.Tablet.getTabletStatus(att)) {
                     description = true;
                     progress.setError();
                     continue;
@@ -1089,7 +1089,7 @@ Zotero.ZotFile = {
             }
         }
         // show messages and handle errors
-        if(description) progress_win.description(this.ZFgetString('general.warning.skippedAtt.msg'));
+        if(description) progress_win.addDescription(this.ZFgetString('general.warning.skippedAtt.msg'));
         progress_win.startCloseTimer(this.getPref("info_window_duration"));
         this.handleErrors();
     }

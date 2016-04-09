@@ -96,7 +96,7 @@ Zotero.ZotFile.Utils = new function() {
      * @return {string}          Completed and normalized path
      */
     function joinPath(folder, filename) {
-        var path = folder + this.folderSep + filename;
+        var path = folder + Zotero.ZotFile.folderSep + filename;
         return OS.Path.normalize(path);
     }
 
