@@ -5,18 +5,18 @@
  */
 Zotero.ZotFile.Utils = new function() {
 
-    this.removeDuplicates = removeDuplicates;
-    this.removeFromArray = removeFromArray;
-    this.arrayReplace = arrayReplace;
-    this.addSuffix = addSuffix;
-    this.getFiletype = getFiletype;
-    this.str_format = str_format;
-    this.joinPath = joinPath;
-    this.normalize_path = normalize_path;
-    this.copy2Clipboard = copy2Clipboard;
-    this.getPDFReader = getPDFReader;
-    this.removeItemTag = removeItemTag;
-    this.parseHTML = parseHTML;
+    this.removeDuplicates = removeDuplicates.bind(Zotero.ZotFile);
+    this.removeFromArray = removeFromArray.bind(Zotero.ZotFile);
+    this.arrayReplace = arrayReplace.bind(Zotero.ZotFile);
+    this.addSuffix = addSuffix.bind(Zotero.ZotFile);
+    this.getFiletype = getFiletype.bind(Zotero.ZotFile);
+    this.str_format = str_format.bind(Zotero.ZotFile);
+    this.joinPath = joinPath.bind(Zotero.ZotFile);
+    this.normalize_path = normalize_path.bind(Zotero.ZotFile);
+    this.copy2Clipboard = copy2Clipboard.bind(Zotero.ZotFile);
+    this.getPDFReader = getPDFReader.bind(Zotero.ZotFile);
+    this.removeItemTag = removeItemTag.bind(Zotero.ZotFile);
+    this.parseHTML = parseHTML.bind(Zotero.ZotFile);
 
     // detect duplicates in array
     function removeDuplicates(x) {
@@ -96,7 +96,7 @@ Zotero.ZotFile.Utils = new function() {
      * @return {string}          Completed and normalized path
      */
     function joinPath(folder, filename) {
-        var path = folder + Zotero.ZotFile.folderSep + filename;
+        var path = folder + this.folderSep + filename;
         return OS.Path.normalize(path);
     }
 
@@ -331,7 +331,7 @@ Zotero.ZotFile.Utils = new function() {
         var ioService = Components.classes["@mozilla.org/network/io-service;1"]
                         .getService(Components.interfaces.nsIIOService);
         var allowStyle = true,
-            baseURI = ioService.newURI(Zotero.ZotFile.xhtml, null, null),
+            baseURI = ioService.newURI(this.xhtml, null, null),
             isXML = false,
             PARSER_UTILS = "@mozilla.org/parserutils;1";
 
