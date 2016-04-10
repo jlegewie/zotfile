@@ -4,8 +4,8 @@ var OpenPDFExtension = new function() {
 
     function newChannel(uri) {
         // get components
-        var ios = Components.classes["@mozilla.org/network/io-service;1"],
-            Zotero = Components.classes["@zotero.org/Zotero;1"]
+        var ios = Components.classes['@mozilla.org/network/io-service;1'],
+            Zotero = Components.classes['@zotero.org/Zotero;1']
                 .getService(Components.interfaces.nsISupports).wrappedJSObject,
             zz = Zotero.ZotFile,
             args;
@@ -19,19 +19,19 @@ var OpenPDFExtension = new function() {
             var lkh = Zotero.Items.parseLibraryKeyHash(key);
             if (!lkh) return;
             var item = Zotero.Items.getByLibraryAndKey(lkh.libraryID, lkh.key);
-            if(item==false) return;
+            if(item == false) return;
             // if attachment, open file and go to page
             if(!item.isAttachment()) return;
             // get file and path
-            var file = item.getFile();
-            var path = file.path;
-            var filename = path.replace(/^.*[\\\/]/, '');
+            var file = item.getFile(),
+                path = file.path,
+                filename = path.replace(/^.*[\\\/]/, '');
             // check whether pdf file
-            if(filename.toLowerCase().indexOf('.pdf')==-1) return;
+            if(filename.toLowerCase().indexOf('.pdf') == -1) return;
             // open pdf and go to page (system specific)
             if(Zotero.isMac) {
-                var open_with = zz.prefs.getCharPref('pdfExtraction.openPdfMac');
-                if(open_with == "Skim") {
+                var open_with = zz.getPref('pdfExtraction.openPdfMac');
+                if(open_with == 'Skim') {
                     args = [
                         '-e', 'tell app "Skim" to activate', 
                         '-e', 'tell app "Skim" to open "' + path + '"'];
@@ -52,7 +52,7 @@ var OpenPDFExtension = new function() {
             }
             if(Zotero.isWin) {
                 // get path to PDF Reader
-                var pdf_reader = zz.prefs.getCharPref('pdfExtraction.openPdfWin');
+                var pdf_reader = zz.getPref('pdfExtraction.openPdfWin');
                 pdf_reader = pdf_reader==='' ? zz.Utils.getPDFReader() : pdf_reader;
                 if (!zz.fileExists(pdf_reader)) {
                     zz.infoWindow(zz.ZFgetString('general.error'), 'Unable to find path for PDF Reader. Please set path manually in hidden preferences (see zotfile documentation).');
@@ -69,9 +69,9 @@ var OpenPDFExtension = new function() {
                 zz.runProcess(pdf_reader, args, false);
             }
             if(Zotero.isLinux) {
-                var cmd = zz.prefs.getCharPref('pdfExtraction.openPdfLinux');
+                var cmd = zz.getPref('pdfExtraction.openPdfLinux');
                 // try okular and evince when nothing is set
-                if (cmd==='') {
+                if (cmd === '') {
                     if (page)
                         args = ['-p', page, path];
                     else
@@ -114,4 +114,3 @@ var OpenPDFExtension = new function() {
 var zotero_ext = Components.classes["@mozilla.org/network/protocol;1?name=zotero"].getService();
 var OpenPDFSpec = "zotero://open-pdf";
 zotero_ext.wrappedJSObject._extensions[OpenPDFSpec] = OpenPDFExtension;
-
