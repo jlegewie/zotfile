@@ -12,6 +12,10 @@ Zotero.ZotFile.UI = new function() {
     this.buildTabletMenu = buildTabletMenu.bind(Zotero.ZotFile);
     this.attboxUpdateTabletStatus = attboxUpdateTabletStatus.bind(Zotero.ZotFile);
 
+    /**
+     * Show collection menu for saved tablet search
+     * @return {void}
+     */
     function showCollectionMenu() {
         // ZoteroPane object
         var doc = this.wm.getMostRecentWindow("navigator:browser").ZoteroPane.document;

@@ -8,6 +8,17 @@ Zotero.ZotFile.notifierCallback = new function() {
     // public functions
     this.notify = notify;
 
+    /**
+     * Callback function for the event listener
+     * https://www.zotero.org/support/dev/client_coding/javascript_api#notification_system
+     * @param  {string} event    Event type: add (c, s, i, t, ci, it), modify (c, s, i, t),
+     *    delete (c, s, i, t), remove (ci, it), move (c, for changing collection parent)
+     * @param  {string} type     Item type: c = collection, s = search (saved search), i = item,
+     *    t = tag, ci = collection-item, it = item-tag 
+     * @param  {array} ids       Array with object ids.
+     * @param  {}      extraData Extra data (e.g. deleted items)
+     * @return {void}
+     */
     function notify(event, type, ids, extraData) {
         // automatic renaming
         if (type == 'item' && event == 'add' && zz.getPref('automatic_renaming') != 1) {
@@ -30,7 +41,11 @@ Zotero.ZotFile.notifierCallback = new function() {
         }
     }
 
-    // Automatic renaming of items
+    /**
+     * Automatic renaming of Items
+     * @param  {array} attachments Array with attachment items
+     * @return {void}
+     */
     function rename(attachments) {
         var auto_rename = zz.getPref('automatic_renaming'),
             progress_win = new Zotero.ZotFile.ProgressWindow();
