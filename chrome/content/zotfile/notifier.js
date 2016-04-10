@@ -11,12 +11,12 @@ Zotero.ZotFile.notifierCallback = new function() {
     /**
      * Callback function for the event listener
      * https://www.zotero.org/support/dev/client_coding/javascript_api#notification_system
-     * @param  {string} event    Event type: add (c, s, i, t, ci, it), modify (c, s, i, t),
+     * @param  {string} event    Event: add (c, s, i, t, ci, it), modify (c, s, i, t),
      *    delete (c, s, i, t), remove (ci, it), move (c, for changing collection parent)
      * @param  {string} type     Item type: c = collection, s = search (saved search), i = item,
      *    t = tag, ci = collection-item, it = item-tag 
-     * @param  {array} ids       Array with object ids.
-     * @param  {}      extraData Extra data (e.g. deleted items)
+     * @param  {array}  ids       Array with object ids.
+     * @param  {object} extraData Extra data (e.g. deleted items)
      * @return {void}
      */
     function notify(event, type, ids, extraData) {
@@ -78,7 +78,7 @@ Zotero.ZotFile.notifierCallback = new function() {
                 // exclude current key for next event
                 zz.excludeAutorenameKeys.push(att.key);
                 // user message
-                var duration = zz.getPref("info_window_duration_clickable");
+                var duration = zz.getPref('info_window_duration_clickable');
                 var message = {
                     lines: [file.leafName],
                     txt: zz.ZFgetString('renaming.clickMoveRename'),

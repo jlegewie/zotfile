@@ -259,7 +259,7 @@ Zotero.ZotFile = {
      */
     openSubfolderWindow: function(paneID, action) {
         var io = {pane: paneID, action: action};
-        var prefWindow=window.openDialog('chrome://zotfile/content/options-projects.xul',
+        var prefWindow = window.openDialog('chrome://zotfile/content/options-projects.xul',
             'zotfile-tablet-subfolders',
             'chrome,titlebar,toolbar,centerscreen' + Zotero.Prefs.get('browser.preferences.instantApply', true) ? 'dialog=no' : 'modal', io
         );

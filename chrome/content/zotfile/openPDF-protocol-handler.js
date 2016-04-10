@@ -1,13 +1,12 @@
-var OpenPDFExtension = new function(){
+
+var OpenPDFExtension = new function() {
     this.newChannel = newChannel;
-    // this.__defineGetter__('loadAsChrome', function () { return false; });
 
     function newChannel(uri) {
         // get components
         var ios = Components.classes["@mozilla.org/network/io-service;1"],
             Zotero = Components.classes["@zotero.org/Zotero;1"]
-                .getService(Components.interfaces.nsISupports)
-                .wrappedJSObject,
+                .getService(Components.interfaces.nsISupports).wrappedJSObject,
             zz = Zotero.ZotFile,
             args;
         generateContent: try {
@@ -107,7 +106,7 @@ var OpenPDFExtension = new function(){
         }
         catch (e) {
             Zotero.debug(e);
-                throw (e);
+            throw (e);
         }
     }
 };
