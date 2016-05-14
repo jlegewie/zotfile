@@ -3,33 +3,33 @@
  * pdfAnnotations class to extract pdf annotations
  * Runs the annotation extraction code in extract.html/extract.js
  */
-Zotero.ZotFile.pdfAnnotations = {
-    progressWin: null,
-    itemProgress: [],
-    popplerExtractorFileName: 'ExtractPDFAnnotations',
-    popplerExtractorPath:null,
-    popplerExtractorVersion:1.0,
-    popplerSupportedPlatforms:['MacIntel'],
-    pdfExtraction:false,
-    popplerExtractorTool:false,
-    popplerExtractorSupported:false,
-    // popplerExtractorBaseURL:'https://github.com/jlegewie/zotfile/raw/gh-pages/PDFTools/',
-    popplerExtractorBaseURL:'http://www.zotfile.com/PDFTools/',
+Zotero.ZotFile.pdfAnnotations = new function() {
 
-    /** The list of PDFs we should extract annotations from.  Each
+    this.progressWin = null;
+    this.itemProgress = [];
+    this.popplerExtractorFileName = 'ExtractPDFAnnotations';
+    this.popplerExtractorPath = null;
+    this.popplerExtractorVersion = 1.0;
+    this.popplerSupportedPlatforms = ['MacIntel'];
+    this.pdfExtraction = false;
+    this.popplerExtractorTool = false;
+    this.popplerExtractorSupported = false;
+    // this.popplerExtractorBaseURL = 'https://github.com/jlegewie/zotfile/raw/gh-pages/PDFTools/';
+    this.popplerExtractorBaseURL = 'http://www.zotfile.com/PDFTools/';
+    /* The list of PDFs we should extract annotations from.  Each
     element is an object with the following fields:
     attachment: the Zotero object representing the attachment
     path: an absolute path to the attachment file
     item: the Zotero item containing the attachment
     */
-    pdfAttachmentsForExtraction: [],
-    numTotalPdfAttachments: 0,
-    errorExtractingAnnotations: false,
-    /** The hidden browser where PDFs get rendered by pdf.js. */
-    pdfHiddenBrowser: null,
-    PDF_EXTRACT_URL: 'chrome://zotfile/content/pdfextract/extract.html',
+    this.pdfAttachmentsForExtraction = [];
+    this.numTotalPdfAttachments = 0;
+    this.errorExtractingAnnotations = false;
+    // The hidden browser where PDFs get rendered by pdf.js
+    this.pdfHiddenBrowser = null;
+    this.PDF_EXTRACT_URL = 'chrome://zotfile/content/pdfextract/extract.html';
 
-    popplerExtractorSetPath: function() {
+    this.popplerExtractorSetPath = function() {
         // extractor filename
         this.popplerExtractorFileName += '-' + Zotero.platform;
         if (Zotero.isWin) this.popplerExtractorFileName+='.exe';
@@ -38,22 +38,22 @@ Zotero.ZotFile.pdfAnnotations = {
         // extractor path
         this.popplerExtractorPath = Zotero.getZoteroDirectory().path + "/ExtractPDFAnnotations/" + this.popplerExtractorFileName;
         if (Zotero.isWin) this.popplerExtractorPath.replace(/\\\//g,"\\").replace(/\//g,"\\");
-    },
+    };
 
-    popplerExtractorCheckInstalled: function  () {
-//          str = toolIsRegistered ? "Installed..." : "Download Tool to Extract PDF Annotations";
+    this.popplerExtractorCheckInstalled = function  () {
+        // str = toolIsRegistered ? "Installed..." : "Download Tool to Extract PDF Annotations";
         try {
-                var fileobj = Zotero.ZotFile.createFile(this.popplerExtractorPath);
-                if (fileobj.exists()) return(1);
-                if (!fileobj.exists()) return(0);
+            var fileobj = Zotero.ZotFile.createFile(this.popplerExtractorPath);
+            if (fileobj.exists()) return(1);
+            if (!fileobj.exists()) return(0);
         }
         catch (err) {
             return(0);
         }
 
-    },
+    };
 
-    openFileStream: function  (file) {
+    this.openFileStream = function  (file) {
         var istream = Components.classes["@mozilla.org/network/file-input-stream;1"].
                         createInstance(Components.interfaces.nsIFileInputStream);
         istream.init(file, 0x01, 0444, 0);
@@ -68,48 +68,43 @@ Zotero.ZotFile.pdfAnnotations = {
         is.QueryInterface(Components.interfaces.nsIUnicharLineInputStream);
 
         return(is);
-    },
+    };
 
-    getAnnotations: function(attIDs) {
+    this.getAnnotations = function(attIDs) {
         // get selected attachments if no att ids are passed
-        if(attIDs==null) {
-            attIDs=Zotero.ZotFile.getSelectedAttachments();
+        if(attIDs == null) {
+            attIDs = Zotero.ZotFile.getSelectedAttachments();
             Zotero.ZotFile.showWarningMessages(Zotero.ZotFile.ZFgetString('general.warning.skippedAtt'),Zotero.ZotFile.ZFgetString('general.warning.skippedAtt.msg'));
         }
         // iterate through attachment items
         var file;
-        if(attIDs!=null) for (var i=0; i < attIDs.length; i++) {                
+        for (var i = 0; i < attIDs.length; i++) {
             try {
                 // get attachment item, parent and file
-                var att  = Zotero.Items.get(attIDs[i]);
-                var item = Zotero.Items.get(att.getSource());
-
+                var att  = Zotero.Items.get(attIDs[i]),
+                    item = Zotero.Items.get(att.parentItemID);
                 // if file is on tablet in background mode, take the one which was modified
-                if(Zotero.ZotFile.Tablet.getTabletStatus(att) && Zotero.ZotFile.Tablet.getInfo(att,"mode")==1) {
-                    var file_zotero=att.getFile();
-                    var file_reader=Zotero.ZotFile.Tablet.getTabletFile(att);
-
+                if(Zotero.ZotFile.Tablet.getTabletStatus(att) && Zotero.ZotFile.Tablet.getInfo(att, "mode") == 1) {
+                    var file_zotero = att.getFile();
+                    var file_reader = Zotero.ZotFile.Tablet.getTabletFile(att);
                     // get times
-                    var time_reader = Zotero.ZotFile.fileExists(file_reader) ? parseInt(file_reader.lastModifiedTime+"",10) : 0;
-                    var time_saved  = parseInt(Zotero.ZotFile.Tablet.getInfo(att,"lastmod"),10);
-                    var time_zotero = (file_zotero!=false) ? parseInt(file_zotero.lastModifiedTime+"",10) : 0;
-
-                    if (time_reader!=0 || time_zotero!=0) {
-
+                    var time_tablet = Zotero.ZotFile.fileExists(file_reader) ? parseInt(file_reader.lastModifiedTime+"",10) : 0,
+                        time_saved  = parseInt(Zotero.ZotFile.Tablet.getInfo(att,"lastmod"),10),
+                        time_zotero = (file_zotero!=false) ? parseInt(file_zotero.lastModifiedTime+"",10) : 0;
+                    if (time_tablet != 0 || time_zotero != 0) {
                         // set options
                         var option;
-                        if (time_reader>time_saved  && time_zotero<=time_saved) option=0;
-                        if (time_reader<=time_saved && time_zotero<=time_saved) option=2;
-                        if (time_reader<=time_saved && time_zotero>time_saved) option=2;
-                        if (time_reader>time_saved  && time_zotero>time_saved) option=1;
-
+                        if (time_tablet > time_saved  && time_zotero <= time_saved) option = 0;
+                        if (time_tablet <= time_saved && time_zotero <= time_saved) option = 2;
+                        if (time_tablet <= time_saved && time_zotero > time_saved) option = 2;
+                        if (time_tablet > time_saved  && time_zotero > time_saved) option = 1;
                         // prompt if both file have been modified
                         if(option==1) option =Zotero.ZotFile.promptUser(Zotero.ZotFile.ZFgetString('extraction.fileConflict', [file_zotero.leafName]),
                             Zotero.ZotFile.ZFgetString('extraction.fileConflict.useT'),
                             Zotero.ZotFile.ZFgetString('general.cancel'),
                             Zotero.ZotFile.ZFgetString('extraction.fileConflict.useZ'));
-                        if(option==0) file   =file_reader;
-                        if(option==2) file   =file_zotero;
+                        if(option==0) file = file_reader;
+                        if(option==2) file = file_zotero;
                         if(option==1) return(false);
                     }
                 }
@@ -117,70 +112,63 @@ Zotero.ZotFile.pdfAnnotations = {
                     file = att.getFile();
                 }                    
                 // extract annotations from pdf and create note with annotations
-                if(Zotero.ZotFile.Utils.getFiletype(file.leafName)=="pdf") {
-                    if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS") || Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler")) {
-                        var a = {};
-                        a.attachment = att;
-                        a.path = file.path;
-                        a.filename = file.leafName;
-                        a.item = item;
-                        this.pdfAttachmentsForExtraction.push(a);
-                    }
-                    if (this.popplerExtractorTool && (
-                        !Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS") ||
-                        Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler"))) {
+                if(Zotero.ZotFile.Utils.getFiletype(file.leafName) != "pdf") continue;
+                if (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS") || Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler")) {
+                    var a = {attachment: att, path: file.path, filename: file.leafName, item: item};
+                    this.pdfAttachmentsForExtraction.push(a);
+                }
+                if (this.popplerExtractorTool && (
+                    !Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS") ||
+                    Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler"))) {
 
-                        var outputFile=file.path.replace(".pdf",".txt");
-                        Zotero.ZotFile.runProcess(this.popplerExtractorPath, [file.path, outputFile]);
-                        var annotations = this.popplerExtractorGetAnnotationsFromFile(outputFile);
-                        annotations = annotations.map(function(anno) {
-                            anno.color = [0, 0, 0];
-                            return anno;
-                        });
-                        if(annotations.length!=0) this.createNote(annotations, item, att, "poppler");
+                    var outputFile=file.path.replace(".pdf",".txt");
+                    Zotero.ZotFile.runProcess(this.popplerExtractorPath, [file.path, outputFile]);
+                    var annotations = this.popplerExtractorGetAnnotationsFromFile(outputFile);
+                    annotations = annotations.map(function(anno) {
+                        anno.color = [0, 0, 0];
+                        return anno;
+                    });
+                    if(annotations.length != 0)
+                        this.createNote(annotations, item, att, "poppler");
 
-                        // delete output text file
-                        if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.popplerDeleteTxtFile")) Zotero.ZotFile.removeFile(Zotero.ZotFile.createFile(outputFile));
-                    }
+                    // delete output text file
+                    if(Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.popplerDeleteTxtFile")) Zotero.ZotFile.removeFile(Zotero.ZotFile.createFile(outputFile));
                 }
             }
             catch(e) {
                 Zotero.ZotFile.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
             }
-        }            
+        }
         if (this.pdfAttachmentsForExtraction.length > 0 &&
                 (Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJS") || Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler"))) {
-            if (!Zotero.isFx36) {
-                try {
-                    // setup extraction process
-                    this.errorExtractingAnnotations = false;
-                    this.numTotalPdfAttachments = this.pdfAttachmentsForExtraction.length;
-                    // show progress window
-                    this.progressWin = new Zotero.ZotFile.ProgressWindow();
-                    this.progressWin.changeHeadline('Zotfile: Extracting Annotations...');
-                    var icon_pdf = 'chrome://zotero/skin/treeitem-attachment-pdf.png';
-                    for (var i = 0; i < this.pdfAttachmentsForExtraction.length; i++) {
-                        this.pdfAttachmentsForExtraction[i].itemProgress = new this.progressWin.ItemProgress(icon_pdf, this.pdfAttachmentsForExtraction[i].filename);
-                    };
-                    this.progressWin.show();
-                    // start extraction in hidden browser
-                    this.pdfHiddenBrowser = Zotero.Browser.createHiddenBrowser();
-                    this.pdfHiddenBrowser.loadURI(this.PDF_EXTRACT_URL);
-                }
-                catch(e) {
-                    if(this.progressWin) this.progressWin.close();
-                    Zotero.ZotFile.infoWindow('Zotfile extraction', 'ERROR');
-                    // close progress window here if it was opened
-                    Zotero.ZotFile.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
-                }
+            try {
+                // setup extraction process
+                this.errorExtractingAnnotations = false;
+                this.numTotalPdfAttachments = this.pdfAttachmentsForExtraction.length;
+                // show progress window
+                this.progressWin = new Zotero.ZotFile.ProgressWindow();
+                this.progressWin.changeHeadline('Zotfile: Extracting Annotations...');
+                var icon_pdf = 'chrome://zotero/skin/treeitem-attachment-pdf.png';
+                for (var i = 0; i < this.pdfAttachmentsForExtraction.length; i++) {
+                    this.pdfAttachmentsForExtraction[i].itemProgress = new this.progressWin.ItemProgress(icon_pdf, this.pdfAttachmentsForExtraction[i].filename);
+                };
+                this.progressWin.show();
+                // start extraction in hidden browser
+                this.pdfHiddenBrowser = Zotero.Browser.createHiddenBrowser();
+                this.pdfHiddenBrowser.loadURI(this.PDF_EXTRACT_URL);
             }
-            else Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.error'),Zotero.ZotFile.ZFgetString('extraction.outdatedFirefox'));
+            catch(e) {
+                if(this.progressWin) this.progressWin.close();
+                Zotero.ZotFile.infoWindow('Zotfile extraction', 'ERROR');
+                // close progress window here if it was opened
+                Zotero.ZotFile.messages_fatalError.push(e.name + ": " + e.message + " \n(" + e.fileName + ", " + e.lineNumber + ")");
+            }
         }
         // show messages and handle errors
         Zotero.ZotFile.handleErrors();
-    },
+    };
 
-    popplerExtractorGetAnnotationsFromFile: function(outputFile) {
+    this.popplerExtractorGetAnnotationsFromFile = function(outputFile) {
         var annotations = [];
         var file=Zotero.ZotFile.createFile(outputFile);
 
@@ -221,101 +209,86 @@ Zotero.ZotFile.pdfAnnotations = {
         }
         else Zotero.ZotFile.messages_error.push(Zotero.ZotFile.ZFgetString('extraction.failedNoFile'));
         return annotations;
-    },
+    };
 
-    createNote: function(annotations, item, att, method) {
+    this.createNote = Zotero.Promise.coroutine(function* (annotations, item, att, method) {
         var note_content = this.getNoteContent(annotations, item, att, method);
         if(typeof note_content == 'string') {
             var note = new Zotero.Item("note");
-            note.libraryID = item._libraryID;
+            note.libraryID = item.libraryID;
             // note.setNote(Zotero.Utilities.text2html(note_content));
             note.setNote(note_content);
-            note.setSource(item.id);
-            var noteID = note.save();
-            /*if (method=="pdf.js" && Zotero.ZotFile.prefs.getBoolPref('pdfExtraction.debug'))
-                this.debugExtraction(item, annotations);*/
+            note.parentKey = item.key;
+            yield note.saveTx();
         }
         else {
             for(var type in note_content) {
                 var note = new Zotero.Item("note");
-                note.libraryID = item._libraryID;
+                note.libraryID = item.libraryID;
                 note.setNote(note_content[type]);
-                note.setSource(item.id);
-                var noteID = note.save();
+                note.parentKey = item.key;
+                yield note.saveTx();
             }
         }
-    },
+    });
 
-    debugExtraction: function(item, annotations) {
-        var note = new Zotero.Item("note");
-        note.libraryID = item._libraryID;
-        var note_content = annotations
-            .map(function(anno){
-                if(typeof anno.chars !== 'undefined') return "<p>"+anno.chars.map(function(char) {return JSON.stringify(char);}).join('<br>') +"</p>"
-                return '';
-            }).join('');
-        note.setNote(note_content);
-        note.setSource(item.id);
-        var noteID = note.save();
-    },
+    this.getColorCategory = function (r,g,b) {
+        // convert RGB to HSL   
+        r /= 255; g /= 255; b /= 255;
+        var max = Math.max(r, g, b), min = Math.min(r, g, b);
+        var h, s, l = (max + min) / 2;
+        if(max == min) {
+            h = s = 0; // achromatic
+        }
+        else {
+            var d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch(max){
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
+            }
+            h*=60;
+            if (h < 0) {
+                h +=360;
+            }
+        }
+        // define color category based on HSL    
+        if (l < 0.12) return "Black";
+        if (l > 0.98) return "White";
+        if (s < 0.2) return "Gray";
+        if (h < 15) return "Red";
+        if (h < 45) return "Orange";
+        if (h < 65) return "Yellow";
+        if (h < 170) return "Green";
+        if (h < 190) return "Cyan";
+        if (h < 270) return "Blue";
+        if (h < 335) return "Magenta";
+        return "Red";
+    };
 
-    getNoteContent: function(annotations, item, att, method) {
-        var getColorCategory = function (r,g,b) {
-            // convert RGB to HSL   
-            r /= 255; g /= 255; b /= 255;
-            var max = Math.max(r, g, b), min = Math.min(r, g, b);
-            var h, s, l = (max + min) / 2;
-            if(max == min) {
-                h = s = 0; // achromatic
-            }
-            else {
-                var d = max - min;
-                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                switch(max){
-                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                    case g: h = (b - r) / d + 2; break;
-                    case b: h = (r - g) / d + 4; break;
-                }
-                h*=60;
-                if (h < 0) {
-                    h +=360;
-                }
-            }
-            // define color category based on HSL    
-            if (l < 0.12) return "Black";
-            if (l > 0.98) return "White";
-            if (s < 0.2) return "Gray";
-            if (h < 15) return "Red";
-            if (h < 45) return "Orange";
-            if (h < 65) return "Yellow";
-            if (h < 170) return "Green";
-            if (h < 190) return "Cyan";
-            if (h < 270) return "Blue";
-            if (h < 335) return "Magenta";
-            return "Red";
-        };
-        var zz = Zotero.ZotFile,
-            lib = att.libraryID===null ? 0 : att.libraryID,
+    this.getNoteContent = function(annotations, item, att, method) {
+        var lib = att.library.libraryType == 'user' ? 0 : att.libraryID,
             format_uri = 'zotero://open-pdf/%(lib)_%(key)/%(page)',
-            str_title = zz.ZFgetString('extraction.noteTitle'),
-            format_title = zz.prefs.getCharPref("pdfExtraction.formatNoteTitle"),
-            format_title_color = zz.prefs.getCharPref("pdfExtraction.formatNoteTitleColor"),
-            format_note = zz.prefs.getCharPref("pdfExtraction.formatAnnotationNote"),
-            format_highlight = zz.prefs.getCharPref("pdfExtraction.formatAnnotationHighlight"),
-            format_underline = zz.prefs.getCharPref("pdfExtraction.formatAnnotationUnderline"),
-            settings_colors = JSON.parse(zz.prefs.getCharPref("pdfExtraction.colorCategories")),
-            separate_color_notes = zz.prefs.getBoolPref("pdfExtraction.colorNotes"),
-            cite = zz.prefs.getBoolPref("pdfExtraction.NoteFullCite") ? zz.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ") : "p. ",
-            repl = JSON.parse(zz.prefs.getCharPref("pdfExtraction.replacements")),
+            str_title = this.ZFgetString('extraction.noteTitle'),
+            format_title = this.prefs.getCharPref("pdfExtraction.formatNoteTitle"),
+            format_title_color = this.prefs.getCharPref("pdfExtraction.formatNoteTitleColor"),
+            format_note = this.prefs.getCharPref("pdfExtraction.formatAnnotationNote"),
+            format_highlight = this.prefs.getCharPref("pdfExtraction.formatAnnotationHighlight"),
+            format_underline = this.prefs.getCharPref("pdfExtraction.formatAnnotationUnderline"),
+            settings_colors = JSON.parse(this.prefs.getCharPref("pdfExtraction.colorCategories")),
+            separate_color_notes = this.prefs.getBoolPref("pdfExtraction.colorNotes"),
+            cite = this.prefs.getBoolPref("pdfExtraction.NoteFullCite") ? this.Wildcards.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ") : "p. ",
+            repl = JSON.parse(this.prefs.getCharPref("pdfExtraction.replacements")),
             reg = repl.map(function(obj) {
                 var flags = ('flags' in obj) ? obj.flags : "g";
                 return new RegExp(obj.regex, flags);
             });
         // add note title
-        var date_str = zz.prefs.getBoolPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString(),
-            title = zz.Utils.str_format(format_title, {'title': str_title, 'date': date_str}),
+        var date_str = this.prefs.getBoolPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString(),
+            title = this.Utils.str_format(format_title, {'title': str_title, 'date': date_str}),
             note = title;
-        if (zz.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler"))
+        if (this.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler"))
             note += ' ' + method;
         if(separate_color_notes) note = {};
         // iterature through annotations
@@ -323,9 +296,9 @@ Zotero.ZotFile.pdfAnnotations = {
         // annotations.map(function(anno) {
             var anno = annotations[i],
                 page = anno.page,
-                uri = zz.Utils.str_format(format_uri, {'lib': lib, 'key': att.key, 'page': anno.page});
+                uri = this.Utils.str_format(format_uri, {'lib': lib, 'key': att.key, 'page': anno.page});
             // get page
-            if(zz.prefs.getBoolPref("pdfExtraction.NoteTruePage")) {
+            if(this.prefs.getBoolPref("pdfExtraction.NoteTruePage")) {
                 try {
                     var itemPages = item.getField('pages');
                     if(itemPages) {
@@ -338,55 +311,48 @@ Zotero.ZotFile.pdfAnnotations = {
             // link
             var link = '<a href="' + uri + '">' + cite + page + '</a>',
                 color = ('color' in anno) ? ('rgb(' + anno.color.join(',') + ')') : 'rgb(255,255,255)',
-                color_category = getColorCategory(anno.color[0], anno.color[1], anno.color[2]),
+                color_category = this.pdfAnnotations.getColorCategory(anno.color[0], anno.color[1], anno.color[2]),
                 color_category_hex = settings_colors[color_category];
             // add markup to note
             if(anno.markup && anno.markup != "") {       
                 var format_markup = anno.subtype == "Highlight" ? format_highlight : format_underline;
                 for (var k = 0; k < repl.length; k++)
                     anno.markup = anno.markup.replace(reg[k], repl[k].replacement);
-                var markup_formated = zz.Utils.str_format(format_markup, {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title, 'color': color, 'color_category': color_category_hex});
+                var markup_formated = this.Utils.str_format(format_markup, {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title, 'color': color, 'color_category': color_category_hex});
                 if(!separate_color_notes)
                     note += markup_formated;
                 else {
                     if(!(color_category in note))
-                        note[color_category] = zz.Utils.str_format(format_title_color, {'title': str_title, 'date': date_str, 'color': color_category});
+                        note[color_category] = this.Utils.str_format(format_title_color, {'title': str_title, 'date': date_str, 'color': color_category});
                     note[color_category] += markup_formated;
                 }
             }
             // add to note text
             if(anno.content && anno.content != "" &&
-              (!anno.markup || this.strDistance(anno.content,anno.markup)>0.15 )) {                    
+              (!anno.markup || this.Utils.strDistance(anno.content,anno.markup)>0.15 )) {                    
                 var content = anno.content.replace(/(\r\n|\n|\r)/gm,"<br>");
                 // '<p><i>%(content) (<a href="%(uri)">note on p.%(page)</a>)</i></p><br>'
-                var content_formated = zz.Utils.str_format(format_note, {'content': content, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title,'color': color, 'color_category': color_category_hex});
+                var content_formated = this.Utils.str_format(format_note, {'content': content, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title,'color': color, 'color_category': color_category_hex});
                 if(!separate_color_notes)
                     note += content_formated;
                 else {
                     if(!(color_category in note))
-                        note[color_category] = zz.Utils.str_format(format_title_color, {'title': str_title, 'date': date_str, 'label': anno.title, 'color': color_category});
+                        note[color_category] = this.Utils.str_format(format_title_color, {'title': str_title, 'date': date_str, 'label': anno.title, 'color': color_category});
                     note[color_category] += content_formated;
                 }
             }
         }
         return note;
-    },
+    }.bind(Zotero.ZotFile);
 
-    trim: function(str) {
+    this.trim = function(str) {
         //return str.replace (/^\s+/, '').replace (/\s+$/, '');
         return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-    },
-
-    strDistance: function (s1,s2) {
-        s1=Zotero.Utilities.trimInternal(s1).replace(/ /g,"");
-        s2=Zotero.Utilities.trimInternal(s2).replace(/ /g,"");
-        var l = (s1.length > s2.length) ? s1.length : s2.length;
-        return Zotero.Utilities.levenshtein(s1,s2)/l;
-    },
+    };
 
     /* Runs the annotation extraction code in extract.html/extract.js,
      * to extract annotations from a single PDF. */
-    extractAnnotationsFromFiles: function() {
+    this.extractAnnotationsFromFiles = function() {
         var attachment = this.pdfAttachmentsForExtraction.shift();
         var itemProgress = this.itemProgress.shift();
         var args = {};
@@ -397,17 +363,17 @@ Zotero.ZotFile.pdfAnnotations = {
         args.callbackObj = this;
         args.callback = this.extractionComplete;
         Zotero.ZotFile.PdfExtractor.extractAnnotations(args);
-    },            
+    };            
 
     /** Keypress listener that cancels the extraction if the user presses escape. */
-    cancellationListener: function(keyEvent) {
+    this.cancellationListener = function(keyEvent) {
         if (keyEvent.keyCode == KeyboardEvent.DOM_VK_ESCAPE) {
             var zzpa = Zotero.ZotFile.pdfAnnotations;
             zzpa.pdfAttachmentsForExtraction = [];
             zzpa.extractionComplete([], null);
             keyEvent.currentTarget.removeEventListener('keypress', zzpa.cancellationListener);
         }
-    },
+    };
 
     /* Called from extract.js when all annotations for a single PDF have
      * been extracted.
@@ -419,7 +385,7 @@ Zotero.ZotFile.pdfAnnotations = {
      * any pop-up note in this annotation), and markup (the words from
      * the document, if any, that were highlighted/underlined).
      * @param item The Zotero item these annotations came from */
-    extractionComplete: function(annotations, item, att) {
+    this.extractionComplete = function(annotations, item, att) {
         // put annotations into a Zotero note
         if (annotations.length > 0) this.createNote(annotations, item, att, "pdf.js");
 
@@ -436,5 +402,5 @@ Zotero.ZotFile.pdfAnnotations = {
             this.numTotalPdfAttachments = 0;
             this.progressWin.startCloseTimer(Zotero.ZotFile.prefs.getIntPref("info_window_duration"));
         }
-    }
-};
+    };
+}

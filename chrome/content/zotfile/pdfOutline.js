@@ -3,13 +3,14 @@
  * pdfOutline class to extract pdf outline
  * Runs code to get outline from pdf
  */
-Zotero.ZotFile.pdfOutline = {
-    atts: [],
-    toc_url: 'chrome://zotfile/content/pdfextract/toc.html',        
-    progressWin: null,
-    itemProgress: [],
+Zotero.ZotFile.pdfOutline = new function() {
 
-    getOutline: function(attIDs) {
+    this.atts = [];
+    this.toc_url = 'chrome://zotfile/content/pdfextract/toc.html';
+    this.progressWin = null;
+    this.itemProgress = [];
+
+    this.getOutline = function(attIDs) {
         var verbose = false;
         this.progressWin = null;
         this.itemProgress = [];
@@ -22,7 +23,8 @@ Zotero.ZotFile.pdfOutline = {
         // get attachment item, parent and file
         this.atts = Zotero.Items.get(attIDs)
             .filter(att => att.isAttachment())
-            .filter(att => att.fileExists() && att.attachmentMIMEType.indexOf('pdf') != -1);
+            .filter(att => att.getFile())
+            .filter(att => att.getFile().exists() && att.attachmentMIMEType.indexOf('pdf') != -1);
         if (this.atts.length==0) return;
         if (Zotero.isFx36) {
             Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.error'),Zotero.ZotFile.ZFgetString('extraction.outdatedFirefox'));
@@ -41,9 +43,9 @@ Zotero.ZotFile.pdfOutline = {
         // get outline in hidden browser
         this.pdfHiddenBrowser = Zotero.Browser.createHiddenBrowser();
         this.pdfHiddenBrowser.loadURI(this.toc_url);            
-    },
+    };
 
-    getOutlineFromFiles: function() {
+    this.getOutlineFromFiles = function() {
         var attachment = this.atts.shift();
         var itemProgress = this.itemProgress.shift();
         var args = {};
@@ -53,9 +55,9 @@ Zotero.ZotFile.pdfOutline = {
         args.callbackObj = this;
         args.callback = this.complete;
         Zotero.ZotFile.PdfGetOutline.getOutline(args);
-    },
+    };
 
-    createOutline: function(att, outline, itemProgress) {
+    this.createOutline = function(att, outline, itemProgress) {
         var zz = Zotero.ZotFile;
         itemProgress.setProgress(100);            
         // [JavaScript Error: "mismatched tag. Expected: </p>."]
@@ -67,7 +69,7 @@ Zotero.ZotFile.pdfOutline = {
         var win = zz.wm.getMostRecentWindow("navigator:browser"),
             toc = win.document.createElementNS(zz.xhtml, 'ul'),
             key = att.key,
-            lib = att.libraryID===null ? 0 : att.libraryID,
+            lib = att.library.libraryType == 'user' ? 0 : att.libraryID,
             href = 'zotero://open-pdf/%(lib)_%(key)/%(page)',
             style = 'list-style-type: none; padding-left:%(padding)px',
             lvl = 1,
@@ -120,12 +122,12 @@ Zotero.ZotFile.pdfOutline = {
         note.insertBefore(title, note.firstChild);
         // save toc in note
         att.setNote(note.innerHTML.replace(/http:\/\/zotfile.com\//g, 'zotero://'));
-        att.save();
+        att.saveTx();
         // done with this att...            
         itemProgress.setIcon('chrome://zotero/skin/tick.png');
-    },
+    };
 
-    complete: function(att, outline, itemProgress) {
+    this.complete = function(att, outline, itemProgress) {
         // create outline
         this.createOutline(att, outline, itemProgress);
         // move on to the next pdf, if there is one
@@ -136,5 +138,5 @@ Zotero.ZotFile.pdfOutline = {
             this.pdfHiddenBrowser = null;
             this.progressWin.startCloseTimer(Zotero.ZotFile.prefs.getIntPref("info_window_duration"));
         }
-    }
+    };
 };

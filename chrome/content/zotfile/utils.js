@@ -5,24 +5,12 @@
  */
 Zotero.ZotFile.Utils = new function() {
 
-    this.removeDuplicates = removeDuplicates.bind(Zotero.ZotFile);
-    this.removeFromArray = removeFromArray.bind(Zotero.ZotFile);
-    this.arrayReplace = arrayReplace.bind(Zotero.ZotFile);
-    this.addSuffix = addSuffix.bind(Zotero.ZotFile);
-    this.getFiletype = getFiletype.bind(Zotero.ZotFile);
-    this.str_format = str_format.bind(Zotero.ZotFile);
-    this.joinPath = joinPath.bind(Zotero.ZotFile);
-    this.copy2Clipboard = copy2Clipboard.bind(Zotero.ZotFile);
-    this.getPDFReader = getPDFReader.bind(Zotero.ZotFile);
-    this.removeItemTag = removeItemTag.bind(Zotero.ZotFile);
-    this.parseHTML = parseHTML.bind(Zotero.ZotFile);
-
     /**
      * Remove duplicate elements from array
      * @param  {array} x Array
      * @return {array}   Modified array.
      */
-    function removeDuplicates(x) {
+    this.removeDuplicates = function(x) {
         x = x.sort();
         var y = [];
 
@@ -31,14 +19,14 @@ Zotero.ZotFile.Utils = new function() {
             if (x[i-1] != x[i]) y.push(x[i]);
         }
         return(y);
-    }
+    }.bind(Zotero.ZotFile);
 
     /**
      * Remove element from array
      * @param  {array} arr Array
      * @return {array}     Array with element removed
      */
-    function removeFromArray (arr) {
+    this.removeFromArray = function (arr) {
         var what, a = Array.prototype.slice.call(arguments).splice(1), L = a.length, ax;
         while (L && arr.length) {
             what = a[--L];
@@ -47,7 +35,7 @@ Zotero.ZotFile.Utils = new function() {
             }
         }
         return arr;
-    }
+    }.bind(Zotero.ZotFile);
 
     /**
      * Search and replace string elements in array
@@ -56,41 +44,54 @@ Zotero.ZotFile.Utils = new function() {
      * @param  {string} replace Replace with
      * @return {array}          Updated array
      */
-    function arrayReplace(x, search, replace) {
+    this.arrayReplace = function(x, search, replace) {
         for(var i = 0; i < x.length; i++) {
             if(x[i] == search) x.splice(i, 1, replace);
         }
         return(x);
-    }
+    }.bind(Zotero.ZotFile);
 
     /**
      * Add suffix to filename
      * @param {string}  filename The filename
      * @param {integer} k        The suffix
      */
-    function addSuffix(filename, k) {
+    this.addSuffix = function(filename, k) {
         return filename.replace(/(\d{1,3})?(\.[\w\d]*)$/i, k + "$2");
-    }
+    }.bind(Zotero.ZotFile);
 
     /**
      * Get the file type from a filename
      * @param  {string} filename Filename with file extension.
      * @return {string}          File type.
      */
-    function getFiletype(filename) {
+    this.getFiletype = function(filename) {
         if (typeof filename != 'string')
             throw("Zotero.ZotFile.Utils.getFiletype(): 'path' is not a string.")
         var pos = filename.lastIndexOf('.');
         return pos == -1 ? '' : filename.substr(pos + 1);
-    }
+    }.bind(Zotero.ZotFile);
 
     /**
      * Format string using named placeholders such as '%(@name [name])'
      * @return {[type]} [description]
      */
-    function str_format(str, args) {
+    this.str_format = function(str, args) {
         return str.replace(/%\((\w+)\)/g, (match, name) => args[name]);
-    }
+    }.bind(Zotero.ZotFile);
+
+    /**
+     * Distance between two strings
+     * @param  {str} s1 First string
+     * @param  {str} s2 Second string
+     * @return {num}    distance
+     */
+    this.strDistance = function (s1, s2) {
+        s1 = Zotero.Utilities.trimInternal(s1).replace(/ /g,"");
+        s2 = Zotero.Utilities.trimInternal(s2).replace(/ /g,"");
+        var l = (s1.length > s2.length) ? s1.length : s2.length;
+        return Zotero.Utilities.levenshtein(s1, s2)/l;
+    }.bind(Zotero.ZotFile);
 
     /**
      * Complete file path
@@ -98,27 +99,27 @@ Zotero.ZotFile.Utils = new function() {
      * @param  {string} filename Filename
      * @return {string}          Completed and normalized path
      */
-    function joinPath(folder, filename) {
+    this.joinPath = function(folder, filename) {
         var path = folder + this.folderSep + filename;
         return OS.Path.normalize(path);
-    }
+    }.bind(Zotero.ZotFile);
 
     /**
      * Copy text to clipboard
      * @param  {string} txt Text to copy to clipboard
      * @return {void}
      */
-    function copy2Clipboard(txt) {
+    this.copy2Clipboard = function(txt) {
         const gClipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
             .getService(Components.interfaces.nsIClipboardHelper);
         gClipboardHelper.copyString(txt);
-    }
+    }.bind(Zotero.ZotFile);
 
     /**
      * Get path to default pdf reader application on windows
      * @return {string} Path to default pdf reader application
      */
-    function getPDFReader() {
+    this.getPDFReader = function() {
         if (!Zotero.isWin) throw('Zotero.ZotFile.Utils.getPDFReader(): Function only works on windows platforms.')
         var wrk = Components.classes["@mozilla.org/windows-registry-key;1"]
                 .createInstance(Components.interfaces.nsIWindowsRegKey);
@@ -184,7 +185,7 @@ Zotero.ZotFile.Utils = new function() {
         
         if(!command) return;
         return command[0].replace(/"/g, '');
-    }
+    }.bind(Zotero.ZotFile);
 
     /**
      * Remove item tag only if no child item has that tag
@@ -192,13 +193,13 @@ Zotero.ZotFile.Utils = new function() {
      * @param  {int} tag    Zotero tag it
      * @return {void}
      */
-    function removeItemTag(item, tag) {
+    this.removeItemTag = function(item, tag) {
         if(item.isRegularItem() && item.hasTag(tag)) {
             if(!Zotero.Items.get(item.getAttachments())
                 .some(function(att) {return att.hasTag(tag);}))
                     item.removeTag(tag);
         }
-    }
+    }.bind(Zotero.ZotFile);
 
     /**
      * Safely parse an HTML fragment, removing any executable
@@ -215,7 +216,7 @@ Zotero.ZotFile.Utils = new function() {
      *     XML fragments.
      * @param {boolean} isXML If true, parse the fragment as XML.
      */
-    function parseHTML(html) {
+    this.parseHTML = function(html) {
         var ioService = Components.classes["@mozilla.org/network/io-service;1"]
                         .getService(Components.interfaces.nsIIOService);
         var allowStyle = true,
@@ -235,5 +236,5 @@ Zotero.ZotFile.Utils = new function() {
         return Components.classes["@mozilla.org/feed-unescapehtml;1"]
                          .getService(Components.interfaces.nsIScriptableUnescapeHTML)
                          .parseFragment(html, !!isXML, baseURI, document.documentElement);
-    }
+    }.bind(Zotero.ZotFile);
 }

@@ -5,18 +5,11 @@
 
 Zotero.ZotFile.UI = new function() {
 
-    this.showCollectionMenu = showCollectionMenu.bind(Zotero.ZotFile);
-    this.buildZotFileCollectionMenu = buildZotFileCollectionMenu.bind(Zotero.ZotFile);
-    this.showMenu = showMenu.bind(Zotero.ZotFile);
-    this.buildZotFileMenu = buildZotFileMenu.bind(Zotero.ZotFile);
-    this.buildTabletMenu = buildTabletMenu.bind(Zotero.ZotFile);
-    this.attboxUpdateTabletStatus = attboxUpdateTabletStatus.bind(Zotero.ZotFile);
-
     /**
      * Show collection menu for saved tablet search
      * @return {void}
      */
-    function showCollectionMenu() {
+    this.showCollectionMenu = function() {
         // ZoteroPane object
         var doc = this.wm.getMostRecentWindow("navigator:browser").ZoteroPane.document;
         // check regular item or attachment selected & custom subfolders
@@ -25,9 +18,9 @@ Zotero.ZotFile.UI = new function() {
         doc.getElementById("id-zotfile-collection-separator").hidden = !collection_menu;
         doc.getElementById("id-zotfile-collection-showall").hidden = !collection_menu;
         doc.getElementById("id-zotfile-collection-restrict").hidden = !collection_menu;
-    }
+    }.bind(Zotero.ZotFile);
 
-    function buildZotFileCollectionMenu() {
+    this.buildZotFileCollectionMenu = function() {
         var win = this.wm.getMostRecentWindow('navigator:browser'),
             nodes = win.ZoteroPane.document.getElementById('id-zotfile-collection-menu').childNodes;
         // hide all items by default
@@ -46,9 +39,9 @@ Zotero.ZotFile.UI = new function() {
             // show menu item
             nodes[i + 3].setAttribute('hidden', false);
         }, this);
-    }
+    }.bind(Zotero.ZotFile);
 
-    function showMenu() {
+    this.showMenu = function() {
         // get selected items
         var pane = this.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
             items = pane.getSelectedItems();
@@ -58,9 +51,9 @@ Zotero.ZotFile.UI = new function() {
         pane.document.getElementById("id-zotfile-separator").hidden = !show_menu;
         pane.document.getElementById("id-zotfile-attach-file").hidden = !show_menu;
         pane.document.getElementById("id-zotfile-manage-attachments").hidden = !show_menu;
-    }
+    }.bind(Zotero.ZotFile);
 
-    function buildZotFileMenu() {
+    this.buildZotFileMenu = Zotero.Promise.coroutine(function* () {
         // get selected items
         var win = this.wm.getMostRecentWindow("navigator:browser"),
             items = win.ZoteroPane.getSelectedItems();
@@ -87,16 +80,16 @@ Zotero.ZotFile.UI = new function() {
         // list of disabled and show menu-items
         var disable = [m.tablet, m.warning1, m.warning2, m.warning3], show = [];
         // check selected items
-        var tag_ids = [Zotero.Tags.getID(this.Tablet.tag, 0), Zotero.Tags.getID(this.Tablet.tagMod, 0)];
+        var tags_tablet = [this.Tablet.tag, this.Tablet.tagMod];
         var atts = items
             .map(item => item.isRegularItem() ? Zotero.Items.get(item.getAttachments()) : item)
             .reduce((a, b) => a.concat(b), []);
-        var group_library = items[0].libraryID !== null,
-            menu_item = items.filter(item => item.isRegularItem() || item.isAttachment()).length > 0,
-            menu_att = atts.filter(att => att.isAttachment()).length > 0,
-            menu_tablet = atts.filter(att => att.isAttachment() && att.hasTags(tag_ids)).length > 0;
+        var group_library = items[0].libraryID != 1,
+            menu_item = items.some(item => item.isRegularItem() || item.isAttachment()),
+            menu_att = atts.some(att => att.isAttachment()),
+            menu_tablet = atts.some(att => this.Tablet.getTabletStatus(att));
         // check whether destination folder is defined (and valid)
-        var valid_destination = this.fileExists(this.getPref('tablet.dest_dir'));
+        var valid_destination = yield OS.File.exists(this.getPref('tablet.dest_dir'));
         // warnings
         if (!menu_item) {
             show.push(m.warning1);
@@ -144,7 +137,7 @@ Zotero.ZotFile.UI = new function() {
                         show.push(m.sep2,m.tablet);
                         // get first selected item
                         item=items[0];
-                        if(item.isAttachment()) if(item.getSource()) item=Zotero.Items.get(item.getSource());
+                        if(item.isAttachment()) if(item.parentItemID) item=Zotero.Items.get(item.parentItemID);
                         // create folders from collections
                         var folders = [];
                         var collections = item.getCollections();
@@ -204,9 +197,9 @@ Zotero.ZotFile.UI = new function() {
         // Show items
         for (i in show) menu.childNodes[show[i]].setAttribute('hidden', false);
 
-    }
+    }).bind(Zotero.ZotFile);
 
-    function buildTabletMenu() {
+    this.buildTabletMenu = function() {
         // get selected items
         var pane = this.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
             att = pane.getSelectedItems()[0],
@@ -292,9 +285,9 @@ Zotero.ZotFile.UI = new function() {
             menuitem.addEventListener('command', this.openSubfolderWindow);
             menupopup.appendChild(menuitem);
         }
-    }
+    }.bind(Zotero.ZotFile);
 
-    function attboxAddTabletRow() {
+    this.attboxAddTabletRow = function() {
         // add tablet row to attachment info
         var pane = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
             row = pane.document.createElement("row");
@@ -319,9 +312,9 @@ Zotero.ZotFile.UI = new function() {
         menupopup.setAttribute('id', 'zotfile-tablet-popup');
         popupset.appendChild(menupopup);
         return row;
-    }
+    }.bind(Zotero.ZotFile);
 
-    function attboxUpdateTabletStatus() {
+    this.attboxUpdateTabletStatus = function() {
         var pane = this.wm.getMostRecentWindow('navigator:browser').ZoteroPane,
             items = pane.getSelectedItems(),
             row = pane.document.getElementById('zotfile-tablet-row');
@@ -345,6 +338,6 @@ Zotero.ZotFile.UI = new function() {
         else {
             lab.setAttribute('value', 'No');
         }
-    }
+    }.bind(Zotero.ZotFile);
 
 }

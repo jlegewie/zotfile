@@ -19,31 +19,31 @@ Zotero JavaScript API
 http://www.zotero.org/support/dev/client_coding/javascript_api
 */
 
-Zotero.ZotFile = {
+Zotero.ZotFile = new function() {
 
-    prefs: null,
-    wm: null,
-    folderSep: null,
-    projectNr: new Array('01','02','03','04','05','06','07','08','09','10','11','12','13','14','15'),
-    projectPath: new Array('','','','','','','','','','','','','','',''),
-    projectMax: 15,
-    zotfileURL: 'http://www.zotfile.com',
-    changelogURL: 'http://zotfile.com/index.html#changelog',
-    temp: '',
-    messages_warning: [],
-    messages_report: [],
-    messages_error: [],
-    messages_fatalError: [],
-    excludeAutorenameKeys: [],
-    notifierID: null,
-    xhtml: 'http://www.w3.org/1999/xhtml',
+    this.prefs = null;
+    this.wm = null;
+    this.folderSep = null;
+    this.projectNr = new Array('01','02','03','04','05','06','07','08','09','10','11','12','13','14','15');
+    this.projectPath = new Array('','','','','','','','','','','','','','','');
+    this.projectMax = 15;
+    this.zotfileURL = 'http://www.zotfile.com';
+    this.changelogURL = 'http://zotfile.com/index.html#changelog';
+    this.temp = '';
+    this.messages_warning = [];
+    this.messages_report = [];
+    this.messages_error = [];
+    this.messages_fatalError = [];
+    this.excludeAutorenameKeys = [];
+    this.notifierID = null;
+    this.xhtml = 'http://www.w3.org/1999/xhtml';
 
     /**
      * Zotfile version changed, open webpage, make adjustments
      * @param  {string} version Current zotfile version
      * @return {void}
      */
-    versionChanges: function(version) {
+    this.versionChanges = function(version) {
         // open webpage
         var show_changelog = ['4.3', '4.1.1', '4.1', '4.0', '3.3', '3.2', '3.1', '2.0', '2.3'];
         if(this.getPref('version') === '' || show_changelog.includes(version)) {
@@ -54,13 +54,13 @@ Zotero.ZotFile = {
             this.setPref('pdfExtraction.openPdfMac', 'Skim');
         // set current version
         this.setPref('version', version);
-    },
+    };
 
     /**
      * Initiate zotfile
      * @return {void}
      */
-    init: function() {
+    this.init = function() {
         // only do this stuff for the first run
         if(this.prefs === null) {
             // defined zotfile variables
@@ -119,10 +119,10 @@ Zotero.ZotFile = {
             tree.removeEventListener('select', Zotero.ZotFile.UI.attboxUpdateTabletStatus);
             tree.addEventListener('select', Zotero.ZotFile.UI.attboxUpdateTabletStatus);
         }
-    },
+    };
 
 	// Localization (borrowed from Zotero sourcecode)
-	ZFgetString: function (name, params){
+	this.ZFgetString = function (name, params){
         var l10n = '';
 		this.stringsBundle = Components.classes['@mozilla.org/intl/stringbundle;1']
 			.getService(Components.interfaces.nsIStringBundleService)
@@ -142,7 +142,7 @@ Zotero.ZotFile = {
 			throw ('Localized string not available for ' + name);
 		}
 		return l10n;
-	},
+	};
 
     /**
      * Check whether attachment is valid for zotfile (not top-level item, file exists and not a web attachment)
@@ -150,7 +150,7 @@ Zotero.ZotFile = {
      * @param  {bool}   warning Show warning message (default is true)
      * @return {bool}
      */
-    validAttachment: function (att, warning) {
+    this.validAttachment = function (att, warning) {
         // set default setting
         warning = typeof warning !== 'undefined' ? warning : true;
         att = typeof att == 'number' ? Zotero.Items.get(att) : att;
@@ -161,14 +161,14 @@ Zotero.ZotFile = {
             return false;
         }
         return true;
-    },
+    };
 
     /**
      * Get preference value in 'extensions.zotfile' branch
      * @param  {string} pref     Name of preference in 'extensions.zotfile' branch
      * @return {string|int|bool} Value of preference.
      */
-    getPref: function(pref) {
+    this.getPref = function(pref) {
         var type = this.prefs.getPrefType(pref);
         if (type == 0)
             throw("Zotero.ZotFile.getPref(): Invalid preference value for '" + pref + "'")
@@ -178,14 +178,14 @@ Zotero.ZotFile = {
             return this.prefs.getIntPref(pref);
         if (type == this.prefs.PREF_BOOL)
             return this.prefs.getBoolPref(pref);
-    },
+    };
 
     /**
      * Set preference value in 'extensions.zotfile' branch
      * @param {string}          pref  Name of preference in 'extensions.zotfile' branch
      * @param {string|int|bool} value Value of preference
      */
-    setPref: function(pref, value) {        
+    this.setPref = function(pref, value) {        
         switch (this.prefs.getPrefType(pref)) {
             case this.prefs.PREF_BOOL:
                 return this.prefs.setBoolPref(pref, value);
@@ -198,24 +198,23 @@ Zotero.ZotFile = {
                 return this.prefs.setIntPref(pref, value);
         }
         throw('Zotero.ZotFile.setPref(): Unable to set preference.')
-    },
+    };
 
     /**
      * Get parent item
-     * @param  {zitem} item Zotero item
-     * @return {zitem}      Returns parent item
+     * @param  {Zotero.Item} item Zotero item
+     * @return {Zotero.Item}      Returns parent item
      */
-    getParent: function(item) {
-        var id = item.getSource();
-        return Zotero.Items.get(id);
-    },
+    this.getParent = function(item) {
+        return Zotero.Items.get(item.parentItemID);
+    };
 
     /**
      * Get array of select attachment IDs including all attachments for selected regular items
      * @param  {bool} all Get all attachments or only valid attachments (default is false)
      * @return {array}    Array with attachment ids
      */
-    getSelectedAttachments: function (all) {
+    this.getSelectedAttachments = function (all) {
         all = typeof all !== 'undefined' ? all : false;
         // get selected items
         var win = this.wm.getMostRecentWindow("navigator:browser");
@@ -226,50 +225,50 @@ Zotero.ZotFile = {
             .filter(item => item.isAttachment())
             .filter(att => att.attachmentLinkMode != Zotero.Attachments.LINK_MODE_LINKED_URL)
             .filter(att => (!all && this.validAttachment(att)) || (all && this.checkFileType(att)))
-            .map(att => att.getID());
+            .map(att => att.id);
         // remove duplicate elements
-        if(attachments.length > 0) attachments = this.Utils.removeDuplicates(attachments);
+        if(attachments.length > 0) attachments = Zotero.Utilities.arrayUnique(attachments);
         // return array with attachment ids
         return attachments;
-    },
+    };
 
     /**
      * Run code in the future to reduce current work load
      * @param  {function} aFunc Function to run
      * @return {void}
      */
-    futureRun: function(fn) {
+    this.futureRun = function(fn) {
         var tm = Components.classes["@mozilla.org/thread-manager;1"].getService(Components.interfaces.nsIThreadManager);
         tm.mainThread.dispatch({run: function(){fn();}},Components.interfaces.nsIThread.DISPATCH_NORMAL);
-    },
+    };
 
     /**
      * Open zotfile preference window
      */
-    openPreferenceWindow: function(paneID, action) {
+    this.openPreferenceWindow = function(paneID, action) {
         var io = {pane: paneID, action: action};
         window.openDialog('chrome://zotfile/content/options.xul',
             'zotfile-options',
             'chrome,titlebar,toolbar,centerscreen' + Zotero.Prefs.get('browser.preferences.instantApply', true) ? 'dialog=no' : 'modal', io
         );
-    },
+    };
 
     /**
      * Open subfolder window
      */
-    openSubfolderWindow: function(paneID, action) {
+    this.openSubfolderWindow = function(paneID, action) {
         var io = {pane: paneID, action: action};
         var prefWindow = window.openDialog('chrome://zotfile/content/options-projects.xul',
             'zotfile-tablet-subfolders',
             'chrome,titlebar,toolbar,centerscreen' + Zotero.Prefs.get('browser.preferences.instantApply', true) ? 'dialog=no' : 'modal', io
         );
-    },
+    };
 
     /**
      * Choose directory from file picker
      * @return {string} Path to file
      */
-    chooseDirectory: function () {
+    this.chooseDirectory = function () {
         var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
             .getService(Components.interfaces.nsIWindowMediator);
         var win = wm.getMostRecentWindow('navigator:browser');
@@ -285,26 +284,26 @@ Zotero.ZotFile = {
             var file = fp.file;
             return file.path;
         }
-    },
+    };
 
     // show report messages
-    showReportMessages: function(title){
+    this.showReportMessages = function(title){
         if(this.messages_report.length > 0) this.infoWindow(title, {lines: this.messages_report});
         this.messages_report = [];
-    },
+    };
 
     // show warnings messages
-    showWarningMessages: function(title,txt){
+    this.showWarningMessages = function(title,txt){
         // default argument
         txt = typeof txt !== 'undefined' ? txt : '';
         // show warning messages
         if(this.messages_warning.length > 0) this.infoWindow(title, {lines: this.messages_warning, txt:txt});
         this.messages_warning = [];
-    },
+    };
 
-    handleErrors: function(error_message) {
+    this.handleErrors = function(error_message) {
         if (error_message !== undefined) this.messages_error.push(error_message);
-        var errors = {lines: this.messages_error},
+        var errors = {lines: this.messages_error};
             on_click = null,
             duration = this.getPref('info_window_duration');
         // fatal errors
@@ -324,7 +323,7 @@ Zotero.ZotFile = {
                 if (typeof e == 'object') Zotero.logError(e);
                 return typeof e == 'object' ? format_error(e) : e;
             });
-            errors_str = this.Utils.removeDuplicates(errors_str).join('\n\n');
+            errors_str = Zotero.Utilities.arrayUnique(errors_str).join('\n\n');
             on_click = function() {
                 Zotero.ZotFile.Utils.copy2Clipboard(errors_str);
             };
@@ -332,16 +331,16 @@ Zotero.ZotFile = {
         // error messages
         if(errors.lines.length > 0) {
             // remove duplicates
-            errors.lines = this.Utils.removeDuplicates(errors.lines);
+            errors.lines = Zotero.Utilities.arrayUnique(errors.lines);
             // show errors
             this.infoWindow(this.ZFgetString('general.error'),errors,duration,on_click);
         }
         // empty error arrays
         this.messages_error = [];
         this.messages_fatalError = [];
-    },
+    };
 
-    infoWindow: function(main, message, time, callback){
+    this.infoWindow = function(main, message, time, callback){
         // default arguments
         main = typeof main !== 'undefined' ? main : 'title';
         message = typeof message !== 'undefined' ? message : 'message';
@@ -374,16 +373,16 @@ Zotero.ZotFile = {
             pw.addCallback(callback);
         // return window
         return(pw);
-    },
+    };
 
-    progressWindow: function(title) {
+    this.progressWindow = function(title) {
         var progressWin = new Zotero.ZotFile.ProgressWindow();
         progressWin.changeHeadline(title);
         progressWin.show();
         return progressWin;
-    },
+    };
 
-    promptUser: function(message,but_0,but_1_cancel,but_2) {
+    this.promptUser = function(message,but_0,but_1_cancel,but_2) {
         var prompts = Components.classes['@mozilla.org/embedcomp/prompt-service;1']
                     .getService(Components.interfaces.nsIPromptService);
 
@@ -398,9 +397,9 @@ Zotero.ZotFile = {
 
         return(button);
 
-    },    
+    };    
 
-    addUserInput: function(filename, original_filename){
+    this.addUserInput = function(filename, original_filename){
         var default_str = this.getPref('userInput_Default');
         if (default_str=='[original filename]') default_str=original_filename;
         var filesuffix = prompt(this.ZFgetString('renaming.addUserInput.prompt', [original_filename, filename]), default_str);
@@ -409,9 +408,9 @@ Zotero.ZotFile = {
             filename = filename + ' (' + filesuffix + ')';
         }
         return(filename);
-    },
+    };
 
-    checkFileType: function (obj) {
+    this.checkFileType = function (obj) {
         if(!this.getPref('useFileTypes')) return(true);
         var filename;
         if(obj.leafName) {
@@ -426,16 +425,16 @@ Zotero.ZotFile = {
             regex = this.getPref('filetypes').toLowerCase().replace(/,/gi, '|');
         // return value
         return filetype.search(new RegExp(regex)) >= 0 ? true : false;
-    },    
+    };    
 
     /**
      * Get filename based on metadata from zotero item
-     * @param  {zitem}  item   Zotero item for metadata
-     * @param  {string} name   Current filename as fallback and for extension
-     * @param  {string} format Formatting rules based on wildcards
-     * @return {string}        Formatted filename with extension
+     * @param  {Zotero.Item}  item   Zotero item for metadata
+     * @param  {string}       name   Current filename as fallback and for extension
+     * @param  {string}       format Formatting rules based on wildcards
+     * @return {string}              Formatted filename with extension
      */
-    getFilename: function(item, name, format) {
+    this.getFilename = function(item, name, format) {
         // check function arguments
         if (!item.isRegularItem()) throw('getFilename: Not regular zotero item.');
         // check whether renaming is disabled
@@ -471,15 +470,15 @@ Zotero.ZotFile = {
         filename = Zotero.File.getValidFileName(filename);
         // return
         return(filename);
-    },
+    };
 
     /**
      * Format subfolder based on rule
-     * @param  {zitem}  item   Zotero item for metadata
-     * @param  {string} format Rule to construct subfolder with wildcards (e.g. '%j/%y')
-     * @return {string}        Formatted subfolder such as 'Author/2010'
+     * @param  {Zotero.Item} item   Zotero item for metadata
+     * @param  {string}      format Rule to construct subfolder with wildcards (e.g. '%j/%y')
+     * @return {string}             Formatted subfolder such as 'Author/2010'
      */
-    formatSubfolder: function(item, format) {
+    this.formatSubfolder = function(item, format) {
         if (format == '') return '';
         var subfolder = this.Wildcards.replaceWildcard(item, format);
         if (subfolder[0] == this.folderSep) subfolder = subfolder.slice(1);
@@ -489,16 +488,16 @@ Zotero.ZotFile = {
             .map(s => Zotero.File.getValidFileName(s))
             .join(this.folderSep);
         return OS.Path.normalize(subfolder);
-    },
+    };
 
     /**
      * Function to get location of file based on zotero item metadata
-     * @param  {string} basefolder Basefolder
-     * @param  {zitem}  item       Zotero item  for metadata
-     * @param  {string} format     Rule to construct subfolder with wildcards (e.g. '%j/%y')
-     * @return {string}            Folder path
+     * @param  {string}      basefolder Basefolder
+     * @param  {Zotero.Item} item       Zotero item  for metadata
+     * @param  {string}      format     Rule to construct subfolder with wildcards (e.g. '%j/%y')
+     * @return {string}                 Folder path
      */
-    getLocation: function(basefolder, item, format) {
+    this.getLocation = function(basefolder, item, format) {
         // check function arguments
         if (!item.isRegularItem()) throw('getLocation: Not regular zotero item.');
         if (typeof basefolder != 'string') throw("getLocation: 'basefolder' not string.");
@@ -506,14 +505,14 @@ Zotero.ZotFile = {
         // combine folder and subfolder
         var subfolder = this.formatSubfolder(item, format);
         return OS.Path.join(OS.Path.normalize(basefolder), subfolder);
-    },
+    };
 
     /**
      * Create nsIFile from path (https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIFile)
      * @param  {string}  path Valid file path.
      * @return {nsIFile}      nsIFile file object
      */
-    createFile: function(path) {
+    this.createFile = function(path) {
         try {
             var file = Components.classes["@mozilla.org/file/local;1"].
                 createInstance(Components.interfaces.nsIFile);
@@ -525,9 +524,9 @@ Zotero.ZotFile = {
             throw("Zotero.ZotFile.createFile(): Unkown error.")
         }
         return(file);
-    },
+    };
 
-    runProcess: function(command, args, blocking) {
+    this.runProcess = function(command, args, blocking) {
         // default arguments
         blocking = typeof blocking !== 'undefined' ? blocking : true;
         try {
@@ -549,15 +548,15 @@ Zotero.ZotFile = {
             Components.utils.reportError(err);
             return (-1);
         }
-    },
+    };
 
     /**
      * Check whether file exists
-     * @param  {nslFile|string|zitem} obj      nslFile, path to directory or string (string) or Zotero attachment item
-     * @param  {string}               filename Filename if obj is string
+     * @param  {nslFile|string|Zotero.Item} obj      nslFile, path to directory or string (string) or Zotero attachment item
+     * @param  {string}                     filename Filename if obj is string
      * @return {bool}
      */
-    fileExists: function(obj, filename) {
+    this.fileExists = function(obj, filename) {
         // nsIFile object
         if (obj instanceof Components.interfaces.nsIFile) {
             if (typeof filename == 'string') obj = this.createFile(OS.Path.join(obj.path, filename));
@@ -574,59 +573,77 @@ Zotero.ZotFile = {
                 return obj.fileExists();
         // return false
         return false;
-    },
+    };
 
     /**
      * Move a linked attachment to a new location
-     * @param  {zitem} att        Zotero attachment to move
-     * @param  {string} location  Folder
-     * @param  {string} filename  Filename
-     * @param  {bool} overwrite   Overwrite existing files in new location
-     * @return {bool}             Indicates whether successful
+     * (mostly adopted from `Zotero.Item.prototype.renameAttachmentFile` )
+     * @param  {Zotero.Item} att       Zotero attachment to move
+     * @param  {string}      location  Folder
+     * @param  {string}      filename  Filename
+     * @param  {bool}        overwrite Overwrite existing files in new location
+     * @return {bool}                  Indicates whether successful
      */
-    moveLinkedAttachmentFile: function(att, location, filename, overwrite) {
+    this.moveLinkedAttachmentFile = Zotero.Promise.coroutine(function* (att, location, filename, overwrite) {
         if (!att.isAttachment() || att.attachmentLinkMode !== Zotero.Attachments.LINK_MODE_LINKED_FILE || !att.getFile())
             return false;
-        // get file
-        var file = att.getFile(),
-            mod_time = file.lastModifiedTime;
+        var origPath = yield att.getFilePathAsync();
+        if (!origPath) {
+            Zotero.debug("Attachment file not found in renameAttachmentFile()", 2);
+            return false;
+        }
+        
         try {
-            if(location.trim() == this.folderSep) {
-                //no place to move the file, so rename it in-place
-                this.infoWindow(this.ZFgetString('general.warning'), 'Custom location for files not set. File is renamed only.');
-                location = file.parent.path;
-            }
-            // destination file path
-            var dest = this.createFile(location);
-            dest.append(filename);
+            var origName = OS.Path.basename(origPath);
+            var origModDate = (yield OS.File.stat(origPath)).lastModificationDate;
+            
+            filename = Zotero.File.getValidFileName(filename);
+            
+            var destPath = OS.Path.join(location, filename);
+            var destName = OS.Path.basename(destPath);
+
             // Ignore if no change
-            if (file.path === dest.path) return true;
+            if (origPath === destPath) {
+                Zotero.debug("Filename has not changed");
+                return true;
+            }
+            
             // Update mod time and clear hash so the file syncs
             // TODO: use an integer counter instead of mod time for change detection
             // Update mod time first, because it may fail for read-only files on Windows
-            file.lastModifiedTime = new Date();            
-            var path = this.moveFile(file, location, filename);
-            if (!path) return false;
-            dest = this.createFile(path);
-            att.relinkAttachmentFile(dest);
-            att.setField('title', dest.leafName);
-            att.save();
-            // Zotero database
-            Zotero.DB.beginTransaction();
-            Zotero.Sync.Storage.setSyncedHash(att.id, null, false);
-            Zotero.Sync.Storage.setSyncState(att.id, Zotero.Sync.Storage.SYNC_STATE_TO_UPLOAD);
-            Zotero.DB.commitTransaction();
+            yield OS.File.setDates(origPath, null, null);
+            var result = yield OS.File.move(origPath, destPath, { noOverwrite: !overwrite })
+            // If no overwriting and file exists, return -1
+            .catch(OS.File.Error, function (e) {
+                if (e.becauseExists) {
+                    return false;
+                }
+                throw e;
+            });
+            if (result) {
+                return result;
+            }
+            
+            yield att.relinkAttachmentFile(destPath);
+            
+            att.attachmentSyncedHash = null;
+            att.attachmentSyncState = "to_upload";
+            yield att.saveTx({ skipAll: true });
+            
+            return true;
         }
         catch (e) {
             // Restore original modification date in case we managed to change it
-            try { file.lastModifiedTime = mod_time } catch (e) {}
+            try {
+                OS.File.setDates(origPath, null, origModDate);
+            } catch (e) {
+                Zotero.debug(e, 2);
+            }
             Zotero.debug(e);
             Components.utils.reportError(e);
             return false;
         }
-        // return
-        return true;
-    },
+    });
 
     /**
      * Move file to new location
@@ -635,7 +652,7 @@ Zotero.ZotFile = {
      * @param  {string} filename Name of file.
      * @return {string}          Path to new location of file.
      */
-    moveFile: function(file, target, filename) {
+    this.moveFile = function(file, target, filename) {
         // check arguments
         if (!(file instanceof Components.interfaces.nsIFile)) throw("Zotero.ZotFile.moveFile(): 'file' is not nsIFile object.")
         if (!file.exists()) throw("Zotero.ZotFile.moveFile(): 'file' does not exists.")
@@ -670,7 +687,7 @@ Zotero.ZotFile = {
         this.removeEmptyFolders(this.createFile(file_dirname));
         // return path to new location
         return(file.path);
-    },
+    };
 
     /**
      * Copy file to new location
@@ -679,7 +696,7 @@ Zotero.ZotFile = {
      * @param  {string} filename    Name of file.
      * @return {string}             Path to new location of file.
      */
-    copyFile: function(file, destination, filename) {
+    this.copyFile = function(file, destination, filename) {
         // check arguments
         if (!(file instanceof Components.interfaces.nsIFile)) throw("Zotero.ZotFile.copyFile(): 'file' is not nsIFile object.")
         if (!file.exists()) throw("Zotero.ZotFile.copyFile(): 'file' does not exists.")
@@ -699,14 +716,14 @@ Zotero.ZotFile = {
         file.copyTo(target, filename);
         // return file
         return this.createFile(this.Utils.joinPath(target.path, filename));
-    },
+    };
 
     /**
      * Delete file or folder
      * @param  {nsIFile} file File or folder to be removed as nsIFile object
      * @return {void}
      */
-    removeFile: function(file) {
+    this.removeFile = function(file) {
         if (!file.exists()) return;
         try {
             // remove file
@@ -726,14 +743,14 @@ Zotero.ZotFile = {
         catch(err) {
             if(file.isDirectory()) this.infoWindow(this.ZFgetString('general.report'), this.ZFgetString('file.removeFolderFailed'));
         }
-    },
+    };
 
     /**
      * Remove empty folders recursively within zotfile directories
      * @param  {nsIFile} folder Folder as nsIFile.
      * @return {void}
      */
-    removeEmptyFolders: function(folder) {
+    this.removeEmptyFolders = function(folder) {
         // Keep track of zotero's internal directory, current source and destination directory
         var folders_zotfile = [Zotero.getStorageDirectory().path];
         var source_dir = this.getSourceDir(false),
@@ -755,9 +772,9 @@ Zotero.ZotFile = {
             // Try the parent of the current folder too
             folder = this.createFile(OS.Path.dirname(folder.path));
         }
-    },
+    };
 
-    showFolder: function(folderFile) {
+    this.showFolder = function(folderFile) {
         // create folder if it does not exsist
         Zotero.File.createDirectoryIfMissing(folderFile);
 
@@ -774,14 +791,14 @@ Zotero.ZotFile = {
             var io = {alertText: folderFile.path};
             window.openDialog('chrome://zotero/content/selectableAlert.xul', "zotero-reveal-window", "chrome", io);
         }
-    },
+    };
 
     /**
      * Get all valid files in folder
      * @param  {string} path Path to directory
-     * @return {array}       Array with nsIFile objects for each valid file in folder
+     * @return {array}       Array with string paths for each valid file in folder
      */
-    getFilesInFolder: function(path) {
+    this.getFilesInFolder = function(path) {
         var dir = this.createFile(path);
         if (!dir.isDirectory()) throw("Zotero.ZotFile.getSortedFilesInDirectory(): '" + path + "' is not directory.")
         var pref_filetypes = this.getPref('useFileTypes'),
@@ -798,15 +815,15 @@ Zotero.ZotFile = {
             entries.push(file);
         }
         // return sorted directory entries
-        return entries;
-    },
+        return entries.map(f => f.path);
+    };
 
     /**
      * Get the last modified file from directory
      * @param  {string} path Path to directory
-     * @return {nsIFile}     Last modified file in folder as nsIFile or undefined.
+     * @return {string}      Path to last modified file in folder or undefined.
      */
-    getLastFileInFolder: function(path) {
+    this.getLastFileInFolder = function(path) {
         var dir = this.createFile(path);
         if (!dir.isDirectory()) throw("Zotero.ZotFile.getSortedFilesInDirectory(): '" + path + "' is not directory.")
         var pref_filetypes = this.getPref('useFileTypes'),
@@ -823,14 +840,14 @@ Zotero.ZotFile = {
             if (file.isFile() && file.lastModifiedTime > lastmod.lastModifiedTime) lastmod = file;
         }
         // return sorted directory entries
-        return lastmod.lastModifiedTime == 0 ? undefined : lastmod;
-    },
+        return lastmod.lastModifiedTime == 0 ? undefined : lastmod.path;
+    };
 
     /**
      * Get Firefox download folder
      * @return {string} Path to download folder
      */
-    getFFDownloadFolder: function () {
+    this.getFFDownloadFolder = function () {
         var path = '';
         try {
             if(this.ffPrefs.getBoolPref('useDownloadDir')) {
@@ -846,14 +863,14 @@ Zotero.ZotFile = {
             path = '';
         }
         return path;
-    },
+    };
 
     /**
      * Get zotfile's source directory
      * @param  {bool} message Show error message if invalid source directory
      * @return {string}       Path for directory of 'undefined' if invalid directory
      */
-    getSourceDir: function(message) {
+    this.getSourceDir = function(message) {
         var source_dir = this.getPref('source_dir_ff') ? this.getFFDownloadFolder() : this.getPref('source_dir');
         // valid source directory?
         if (source_dir == "" || !this.fileExists(source_dir)) {
@@ -861,39 +878,40 @@ Zotero.ZotFile = {
             return undefined;
         }
         return source_dir;
-    },
+    };
 
     /**
      * Attach file to zotero items
-     * @param  {zitem}   item Regular zotero item.
-     * @param  {nsIFile} file File object.
-     * @return {int}          Zotero attachment id.
+     * @param  {Zotero.Item} item  Regular zotero item.
+     * @param  {string}      path  Filepath.
+     * @return {int}               Zotero attachment id
      */
-    attachFile: function(item, file) {
+    this.attachFile = Zotero.Promise.coroutine(function* (item, path) {
         if (!item.isRegularItem()) throw("Zotero.ZotFile.attachFile(): 'item' is not a regular zotero attachment item.");
         // create linked or imported attachment from file
-        var att_id = this.getPref('import') || item.libraryID ?
-                Zotero.Attachments.importFromFile(file, item.getID(), item.libraryID) :
-                Zotero.Attachments.linkFromFile(file, item.getID(), item.libraryID);
-        // rename and move attachment
-        var att = Zotero.Items.get(att_id);
-        var att_id = this.renameAttachment(att);
-        // remove file
-        if (file.exists()) this.removeFile(file);
-        // return attachment item
-        return Zotero.Items.get(att_id);
-    },
+        var options = {file: path, libraryID: item.libraryID, parentItemID: item.id, collections: undefined};
+        // create attachment
+        var att_promise = this.getPref('import') || item.libraryID ?
+                Zotero.Attachments.importFromFile(options) :
+                Zotero.Attachments.linkFromFile(options);
+        // return renamed and moved attachment
+        return att_promise.then(this.renameAttachment.bind(this))
+            // remove file
+            .then(att => {OS.File.remove(path); return att;})
+            // Catch errors
+            .catch(e => this.infoWindow('ERROR', format_error(e)));
+    });
 
     /**
      * Attach last file (or all files) from source directory
      * @return {void}
      */
-    attachFileFromSourceDirectory: function() {
+    this.attachFileFromSourceDirectory = Zotero.Promise.coroutine(function* () {
         // get selected items
         var win = this.wm.getMostRecentWindow("navigator:browser"),
             item = win.ZoteroPane.getSelectedItems()[0];
         // if not top-level item, get parent
-        item = !item.isTopLevelItem() ? Zotero.Items.get(item.getSource()) : item;
+        item = !item.isTopLevelItem() ? Zotero.Items.get(item.parentItemID) : item;
         // check whether regular item
         if (!item.isRegularItem()) {
             this.handleErrors(this.ZFgetString('renaming.renameAttach.wrongItem'));
@@ -909,36 +927,36 @@ Zotero.ZotFile = {
         }
         if (!source_dir) return;
         // get files from source directory
-        var file = !this.getPref("allFiles") ? [this.getLastFileInFolder(source_dir)] : this.getFilesInFolder(source_dir);
-        if (!file[0]) {
+        var paths = !this.getPref("allFiles") ? [this.getLastFileInFolder(source_dir)] : this.getFilesInFolder(source_dir);
+        if (!paths[0]) {
             this.handleErrors(this.ZFgetString('renaming.renameAttach.noFileFound'));
             return;
         }
         // confirmation
         if (this.getPref("confirmation"))
-            if(!confirm(this.ZFgetString('renaming.renameAttach.confirm', [file[0].leafName])))
+            if(!confirm(this.ZFgetString('renaming.renameAttach.confirm', [OS.Path.basename(paths[0])])))
                 return;
         // attach files
         var progress_win = this.progressWindow(this.ZFgetString('general.newAttachmentsAdded'));
-        for (var i = 0; i < file.length; i++) {
-            var att = this.attachFile(item, file[i]);
+        for (var i = 0; i < paths.length; i++) {
+            let att = yield this.attachFile(item, paths[i]);
             progress = new progress_win.ItemProgress(att.getImageSrc(), att.getField('title'));
             progress.setProgress(100);
         }
         progress_win.startCloseTimer(this.getPref("info_window_duration"));
-    },
+    });
 
     /**
      * Rename attachment file based on parent item metadata.
-     * @param  {zitem}  att       Zotero attachment item.
-     * @param  {bool}   imported  Create imported Zotero attachment.
-     * @param  {bool}   rename    Rename attachment file.
-     * @param  {string} folder    Custom location if not imported attachment.
-     * @param  {string} subfolder Subfolder location if not important attachment
-     * @param  {book}   verbose   Notification about renaming.
-     * @return {string}           Zotero ID (new) item.
+     * @param  {Zotero.Item} att       Zotero attachment item.
+     * @param  {bool}        imported  Create imported Zotero attachment.
+     * @param  {bool}        rename    Rename attachment file.
+     * @param  {string}      folder    Custom location if not imported attachment.
+     * @param  {string}      subfolder Subfolder location if not important attachment
+     * @param  {book}        verbose   Notification about renaming.
+     * @return {Zotero.Item}           Zotero item for renamed attachment.
      */
-    renameAttachment: function(att, imported, rename, folder, subfolder, verbose) {
+    this.renameAttachment = Zotero.Promise.coroutine(function* (att, imported, rename, folder, subfolder, verbose) {
         // default arguments
         var subfolder_default = this.getPref('subfolder') ? this.getPref('subfolderFormat') : '';
         imported = typeof imported !== 'undefined' ? imported : this.getPref('import');
@@ -953,99 +971,107 @@ Zotero.ZotFile = {
         // set variables
         var win = this.wm.getMostRecentWindow("navigator:browser"),
             selection = win.ZoteroPane.itemsView.saveSelection(),
-            att_id = att.getID(),
+            att_id = att.id,
             linkmode = att.attachmentLinkMode,
-            item = Zotero.Items.get(att.getSource()),
+            item = Zotero.Items.get(att.parentItemID),
             file = att.getFile(),
-            note = att.getNote(),
-            tags = att.getTags().map(tag => tag._get('name')),
-            related_items = att.relatedItems;
+            att_note = att.getNote(),
+            att_tags = att.getTags().map(tag => tag.tag),
+            att_relations = att.getRelations();
         // only proceed if linked or imported attachment
-        if(!att.isImportedAttachment() && !linkmode==Zotero.Attachments.LINK_MODE_LINKED_FILE)
-            return att_id;
+        if(!att.isImportedAttachment() && !linkmode == Zotero.Attachments.LINK_MODE_LINKED_FILE)
+            return att;
         // get filename and location
         var filename = rename ? this.getFilename(item, file.leafName) : file.leafName,
             location = this.getLocation(folder, item, subfolder);
         // (a) linked to imported attachment
         if (imported && linkmode == Zotero.Attachments.LINK_MODE_LINKED_FILE) {
-            // attach file to selected Zotero item
-            var id = Zotero.Attachments.importFromFile(file, item.getID(), item.libraryID);
-            // remove file from hard-drive (and delete empty folders after importing file)
-            file.remove(false);
-            this.removeEmptyFolders(file.parent);
+            // when the only attachment, select parent item
+            if (item.getAttachments().length == 1)
+                win.ZoteroPane.itemsView.selectItems(
+                    this.Utils.arrayReplace(selection.slice(), att_id, item.id)); 
             // erase old attachment
-            att.erase();
-            // create new attachment object
-            att = Zotero.Items.get(id);
+            att.eraseTx();
+            // attach file to selected Zotero item and return new attachment object
+            var options = {file: file, libraryID: item.libraryID, parentItemID: item.id, collections: undefined};
+            att = yield Zotero.Attachments.importFromFile(options);
+            // remove file from hard-drive (and delete empty folders after importing file)
+            OS.File.remove(file.path);
+            this.removeEmptyFolders(file.parent);
             // rename file associated with attachment
-            att.renameAttachmentFile(filename);
+            yield att.renameAttachmentFile(filename);
             // change title of attachment item
             att.setField('title', filename);
             // restore attachment data
-            att.relatedItems = related_items;
-            if(note != "") att.setNote(note);
-            if(tags) att.addTags(tags);
-            att.save();
+            att.setRelations(att_relations);
+            if(att_note != '') att.setNote(att_note);
+            if(att_tags.length > 0) att_tags.forEach(tag => att.addTag(tag));
+            yield att.saveTx();
             // restore selection
-            selection = this.Utils.arrayReplace(selection, att_id, id);
-            if(Zotero.version >= "3") win.ZoteroPane.itemsView.selectItems(selection);
+            ZoteroPane.itemsView.expandSelectedRows()
+            selection = this.Utils.arrayReplace(selection, att_id, att.id);
+            win.ZoteroPane.itemsView.selectItems(selection);
             // notification
             if (verbose) this.messages_report.push(this.ZFgetString('renaming.imported', [filename]));
         }
         // (b) imported to imported attachment (or cloud library)
-        if ((imported && att.isImportedAttachment()) || item.libraryID) {
+        if ((imported && att.isImportedAttachment()) || item.library.libraryType != 'user') {
             // rename file associated with attachment
-            att.renameAttachmentFile(filename);
+            yield att.renameAttachmentFile(filename);
             // change title of attachment item
             att.setField('title', filename);
-            att.save();
+            yield att.saveTx();
             // notification
             if (verbose) this.messages_report.push(this.ZFgetString('renaming.imported', [filename]));
         }
         // (c) imported to linked attachment (only if library is local)
-        if (att.isImportedAttachment() && !imported && !item.libraryID) {
+        if (att.isImportedAttachment() && !imported && item.library.libraryType == 'user') {
             // move pdf file
             var path = this.moveFile(file, location, filename);
-            if (!path) return att_id;
+            if (!path) return att;
             // recreate the outfile nslFile Object
             file = this.createFile(path);
-            // create linked attachment
-            var id = Zotero.Attachments.linkFromFile(file, item.getID(), item.libraryID);
+            // when the only attachment, select parent item
+            if (item.getAttachments().length == 1)
+                win.ZoteroPane.itemsView.selectItems(
+                    this.Utils.arrayReplace(selection.slice(), att_id, item.id)); 
             // erase old attachment
-            att.erase();
-            // create new attachment object
-            att = Zotero.Items.get(id);
+            att.eraseTx();
+            // create linked attachment
+            var options = {file: file, libraryID: item.libraryID, parentItemID: item.id, collections: undefined};
+            att = yield Zotero.Attachments.linkFromFile(options);
             // rename file associated with attachment
-            att.renameAttachmentFile(filename);
+            yield att.renameAttachmentFile(filename);
             // change title of attachment item
             att.setField('title', filename);
             // restore attachment data
-            att.relatedItems = related_items;
-            if(note != '') att.setNote(note);
-            if(tags) att.addTags(tags);
-            att.save();
+            att.setRelations(att_relations);
+            if(att_note != '') att.setNote(att_note);
+            if(att_tags.length > 0) att.addTags(att_tags);
+            yield att.saveTx();
             // restore selection
-            selection = this.Utils.arrayReplace(selection, att_id, id);
-            if(Zotero.version >= '3') win.ZoteroPane.itemsView.selectItems(selection);
+            ZoteroPane.itemsView.expandSelectedRows()
+            selection = this.Utils.arrayReplace(selection, att_id, att.id);
+            win.ZoteroPane.itemsView.selectItems(selection);
             // notification and return
             if(verbose) this.messages_report.push(this.ZFgetString('renaming.linked', [filename]));
         }
         // (d) linked to linked attachment (only if library is local)
-        if (!att.isImportedAttachment() && !imported && !item.libraryID) {
+        if (!att.isImportedAttachment() && !imported && item.library.libraryType == 'user') {
             // relink attachment
-            this.moveLinkedAttachmentFile(att, location, filename, false);
+            yield this.moveLinkedAttachmentFile(att, location, filename, false);
             // notification
             if(verbose) this.messages_report.push(this.ZFgetString('renaming.linked', [filename]));
         }
         // return id of attachment
-        return att.getID();
-    },
+        return att;
+    });
 
     /**
      * Rename select attachments
      * @return {void}
      */
-    renameSelectedAttachments: function() {
+    this.renameSelectedAttachments = Zotero.Promise.coroutine(function* () {
         // get selected attachments
         var atts = this.getSelectedAttachments(true);
         if (atts.length === 0) {
@@ -1072,10 +1098,9 @@ Zotero.ZotFile = {
                     continue;
                 }
                 // Rename and Move Attachment
-                var item = Zotero.Items.get(att.getSource()),
+                var item = Zotero.Items.get(att.parentItemID),
                     file = att.getFile();
-                var id = this.renameAttachment(att);
-                att = Zotero.Items.get(id);
+                att = yield this.renameAttachment(att);
                 if(!att) {
                     progress.setError();
                     continue;
@@ -1092,5 +1117,5 @@ Zotero.ZotFile = {
         if(description) progress_win.addDescription(this.ZFgetString('general.warning.skippedAtt.msg'));
         progress_win.startCloseTimer(this.getPref("info_window_duration"));
         this.handleErrors();
-    }
+    });
 };

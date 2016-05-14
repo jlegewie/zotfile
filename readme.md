@@ -34,6 +34,11 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 5.0.0
+
+- Compatibility with Zotero 5.0 (involves rewrite of codebase)
+- REMOVED FUNCTION: Watching folders is not possible anymore. This was always more a hack and resource intense.
+
 #### Changes in 4.2.5
 
 - Compatibility with [Juris-M](https://juris-m.github.io/)
