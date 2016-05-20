@@ -4,6 +4,8 @@
  */
 Zotero.ZotFile.notifierCallback = new function() {
 
+    this.progress_win = null;
+
     /**
      * Callback function for the event listener
      * https://www.zotero.org/support/dev/client_coding/javascript_api#notification_system
@@ -43,9 +45,9 @@ Zotero.ZotFile.notifierCallback = new function() {
      * @return {void}
      */
     var rename = Zotero.Promise.coroutine(function* (attachments) {
-        var auto_rename = this.getPref('automatic_renaming'),
-            progress_win = new this.ProgressWindow();
-        progress_win.changeHeadline(this.ZFgetString('general.newAttachmentRenamed'));
+        var auto_rename = this.getPref('automatic_renaming');
+        this.notifierCallback.progress_win = new this.ProgressWindow();
+        this.notifierCallback.progress_win.changeHeadline(this.ZFgetString('general.newAttachmentRenamed'));
         // iterate through attachments
         attachments = attachments
             .filter(att => att.isImportedAttachment() && !att.isTopLevelItem())
@@ -87,15 +89,15 @@ Zotero.ZotFile.notifierCallback = new function() {
             // always rename
             if(auto_rename == 4) on_confirm(att);
         }
-        progress_win.startCloseTimer();
+        this.notifierCallback.progress_win.startCloseTimer();
     }.bind(Zotero.ZotFile));
 
     var on_confirm = Zotero.Promise.coroutine(function* (att) {
         // rename attachment
         att = yield this.renameAttachment(att);
         // user notification
-        progress_win.show();
-        progress = new progress_win.ItemProgress(att.getImageSrc(), att.getField('title'));
+        this.notifierCallback.progress_win.show();
+        progress = new this.notifierCallback.progress_win.ItemProgress(att.getImageSrc(), att.getField('title'));
         progress.setProgress(100);
     }.bind(Zotero.ZotFile));
 }
