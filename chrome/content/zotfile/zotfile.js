@@ -301,6 +301,14 @@ Zotero.ZotFile = new function() {
         this.messages_warning = [];
     };
 
+    this.format_error = function(e) {
+        var name = e.name ? e.name : 'Error',
+            message = e.message ? e.message : 'undefined message',
+            fileName = e.fileName ? e.fileName : (e.filename ? e.filename : 'undefined file'),
+            lineNumber = e.lineNumber ? e.lineNumber : 'undefined line number';
+        return name + ': ' + message + ' \n(' + fileName + ', ' + lineNumber + ')';
+    };
+
     this.handleErrors = function(error_message) {
         if (error_message !== undefined) this.messages_error.push(error_message);
         var errors = {lines: this.messages_error};
@@ -312,16 +320,10 @@ Zotero.ZotFile = new function() {
             errors.lines.push(this.ZFgetString('error.unknown'));
             errors.txt = this.ZFgetString('error.clickToCopy');
             // prepare error message for clipboard
-            var format_error = function(e) {
-                var name = e.name ? e.name : 'Error',
-                    message = e.message ? e.message : 'undefined message',
-                    fileName = e.fileName ? e.fileName : (e.filename ? e.filename : 'undefined file'),
-                    lineNumber = e.lineNumber ? e.lineNumber : 'undefined line number';
-                return name + ': ' + message + ' \n(' + fileName + ', ' + lineNumber + ')';
-            };
+            
             var errors_str = this.messages_fatalError.map(function(e) {
                 if (typeof e == 'object') Zotero.logError(e);
-                return typeof e == 'object' ? format_error(e) : e;
+                return typeof e == 'object' ? this.format_error(e) : e;
             });
             errors_str = Zotero.Utilities.arrayUnique(errors_str).join('\n\n');
             on_click = function() {
