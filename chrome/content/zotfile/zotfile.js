@@ -890,18 +890,31 @@ Zotero.ZotFile = new function() {
      */
     this.attachFile = Zotero.Promise.coroutine(function* (item, path) {
         if (!item.isRegularItem()) throw("Zotero.ZotFile.attachFile(): 'item' is not a regular zotero attachment item.");
-        // create linked or imported attachment from file
-        var options = {file: path, libraryID: item.libraryID, parentItemID: item.id, collections: undefined};
-        // create attachment
-        var att_promise = this.getPref('import') || item.libraryID ?
-                Zotero.Attachments.importFromFile(options) :
-                Zotero.Attachments.linkFromFile(options);
-        // return renamed and moved attachment
-        return att_promise.then(this.renameAttachment.bind(this))
-            // remove file
-            .then(att => {OS.File.remove(path); return att;})
-            // Catch errors
-            .catch(e => this.infoWindow('ERROR', format_error(e)));
+        let options = {file: path, libraryID: item.libraryID, parentItemID: item.id, collections: undefined, saveOptions: {skipNotifier: true}};
+        // create imported attachment
+        if (this.getPref('import') || item.library.libraryType != 'user') {
+            var att = yield Zotero.Attachments.importFromFile(options);
+            // rename attachment
+            att = yield this.renameAttachment(att);
+            // remove file from source folder
+            if (path != att.getFilePath())
+                OS.File.remove(path);
+        }
+        // create linked attachment
+        else {
+            // get filename and location
+            let filename = this.getFilename(item, OS.Path.basename(path)),
+                subfolder = this.getPref('subfolder') ? this.getPref('subfolderFormat') : '',
+                location = this.getLocation(this.getPref('dest_dir'), item, subfolder);
+            // move and rename file
+            options.file = this.moveFile(Zotero.File.pathToFile(path), location, filename);
+            // create zotero link to file
+            var att = yield Zotero.Attachments.linkFromFile(options);
+        }
+        // get pdf outline
+        this.pdfOutline.getOutline([att.id])
+        // return attachment item
+        return att;
     });
 
     /**
