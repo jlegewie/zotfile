@@ -12,7 +12,6 @@ Zotero.ZotFile.PdfGetOutline = {
     getOutline: function(args) {    
         function logError(msg) {
             Components.utils.reportError(msg);
-            Zotero.ZotFile.pdfAnnotations.errorExtractingAnnotations = true;
         }
 
         // read file

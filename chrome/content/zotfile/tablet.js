@@ -544,6 +544,37 @@ Zotero.ZotFile.Tablet = new function() {
         this.handleErrors();
     }.bind(Zotero.ZotFile));
 
+    this.getLastModifiedTabletFile = Zotero.Promise.coroutine(function* (att) {
+        // foreground mode
+        if (this.Tablet.getInfo(att, 'mode') == 2) return att.getFilePath();
+        // background mode
+        var path_zotero = att.getFilePath(),
+            path_tablet = this.Tablet.getTabletFile(att).path;
+        // get times
+        var time_tablet = (yield OS.File.exists(path_tablet)) ?
+                Date.parse((yield OS.File.stat(path_tablet)).lastModificationDate) : 0,
+            time_saved  = parseInt(this.Tablet.getInfo(att, 'lastmod'), 10),
+            time_zotero = path_zotero ? Date.parse((yield OS.File.stat(path_zotero)).lastModificationDate) : 0;
+        if (time_tablet == 0 && time_zotero == 0)
+            return false;
+        // set options
+        var tablet_status = undefined;
+        if (time_tablet > time_saved  && time_zotero <= time_saved) tablet_status = 0;
+        if (time_tablet <= time_saved && time_zotero <= time_saved) tablet_status = 2;
+        if (time_tablet <= time_saved && time_zotero > time_saved) tablet_status = 2;
+        if (time_tablet > time_saved  && time_zotero > time_saved) tablet_status = 1;
+        // prompt if both file have been modified
+        if(tablet_status == 1) tablet_status = this.promptUser(
+            this.ZFgetString('extraction.fileConflict',
+            [OS.Path.basename(path_zotero)]),
+            this.ZFgetString('extraction.fileConflict.useT'),
+            this.ZFgetString('general.cancel'),
+            this.ZFgetString('extraction.fileConflict.useZ'));
+        if(tablet_status == 0) return path_tablet;
+        if(tablet_status == 2) return path_zotero;
+        if(tablet_status == 1) return false;
+    }.bind(Zotero.ZotFile));
+
     this.getAttachmentFromTablet = Zotero.Promise.coroutine(function* (att, fake_remove) {
         var item = Zotero.Items.get(att.parentItemID),
             tablet_status = 1, 
