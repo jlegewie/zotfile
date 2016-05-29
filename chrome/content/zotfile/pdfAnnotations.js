@@ -30,43 +30,12 @@ Zotero.ZotFile.pdfAnnotations = new function() {
 
     this.popplerExtractorSetPath = function() {
         // extractor filename
+        /* "pdftotext-{platform}", where {platform} is "Win32", "MacIntel", "MacPPC", "Linux-i686", etc.
+           (To determine your current platform, type javascript:alert(navigator.platform) in the Firefox URL bar and hit Enter.)*/
         this.popplerExtractorFileName += '-' + Zotero.platform;
-        if (Zotero.isWin) this.popplerExtractorFileName+='.exe';
-        //â€œpdftotext-{platform}â€?, where {platform} is â€œWin32â€?, â€œMacIntelâ€?, â€œMacPPCâ€?, â€œLinux-i686â€?, etc. (To determine your current platform, type javascript:alert(navigator.platform) in the Firefox URL bar and hit Enter.)
-
+        if (Zotero.isWin) this.popplerExtractorFileName += '.exe';
         // extractor path
-        this.popplerExtractorPath = Zotero.getZoteroDirectory().path + "/ExtractPDFAnnotations/" + this.popplerExtractorFileName;
-        if (Zotero.isWin) this.popplerExtractorPath.replace(/\\\//g,"\\").replace(/\//g,"\\");
-    };
-
-    this.popplerExtractorCheckInstalled = function  () {
-        // str = toolIsRegistered ? "Installed..." : "Download Tool to Extract PDF Annotations";
-        try {
-            var fileobj = Zotero.ZotFile.createFile(this.popplerExtractorPath);
-            if (fileobj.exists()) return(1);
-            if (!fileobj.exists()) return(0);
-        }
-        catch (err) {
-            return(0);
-        }
-
-    };
-
-    this.openFileStream = function  (file) {
-        var istream = Components.classes["@mozilla.org/network/file-input-stream;1"].
-                        createInstance(Components.interfaces.nsIFileInputStream);
-        istream.init(file, 0x01, 0444, 0);
-        istream.QueryInterface(Components.interfaces.nsILineInputStream);
-
-        /* Need to find out what the character encoding is. Using UTF-8 for this example: */
-        var charset = "UTF-8";
-        var is = Components.classes["@mozilla.org/intl/converter-input-stream;1"]
-                            .createInstance(Components.interfaces.nsIConverterInputStream);
-        // This assumes that fis is the template.Interface("nsIInputStream") you want to read from
-        is.init(istream, charset, 1024, 0xFFFD);
-        is.QueryInterface(Components.interfaces.nsIUnicharLineInputStream);
-
-        return(is);
+        this.popplerExtractorPath = OS.Path.join(Zotero.getZoteroDirectory().path, 'ExtractPDFAnnotations', this.popplerExtractorFileName);
     };
 
     this.getAnnotations = Zotero.Promise.coroutine(function* (attIDs) {
@@ -92,7 +61,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
             // get attachment item, parent and file
             var att  = atts[i],
                 item = Zotero.Items.get(att.parentItemID),
-                path = Zotero.ZotFile.Tablet.getTabletStatus(att) ? (yield this.Tablet.getLastModifiedTabletFile(att)) : att.getFilePath();
+                path = Zotero.ZotFile.Tablet.getTabletStatus(att) ? (yield Zotero.ZotFile.Tablet.getLastModifiedTabletFile(att)) : att.getFilePath();
             // extract annotations from pdf and create note with annotations
             if (settings_pdfjs || settings_both) {
                 var a = {attachment: att, path: path, filename: OS.Path.basename(path), item: item};
@@ -102,7 +71,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
             if (this.popplerExtractorTool && (!settings_pdfjs || settings_both)) {
                 let outputFile = path.replace('.pdf', '.txt');
                 Zotero.ZotFile.runProcess(this.popplerExtractorPath, [path, outputFile]);
-                let annotations = this.popplerExtractorGetAnnotationsFromFile(outputFile);
+                let annotations = yield this.popplerExtractorGetAnnotationsFromFile(outputFile);
                 annotations = annotations.map(anno => {anno.color = [0, 0, 0]; return anno;});
                 // create note
                 if(annotations.length != 0) this.createNote(annotations, item, att, 'poppler');
@@ -129,67 +98,60 @@ Zotero.ZotFile.pdfAnnotations = new function() {
         }
     });
 
-    this.popplerExtractorGetAnnotationsFromFile = function(outputFile) {
+    this.popplerExtractorGetAnnotationsFromFile = Zotero.Promise.coroutine(function* (path) {
         var annotations = [];
-        var file=Zotero.ZotFile.createFile(outputFile);
-
-        if(file.exists()) {
-            // open an input stream from file
-                var istream=this.openFileStream(file);
-
-            // read lines into array
-            var line = {};
-            do {
-                // get line
-                cont = istream.readLine(line);
-                var line_split = line.value.split(' ; ');
-                var strMarkUp  = (line_split[5]) ? this.trim(line_split[5].replace(/\\n/g,"<br>")) : "";
-                var strText    = (line_split[4]) ? this.trim(line_split[4].replace(/\\n/g,"<br>")) : "";
-
-//              if(strText!="") var strText=strText.replace(/([a-zA-Z])- ([a-zA-Z])/g, '$1$2');
-
-                // create annotation object
-                /*                  structure: filename ; page ; ID ; type ; text ; textMarkUp */
-                if(strMarkUp!="" || strText!="") {
-                    a = {
-                        filename:line_split[0],
-                        page:parseInt(line_split[1],10),
-                        ID:parseInt(line_split[2],10),
-                        type:line_split[3],
-        //              date:line_split[7],
-        //              creator:line_split[11],
-                        content:strText,
-                        markup:strMarkUp
-                    };
-                    annotations.push(a);
-                }
-
-            } while (cont);
-
-            istream.close();
+        // check whether file exists
+        if (!(yield OS.File.exists(path))) {
+            Zotero.ZotFile.messages_error.push(Zotero.ZotFile.ZFgetString('extraction.failedNoFile'));
+            return [];
         }
-        else Zotero.ZotFile.messages_error.push(Zotero.ZotFile.ZFgetString('extraction.failedNoFile'));
+        // read file
+        var decoder = new TextDecoder(),
+            text = yield OS.File.read(path).then(array => decoder.decode(array)),
+            lines = text.split('\n').map(line => line.split(' ; '));
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i],
+                strMarkUp  = (line[5]) ? this.trim(line[5].replace(/\\n/g,'<br>')) : '',
+                strText    = (line[4]) ? this.trim(line[4].replace(/\\n/g,'<br>')) : '';
+            if(strMarkUp == '' && strText == '') continue;
+            // add annotation object to array
+            annotations.push({
+                filename: line[0],
+                page: parseInt(line[1], 10),
+                ID: parseInt(line[2], 10),
+                type: line[3],
+                // date: line[7],
+                // creator: line[11],
+                content: strText,
+                markup: strMarkUp
+            });
+        }
+        // return annotations
         return annotations;
-    };
+    });
 
     this.createNote = Zotero.Promise.coroutine(function* (annotations, item, att, method) {
+        // get note content
         var note_content = this.getNoteContent(annotations, item, att, method);
+        // save single note
         if(typeof note_content == 'string') {
-            var note = new Zotero.Item("note");
+            let note = new Zotero.Item('note');
             note.libraryID = item.libraryID;
-            // note.setNote(Zotero.Utilities.text2html(note_content));
             note.setNote(note_content);
             note.parentKey = item.key;
             yield note.saveTx();
         }
+        // save multiple notes
         else {
-            for(var type in note_content) {
-                var note = new Zotero.Item("note");
-                note.libraryID = item.libraryID;
-                note.setNote(note_content[type]);
-                note.parentKey = item.key;
-                yield note.saveTx();
-            }
+            yield Zotero.DB.executeTransaction(function* () {
+                for(let type in note_content) {
+                    let note = new Zotero.Item('note');
+                    note.libraryID = item.libraryID;
+                    note.setNote(note_content[type]);
+                    note.parentKey = item.key;
+                    yield note.save();
+                }
+            });
         }
     });
 
@@ -232,26 +194,26 @@ Zotero.ZotFile.pdfAnnotations = new function() {
         var lib = att.library.libraryType == 'user' ? 0 : att.libraryID,
             format_uri = 'zotero://open-pdf/%(lib)_%(key)/%(page)',
             str_title = this.ZFgetString('extraction.noteTitle'),
-            format_title = this.prefs.getCharPref("pdfExtraction.formatNoteTitle"),
-            format_title_color = this.prefs.getCharPref("pdfExtraction.formatNoteTitleColor"),
-            format_note = this.prefs.getCharPref("pdfExtraction.formatAnnotationNote"),
-            format_highlight = this.prefs.getCharPref("pdfExtraction.formatAnnotationHighlight"),
-            format_underline = this.prefs.getCharPref("pdfExtraction.formatAnnotationUnderline"),
-            settings_colors = JSON.parse(this.prefs.getCharPref("pdfExtraction.colorCategories")),
-            separate_color_notes = this.prefs.getBoolPref("pdfExtraction.colorNotes"),
-            cite = this.prefs.getBoolPref("pdfExtraction.NoteFullCite") ? this.Wildcards.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ") : "p. ",
-            repl = JSON.parse(this.prefs.getCharPref("pdfExtraction.replacements")),
+            format_title = this.getPref("pdfExtraction.formatNoteTitle"),
+            format_title_color = this.getPref("pdfExtraction.formatNoteTitleColor"),
+            format_note = this.getPref("pdfExtraction.formatAnnotationNote"),
+            format_highlight = this.getPref("pdfExtraction.formatAnnotationHighlight"),
+            format_underline = this.getPref("pdfExtraction.formatAnnotationUnderline"),
+            settings_colors = JSON.parse(this.getPref("pdfExtraction.colorCategories")),
+            setting_color_notes = this.getPref("pdfExtraction.colorNotes"),
+            cite = this.getPref("pdfExtraction.NoteFullCite") ? this.Wildcards.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ") : "p. ",
+            repl = JSON.parse(this.getPref("pdfExtraction.replacements")),
             reg = repl.map(function(obj) {
                 var flags = ('flags' in obj) ? obj.flags : "g";
                 return new RegExp(obj.regex, flags);
             });
         // add note title
-        var date_str = this.prefs.getBoolPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString(),
+        var date_str = this.getPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString(),
             title = this.Utils.str_format(format_title, {'title': str_title, 'date': date_str}),
             note = title;
-        if (this.prefs.getBoolPref("pdfExtraction.UsePDFJSandPoppler"))
+        if (this.getPref("pdfExtraction.UsePDFJSandPoppler"))
             note += ' ' + method;
-        if(separate_color_notes) note = {};
+        if(setting_color_notes) note = {};
         // iterature through annotations
         for (var i=0; i < annotations.length; i++) {
         // annotations.map(function(anno) {
@@ -259,7 +221,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                 page = anno.page,
                 uri = this.Utils.str_format(format_uri, {'lib': lib, 'key': att.key, 'page': anno.page});
             // get page
-            if(this.prefs.getBoolPref("pdfExtraction.NoteTruePage")) {
+            if(this.getPref("pdfExtraction.NoteTruePage")) {
                 try {
                     var itemPages = item.getField('pages');
                     if(itemPages) {
@@ -280,7 +242,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                 for (var k = 0; k < repl.length; k++)
                     anno.markup = anno.markup.replace(reg[k], repl[k].replacement);
                 var markup_formated = this.Utils.str_format(format_markup, {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title, 'color': color, 'color_category': color_category_hex});
-                if(!separate_color_notes)
+                if(!setting_color_notes)
                     note += markup_formated;
                 else {
                     if(!(color_category in note))
@@ -294,7 +256,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                 var content = anno.content.replace(/(\r\n|\n|\r)/gm,"<br>");
                 // '<p><i>%(content) (<a href="%(uri)">note on p.%(page)</a>)</i></p><br>'
                 var content_formated = this.Utils.str_format(format_note, {'content': content, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title,'color': color, 'color_category': color_category_hex});
-                if(!separate_color_notes)
+                if(!setting_color_notes)
                     note += content_formated;
                 else {
                     if(!(color_category in note))
