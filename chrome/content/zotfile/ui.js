@@ -307,8 +307,8 @@ Zotero.ZotFile.UI = new function() {
         row.appendChild(lab2);
         rows.appendChild(row);
         // add popup menu to DOM
-        var popupset = pane.document.getElementById('seeAlsoPopup').parentNode,
-           menupopup = pane.document.createElement("menupopup");
+        var popupset = pane.document.getElementById('relatedLabel').parentNode,
+            menupopup = pane.document.createElement("menupopup");
         menupopup.setAttribute('id', 'zotfile-tablet-popup');
         popupset.appendChild(menupopup);
         return row;
@@ -320,12 +320,12 @@ Zotero.ZotFile.UI = new function() {
             row = pane.document.getElementById('zotfile-tablet-row');
         if (items.length != 1) return;
         var att = items[0];
-        if(!this.getPref('tablet') || !att.isAttachment() || att._attachmentMIMEType != 'application/pdf') {
+        if(!this.getPref('tablet') || !att.isAttachment() || att.attachmentContentType != 'application/pdf') {
             if(row) row.setAttribute('hidden', 'true');
             return;
         }
         // add row if it does not exist
-        if(!row) row = attboxAddTabletRow();
+        if(!row) row = this.UI.attboxAddTabletRow();
         // pdf attachment
         row.setAttribute('hidden', 'false');
         // update tablet status
