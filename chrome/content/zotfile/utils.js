@@ -57,6 +57,15 @@ Zotero.ZotFile.Utils = new function() {
      * @param {integer} k        The suffix
      */
     this.addSuffix = function(filename, k) {
+        return filename.replace(/(\.[\w\d]*)$/i, k + "$2");
+    }.bind(Zotero.ZotFile);
+
+    /**
+     * Add numerical suffix to filename
+     * @param {string}  filename The filename
+     * @param {integer} k        The suffix
+     */
+    this.addNumericalSuffix = function(filename, k) {
         return filename.replace(/(\d{1,3})?(\.[\w\d]*)$/i, k + "$2");
     }.bind(Zotero.ZotFile);
 

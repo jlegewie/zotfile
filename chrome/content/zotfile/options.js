@@ -612,11 +612,28 @@ var checkForUpdates = function(button,installedVersion) {
         
 }.bind(Zotero.ZotFile);
 
+var openFileStream = function(file) {
+    var istream = Components.classes['@mozilla.org/network/file-input-stream;1'].
+        createInstance(Components.interfaces.nsIFileInputStream);
+    istream.init(file, 0x01, 0444, 0);
+    istream.QueryInterface(Components.interfaces.nsILineInputStream);
+
+    /* Need to find out what the character encoding is. Using UTF-8 for this example: */
+    var charset = 'UTF-8';
+    var is = Components.classes['@mozilla.org/intl/converter-input-stream;1']
+        .createInstance(Components.interfaces.nsIConverterInputStream);
+    // This assumes that fis is the template.Interface("nsIInputStream") you want to read from
+    is.init(istream, charset, 1024, 0xFFFD);
+    is.QueryInterface(Components.interfaces.nsIUnicharLineInputStream);
+
+    return(is);
+};
+
 var getInstalledVersion = function () {
     var filepath = this.pdfAnnotations.popplerExtractorPath+'.version';
     var file=this.createFile(filepath);
     if(this.fileExists(filepath)) {
-        var istream=this.pdfAnnotations.openFileStream(file);
+        var istream = openFileStream(file);
     
         // get line
         var line = {};

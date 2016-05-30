@@ -91,9 +91,12 @@ Zotero.ZotFile = new function() {
                     // set Extractor Path
                     this.pdfAnnotations.popplerExtractorSetPath();
                     // check whether tool is installed
-                    this.pdfAnnotations.popplerExtractorTool = this.pdfAnnotations.popplerExtractorCheckInstalled();
-                    // set to pdf.js if poppler is not installed
-                    if(!this.pdfAnnotations.popplerExtractorTool) this.setPref('pdfExtraction.UsePDFJS', true);
+                    OS.File.exists(this.pdfAnnotations.popplerExtractorPath)
+                        .then(poppler => {
+                            this.pdfAnnotations.popplerExtractorTool = poppler;
+                            // set to pdf.js if poppler is not installed
+                            if(!poppler) this.setPref('pdfExtraction.UsePDFJS', true);
+                        })
                 }
                 // set to pdf.js if poppler is not supported
                 if(!this.pdfAnnotations.popplerExtractorSupported) this.setPref('pdfExtraction.UsePDFJS', true);
@@ -413,14 +416,14 @@ Zotero.ZotFile = new function() {
     };
 
     this.checkFileType = function (obj) {
-        if(!this.getPref('useFileTypes')) return(true);
+        if(!this.getPref('useFileTypes')) return true;
         var filename;
         if(obj.leafName) {
             filename = obj.leafName;
         } else {
             if(typeof(obj) == 'number') obj = Zotero.Items.get(obj);
             if (obj.attachmentLinkMode === Zotero.Attachments.LINK_MODE_LINKED_URL)  return false;
-            filename = obj.getFilename();
+            filename = obj.attachmentFilename;
         }
         // check
         var filetype = this.Utils.getFiletype(filename).toLowerCase(),
@@ -649,76 +652,69 @@ Zotero.ZotFile = new function() {
 
     /**
      * Move file to new location
-     * @param  {nsIFile} file    File to move.
-     * @param  {string} target   Target directory.
-     * @param  {string} filename Name of file.
-     * @return {string}          Path to new location of file.
+     * @param  {String} path     File to move.
+     * @param  {String} target   Target directory or full path.
+     * @param  {String} filename Name of file.
+     * @return {String}          Path to new location of file.
      */
-    this.moveFile = function(file, target, filename) {
+    this.moveFile = Zotero.Promise.coroutine(function* (sourcePath, target, filename) {
         // check arguments
-        if (!(file instanceof Components.interfaces.nsIFile)) throw("Zotero.ZotFile.moveFile(): 'file' is not nsIFile object.")
-        if (!file.exists()) throw("Zotero.ZotFile.moveFile(): 'file' does not exists.")
+        if (!(yield OS.File.exists(sourcePath))) throw("Zotero.ZotFile.moveFile(): 'file' does not exists.")
         // if target is '/' or '\', use file's parent directory
         if(target.trim() == this.folderSep)
-            target = file.isFile() ? file.parent.path : file.path;
-        // define variables
-        var target = this.createFile(target),
-            file_dirname = OS.Path.dirname(file.path);
+            target = sourceDir;
+        sourcePath = OS.Path.normalize(sourcePath);
+        var sourceDir = OS.Path.dirname(sourcePath),
+            destPath = filename === undefined ? target : this.Utils.joinPath(target, filename);
         // return if already at target
-        if(file.path == this.Utils.joinPath(target.path, filename)) return(file.path);
+        if(sourcePath == destPath) return sourcePath;
         // add suffix if target path exists
         var k = 2;
-        while(this.fileExists(target, filename)) {
-            filename = this.Utils.addSuffix(filename, k);
-            if (file.path == this.Utils.joinPath(target.path, filename)) return file.path;
+        while(yield OS.File.exists(destPath)) {
+            destPath = this.Utils.addNumericalSuffix(destPath, k);
+            if (sourcePath == destPath) return sourcePath;
             k++;
             if(k > 999) throw("'Zotero.ZotFile.moveFile()': '" + filename + "' already exists.");
         }
         // move file to new location
-        try {
-            file.moveTo(target, filename);
-        }
-        catch(err) {
-            if(err.name == "NS_ERROR_FILE_IS_LOCKED")
-                this.messages_error.push(this.ZFgetString('error.movingFileLocked', [file.leafName]));
-            else
-                this.messages_error.push(this.ZFgetString('error.movingFileGeneral', [file.leafName, err]));
-            return false;
-        }
+        yield OS.File.move(sourcePath, destPath)
+            .catch(e => {
+                this.messages_error.push("Error when moving the file '" + OS.Path.basename(sourcePath) + "'. Possibly, the file is locked.");
+                return false;
+            });
         // delete empty folders after moving file
-        this.removeEmptyFolders(this.createFile(file_dirname));
+        OS.File.removeEmptyDir(sourceDir);
         // return path to new location
-        return(file.path);
-    };
+        return destPath;
+    });
 
     /**
      * Copy file to new location
-     * @param  {nsIFile} file       File to move.
-     * @param  {string} destination Target directory.
-     * @param  {string} filename    Name of file.
-     * @return {string}             Path to new location of file.
+     * @param  {String} sourcePath  File to move.
+     * @param  {String} target      Target directory  or full path.
+     * @param  {String} filename    Name of file.
+     * @return {String}             Path to location of copied file.
      */
-    this.copyFile = function(file, destination, filename) {
+    this.copyFile = Zotero.Promise.coroutine(function* (sourcePath, target, filename) {
         // check arguments
-        if (!(file instanceof Components.interfaces.nsIFile)) throw("Zotero.ZotFile.copyFile(): 'file' is not nsIFile object.")
-        if (!file.exists()) throw("Zotero.ZotFile.copyFile(): 'file' does not exists.")
-        // create a nsIFile Object of the destination folder
-        var target = this.createFile(destination);
-        // check whether already exists and add name if it does
-        if(file.path == this.Utils.joinPath(target.path, filename)) return file;
+        if (!(yield OS.File.exists(sourcePath))) throw("Zotero.ZotFile.copyFile(): 'file' does not exists.")
+        // source and destination path
+        sourcePath = OS.Path.normalize(sourcePath);
+        var destPath = filename === undefined ? target : this.Utils.joinPath(target, filename);
+        if(sourcePath == destPath) return sourcePath;
         // add suffix if target path exists
         var k = 2;
-        while(this.fileExists(target, filename)) {
-            filename = this.Utils.addSuffix(filename, k);
-            if (file.path == this.Utils.joinPath(target.path, filename)) return file;
+        while(yield OS.File.exists(destPath)) {
+            destPath = this.Utils.addNumericalSuffix(destPath, k);
+            if (sourcePath == destPath) return sourcePath;
             k++;
             if(k > 999) throw("'Zotero.ZotFile.copyFile()': '" + filename + "' already exists.");
         }
         // copy file
-        file.copyTo(target, filename);
+        yield OS.File.copy(sourcePath, destPath);
         // return file
-        return this.createFile(this.Utils.joinPath(target.path, filename));
-    };
+        return destPath;
+    });
 
     /**
      * Delete file or folder
@@ -726,6 +722,7 @@ Zotero.ZotFile = new function() {
      * @return {void}
      */
     this.removeFile = function(file) {
+        file = Zotero.File.pathToFile(file);
         if (!file.exists()) return;
         try {
             // remove file
@@ -907,7 +904,7 @@ Zotero.ZotFile = new function() {
                 subfolder = this.getPref('subfolder') ? this.getPref('subfolderFormat') : '',
                 location = this.getLocation(this.getPref('dest_dir'), item, subfolder);
             // move and rename file
-            options.file = this.moveFile(Zotero.File.pathToFile(path), location, filename);
+            options.file = yield this.moveFile(path, location, filename);
             // create zotero link to file
             var att = yield Zotero.Attachments.linkFromFile(options);
         }
@@ -1042,7 +1039,7 @@ Zotero.ZotFile = new function() {
         // (c) imported to linked attachment (only if library is local)
         if (att.isImportedAttachment() && !imported && item.library.libraryType == 'user') {
             // move pdf file
-            var path = this.moveFile(file, location, filename);
+            var path = yield this.moveFile(file.path, location, filename);
             if (!path) return att;
             // recreate the outfile nslFile Object
             file = this.createFile(path);
@@ -1075,6 +1072,8 @@ Zotero.ZotFile = new function() {
         if (!att.isImportedAttachment() && !imported && item.library.libraryType == 'user') {
             // relink attachment
             yield this.moveLinkedAttachmentFile(att, location, filename, false);
+            att.setField('title', filename);
+            yield att.saveTx();
             // notification
             if(verbose) this.messages_report.push(this.ZFgetString('renaming.linked', [filename]));
         }
@@ -1121,7 +1120,7 @@ Zotero.ZotFile = new function() {
                     continue;
                 }
                 // update progress window
-                progress.complete(att.getFilename(), att.getImageSrc());
+                progress.complete(att.attachmentFilename, att.getImageSrc());
             }
             catch(e) {
                 progress.setError();
