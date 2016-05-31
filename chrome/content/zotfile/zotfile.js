@@ -570,7 +570,8 @@ Zotero.ZotFile = new function() {
             target = sourceDir;
         sourcePath = OS.Path.normalize(sourcePath);
         var sourceDir = OS.Path.dirname(sourcePath),
-            destPath = filename === undefined ? target : this.Utils.joinPath(target, filename);
+            destPath = filename === undefined ? target : this.Utils.joinPath(target, filename),
+            destDir = OS.Path.dirname(destPath);
         // return if already at target
         if(sourcePath == destPath) return sourcePath;
         // add suffix if target path exists
@@ -581,14 +582,25 @@ Zotero.ZotFile = new function() {
             k++;
             if(k > 999) throw("'Zotero.ZotFile.moveFile()': '" + filename + "' already exists.");
         }
+        // create subfolder
+        if (!(yield OS.File.exists(destDir))) {
+            let create = [destDir],
+                parent = OS.Path.dirname(destDir);
+            while(!(yield OS.File.exists(parent))) {
+                create.push(parent);
+                parent = OS.Path.dirname(parent);
+            }
+            yield Zotero.Promise.all(create.reverse().map(f => OS.File.makeDir(f)))
+        }
         // move file to new location
         yield OS.File.move(sourcePath, destPath)
-            .catch(e => {
-                this.messages_error.push("Error when moving the file '" + OS.Path.basename(sourcePath) + "'. Possibly, the file is locked.");
-                return false;
+            .catch(OS.File.Error, function (e) {
+                // this.messages_error.push("Error when moving the file '" + OS.Path.basename(sourcePath) + "'. Possibly, the file is locked.");
+                // if (e.becauseExists)
+                throw e;
             });
         // delete empty folders after moving file
-        OS.File.removeEmptyDir(sourceDir);
+        this.removeEmptyFolders(sourceDir);
         // return path to new location
         return destPath;
     });
@@ -605,7 +617,8 @@ Zotero.ZotFile = new function() {
         if (!(yield OS.File.exists(sourcePath))) throw("Zotero.ZotFile.copyFile(): 'file' does not exists.")
         // source and destination path
         sourcePath = OS.Path.normalize(sourcePath);
-        var destPath = filename === undefined ? target : this.Utils.joinPath(target, filename);
+        var destPath = filename === undefined ? target : this.Utils.joinPath(target, filename),
+            destDir = OS.Path.dirname(destPath);
         if(sourcePath == destPath) return sourcePath;
         // add suffix if target path exists
         var k = 2;
@@ -614,6 +627,16 @@ Zotero.ZotFile = new function() {
             if (sourcePath == destPath) return sourcePath;
             k++;
             if(k > 999) throw("'Zotero.ZotFile.copyFile()': '" + filename + "' already exists.");
+        }
+        // create subfolder
+        if (!(yield OS.File.exists(destDir))) {
+            let create = [destDir],
+                parent = OS.Path.dirname(destDir);
+            while(!(yield OS.File.exists(parent))) {
+                create.push(parent);
+                parent = OS.Path.dirname(parent);
+            }
+            yield Zotero.Promise.all(create.reverse().map(f => OS.File.makeDir(f)))
         }
         // copy file
         yield OS.File.copy(sourcePath, destPath);
