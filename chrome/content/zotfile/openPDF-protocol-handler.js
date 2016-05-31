@@ -197,11 +197,13 @@ var OpenPDFExtension = {
         return new AsyncChannel(uri, function* () {
             // get arguments from uri
             // e.g. zotero://open-pdf/0_EFWJW9U7
+            Zotero.ZotFile.uri = uri;
             var [key, page] = uri.path.substr(1).split('/');
             // exit if no key
             if(!key) return;
             // get zotero item from key
             var params = {objectType: 'item'};
+            // Zotero.Items.parseLibraryKeyHash() is deprecated -- use .parseLibraryKey() instead
             var lkh = Zotero.Items.parseLibraryKeyHash(key);
             if (lkh) {
                 params.libraryID = lkh.libraryID;
@@ -218,8 +220,7 @@ var OpenPDFExtension = {
             // if attachment, open file and go to page
             if(!item.isAttachment()) return;
             // get file and path
-            var file = item.getFile(),
-                path = file.path,
+            var path = item.getFilePath(),
                 filename = path.replace(/^.*[\\\/]/, '');
             // check whether pdf file
             if(filename.toLowerCase().indexOf('.pdf') == -1) return;
@@ -232,24 +233,24 @@ var OpenPDFExtension = {
                         '-e', 'tell app "Skim" to open "' + path + '"'];
                     if (page)
                         args.push('-e', 'tell document "' + filename + '" of application "Skim" to go to page ' + page);
-                    this.runProcess('/usr/bin/osascript', args, false);
+                    Zotero.Utilities.Internal.exec('/usr/bin/osascript', args);
                     return;
                 }
                 // open pdf file
-                this.runProcess('/usr/bin/open', ['-a', open_with, path]);
+                yield Zotero.Utilities.Internal.exec('/usr/bin/open', ['-a', open_with, path]);
                 // go to page using applescript
                 args = [
                   '-e', 'tell app "' + open_with + '" to activate', 
                   '-e', 'tell app "System Events" to keystroke "g" using {option down, command down}', 
                   '-e', 'tell app "System Events" to keystroke "' + page + '"',
                   '-e', 'tell app "System Events" to keystroke return'];
-                if (page) this.runProcess('/usr/bin/osascript', args, false);
+                if (page) Zotero.Utilities.Internal.exec('/usr/bin/osascript', args);
             }
             if(Zotero.isWin) {
                 // get path to PDF Reader
                 var pdf_reader = this.getPref('pdfExtraction.openPdfWin');
-                pdf_reader = pdf_reader==='' ? this.Utils.getPDFReader() : pdf_reader;
-                if (!this.fileExists(pdf_reader)) {
+                pdf_reader = pdf_reader === '' ? this.Utils.getPDFReader() : pdf_reader;
+                if (!(yield OS.File.exists(pdf_reader))) {
                     this.infoWindow(this.ZFgetString('general.error'), 'Unable to find path for PDF Reader. Please set path manually in hidden preferences (see zotfile documentation).');
                     return;
                 }
@@ -261,7 +262,7 @@ var OpenPDFExtension = {
                 else
                     args = [path];
                 // run process
-                this.runProcess(pdf_reader, args, false);
+                Zotero.Utilities.Internal.exec(pdf_reader, args);
             }
             if(Zotero.isLinux) {
                 var cmd = this.getPref('pdfExtraction.openPdfLinux');
@@ -272,13 +273,13 @@ var OpenPDFExtension = {
                     else
                         args = [path];
                     // try okular
-                    if (this.fileExists('/usr/bin/okular')) {
-                        this.runProcess('/usr/bin/okular', args, false);
+                    if (yield OS.File.exists('/usr/bin/okular')) {
+                        Zotero.Utilities.Internal.exec('/usr/bin/okular', args);
                     }
                     // try evince
                     else {
-                        if (this.fileExists('/usr/bin/evince')) {
-                            this.runProcess('/usr/bin/evince', args, false);
+                        if (yield OS.File.exists('/usr/bin/evince')) {
+                            Zotero.Utilities.Internal.exec('/usr/bin/evince', args);
                         }
                         else {
                             this.infoWindow('Zotfile', this.ZFgetString('general.open.pdf'));
@@ -295,7 +296,7 @@ var OpenPDFExtension = {
                     else
                         args = [path];
                     // run process
-                    this.runProcess(cmd.join('-'), args, false);
+                    Zotero.Utilities.Internal.exec(cmd.join('-'), args);
                 }
             }
         }.bind(Zotero.ZotFile));

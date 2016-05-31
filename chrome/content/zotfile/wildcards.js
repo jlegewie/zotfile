@@ -110,7 +110,7 @@ Zotero.ZotFile.Wildcards = new function() {
     }
 
     function formatAuthors(item) {
-        var item_type = item.getType();
+        var item_type = item.itemTypeID;
         // get creator and create authors string
         // creator types: author/editor(1,3) for book(2), inventor(14) for patent(19),programmer(24) for computer prog.(27),presenter(21) for presentation(32)
         var creatorType = [1];
@@ -193,14 +193,14 @@ Zotero.ZotFile.Wildcards = new function() {
                 var collection = Zotero.Collections.get(collectionID);
                 if (collection.parent == null)  return collection.name
 
-                return OS.Path.normalize(getCollectionPath(collection.parent) + Zotero.ZotFile.folderSep + collection.name);
+                return OS.Path.normalize(getCollectionPath(collection.parentID) + Zotero.ZotFile.folderSep + collection.name);
             };
 
             return item.getCollections().map(getCollectionPath);
         };
 
         // item type
-        var item_type = item.getType();
+        var item_type = item.itemTypeID;
         var item_type_name = Zotero.ItemTypes.getName(item_type);
         // get formated author strings
         var authors = formatAuthors(item);

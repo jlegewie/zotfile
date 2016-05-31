@@ -7,6 +7,8 @@ var Zotero = Components.classes["@zotero.org/Zotero;1"]
     .getService(Components.interfaces.nsISupports)
     .wrappedJSObject;
 
+Components.utils.import("resource://gre/modules/osfile.jsm")
+
 // function to disable prefernce in pref window
 // 'pref' can be passed as string or array
 // returns setting if needed for further changes
@@ -22,7 +24,7 @@ var updatePreferenceWindow = function (which) {
     var setting;
     if(which=="all") {
         updatePDFToolsStatus();
-        updateFolderIcon("all",false);
+        updateFolderIcon("all", false);
         this.temp = this.getPref('tablet.dest_dir');
         /*if(document.getElementById('pref-zotfile-tablet-mode').value==2) {
             document.getElementById('id-zotfile-tablet-storeCopyOfFile').disabled = true;
@@ -132,7 +134,7 @@ var checkRenameFormat = function(which) {
     }
 }.bind(Zotero.ZotFile);
 
-var updateFolderIcon = function(which, revert) {
+var updateFolderIcon = Zotero.Promise.coroutine(function* (which, revert) {
     var setting, icon_clear,icon_ok,icon_error;
     // Source Folder
     if(which=="source" || which=="all") {
@@ -152,7 +154,7 @@ var updateFolderIcon = function(which, revert) {
         // if source dir is set custom folder
         if(!setting) {
             icon_clear.setAttribute('hidden', true);
-            if(checkFolderLocation("source_dir")) {
+            if(yield checkFolderLocation("source_dir")) {
                 icon_ok.setAttribute('hidden', false);
                 icon_error.setAttribute('hidden', true);
             }
@@ -181,7 +183,7 @@ var updateFolderIcon = function(which, revert) {
         // if dest dir is set custom folder
         if(!setting) {
             icon_clear.setAttribute('hidden', true);
-            if(checkFolderLocation("dest_dir")) {
+            if(yield checkFolderLocation("dest_dir")) {
                 icon_ok.setAttribute('hidden', false);
                 icon_error.setAttribute('hidden', true);
             }
@@ -199,7 +201,7 @@ var updateFolderIcon = function(which, revert) {
         icon_error=document.getElementById('id-zotfile-tablet-error');
         
         // if dest dir is set custom folder
-        if(checkFolderLocation("tablet.dest_dir")) {
+        if(yield checkFolderLocation("tablet.dest_dir")) {
             icon_ok.setAttribute('hidden', false);
             icon_error.setAttribute('hidden', true);
         }
@@ -209,13 +211,12 @@ var updateFolderIcon = function(which, revert) {
         }
         if(which!='all') changedBasefolder(this.getPref('tablet.dest_dir'));
     }
-}.bind(Zotero.ZotFile);
+}.bind(Zotero.ZotFile));
 
-var checkFolderLocation = function(folder) {
+var checkFolderLocation = Zotero.Promise.coroutine(function* (folder) {
     var path = this.getPref(folder);
-    if(path!="") if(this.fileExists(path)) return(true);
-    return(false);
-}.bind(Zotero.ZotFile);
+    return path != '' && (yield OS.File.exists(path));
+}.bind(Zotero.ZotFile));
 
 var previewFilename = function() {
     try {
@@ -243,9 +244,9 @@ var previewFilename = function() {
 
 var changedBasefolder = Zotero.Promise.coroutine(function* (dest_dir) {
     var baseFolderOld = this.temp;
-    var baseFolderOldValid = this.fileExists(baseFolderOld);
+    var baseFolderOldValid = yield OS.File.exists(baseFolderOld);
     var baseFolder = this.getPref('tablet.dest_dir');
-    var baseFolderValid = checkFolderLocation('tablet.dest_dir');
+    var baseFolderValid = yield checkFolderLocation('tablet.dest_dir');
 
     // only proceed if folder has changed and the old location was valid
     if(baseFolderOld != baseFolder && baseFolderOldValid) {
@@ -417,9 +418,8 @@ var deleteSelectedSubfolder = function() {
 
 var deleteSubfolder = Zotero.Promise.coroutine(function* (subfolder) {
     //create folder file
-    var folder=this.Tablet.getTabletLocationFile(subfolder);
-    if(!folder.exists())
-        return true;
+    var folder = this.Tablet.getTabletLocationFile(subfolder);
+    if(!(yield OS.File.exists(folder))) return true;
     // get attachments in old subfolder
     var attInFolder = yield this.Tablet.getAttachmentsOnTablet(subfolder);
     // iterate through attachments in folder
@@ -461,17 +461,16 @@ var changedSubfolder = Zotero.Promise.coroutine(function* (projectFolderOld, pro
     // get attachments in old subfolder
     var attInFolder = yield this.Tablet.getAttachmentsOnTablet(projectFolderOld);
     // create file file old subfolder
-    var file=this.Tablet.getTabletLocationFile(projectFolderOld);
+    var path = this.Tablet.getTabletLocationFile(projectFolderOld);
     // move attachments to new subfolder
     var confirmed=0;
     if(attInFolder.length>0) confirmed=confirm(this.ZFgetString('tablet.moveAttsToNewSubfolder', [attInFolder.length, projectFolderOld, projectFolderNew]));
     if (confirmed) {
-//      var path=attInFolder[0].getFile().parent.path;
         this.setTabletFolder(attInFolder,projectFolderNew)
             // remove folder if empty
-            .then(() => this.removeFile(file));
+            .then(() => this.removeFile(path));
     }
-    if(attInFolder.length==0) this.removeFile(file);
+    if(attInFolder.length==0) this.removeFile(path);
 }.bind(Zotero.ZotFile));
 
 var moveSelectedSubfolderUp = function() {
@@ -544,9 +543,9 @@ var showSelectedSubfolder = function() {
     var treerow = treechildren.childNodes[index].firstChild;
     var folder = treerow.childNodes[1].getAttribute('label');
     // get folder object
-    var folderFile = this.Tablet.getTabletLocationFile(folder);
+    var folder = this.Tablet.getTabletLocationFile(folder);
     // show folder
-    this.showFolder(folderFile);
+    this.showFolder(folder);
 }.bind(Zotero.ZotFile);
 
 
@@ -554,7 +553,7 @@ var showSelectedSubfolder = function() {
 // FUNCTIONS: PDF TOOL //
 // =================== //
 
-var updatePDFToolsStatus = function() {
+var updatePDFToolsStatus = Zotero.Promise.coroutine(function* () {
     var toolIsCompatible = this.pdfAnnotations.popplerExtractorSupported;
     var toolIsRegistered = this.pdfAnnotations.popplerExtractorTool;
     var updateButton = document.getElementById('pdf-annotations-extractor-update-button');
@@ -571,11 +570,11 @@ var updatePDFToolsStatus = function() {
     // poppler pdf tool status if compatible (only mac for now...)
     if(toolIsCompatible && toolIsRegistered) {
         // get installed version from file
-        var installedVersion = getInstalledVersion();
+        var installedVersion = yield getInstalledVersion();
         // disable download botton if registered
         updateButton.setAttribute('disabled', true);
         // check for updated
-        checkForUpdates(updateButton,installedVersion);
+        checkForUpdates(updateButton, installedVersion);
         // set version text
         var versionText = document.getElementById('pdf-annotations-extractor-version');
         versionText.setAttribute('hidden', false);
@@ -588,60 +587,27 @@ var updatePDFToolsStatus = function() {
     // var annotation_prefs=['Pull','NoteFullCite','NoteTruePage'];
     // for (var i=0;i<annotation_prefs.length;i++) document.getElementById('id-zotfile-pdfExtraction-' + annotation_prefs[i]).disabled = !Zotero.ZotFile.pdfAnnotations.popplerExtractorTool;
         
-}.bind(Zotero.ZotFile);
+}.bind(Zotero.ZotFile));
 
-var checkForUpdates = function(button,installedVersion) {
-    var url = this.pdfAnnotations.popplerExtractorBaseURL + this.pdfAnnotations.popplerExtractorFileName + '.version';
-    
+var checkForUpdates = function(button, installedVersion) {
+    var url = this.popplerExtractorBaseURL + this.popplerExtractorFileName + '.version';
     // Find latest version for this platform
-    var sent = Zotero.HTTP.doGet(url, function (xmlhttp) {
-        try {
-            if (xmlhttp.status == 200) {
-                
-                var serverVersion = parseFloat(xmlhttp.responseText);
-
-                // if server version higher... update!
-                if(serverVersion>installedVersion) button.setAttribute('disabled', false);
-                                    
-            }
-        }
-        catch (e) {
-//          onPDFToolsDownloadError(e);
+    return Zotero.HTTP.request("GET", url).then(xmlhttp => {
+        if (xmlhttp.status == 200) {
+            var serverVersion = parseFloat(xmlhttp.responseText);
+            // if server version higher... update!
+            if(serverVersion > installedVersion) button.setAttribute('disabled', false);
         }
     });
-        
-}.bind(Zotero.ZotFile);
+}.bind(Zotero.ZotFile.pdfAnnotations);
 
-var openFileStream = function(file) {
-    var istream = Components.classes['@mozilla.org/network/file-input-stream;1'].
-        createInstance(Components.interfaces.nsIFileInputStream);
-    istream.init(file, 0x01, 0444, 0);
-    istream.QueryInterface(Components.interfaces.nsILineInputStream);
-
-    /* Need to find out what the character encoding is. Using UTF-8 for this example: */
-    var charset = 'UTF-8';
-    var is = Components.classes['@mozilla.org/intl/converter-input-stream;1']
-        .createInstance(Components.interfaces.nsIConverterInputStream);
-    // This assumes that fis is the template.Interface("nsIInputStream") you want to read from
-    is.init(istream, charset, 1024, 0xFFFD);
-    is.QueryInterface(Components.interfaces.nsIUnicharLineInputStream);
-
-    return(is);
-};
-
-var getInstalledVersion = function () {
-    var filepath = this.pdfAnnotations.popplerExtractorPath+'.version';
-    var file=this.createFile(filepath);
-    if(this.fileExists(filepath)) {
-        var istream = openFileStream(file);
-    
-        // get line
-        var line = {};
-        cont = istream.readLine(line);
-        return(parseFloat(line['value']));
-    }
-    else return(1);
-}.bind(Zotero.ZotFile);
+var getInstalledVersion = Zotero.Promise.coroutine(function* () {
+    var path = this.pdfAnnotations.popplerExtractorPath + '.version';
+    if (!(yield OS.File.exists(path))) return 1;
+    var decoder = new TextDecoder(),
+        text = yield OS.File.read(path).then(array => decoder.decode(array));
+    return parseFloat(text);
+}.bind(Zotero.ZotFile));
 
 var downloadPDFTool = function() {
     Components.utils.import("resource://gre/modules/Downloads.jsm");
@@ -660,7 +626,7 @@ var downloadPDFTool = function() {
             // extract zip file
             var proc = Components.classes["@mozilla.org/process/util;1"].
                 createInstance(Components.interfaces.nsIProcess);
-            proc.init(Zotero.ZotFile.createFile("/usr/bin/unzip"));
+            proc.init(Zotero.File.pathToFile("/usr/bin/unzip"));
             // define arguments
             var args = ["-o","-q", file.path, "-d"  + zotero_dir + "/ExtractPDFAnnotations"];
             // run process
@@ -671,7 +637,7 @@ var downloadPDFTool = function() {
                 proc.run(true, args, args.length);
             }
             // Set permissions to 755
-            var extractorFile=Zotero.ZotFile.createFile(Zotero.ZotFile.pdfAnnotations.popplerExtractorPath);
+            var extractorFile = Zotero.File.pathToFile(Zotero.ZotFile.pdfAnnotations.popplerExtractorPath);
             if (Zotero.isMac) {
                 extractorFile.permissions = 33261;
             }

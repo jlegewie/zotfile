@@ -52,7 +52,7 @@ Zotero.ZotFile.ProgressWindow = function(_window){
 		Zotero.ProgressWindowSet.add(_progressWindow, this);
 		// start close timer 
 		/*This is overwritten by later calls but I am calling it here just to make sure that an error doesn't prevent it from starting */
-		this.startCloseTimer(8000);
+		// this.startCloseTimer(8000);
 		
 		return true;
 	}

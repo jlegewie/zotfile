@@ -10,21 +10,22 @@ Zotero.ZotFile.pdfOutline = new function() {
     this.progressWin = null;
     this.itemProgress = [];
 
-    this.getOutline = function(attIDs) {
+    this.getOutline = Zotero.Promise.coroutine(function* (attIDs, verbose) {
         var verbose = false;
         this.progressWin = null;
         this.itemProgress = [];
         // get selected attachments if no att ids are passed
-        if(attIDs==null) {
+        if(attIDs == null) {
             verbose = true;
             attIDs = Zotero.ZotFile.getSelectedAttachments();
             Zotero.ZotFile.showWarningMessages(Zotero.ZotFile.ZFgetString('general.warning.skippedAtt'),Zotero.ZotFile.ZFgetString('general.warning.skippedAtt.msg'));
         }
         // get attachment item, parent and file
+        // filter attachments
         this.atts = Zotero.Items.get(attIDs)
-            .filter(att => att.isAttachment())
-            .filter(att => att.getFile())
-            .filter(att => att.getFile().exists() && att.attachmentMIMEType.indexOf('pdf') != -1);
+            .filter(att => att.isAttachment() && !att.isTopLevelItem())
+            .filter(att => att.attachmentContentType == 'application/pdf');
+        this.atts = yield Zotero.Promise.filter(atts, att => att.fileExists());
         if (this.atts.length==0) return;
         if (Zotero.isFx36) {
             Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.error'),Zotero.ZotFile.ZFgetString('extraction.outdatedFirefox'));
@@ -39,17 +40,16 @@ Zotero.ZotFile.pdfOutline = new function() {
         };
         this.progressWin.addDescription("Zotfile can only extract the TOC for PDFs that have a TOC.");
         if(verbose) this.progressWin.show();
-
         // get outline in hidden browser
         this.pdfHiddenBrowser = Zotero.Browser.createHiddenBrowser();
         this.pdfHiddenBrowser.loadURI(this.toc_url);            
-    };
+    });
 
     this.getOutlineFromFiles = function() {
         var attachment = this.atts.shift();
         var itemProgress = this.itemProgress.shift();
         var args = {};
-        args.url = attachment.getFile().path;
+        args.url = att.getFilePath();
         args.att = attachment;
         args.itemProgress = itemProgress;
         args.callbackObj = this;

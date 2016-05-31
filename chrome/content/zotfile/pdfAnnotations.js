@@ -6,7 +6,6 @@
 Zotero.ZotFile.pdfAnnotations = new function() {
 
     this.progressWin = null;
-    this.itemProgress = [];
     this.popplerExtractorFileName = 'ExtractPDFAnnotations';
     this.popplerExtractorPath = null;
     this.popplerExtractorVersion = 1.0;
@@ -39,63 +38,85 @@ Zotero.ZotFile.pdfAnnotations = new function() {
     };
 
     this.getAnnotations = Zotero.Promise.coroutine(function* (attIDs) {
-        this.progressWin = null;
-        this.itemProgress = [];
         // get selected attachments if no att ids are passed
-        if(attIDs == null) {
-            attIDs = Zotero.ZotFile.getSelectedAttachments();
-            Zotero.ZotFile.showWarningMessages(
-                Zotero.ZotFile.ZFgetString('general.warning.skippedAtt'),
-                Zotero.ZotFile.ZFgetString('general.warning.skippedAtt.msg'));
-        }
-        // extraction settings
-        var settings_pdfjs = Zotero.ZotFile.getPref('pdfExtraction.UsePDFJS'),
-            settings_both = Zotero.ZotFile.getPref('pdfExtraction.UsePDFJSandPoppler');
+        if(attIDs == null) attIDs = Zotero.ZotFile.getSelectedAttachments();
         // filter attachments
         var atts = Zotero.Items.get(attIDs)
             .filter(att => att.isAttachment() && !att.isTopLevelItem())
             .filter(att => att.attachmentContentType == 'application/pdf');
         atts = yield Zotero.Promise.filter(atts, att => att.fileExists());
+        // progress window
+        this.progressWin = new Zotero.ZotFile.ProgressWindow();
+        this.progressWin.changeHeadline('Zotfile: Extracting Annotations...');
+        this.progressWin.show();
+        if (atts.length == 0) {
+            this.progressWin.addDescription(Zotero.ZotFile.ZFgetString('general.warning.skippedAtt.msg'));
+            this.progressWin.startCloseTimer(Zotero.ZotFile.getPref('info_window_duration'));
+            return;
+        }
+        // extraction settings
+        var settings_pdfjs = Zotero.ZotFile.getPref('pdfExtraction.UsePDFJS'),
+            settings_both = Zotero.ZotFile.getPref('pdfExtraction.UsePDFJSandPoppler'),
+            icon_pdf = 'chrome://zotero/skin/treeitem-attachment-pdf.png';
         // iterate through attachment items
+        this.pdfAttachmentsForExtraction = [];
         for (let i = 0; i < atts.length; i++) {
             // get attachment item, parent and file
-            var att  = atts[i],
+            let att  = atts[i],
                 item = Zotero.Items.get(att.parentItemID),
-                path = Zotero.ZotFile.Tablet.getTabletStatus(att) ? (yield Zotero.ZotFile.Tablet.getLastModifiedTabletFile(att)) : att.getFilePath();
+                tabletStatus = Zotero.ZotFile.Tablet.getTabletStatus(att),
+                path = tabletStatus ? (yield Zotero.ZotFile.Tablet.getLastModifiedTabletFile(att)) : (yield att.getFilePathAsync());
             // extract annotations from pdf and create note with annotations
-            if (settings_pdfjs || settings_both) {
-                var a = {attachment: att, path: path, filename: OS.Path.basename(path), item: item};
-                this.pdfAttachmentsForExtraction.push(a);
-            }
-            // extract annotations with poppler
-            if (this.popplerExtractorTool && (!settings_pdfjs || settings_both)) {
-                let outputFile = path.replace('.pdf', '.txt');
-                Zotero.ZotFile.runProcess(this.popplerExtractorPath, [path, outputFile]);
-                let annotations = yield this.popplerExtractorGetAnnotationsFromFile(outputFile);
-                annotations = annotations.map(anno => {anno.color = [0, 0, 0]; return anno;});
-                // create note
-                if(annotations.length != 0) this.createNote(annotations, item, att, 'poppler');
-                // delete output text file
-                if(Zotero.ZotFile.getPref('pdfExtraction.popplerDeleteTxtFile'))
-                    OS.File.remove(outputFile);
-            }
+            this.pdfAttachmentsForExtraction.push({
+                attachment: att,
+                path: path,
+                filename: OS.Path.basename(path),
+                item: item,
+                itemProgress: new this.progressWin.ItemProgress(icon_pdf, OS.Path.basename(path))
+            });
         }
-        // extract annotations with pdf.js
-        if (this.pdfAttachmentsForExtraction.length > 0 && (settings_pdfjs || settings_both)) {
+        if (attIDs.length > atts.length)
+            this.progressWin.addDescription(Zotero.ZotFile.ZFgetString('general.warning.skippedAtt.msg'));
+        // extract annotations (poppler)
+        if (this.popplerExtractorTool && (!settings_pdfjs || settings_both))
+            this.popplerExtractor(!(settings_pdfjs || settings_both));
+        // extract annotations (pdf.js)
+        if (settings_pdfjs || settings_both) {
             // setup extraction process
             this.errorExtractingAnnotations = false;
-            // show progress window
-            this.progressWin = new Zotero.ZotFile.ProgressWindow();
-            this.progressWin.changeHeadline('Zotfile: Extracting Annotations...');
-            var icon_pdf = 'chrome://zotero/skin/treeitem-attachment-pdf.png';
-            for (let i = 0; i < this.pdfAttachmentsForExtraction.length; i++) {
-                this.pdfAttachmentsForExtraction[i].itemProgress = new this.progressWin.ItemProgress(icon_pdf, this.pdfAttachmentsForExtraction[i].filename);                    
-            };                
-            this.progressWin.show();
             // start extraction in hidden browser
             this.pdfHiddenBrowser = Zotero.Browser.createHiddenBrowser();
             this.pdfHiddenBrowser.loadURI(this.PDF_EXTRACT_URL);
         }
+    });
+
+    this.popplerExtractor = Zotero.Promise.coroutine(function* (setProgress) {
+        // iterate through pdfs
+        for (let i = 0; i < this.pdfAttachmentsForExtraction.length; i++) {
+            let item = this.pdfAttachmentsForExtraction[i].item,
+                att = this.pdfAttachmentsForExtraction[i].attachment,
+                path = this.pdfAttachmentsForExtraction[i].path,
+                progress = this.pdfAttachmentsForExtraction[i].itemProgress,
+                outputFile = path.replace('.pdf', '.txt');            
+            // extract annotations with poppler
+            yield Zotero.Utilities.Internal.exec(this.popplerExtractorPath, [path, outputFile]);
+            // get annotations from file and create note
+            let annotations = yield this.popplerExtractorGetAnnotationsFromFile(outputFile);
+            annotations = annotations.map(anno => {anno.color = [0, 0, 0]; return anno;});
+            // create note
+            if(annotations.length != 0) this.createNote(annotations, item, att, 'poppler');
+            // delete output text file
+            if(Zotero.ZotFile.getPref('pdfExtraction.popplerDeleteTxtFile'))
+                OS.File.remove(outputFile);
+            // update progress window
+            let icon = annotations.length > 0 ? 'chrome://zotero/skin/tick.png' : 'chrome://zotero/skin/cross.png';
+            if (setProgress) {
+                progress.setProgress(100);
+                progress.setIcon(icon);
+            }
+        }
+        if (setProgress)
+            this.progressWin.startCloseTimer(Zotero.ZotFile.getPref('info_window_duration'));        
     });
 
     this.popplerExtractorGetAnnotationsFromFile = Zotero.Promise.coroutine(function* (path) {
@@ -310,7 +331,6 @@ Zotero.ZotFile.pdfAnnotations = new function() {
     this.extractionComplete = function(annotations, item, att) {
         // put annotations into a Zotero note
         if (annotations.length > 0) this.createNote(annotations, item, att, "pdf.js");
-
         // move on to the next pdf, if there is one
         if (this.pdfAttachmentsForExtraction.length > 0) {
             this.extractAnnotationsFromFiles();
