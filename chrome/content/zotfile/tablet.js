@@ -303,30 +303,49 @@ Zotero.ZotFile.Tablet = new function() {
         return atts;
     }.bind(Zotero.ZotFile));
 
-    this.setTabletFolder = Zotero.Promise.coroutine(function* (atts, project_folder) {
-        this.infoWindow('Warning', 'why is project_folder == null????');
-        project_folder = typeof project_folder !== 'undefined' ? project_folder : '';
+    this.setTabletFolder = Zotero.Promise.coroutine(function* (atts, projectFolder) {
+        projectFolder = typeof projectFolder !== 'undefined' ? projectFolder : '';
+        var tablet_folder = this.Utils.joinPath(this.getPref('tablet.dest_dir'), projectFolder),
+            tablet_subfolder = this.getPref('tablet.subfolder') ? this.getPref('tablet.subfolderFormat') : '';
         atts = atts.filter(att => !att.isTopLevelItem());
-        for (var i = 0; i < atts.length; i++) {
+        // show infoWindow
+        var loc = (projectFolder !== '') ? ("'..." + projectFolder + "'.") : this.ZFgetString('tablet.baseFolder');
+        var progressWin = this.progressWindow(this.ZFgetString('tablet.movedAttachments', [loc]));
+        // iterature over attachments
+        for (let i = 0; i < atts.length; i++) {
+            let att = atts[i],
+                progress = new progressWin.ItemProgress(att.getImageSrc(), att.getField('title'));
             try {
-                var att = atts[i],
-                    item = Zotero.Items.get(att.parentItemID);
-                if (!item.isRegularItem()) continue;
-                // first pull if background mode
-                var att_mode = this.Tablet.getInfo(att, 'mode');
-                if(att_mode == 1 || att_mode != this.getPref('tablet.mode'))
-                    att = yield this.Tablet.getAttachmentFromTablet(att, true);
-                // send to tablet
-                yield this.Tablet.sendAttachmentToTablet(att, project_folder, false);
-                this.messages_report.push("'" + att.getField('title') + "'");
+                let item = Zotero.Items.get(att.parentItemID),
+                    path = yield this.Tablet.getTabletFilePath(att),
+                    folder = this.getLocation(tablet_folder, item, tablet_subfolder),
+                    pathNew = this.Utils.joinPath(folder, OS.Path.basename(path)),
+                    att_mode = this.Tablet.getInfo(att, 'mode');
+                let time_saved  = parseInt(this.Tablet.getInfo(att, 'lastmod'), 10),
+                    time_tablet = path ? Date.parse((yield OS.File.stat(path)).lastModificationDate) : 0;
+                // update tablet folder (background mode)
+                if(att_mode == 1)
+                    yield this.moveFile(path, pathNew);
+                // update tablet folder (foreground mode)
+                if(att_mode == 2)
+                    yield this.moveLinkedAttachmentFile(att, folder, OS.Path.basename(path), false);
+                // update tablet information
+                this.Tablet.addInfo(att, {
+                    'lastmod': time_saved == time_tablet ? Date.parse((yield OS.File.stat(pathNew)).lastModificationDate) : time_saved,
+                    'location': pathNew,
+                    'projectFolder': projectFolder
+                });
+                yield att.saveTx();
+                // update progress window
+                progress.complete(att.attachmentFilename, att.getImageSrc());
             }
             catch(e) {
+                progress.setError();
                 this.messages_fatalError.push(e);
             }
         }
         // show messages and handle errors
-        var mess_loc = (project_folder !== '' && project_folder !== null) ? ("'..." + project_folder + "'.") : this.ZFgetString('tablet.baseFolder');
-        this.showReportMessages(this.ZFgetString('tablet.movedAttachments', [mess_loc]));
+        progressWin.startCloseTimer(this.getPref("info_window_duration"));
         this.handleErrors();
     }.bind(Zotero.ZotFile));
 

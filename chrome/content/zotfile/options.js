@@ -460,13 +460,13 @@ var deleteSubfolder = Zotero.Promise.coroutine(function* (subfolder) {
 var changedSubfolder = Zotero.Promise.coroutine(function* (projectFolderOld, projectFolderNew) {
     // get attachments in old subfolder
     var attInFolder = yield this.Tablet.getAttachmentsOnTablet(projectFolderOld);
-    // create file file old subfolder
+    // create file old subfolder
     var path = this.Tablet.getTabletLocationFile(projectFolderOld);
     // move attachments to new subfolder
     var confirmed=0;
     if(attInFolder.length>0) confirmed=confirm(this.ZFgetString('tablet.moveAttsToNewSubfolder', [attInFolder.length, projectFolderOld, projectFolderNew]));
     if (confirmed) {
-        this.setTabletFolder(attInFolder,projectFolderNew)
+        this.Tablet.setTabletFolder(attInFolder, projectFolderNew)
             // remove folder if empty
             .then(() => this.removeFile(path));
     }
