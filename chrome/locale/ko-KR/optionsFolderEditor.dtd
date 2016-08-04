@@ -1,0 +1,3 @@
+<!ENTITY label "라벨">
+<!ENTITY subfolder "하위 폴더">
+<!ENTITY leave-empty "이 항목을 비워 두면 라벨 이름으로 폴더를 생성합니다.">

@@ -1,0 +1,24 @@
+<!ENTITY zotfile-attach-file.label "새 파일 첨부">
+<!ENTITY zotfile-attach-file.tooltiptext "사용자 지정 폴더의 최신 파일을 선택된 Zotero 항목에 이동하고 첨부합니다">
+<!ENTITY zotfile-manage-attachments.label "첨부 파일 관리">
+<!ENTITY warning.label "경고">
+<!ENTITY renameSelectedAttachments.label "첨부 파일 이름 바꾸기">
+<!ENTITY renameSelectedAttachments.tooltiptext "선택된 Zotero 항목에 속한 첨부 파일을 이동하고 이름을 바꿉니다">
+<!ENTITY extract-annotations.label "주석 추출">
+<!ENTITY extract-annotations.tooltiptext "PDF 파일에서 주석과 텍스트 강조를 추출합니다.">
+<!ENTITY pdf-outline.label "목차 얻기">
+<!ENTITY pdf-outline.tooltiptext "PDF 파일로부터 목차를 (ToC) 얻습니다.">
+<!ENTITY send-to-tablet "태블릿으로 보내기">
+<!ENTITY send-attachment-file-to-tablet "첨부 파일을 태블릿으로 보냅니다.">
+<!ENTITY update-file-modification-time "파일 수정 시간 기준 업데이트">
+<!ENTITY sync-attachment-file "Zotero 파일과 태블릿의 파일을 동기화합니다.">
+<!ENTITY get-from-tablet "태블릿에서 가져오기">
+<!ENTITY get-attachment-file-from-tablet "태블릿으로부터 첨부 파일을 가져옵니다.">
+<!ENTITY send-to-subfolder-on-tablet "태블릿 하위 폴더로 보내기">
+<!ENTITY change-subfolders "하위 폴더 변경...">
+<!ENTITY add-and-delete-subfolders "메뉴에 하위 폴더를 추가/제거합니다.">
+<!ENTITY zotfile-options.label "ZotFile 환경설정...">
+<!ENTITY saved-search-all "모든 하위 폴더의 첨부 파일 보기">
+<!ENTITY saved-search-restrict "하위 폴더로 검색 제한">
+<!ENTITY restrict-subfolder "하위 폴더로 제한...">
+<!ENTITY restrict-basefolder "미분류 첨부 파일">
