@@ -522,17 +522,7 @@ Zotero.ZotFile = new function() {
             // TODO: use an integer counter instead of mod time for change detection
             // Update mod time first, because it may fail for read-only files on Windows
             yield OS.File.setDates(origPath, null, null);
-            var result = yield OS.File.move(origPath, destPath, { noOverwrite: !overwrite })
-            // If no overwriting and file exists, return -1
-            .catch(OS.File.Error, function (e) {
-                if (e.becauseExists) {
-                    return false;
-                }
-                throw e;
-            });
-            if (result) {
-                return result;
-            }
+            var result = yield this.moveFile(origPath, destPath)
             
             yield att.relinkAttachmentFile(destPath);
             
@@ -940,7 +930,7 @@ Zotero.ZotFile = new function() {
             if(att_tags.length > 0) att_tags.forEach(tag => attNew.addTag(tag));
             yield attNew.saveTx();
             // select new attachment
-            if (win.ZoteroPane.getSelectedItems(true).includes(att.id)) {
+            if (selection.includes(att.id)) {
                 this.Utils.arrayReplace(selection, att.id, attNew.id);
                 win.ZoteroPane.itemsView.selectItems(selection);
             }
@@ -981,7 +971,7 @@ Zotero.ZotFile = new function() {
             if(att_tags.length > 0) attNew.addTags(att_tags);
             yield attNew.saveTx();
             // select new attachment
-            if (win.ZoteroPane.getSelectedItems(true).includes(att.id)) {
+            if (selection.includes(att.id)) {
                 this.Utils.arrayReplace(selection, att.id, attNew.id);
                 win.ZoteroPane.itemsView.selectItems(selection);
             }
