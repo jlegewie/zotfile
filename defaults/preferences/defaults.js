@@ -2,7 +2,7 @@ pref("extensions.zotfile.debug",false);
 pref("extensions.zotfile.source_dir_ff",true);
 pref("extensions.zotfile.source_dir","");
 pref("extensions.zotfile.dest_dir", "");
-pref("extensions.zotfile.filetypes", "pdf,doc,docx,txt,rtf");
+pref("extensions.zotfile.filetypes", "pdf,doc,docx,txt,rtf,djvu");
 pref("extensions.zotfile.useFileTypes", true);
 pref("extensions.zotfile.allFiles", false);
 pref("extensions.zotfile.useZoteroToRename", false);
