@@ -25,7 +25,7 @@ Zotero.ZotFile.pdfOutline = new function() {
         this.atts = Zotero.Items.get(attIDs)
             .filter(att => att.isAttachment() && !att.isTopLevelItem())
             .filter(att => att.attachmentContentType == 'application/pdf');
-        this.atts = yield Zotero.Promise.filter(atts, att => att.fileExists());
+        this.atts = yield Zotero.Promise.filter(this.atts, att => att.fileExists());
         if (this.atts.length==0) return;
         if (Zotero.isFx36) {
             Zotero.ZotFile.infoWindow(Zotero.ZotFile.ZFgetString('general.error'),Zotero.ZotFile.ZFgetString('extraction.outdatedFirefox'));
@@ -49,7 +49,7 @@ Zotero.ZotFile.pdfOutline = new function() {
         var attachment = this.atts.shift();
         var itemProgress = this.itemProgress.shift();
         var args = {};
-        args.url = att.getFilePath();
+        args.url = attachment.getFilePath();
         args.att = attachment;
         args.itemProgress = itemProgress;
         args.callbackObj = this;
