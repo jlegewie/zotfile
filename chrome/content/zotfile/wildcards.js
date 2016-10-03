@@ -281,17 +281,24 @@ Zotero.ZotFile.Wildcards = new function() {
         var table = {};
         for (var key in wildcards) {
             var property = wildcards[key],
-                value = '';
+                value;
             // if string, get field from zotero or using additional fields
             if(typeof(property)=='string')
-                value = (property in addFields) ? addFields[property] : item.getField(property, false, true);
-            if(typeof(property)=='object') {
+                value = function(){
+                  return (property in addFields) ? addFields[property] : item.getField(property, false, true);
+                }
+            else if(typeof(property)=='object') {
+                // javascript object with three elements for field, regular expression, and group (e.g. '%y')
+                if('field' in property) value = function(){
+                  return regexWildcard(item, property);
+                }
                 // javascript object with item type specific field names (e.g. '%w')
                    /* Note: 'default' key defines default, only include item types that are different */
-                if('default' in property) value = itemtypeWildcard(item, property);
-                // javascript object with three elements for field, regular expression, and group (e.g. '%y')
-                if('field' in property) value = regexWildcard(item, property);
+                else if('default' in property) value = function(){
+                  return itemtypeWildcard(item, property);
+                }
             }
+            else value = function(){ return ''; }
             // add element to wildcards table
             table['%' + key] = value;
         }
@@ -342,20 +349,20 @@ Zotero.ZotFile.Wildcards = new function() {
                     // substring(NaN, x) is from the beginning of the string ;-]
                     str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
                     // add content of wildcard
-                    lookup = table[rule.substr(wildcards[j], 2)];
+                    lookup = table[rule.substr(wildcards[j], 2)]();
                     if (lookup === "" || typeof(lookup) === "undefined") complete = false;
                     else str.push(lookup);
                 }
                 // add rule content between last and current wildcard
                 str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
             }
-            lookup = table[rule.substr(wildcards[pos - 1], 2)];
+            lookup = table[rule.substr(wildcards[pos - 1], 2)]();
             if (lookup === "" || typeof(lookup) === "undefined") excl_complete |= false;
             else {
                 exclusive = exclusive || lookup;
                 excl_complete |= true;
             }
-            lookup = table[rule.substr(wildcards[pos], 2)];
+            lookup = table[rule.substr(wildcards[pos], 2)]();
             if (lookup === "" || typeof(lookup) === "undefined") excl_complete |= false;
             else {
                 exclusive = exclusive || lookup;
@@ -372,7 +379,7 @@ Zotero.ZotFile.Wildcards = new function() {
             str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
             // add content of wildcard
             var wildcard = rule.substr(wildcards[j], 2);
-            lookup = table[wildcard];
+            lookup = table[wildcard]();
             // if it is a collectionPath field. we need to select one element from the array.
             if (lookup && Array.isArray(lookup)) {
                 var getCollectionPathFromTable = function () {
@@ -390,7 +397,7 @@ Zotero.ZotFile.Wildcards = new function() {
                     if (collectionPaths.length === 0)  return "";
                     if (collectionPaths.length === 1)  return collectionPaths[0];
 
-                    var title = table['%t'];
+                    var title = table['%t']();
                     var idx = selectFromList(collectionPaths, title);
                     if (idx >= 0)  return collectionPaths[idx];
 
