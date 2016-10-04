@@ -41,6 +41,8 @@ Zotero.ZotFile.Wildcards = new function() {
     }
 
     function truncateTitle(title) {
+        title = '' + title
+
         // truncate title after : . and ?
         if(Zotero.ZotFile.prefs.getBoolPref("truncate_title")) {
             var truncate = title.search(/:|\.|\?|\!/);
