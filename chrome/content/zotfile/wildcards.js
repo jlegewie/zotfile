@@ -224,26 +224,24 @@ Zotero.ZotFile.Wildcards = new function() {
             "collectionPaths": getCollectionPathsOfItem(item)
         };
         // define transform functions
-        var itemtypeWildcard = function(item, map) {
-            var value = '',
-                property = (item_type_name in map) ? map[item_type_name] : map['default'];
-            if(typeof(property)=='string')
-                value = (property in addFields) ? addFields[property] : item.getField(property, false, true);
-            if(typeof(property)=='object')
-                value = regexWildcard(item, property);
-            return value;
-        };
-        var regexWildcard = function(item, w) {
-            var field = w.field,
-                operations = w.operations,
-                output = '';
-            // get field
-            if (typeof(field)=='string')
-                output = (field in addFields) ? addFields[field] : item.getField(field, false, true);
-            if (typeof(field)=='object')
-                output = itemtypeWildcard(item, field);
-            // operations
-            if(operations!==undefined) {
+        function replaceObjectWildcard(item, w){
+            var field,
+                operations,
+                output;
+
+            if(typeof(w)=='string'){
+                field = w
+            } else {
+                if(typeof(w)!='object') throw 'Invalid wildcard definition';
+                field = ('field' in w) ? w.field
+                    : (item_type_name in w) ? w[item_type_name]
+                    : w.default;
+                operations = w.operations
+            }
+
+            output = (field in addFields) ? addFields[field] : item.getField(field, false, true);
+
+            if (operations){
                 for (var i = 0; i < operations.length; ++i) {
                     var obj = operations[i],
                         regex = obj.regex,
@@ -270,40 +268,24 @@ Zotero.ZotFile.Wildcards = new function() {
                         output = output.trim();
                 }
             }
-            // return
+
             return output;
-        };
+        }
+
         // get wildcards object from preferences
         var wildcards = JSON.parse(Zotero.ZotFile.prefs.getCharPref("wildcards.default"));
         var wildcards_user = JSON.parse(Zotero.ZotFile.prefs.getCharPref("wildcards.user"));
         for (var key in wildcards_user) { wildcards[key] = wildcards_user[key]; }
-        // define wildcard table for item by iterating through wildcards
-        var table = {};
-        for (var key in wildcards) {
-            var property = wildcards[key],
-                value;
-            // if string, get field from zotero or using additional fields
-            if(typeof(property)=='string')
-                value = function(){
-                  return (property in addFields) ? addFields[property] : item.getField(property, false, true);
-                }
-            else if(typeof(property)=='object') {
-                // javascript object with three elements for field, regular expression, and group (e.g. '%y')
-                if('field' in property) value = function(){
-                  return regexWildcard(item, property);
-                }
-                // javascript object with item type specific field names (e.g. '%w')
-                   /* Note: 'default' key defines default, only include item types that are different */
-                else if('default' in property) value = function(){
-                  return itemtypeWildcard(item, property);
-                }
-            }
-            else value = function(){ return ''; }
-            // add element to wildcards table
-            table['%' + key] = value;
-        }
 
-        // return
+        // define lazy wildcard table for item by iterating through wildcards
+        var table = {};
+        Object.keys(wildcards).forEach(function(key){
+            // add element to wildcards table
+            table['%' + key] = function(item){
+                return replaceObjectWildcard(item, wildcards[key])
+            };
+        })
+
         return table;
     }
 
