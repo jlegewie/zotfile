@@ -189,18 +189,18 @@ Zotero.ZotFile.Wildcards = new function() {
         return([author, author_lastf, author_initials, editor, editor_lastf, editor_initials, author_lastg, lastAuthor, lastAuthor_lastInitial, lastAuthor_lastf, lastAuthor_initials]);
     }
 
-    function getCollectionPathsOfItem(item) {
-        function getCollectionPath(collectionID) {
-            var collection = Zotero.Collections.get(collectionID);
-            if (collection.parent == null)  return collection.name
+    function wildcardTable(item) {
+        var getCollectionPathsOfItem = function(item) {
+            var getCollectionPath = function(collectionID) {
+                var collection = Zotero.Collections.get(collectionID);
+                if (collection.parent == null)  return collection.name
 
-            return OS.Path.normalize(getCollectionPath(collection.parentID) + Zotero.ZotFile.folderSep + collection.name);
+                return OS.Path.normalize(getCollectionPath(collection.parentID) + Zotero.ZotFile.folderSep + collection.name);
+            };
+
+            return item.getCollections().map(getCollectionPath);
         };
 
-        return item.getCollections().map(getCollectionPath);
-    };
-
-    function wildcardTable(item) {
         // item type
         var item_type = item.itemTypeID;
         var item_type_name = Zotero.ItemTypes.getName(item_type);
@@ -223,26 +223,27 @@ Zotero.ZotFile.Wildcards = new function() {
             "lastAuthor_initials": authors[10],
             "collectionPaths": getCollectionPathsOfItem(item)
         };
-
-        function replaceObjectWildcard(item, w){
-            var field,
-                operations,
-                output;
-
-            if(typeof(w)=='string'){
-                field = w
-            } else {
-                if(typeof(w)!='object') throw 'Invalid wildcard definition';
-                field = ('field' in w) ? w.field
-                    : (item_type_name in w) ? w[item_type_name]
-                    : w.default;
-                operations = w.operations
-            }
-
-            output = (field in addFields) ? addFields[field] : item.getField(field, false, true);
-
-            // apply transform functions
-            if (operations){
+        // define transform functions
+        var itemtypeWildcard = function(item, map) {
+            var value = '',
+                property = (item_type_name in map) ? map[item_type_name] : map['default'];
+            if(typeof(property)=='string')
+                value = (property in addFields) ? addFields[property] : item.getField(property, false, true);
+            if(typeof(property)=='object')
+                value = regexWildcard(item, property);
+            return value;
+        };
+        var regexWildcard = function(item, w) {
+            var field = w.field,
+                operations = w.operations,
+                output = '';
+            // get field
+            if (typeof(field)=='string')
+                output = (field in addFields) ? addFields[field] : item.getField(field, false, true);
+            if (typeof(field)=='object')
+                output = itemtypeWildcard(item, field);
+            // operations
+            if(operations!==undefined) {
                 for (var i = 0; i < operations.length; ++i) {
                     var obj = operations[i],
                         regex = obj.regex,
@@ -269,24 +270,33 @@ Zotero.ZotFile.Wildcards = new function() {
                         output = output.trim();
                 }
             }
-
+            // return
             return output;
-        }
-
+        };
         // get wildcards object from preferences
         var wildcards = JSON.parse(Zotero.ZotFile.prefs.getCharPref("wildcards.default"));
         var wildcards_user = JSON.parse(Zotero.ZotFile.prefs.getCharPref("wildcards.user"));
         for (var key in wildcards_user) { wildcards[key] = wildcards_user[key]; }
-
-        // define lazy wildcard table for item by iterating through wildcards
+        // define wildcard table for item by iterating through wildcards
         var table = {};
-        Object.keys(wildcards).forEach(function(key){
+        for (var key in wildcards) {
+            var property = wildcards[key],
+                value = '';
+            // if string, get field from zotero or using additional fields
+            if(typeof(property)=='string')
+                value = (property in addFields) ? addFields[property] : item.getField(property, false, true);
+            if(typeof(property)=='object') {
+                // javascript object with item type specific field names (e.g. '%w')
+                   /* Note: 'default' key defines default, only include item types that are different */
+                if('default' in property) value = itemtypeWildcard(item, property);
+                // javascript object with three elements for field, regular expression, and group (e.g. '%y')
+                if('field' in property) value = regexWildcard(item, property);
+            }
             // add element to wildcards table
-            table['%' + key] = function(item){
-                return replaceObjectWildcard(item, wildcards[key])
-            };
-        })
+            table['%' + key] = value;
+        }
 
+        // return
         return table;
     }
 
@@ -332,20 +342,20 @@ Zotero.ZotFile.Wildcards = new function() {
                     // substring(NaN, x) is from the beginning of the string ;-]
                     str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
                     // add content of wildcard
-                    lookup = table[rule.substr(wildcards[j], 2)]();
+                    lookup = table[rule.substr(wildcards[j], 2)];
                     if (lookup === "" || typeof(lookup) === "undefined") complete = false;
                     else str.push(lookup);
                 }
                 // add rule content between last and current wildcard
                 str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
             }
-            lookup = table[rule.substr(wildcards[pos - 1], 2)]();
+            lookup = table[rule.substr(wildcards[pos - 1], 2)];
             if (lookup === "" || typeof(lookup) === "undefined") excl_complete |= false;
             else {
                 exclusive = exclusive || lookup;
                 excl_complete |= true;
             }
-            lookup = table[rule.substr(wildcards[pos], 2)]();
+            lookup = table[rule.substr(wildcards[pos], 2)];
             if (lookup === "" || typeof(lookup) === "undefined") excl_complete |= false;
             else {
                 exclusive = exclusive || lookup;
@@ -362,7 +372,7 @@ Zotero.ZotFile.Wildcards = new function() {
             str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
             // add content of wildcard
             var wildcard = rule.substr(wildcards[j], 2);
-            lookup = table[wildcard]();
+            lookup = table[wildcard];
             // if it is a collectionPath field. we need to select one element from the array.
             if (lookup && Array.isArray(lookup)) {
                 var getCollectionPathFromTable = function () {
@@ -380,7 +390,7 @@ Zotero.ZotFile.Wildcards = new function() {
                     if (collectionPaths.length === 0)  return "";
                     if (collectionPaths.length === 1)  return collectionPaths[0];
 
-                    var title = table['%t']();
+                    var title = table['%t'];
                     var idx = selectFromList(collectionPaths, title);
                     if (idx >= 0)  return collectionPaths[idx];
 
