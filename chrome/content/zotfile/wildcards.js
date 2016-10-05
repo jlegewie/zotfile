@@ -239,7 +239,11 @@ Zotero.ZotFile.Wildcards = new function() {
                 operations = w.operations
             }
 
-            output = (field in addFields) ? addFields[field] : item.getField(field, false, true);
+            if (field == 'BBTCiteKey' && Zotero.BetterBibTeX){
+                output = Zotero.BetterBibTeX.keymanager.get(item).citekey
+            } else {
+                output = (field in addFields) ? addFields[field] : item.getField(field, false, true);
+            }
 
             // apply transform functions
             if (operations){
