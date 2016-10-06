@@ -441,9 +441,11 @@ Zotero.ZotFile = new function() {
             filename = Zotero.Attachments.getFileBaseNameFromItem(item);
         // Add user input to filename
         if(this.getPref('userInput')) filename = this.addUserInput(filename, name);
-        // add filetype to filename
-        var filetype = this.Utils.getFiletype(name);
-        if(filetype != '') filename = filename + '.' + filetype;
+        if (name){
+            // add filetype to filename
+            var filetype = this.Utils.getFiletype(name);
+            if(filetype != '') filename = filename + '.' + filetype;
+        }
         // valid zotero name
         filename = Zotero.File.getValidFileName(filename);
         // return
