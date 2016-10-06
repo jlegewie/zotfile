@@ -189,18 +189,18 @@ Zotero.ZotFile.Wildcards = new function() {
         return([author, author_lastf, author_initials, editor, editor_lastf, editor_initials, author_lastg, lastAuthor, lastAuthor_lastInitial, lastAuthor_lastf, lastAuthor_initials]);
     }
 
-    function wildcardTable(item) {
-        var getCollectionPathsOfItem = function(item) {
-            var getCollectionPath = function(collectionID) {
-                var collection = Zotero.Collections.get(collectionID);
-                if (collection.parent == null)  return collection.name
+    function getCollectionPathsOfItem(item) {
+        function getCollectionPath(collectionID) {
+            var collection = Zotero.Collections.get(collectionID);
+            if (collection.parent == null)  return collection.name
 
-                return OS.Path.normalize(getCollectionPath(collection.parentID) + Zotero.ZotFile.folderSep + collection.name);
-            };
-
-            return item.getCollections().map(getCollectionPath);
+            return OS.Path.normalize(getCollectionPath(collection.parentID) + Zotero.ZotFile.folderSep + collection.name);
         };
 
+        return item.getCollections().map(getCollectionPath);
+    };
+
+    function wildcardTable(item) {
         // item type
         var item_type = item.itemTypeID;
         var item_type_name = Zotero.ItemTypes.getName(item_type);
@@ -223,7 +223,7 @@ Zotero.ZotFile.Wildcards = new function() {
             "lastAuthor_initials": authors[10],
             "collectionPaths": getCollectionPathsOfItem(item)
         };
-        // define transform functions
+
         function replaceObjectWildcard(item, w){
             var field,
                 operations,
@@ -241,6 +241,7 @@ Zotero.ZotFile.Wildcards = new function() {
 
             output = (field in addFields) ? addFields[field] : item.getField(field, false, true);
 
+            // apply transform functions
             if (operations){
                 for (var i = 0; i < operations.length; ++i) {
                     var obj = operations[i],
