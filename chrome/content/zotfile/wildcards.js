@@ -290,7 +290,7 @@ Zotero.ZotFile.Wildcards = new function() {
         var table = {};
         Object.keys(wildcards).forEach(function(key){
             // add element to wildcards table
-            table['%' + key] = function(item){
+            table['%' + key] = function(){
                 return replaceObjectWildcard(item, wildcards[key])
             };
         })
