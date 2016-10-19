@@ -806,9 +806,10 @@ Zotero.ZotFile = new function() {
      */
     this.attachFile = Zotero.Promise.coroutine(function* (item, path) {
         if (!item.isRegularItem()) throw("Zotero.ZotFile.attachFile(): 'item' is not a regular zotero attachment item.");
-        let options = {file: path, libraryID: item.libraryID, parentItemID: item.id, collections: undefined, saveOptions: {skipNotifier: true}};
+        let options = {file: path, libraryID: item.libraryID, parentItemID: item.id, collections: undefined};
         // create imported attachment
         if (this.getPref('import') || item.library.libraryType != 'user') {
+            this.excludeAutorenameKeys.push(item.key);
             var att = yield Zotero.Attachments.importFromFile(options);
             // rename attachment
             att = yield this.renameAttachment(att);
