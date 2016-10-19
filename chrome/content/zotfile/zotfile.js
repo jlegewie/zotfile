@@ -828,8 +828,6 @@ Zotero.ZotFile = new function() {
             // create zotero link to file
             var att = yield Zotero.Attachments.linkFromFile(options);
         }
-        // get pdf outline
-        this.pdfOutline.getOutline([att.id])
         // return attachment item
         return att;
     });
