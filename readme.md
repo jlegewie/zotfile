@@ -34,6 +34,10 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
+#### Changes in 4.2.6
+
+- fix regression from 4.2.5 (extraction of annotations)
+
 #### Changes in 4.2.5
 
 - Compatibility with [Juris-M](https://juris-m.github.io/)
