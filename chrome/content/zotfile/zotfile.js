@@ -960,8 +960,6 @@ Zotero.ZotFile = new function() {
             // create linked attachment
             var options = {file: path, libraryID: item.libraryID, parentItemID: item.id, collections: undefined};
             attNew = yield Zotero.Attachments.linkFromFile(options);
-            // rename file associated with attachment
-            yield attNew.renameAttachmentFile(filename);
             // change title of attachment item
             attNew.setField('title', filename);
             // restore attachment data
