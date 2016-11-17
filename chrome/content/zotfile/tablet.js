@@ -103,15 +103,14 @@ Zotero.ZotFile.Tablet = new function() {
 
     this.clearInfo = function (att) {
         try {
-            var win = this.wm.getMostRecentWindow('navigator:browser'),
+            var parser = new DOMParser(),
                 content = att.getNote().replace(/zotero:\/\//g, 'http://zotfile.com/'),
-                fragment = this.Utils.parseHTML(content),
-                note = win.document.createElementNS(this.xhtml, 'div');
-            note.appendChild(fragment);
-            var p = note.querySelector("#zotfile-data");
-            if (p !== null) note.removeChild(p);
+                doc = parser.parseFromString(content, 'text/html'),
+                p = doc.querySelector('#zotfile-data');
+            if(p === null) p = doc.querySelector('[title*="lastmod"][title*="projectFolder"]');
+            if (p !== null) doc.removeChild(p);
             // save content back to note
-            content = note.innerHTML
+            content = doc.documentElement.innerHTML
                 // remove old zotfile data
                 .replace(/(lastmod|mode|location|projectFolder)\{.*?\};?/g,'')
                 // replace links with zotero links
@@ -124,22 +123,13 @@ Zotero.ZotFile.Tablet = new function() {
     }.bind(Zotero.ZotFile);
 
     this.getInfo = function(att, key) {
-        var win = this.wm.getMostRecentWindow('navigator:browser'),
-            note = win.document.createElementNS(this.xhtml, 'div'),
-            content = att.getNote(),
-            value;
         try {
-            try {
-                note.appendChild(this.Utils.parseHTML(content));
-            }
-            catch(e) {
-                var match = content.match(/<p id="zotfile-data".+<\/p>/);
-                if (match === null) match = content.match(/lastmod{.+}/);
-                if (match === null) return '';
-                note.appendChild(this.Utils.parseHTML(match[0]));
-            }
-            // get zotfile data
-            var p = note.querySelector('#zotfile-data');
+            var value,
+                parser = new DOMParser(),
+                content = att.getNote(),
+                doc = parser.parseFromString(content, 'text/html'),
+                p = doc.querySelector('#zotfile-data');
+            if(p === null) p = doc.querySelector('[title*="lastmod"][title*="projectFolder"]');
             if(p === null) {
                 // support for old system
                 var search = content.search(key);
@@ -147,8 +137,8 @@ Zotero.ZotFile.Tablet = new function() {
                 value = value.substring(value.search('{') + 1, value.search('}'));
             }
             else {
-                var data = JSON.parse(p.getAttribute('title'));
-                value = data[key]===undefined ? '' : data[key];
+                var data = JSON.parse(p.getAttribute('title').replace(/&quot;/g, '"'));
+                value = key in data ? data[key] : undefined;
             }
             // for location tag: replace [BaseFolder] with destination folder
             if(key == 'location') value = value.replace('[BaseFolder]', this.getPref('tablet.dest_dir'));
@@ -171,22 +161,14 @@ Zotero.ZotFile.Tablet = new function() {
      */
     this.addInfo = function(att, data) {
         // get current content of note
-        var win = this.wm.getMostRecentWindow('navigator:browser'),
+        var parser = new DOMParser(),
             content = att.getNote().replace(/zotero:\/\//g, 'http://zotfile.com/'),
-            note = win.document.createElementNS(this.xhtml, 'div');
-        try {
-            note.appendChild(this.Utils.parseHTML(content));
-        }
-        catch (e){
-            var match = content.match(/<p id="zotfile-data".+<\/p>/);
-            if (match !== null)
-                note.appendChild(this.Utils.parseHTML(match[0]));
-        }
+            doc = parser.parseFromString(content, 'text/html'),
+            p = doc.querySelector('#zotfile-data');
+        if(p === null) p = doc.querySelector('[title*="lastmod"][title*="projectFolder"]');
         // for location tag: replace destination folder with [BaseFolder]
         if('location' in data && this.getPref('tablet.dest_dir_relativePath'))
             data.location = data.location.replace(this.getPref('tablet.dest_dir'), '[BaseFolder]');
-        // get zotfile element
-        var p = note.querySelector('#zotfile-data');
         // doesn't exists...
         if (p === null) {
             p = win.document.createElementNS(this.xhtml, 'p');
@@ -194,16 +176,16 @@ Zotero.ZotFile.Tablet = new function() {
             p.setAttribute('style', 'color: #cccccc;');
             p.setAttribute('title', JSON.stringify(data));
             p.textContent = '(hidden zotfile data)';
-            note.appendChild(p);
+            doc.appendChild(p);
         }
         // already exists...
         else {
-            var attData = JSON.parse(p.getAttribute('title'));
+             var attData = JSON.parse(p.getAttribute('title').replace(/&quot;/g, '"'));
             for (var attr in data) attData[attr] = data[attr];
             p.setAttribute('title', JSON.stringify(attData));
         }
         // save changes in zotero note
-        att.setNote(note.innerHTML.replace(/http:\/\/zotfile.com\//g, 'zotero://'));
+        att.setNote(doc.documentElement.innerHTML.replace(/http:\/\/zotfile.com\//g, 'zotero://'));
     }.bind(Zotero.ZotFile);
 
     this.getTabletStatus = function(att) {
