@@ -161,7 +161,8 @@ Zotero.ZotFile.Tablet = new function() {
      */
     this.addInfo = function(att, data) {
         // get current content of note
-        var parser = new DOMParser(),
+        var win = this.wm.getMostRecentWindow('navigator:browser'),
+            parser = new DOMParser(),
             content = att.getNote().replace(/zotero:\/\//g, 'http://zotfile.com/'),
             doc = parser.parseFromString(content, 'text/html'),
             p = doc.querySelector('#zotfile-data');
@@ -176,7 +177,7 @@ Zotero.ZotFile.Tablet = new function() {
             p.setAttribute('style', 'color: #cccccc;');
             p.setAttribute('title', JSON.stringify(data));
             p.textContent = '(hidden zotfile data)';
-            doc.appendChild(p);
+            doc.body.appendChild(p);
         }
         // already exists...
         else {
