@@ -83,7 +83,7 @@ Zotero.ZotFile.Utils = new function() {
 
     /**
      * Format string using named placeholders such as '%(@name [name])'
-     * @return {[type]} [description]
+     * @return {str} [description]
      */
     this.str_format = function(str, args) {
         return str.replace(/%\((\w+)\)/g, (match, name) => args[name]);
