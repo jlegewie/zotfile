@@ -80,7 +80,7 @@ Zotero.ZotFile.PdfGetOutline = {
                 // error handler for getDocument
                 function(err) {
                     args.itemProgress.setError();
-                    logError('error opening PDF: ' + args.url + ' ' + msg);
+                    logError('error opening PDF: ' + args.url + ' ' + err);
                     args.callback.call(args.callbackObj, args.att, null, args.itemProgress);
                 });
 
