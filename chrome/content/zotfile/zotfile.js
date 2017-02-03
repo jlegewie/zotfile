@@ -821,7 +821,7 @@ Zotero.ZotFile = new function() {
         else {
             // get filename and location
             let filename = this.getFilename(item, OS.Path.basename(path)),
-                subfolder = this.getPref('subfolder') ? this.getPref('subfolderFormat') : '',
+                subfolder = !this.getPref('import') & this.getPref('subfolder') ? this.getPref('subfolderFormat') : '',
                 location = this.getLocation(this.getPref('dest_dir'), item, subfolder);
             // move and rename file
             options.file = yield this.moveFile(path, location, filename);
@@ -888,8 +888,8 @@ Zotero.ZotFile = new function() {
      */
     this.renameAttachment = Zotero.Promise.coroutine(function* (att, imported, rename, folder, subfolder, verbose) {
         // default arguments
-        var subfolder_default = this.getPref('subfolder') ? this.getPref('subfolderFormat') : '';
         imported = typeof imported !== 'undefined' ? imported : this.getPref('import');
+        var subfolder_default = !imported & this.getPref('subfolder') ? this.getPref('subfolderFormat') : '';
         rename = typeof rename !== 'undefined' ? rename : true;
         folder = typeof folder !== 'undefined' ? folder : this.getPref('dest_dir');
         subfolder = typeof subfolder !== 'undefined' ? subfolder : subfolder_default;
