@@ -289,7 +289,7 @@ Zotero.ZotFile.Tablet = new function() {
     this.setTabletFolder = Zotero.Promise.coroutine(function* (atts, projectFolder) {
         projectFolder = typeof projectFolder !== 'undefined' ? projectFolder : '';
         var tablet_folder = this.Utils.joinPath(this.getPref('tablet.dest_dir'), projectFolder),
-            tablet_subfolder = this.getPref('tablet.subfolder') ? this.getPref('tablet.subfolderFormat') : '';
+            tablet_subfolder = !this.getPref('import') & this.getPref('tablet.subfolder') ? this.getPref('tablet.subfolderFormat') : '';
         atts = atts.filter(att => !att.isTopLevelItem());
         // show infoWindow
         var loc = (projectFolder !== '') ? ("'..." + projectFolder + "'.") : this.ZFgetString('tablet.baseFolder');
@@ -408,7 +408,7 @@ Zotero.ZotFile.Tablet = new function() {
             tablet_rename = this.getPref('tablet.rename'),
             // OS.Path.join(this.getPref('tablet.dest_dir'), project_folder)
             tablet_dest = this.Utils.joinPath(this.getPref('tablet.dest_dir'), project_folder),
-            tablet_subfolder = this.getPref('tablet.subfolder') ? this.getPref('tablet.subfolderFormat') : '';
+            tablet_subfolder = !this.getPref('import') & this.getPref('tablet.subfolder') ? this.getPref('tablet.subfolderFormat') : '';
         // background mode: Rename and Move Attachment
         if (tablet_mode == 1) {
             // change name of attachment file
@@ -674,7 +674,7 @@ Zotero.ZotFile.Tablet = new function() {
             // get note content
             var note = att.getNote();
             // rename and move attachment
-            var subfolder = this.getPref('subfolder') ? this.getPref('subfolderFormat') : '';
+            var subfolder = !this.getPref('import') & this.getPref('subfolder') ? this.getPref('subfolderFormat') : '';
             att = yield this.renameAttachment(att, this.getPref('import'), this.getPref('tablet.rename'),
                             this.getPref('dest_dir'), subfolder, false);
             // finish up
