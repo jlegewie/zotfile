@@ -602,12 +602,9 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         destCtx[property] = sourceCtx[property];
       }
     }
-    if ('setLineDash' in sourceCtx) {
+    if (sourceCtx.setLineDash !== undefined) {
       destCtx.setLineDash(sourceCtx.getLineDash());
       destCtx.lineDashOffset =  sourceCtx.lineDashOffset;
-    } else if ('mozDash' in sourceCtx) {
-      destCtx.mozDash = sourceCtx.mozDash;
-      destCtx.mozDashOffset = sourceCtx.mozDashOffset;
     }
   }
 
@@ -834,12 +831,9 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
     },
     setDash: function CanvasGraphics_setDash(dashArray, dashPhase) {
       var ctx = this.ctx;
-      if ('setLineDash' in ctx) {
+      if (ctx.setLineDash !== undefined) {
         ctx.setLineDash(dashArray);
         ctx.lineDashOffset = dashPhase;
-      } else {
-        ctx.mozDash = dashArray;
-        ctx.mozDashOffset = dashPhase;
       }
     },
     setRenderingIntent: function CanvasGraphics_setRenderingIntent(intent) {
