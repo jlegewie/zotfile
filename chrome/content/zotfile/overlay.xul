@@ -80,6 +80,10 @@
     <menuitem id="zotfile-options" insertafter="zotero-tb-actions-prefs" label="&zotfile-options.label;" oncommand="Zotero.ZotFile.openPreferenceWindow();"/>
 	</menupopup>
 	
+	<menupopup id="menu_ToolsPopup">
+	<menuitem id="zotfile-options" insertafter="menu_preferences" label="&zotfile-options.label;" oncommand="Zotero.ZotFile.openPreferenceWindow();"/>
+	</menupopup>
+	
 	<!-- Include the main extension logic -->
 	<script src="chrome://zotero/content/include.js"/>
 	<script src="chrome://zotfile/content/include.js"/>	
