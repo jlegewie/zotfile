@@ -917,7 +917,7 @@ Zotero.ZotFile = new function() {
         // (a) linked to imported attachment
         if (imported && linkmode == Zotero.Attachments.LINK_MODE_LINKED_FILE) {
             // attach file to selected Zotero item and return new attachment object
-            var options = {file: path, libraryID: item.libraryID, parentItemID: item.id, collections: undefined};
+            var options = {file: path, libraryID: item.libraryID, parentItemID: item.id, collections: undefined, saveOptions: {skipSelect: true}};
             var attNew = yield Zotero.Attachments.importFromFile(options);
             // rename file associated with attachment
             yield attNew.renameAttachmentFile(filename);
@@ -958,7 +958,7 @@ Zotero.ZotFile = new function() {
             path = yield this.moveFile(path, location, filename);
             if (!path) return att;
             // create linked attachment
-            var options = {file: path, libraryID: item.libraryID, parentItemID: item.id, collections: undefined};
+            var options = {file: path, libraryID: item.libraryID, parentItemID: item.id, collections: undefined, saveOptions: {skipSelect: true}};
             attNew = yield Zotero.Attachments.linkFromFile(options);
             // change title of attachment item
             attNew.setField('title', filename);
