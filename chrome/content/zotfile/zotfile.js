@@ -947,7 +947,8 @@ Zotero.ZotFile = new function() {
             yield att.renameAttachmentFile(filename);
             // change title of attachment item
             att.setField('title', filename);
-            yield att.saveTx();
+            path = path.split(this.folderSep).slice(0, -1).concat([filename]).join(this.folderSep);
+            yield att.relinkAttachmentFile(path)
             // notification
             if (verbose) this.messages_report.push(this.ZFgetString('renaming.imported', [filename]));
             return att;
