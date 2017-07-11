@@ -5,7 +5,7 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>zotfile@columbia.edu</em:id>
     <em:name>ZotFile</em:name>
-    <em:version>5.0.0b3</em:version>
+    <em:version>5.0.0</em:version>
     <em:type>2</em:type>
     <em:multiprocessCompatible>true</em:multiprocessCompatible>
 
@@ -21,7 +21,7 @@
 	<em:targetApplication>
 		<Description>
 			<em:id>zotero@chnm.gmu.edu</em:id>
-			<em:minVersion>4.999</em:minVersion>
+			<em:minVersion>5.0.0</em:minVersion>
 			<em:maxVersion>5.*</em:maxVersion>
 		</Description>
 	</em:targetApplication>
