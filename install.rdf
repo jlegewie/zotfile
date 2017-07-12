@@ -8,6 +8,10 @@
     <em:version>5.0.0</em:version>
     <em:type>2</em:type>
     <em:multiprocessCompatible>true</em:multiprocessCompatible>
+    <em:creator>Joscha Legewie</em:creator>
+    <em:homepageURL>http://www.zotfile.com</em:homepageURL>
+    <em:optionsURL>chrome://zotfile/content/options.xul</em:optionsURL>
+    <em:updateURL>https://cdn.rawgit.com/jlegewie/zotfile/master/zotfile-update.rdf</em:updateURL>
 
     <em:targetApplication>
       <Description>
@@ -51,8 +55,5 @@
         <em:description> Un plugin di Zotero per gestire i tuoi allegati</em:description>
       </Description>
     </em:localized>
-    <em:creator>Joscha Legewie</em:creator>
-    <em:homepageURL>http://www.zotfile.com</em:homepageURL>
-    <em:optionsURL>chrome://zotfile/content/options.xul</em:optionsURL>
   </Description>
 </RDF>
