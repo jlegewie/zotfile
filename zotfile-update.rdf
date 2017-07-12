@@ -2,7 +2,7 @@
 <RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
-  <RDF:Description about="urn:mozilla:extension:foobar@developer.mozilla.org">
+  <RDF:Description about="urn:mozilla:extension:zotfile@columbia.edu">
     <em:updates>
       <RDF:Seq>
 
