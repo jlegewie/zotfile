@@ -6,9 +6,10 @@ Zotfile is a Zotero plugin to manage your attachments: automatically rename, mov
 Detailed information are available from the [zotfile website](http://www.zotfile.com).
 
 ## Installation
-The currently released version (3.x) is available [here](https://addons.mozilla.org/en-US/firefox/addon/zotfile/).
 
-To install the development version on github:
+For *Zotero 5*, first download the extension file (follow the download link above, click on the .xpi file for the most recent release). Now start Zotero 5 and go to "Tool -> Add-ons -> Tools for all Add-ons (the small, drop-down wheel in the top right corner) -> Install Add-on From File" and select the downloaded .xpi file. For *Zotero 4.x*, the process is different for Zotero for Firfox and Zotero Standalone. For Zotero 4.x Firefox, go to the [Mozilla Add-Ons page](https://addons.mozilla.org/en-us/firefox/addon/zotfile/) and follow the instructions. For Zotero 4.x Standalone, use the same steps as for Zotero 5 but download the .xpi file from [here](https://addons.mozilla.org/firefox/downloads/file/585224/zotfile-4.2.8-fx.xpi?src=dp-btn-primary)
+
+To install the **development version** on github:
 
 1. download `.zip` file from github
 2. extract `.zip` file
@@ -34,7 +35,7 @@ Contributions preferably through pull requests are welcome!
 
 ## Changelog
 
-#### Changes in 5.0.0
+#### Changes in 5.0.1
 
 - Compatibility with Zotero 5.0 (involves rewrite of codebase)
 - REMOVED FUNCTION: Watching folders is not possible anymore. This was always more a hack and resource intense.
