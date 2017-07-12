@@ -9,55 +9,46 @@
     <em:type>2</em:type>
     <em:multiprocessCompatible>true</em:multiprocessCompatible>
 
-    <!-- Target Application this extension can install into,
-         with minimum and maximum supported versions. -->
     <em:targetApplication>
       <Description>
-        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
-        <em:minVersion>31.0</em:minVersion>
-        <em:maxVersion>52.*</em:maxVersion>
+        <em:id>zotero@chnm.gmu.edu</em:id>
+        <em:minVersion>5.0.0</em:minVersion>
+        <em:maxVersion>5.*</em:maxVersion>
       </Description>
     </em:targetApplication>
-	<em:targetApplication>
-		<Description>
-			<em:id>zotero@chnm.gmu.edu</em:id>
-			<em:minVersion>5.0.0</em:minVersion>
-			<em:maxVersion>5.*</em:maxVersion>
-		</Description>
-	</em:targetApplication>
-	<em:targetApplication>
-		<Description>
-			<em:id>juris-m@juris-m.github.io</em:id>
-			<em:minVersion>4.999</em:minVersion>
-			<em:maxVersion>5.*</em:maxVersion>
-		</Description>
-	</em:targetApplication>
+    <em:targetApplication>
+      <Description>
+        <em:id>juris-m@juris-m.github.io</em:id>
+        <em:minVersion>4.999</em:minVersion>
+        <em:maxVersion>5.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
     <em:localized>
       <Description>
-	<em:locale>en-US</em:locale>
-	<em:name>ZotFile</em:name>
-          <em:description>Advanced PDF management for Zotero</em:description>
+        <em:locale>en-US</em:locale>
+        <em:name>ZotFile</em:name>
+        <em:description>Advanced PDF management for Zotero</em:description>
       </Description>
     </em:localized>
     <em:localized>
       <Description>
-	<em:locale>de-DE</em:locale>
-	<em:name>ZotFile</em:name>
-          <em:description>Zotero Plug-in zur Verwaltung Ihrer Anhänge</em:description>
+        <em:locale>de-DE</em:locale>
+        <em:name>ZotFile</em:name>
+        <em:description>Zotero Plug-in zur Verwaltung Ihrer Anhänge</em:description>
       </Description>
     </em:localized>
-	<em:localized>
+    <em:localized>
       <Description>
-	<em:locale>fr-FR</em:locale>
-	<em:name>ZotFile</em:name>
-          <em:description>Un module complémentaire de Zotero pour gérer vos pièces jointes</em:description>
+        <em:locale>fr-FR</em:locale>
+        <em:name>ZotFile</em:name>
+        <em:description>Un module complémentaire de Zotero pour gérer vos pièces jointes</em:description>
       </Description>
     </em:localized>
-      <em:localized>
-     <Description>
-	<em:locale>it-IT</em:locale>
-	<em:name>ZotFile</em:name>
-         <em:description> Un plugin di Zotero per gestire i tuoi allegati</em:description>
+    <em:localized>
+      <Description>
+        <em:locale>it-IT</em:locale>
+        <em:name>ZotFile</em:name>
+        <em:description> Un plugin di Zotero per gestire i tuoi allegati</em:description>
       </Description>
     </em:localized>
     <em:creator>Joscha Legewie</em:creator>
