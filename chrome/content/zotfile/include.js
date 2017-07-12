@@ -9,11 +9,12 @@ if (!Zotero.ZotFile) {
 window.addEventListener('load', function(e) {
     Zotero.ZotFile.init();
     if(window.ZoteroPane) {
+        var doc = window.ZoteroPane.document;
         // add event listener for zotfile menu items
-        window.ZoteroPane.document.getElementById('zotero-itemmenu').addEventListener('popupshowing', Zotero.ZotFile.UI.showMenu, false);
+        doc.getElementById('zotero-itemmenu').addEventListener('popupshowing', Zotero.ZotFile.UI.showMenu, false);
         // add event listener for zotfile collection menu
-        window.ZoteroPane.document.getElementById('zotero-collectionmenu').addEventListener('popupshowing', Zotero.ZotFile.UI.showCollectionMenu, false);
+        doc.getElementById('zotero-collectionmenu').addEventListener('popupshowing', Zotero.ZotFile.UI.showCollectionMenu, false);
         // add event listener to update saved search for modified tablet attachments
-        window.ZoteroPane.document.getElementById('zotero-collections-tree').addEventListener('click', Zotero.ZotFile.Tablet.updateModifiedAttachmentsSearch, false);
+        doc.getElementById('zotero-collections-tree').addEventListener('click', Zotero.ZotFile.Tablet.updateModifiedAttachmentsSearch, false);
     }
 }, false);
