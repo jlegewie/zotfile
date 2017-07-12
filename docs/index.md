@@ -445,10 +445,14 @@ Other small fixes mainly for Italian translation, restriction of saved searches 
 **Examples for enhanced renaming rules**
 `%j` - journal; `%s` - journal abbreviation
 
+{% raw %}
+
 `{%a}{-%y}{-%j (%s)}` - `author-2001-Proceedings of the National Academy of Sciences (PNAS)`
 (if either `%j` or `%s` is empty, `author-2001`)
 
 `{%a-}{%y-}{%s|%j}` - `author-2001-PNAS` or `author-2001-Proceedings...` if `%s` is empty
+
+{% endraw %}
 
 For full description, see [updated zotfile website](http://www.zotfile.com/index.html#renaming-rules).
 
