@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="{{ site.lang | default: "en-US" }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>{{ site.title | default: site.github.repository_name }} by {{ site.github.owner_name }}</title>
+
+    <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>ZotFile</h1>
+        <p>Advanced PDF management for Zotero</p>
+
+        <p class="view">
+          <h3 style="margin:0 0 0px;"><a style="font-weight:600;" href="https://addons.mozilla.org/firefox/downloads/file/420697/zotfile-4.2.6-fx.xpi?src=dp-btn-primary">Download</a></h3>
+          <!-- <a style="margin:0 0 55px;" href="https://addons.mozilla.org/en-US/firefox/addon/zotfile/">DOWNLOAD</a><br> -->
+          <!-- <small><a href="https://addons.mozilla.org/firefox/downloads/file/420697/zotfile-4.2.6-fx.xpi?src=dp-btn-primary">Download from Chrome or Safari</a></small><br> -->
+          <small><a href="https://github.com/jlegewie/zotfile">View the Project on GitHub</a></small>
+        </p>
+
+        <form action="https://www.paypal.com/cgi-bin/webscr" onClick="_gaq.push(['_trackEvent', 'external-links', 'donation']);" method="post">
+          <input type="hidden" name="cmd" value="_s-xclick">
+          <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
+          ">
+          &nbsp;&nbsp;&nbsp;&nbsp;<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+          <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+
+          <br><br>
+          <h3 style="margin:0 0 5px;">Content</h3>
+          <p class="view">
+            <a class="navi" href="#features">Features <span class="navi-seperator">&#8226; </span></a>
+            <a class="navi" href="#how-to-install--set-up-zotfile">Install Zotfile <span class="navi-seperator">&#8226; </span></a>
+            <a class="navi" href="#renaming-rules">Renaming Rules <span class="navi-seperator">&#8226; </span></a>
+            <a class="navi" href="#user-defined-wildcards">User-Defined Wildcards <span class="navi-seperator">&#8226; </span></a>
+            <a class="navi" href="#extract-pdf-annotations">Extract PDF Annotations <span class="navi-seperator">&#8226; </span></a>
+            <a class="navi" href="#hidden-options">Hidden Options <span class="navi-seperator">&#8226; </span></a>
+            <a class="navi" href="#reporting-a-bug">Reporting a Bug <span class="navi-seperator">&#8226; </span></a>
+            <a class="navi" href="#changelog">Changelog</a>
+          </p>
+
+          <br>
+          <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://zotfile.com" data-text="ZotFile: Advanced PDF management for Zotero">Tweet</a>
+
+      </header>
+      <section>
+
+      {{ content }}
+
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a>
+        <small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="{{ '/assets/js/scale.fix.js' | relative_url }}"></script>
+
+
+  {% if site.google_analytics %}
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', '{{ site.google_analytics }}', 'auto');
+        ga('send', 'pageview');
+    </script>
+  {% endif %}
+  </body>
+</html>
