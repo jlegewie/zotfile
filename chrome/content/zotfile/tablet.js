@@ -479,7 +479,8 @@ Zotero.ZotFile.Tablet = new function() {
             }
         }
         // confirm
-        var atts_tablet = atts.map(this.Tablet.getTabletStatus).reduce((pv, cv) => pv + cv, 0),
+        var atts_tablet = Zotero.Promise.map(atts, att =>
+                this.Tablet.getTabletStatus(att) && this.Tablet.getTabletFilePath(att, false)).reduce((pv, cv) => pv + cv, 0),
             pref_repush = !this.getPref('tablet.confirmRepush');
         if (this.getPref('confirmation_batch_ask') && atts.length >= this.getPref('confirmation_batch'))
             if(!confirm(this.ZFgetString('tablet.sendAttachments', [atts.length]))) return;
@@ -490,19 +491,20 @@ Zotero.ZotFile.Tablet = new function() {
             description = atts.length == 0 || atts_tablet == atts.length;
         // iterate through attachments
         for (let i = 0; i < atts.length; i++) {
-            if(this.Tablet.getTabletStatus(atts[i]) && !pref_repush) continue;
-            // get attachment and add line to infoWindow
             var att = atts[i],
-                att_mode = this.Tablet.getInfo(att, 'mode'),
+                path_tablet = yield this.Tablet.getTabletFilePath(att, false);
+            if(this.Tablet.getTabletStatus(att) && path_tablet && !pref_repush) continue;
+            // get attachment and add line to infoWindow
+            var att_mode = this.Tablet.getInfo(att, 'mode'),
                 progress = new progressWin.ItemProgress(att.getImageSrc(), att.getField('title'));
             // check attachment
-            if (!(yield att.fileExists()) || att.isTopLevelItem() || (this.Tablet.getTabletStatus(atts[i]) && !pref_repush)) {
+            if (!(yield att.fileExists()) || att.isTopLevelItem()) {
                 description = true;
                 progress.setError();
                 continue;
             }
-            // First remove from tablet if mode has changed
-            if(this.Tablet.getTabletStatus(atts[i]) && att_mode != this.getPref('tablet.mode'))
+            // First remove from tablet if mode has changed or tablet file was moved
+            if(this.Tablet.getTabletStatus(att) && (att_mode != this.getPref('tablet.mode') || !path_tablet))
                 att = yield this.Tablet.getAttachmentFromTablet(att, true);
             // send to tablet
             att = yield this.Tablet.sendAttachmentToTablet(att, project_folder, false);
@@ -612,7 +614,8 @@ Zotero.ZotFile.Tablet = new function() {
             this.Tablet.clearInfo(att);
             yield att.saveTx();
             yield item.saveTx();
-            this.infoWindow('ZotFile Warning', 'The tablet file "' + att.attachmentFilename + '" was manually moved and does not exist.');
+            if (!fake_remove)
+                this.infoWindow('ZotFile Warning', 'The tablet file "' + att.attachmentFilename + '" was manually moved and does not exist.');
             return att;
         }
         var tablet_folder = OS.Path.dirname(path_tablet);
