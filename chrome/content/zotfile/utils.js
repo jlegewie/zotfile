@@ -211,6 +211,15 @@ Zotero.ZotFile.Utils = new function() {
     }.bind(Zotero.ZotFile);
 
     /**
+     * Load URI using ZoteroPane_Local
+     * @param  {uri} string URL
+     * @return {void}
+     */
+    this.loadURI = function(uri) {
+        ZoteroPane_Local.loadURI(uri);
+    };
+
+    /**
      * Safely parse an HTML fragment, removing any executable
      * JavaScript, and return a document fragment.
      * https://developer.mozilla.org/en-US/Add-ons/Overlay_Extensions/XUL_School/DOM_Building_and_HTML_Insertion#Safely_Using_Remote_HTML
