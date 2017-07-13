@@ -935,6 +935,13 @@ Zotero.ZotFile = new function() {
                 this.Utils.arrayReplace(selection, att.id, attNew.id);
                 win.ZoteroPane.itemsView.selectItems(selection);
             }
+            // update links to attachment file in notes
+            Zotero.Items.get(item.getNotes()).forEach(note => {
+                var content = note.getNote();
+                content = content.replace(new RegExp('open-pdf/([\\w\\W\\d]{1,10})_' + att.key, 'g'), 'open-pdf/$1_' + attNew.key);
+                note.setNote(content);
+                note.saveTx();
+            });
             // erase old attachment, remove file and folder
             yield att.eraseTx();
             yield OS.File.remove(path);
@@ -974,6 +981,13 @@ Zotero.ZotFile = new function() {
                 this.Utils.arrayReplace(selection, att.id, attNew.id);
                 win.ZoteroPane.itemsView.selectItems(selection);
             }
+            // update links to attachment file in notes
+            Zotero.Items.get(item.getNotes()).forEach(note => {
+                var content = note.getNote();
+                content = content.replace(new RegExp('open-pdf/([\\w\\W\\d]{1,10})_' + att.key, 'g'), 'open-pdf/$1_' + attNew.key);
+                note.setNote(content);
+                note.saveTx();
+            });
             // erase old attachment, remove file and folder
             yield att.eraseTx();
             // notification and return
