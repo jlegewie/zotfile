@@ -240,7 +240,7 @@ Zotero.ZotFile.Tablet = new function() {
      * Get the path to the tablet file
      * @param {Zotero.Item} att     Zotero attachment item.
      * @param {bool}        verbose Show error message if file does not exists
-     * @yield {string}              Path to file on tablet of false if file does not exists.
+     * @yield {string}              Path to file on tablet or false if file does not exists.
      */
     this.getTabletFilePath = Zotero.Promise.coroutine(function* (att, verbose) {
         var verbose = typeof verbose !== 'undefined' ? verbose : true;
@@ -601,12 +601,21 @@ Zotero.ZotFile.Tablet = new function() {
             tablet_status = 1, 
             item_pulled = false,
             att_deleted = false,
-            att_mode = this.Tablet.getInfo(att, 'mode');
+            att_mode = this.Tablet.getInfo(att, 'mode'),
+            attSubfolder = this.Tablet.getInfo(att, 'projectFolder').trim();
         // get files
         var path_zotero = yield att.getFilePathAsync(),
-            path_tablet = yield this.Tablet.getTabletFilePath(att),
-            attSubfolder = this.Tablet.getInfo(att, 'projectFolder').trim(),
-            tablet_folder = OS.Path.dirname(path_tablet);
+            path_tablet = yield this.Tablet.getTabletFilePath(att, false);
+        if (path_tablet === false) {
+            // clear tablet tag and info from att and parent item
+            this.Tablet.removeTabletTag(att, this.Tablet.tag);
+            this.Tablet.clearInfo(att);
+            yield att.saveTx();
+            yield item.saveTx();
+            this.infoWindow('ZotFile Warning', 'The tablet file "' + att.attachmentFilename + '" was manually moved and does not exist.');
+            return att;
+        }
+        var tablet_folder = OS.Path.dirname(path_tablet);
         // get modification times for files
         var time_tablet = path_tablet ? Date.parse((yield OS.File.stat(path_tablet)).lastModificationDate) : 0,
             time_saved  = parseInt(this.Tablet.getInfo(att, 'lastmod'), 10),
