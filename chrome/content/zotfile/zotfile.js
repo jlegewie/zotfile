@@ -465,6 +465,8 @@ Zotero.ZotFile = new function() {
             .map(s => s == '' ? 'undefined' : s)
             .map(s => Zotero.File.getValidFileName(s))
             .join(this.folderSep);
+        if (format.replace(/[\/\\]/g,'') == '%c')
+            subfolder = subfolder.replace(/undefined[\/\\]?/g, '');
         return OS.Path.normalize(subfolder);
     };
 
