@@ -5,9 +5,14 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>zotfile@columbia.edu</em:id>
     <em:name>ZotFile</em:name>
-    <em:version>4.2.8</em:version>
+    <em:version>4.2.9</em:version>
     <em:type>2</em:type>
     <em:multiprocessCompatible>true</em:multiprocessCompatible>
+    <em:updateURL>http://www.zotfile.com/zotfile-update.rdf</em:updateURL>
+    <em:updateKey>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCpXXp3Hx4rLiTLt3CBukiq+
+                  Co4T1OvGYWCkKAm8b2Mas8Si8+aqwO2ELyaJR2kwkhrf1ol0jNaiWPRmbrfD8
+                  g1uXBmMUhkg3/kHuhQMyj8nwcKBKGAilwH7wvWdaX4gb7kMg3ouJh+/E9jkgD
+                  /TogLttZCp/2UxU2vYUBtFQgszQIDAQAB</em:updateKey>
 
     <!-- Target Application this extension can install into,
          with minimum and maximum supported versions. -->
