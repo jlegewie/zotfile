@@ -72,6 +72,14 @@ Zotero.ZotFile = {
 
         // only do this stuff for the first run
         if(this.prefs===null) {
+            // Disable addon if Zotero 5.*
+            if (Zotero.version[0] >= 5) {
+                Components.utils.import('resource://gre/modules/AddonManager.jsm');
+                AddonManager.getAddonByID('zotfile@columbia.edu', function(addon) {
+                    alert("ZotFile " + addon.version + " is not compatible with Zotero " + Zotero.version + ". ZotFile will be disabled. Please restart Firefox.")
+                    addon.userDisabled = true;
+                });
+            }
             //get preference objects
             this.prefs = Components.classes["@mozilla.org/preferences-service;1"]
                         .getService(Components.interfaces.nsIPrefService)
