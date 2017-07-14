@@ -242,7 +242,7 @@ You can report bugs on the [Zotfile thread](http://forums.zotero.org/discussion/
 
 ### CHANGELOG
 
-#### Changes in 5.0.1
+#### Changes in 5.0.2
 
 - Compatibility with Zotero 5.0 (involves rewrite of codebase)
 - REMOVED FUNCTION: Watching folders is not possible anymore. This was always more a hack and resource intense.
