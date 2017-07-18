@@ -139,19 +139,17 @@ Zotero.ZotFile.UI = new function() {
                         item=items[0];
                         if(item.isAttachment()) if(item.parentItemID) item=Zotero.Items.get(item.parentItemID);
                         // create folders from collections
-                        var folders = [];
-                        var collections = item.getCollections();
-                        for (i = 0; i < collections.length; i++) {
-                            var collection=Zotero.Collections.get(collections[i]);
-                            var folder =  this.folderSep + collection.name;
-                            var parent = collection.getParent();
-                            while (parent) {
-                                parent = Zotero.Collections.get(parent);
-                                folder = this.folderSep + parent.name + folder;
-                                parent = parent.getParent();
-                            }
-                            folders.push(folder);
-                        }
+                        var getCollectionPathsOfItem = function(item) {
+                            var getCollectionPath = function(collectionID) {
+                                var collection = Zotero.Collections.get(collectionID);
+                                if (collection.parent == null)  return collection.name
+
+                                return OS.Path.normalize(getCollectionPath(collection.parentID) + Zotero.ZotFile.folderSep + collection.name);
+                            };
+
+                            return item.getCollections().map(getCollectionPath);
+                        };
+                        var folders = getCollectionPathsOfItem(item);
                         // add folders to menu
                         if(folders.length) {
                             projects_set = true;
