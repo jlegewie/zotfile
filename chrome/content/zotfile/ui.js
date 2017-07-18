@@ -149,7 +149,8 @@ Zotero.ZotFile.UI = new function() {
 
                             return item.getCollections().map(getCollectionPath);
                         };
-                        var folders = getCollectionPathsOfItem(item);
+                        var folders = this.Utils.getCollectionPathsOfItem(item);
+                        folders = folders.map(path => path.replace(/undefined[\/\\]?/g, ''));
                         // add folders to menu
                         if(folders.length) {
                             projects_set = true;

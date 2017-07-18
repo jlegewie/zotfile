@@ -52,6 +52,22 @@ Zotero.ZotFile.Utils = new function() {
     }.bind(Zotero.ZotFile);
 
     /**
+     * Get collection path from Zotero.Item
+     * @param  {Zotero.Item}
+     * @return {array}          Array with paths that reflect zotero items
+     */
+    this.getCollectionPathsOfItem = function(item) {
+        var getCollectionPath = function(collectionID) {
+            var collection = Zotero.Collections.get(collectionID);
+            if (collection.parent == null)  return collection.name
+
+            return OS.Path.normalize(getCollectionPath(collection.parentID) + Zotero.ZotFile.folderSep + collection.name);
+        };
+
+        return item.getCollections().map(getCollectionPath);
+    }.bind(Zotero.ZotFile);
+
+    /**
      * Add suffix to filename
      * @param {string}  filename The filename
      * @param {integer} k        The suffix

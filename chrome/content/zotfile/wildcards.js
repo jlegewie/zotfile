@@ -190,17 +190,6 @@ Zotero.ZotFile.Wildcards = new function() {
     }
 
     function wildcardTable(item) {
-        var getCollectionPathsOfItem = function(item) {
-            var getCollectionPath = function(collectionID) {
-                var collection = Zotero.Collections.get(collectionID);
-                if (collection.parent == null)  return collection.name
-
-                return OS.Path.normalize(getCollectionPath(collection.parentID) + Zotero.ZotFile.folderSep + collection.name);
-            };
-
-            return item.getCollections().map(getCollectionPath);
-        };
-
         // item type
         var item_type = item.itemTypeID;
         var item_type_name = Zotero.ItemTypes.getName(item_type);
@@ -221,7 +210,7 @@ Zotero.ZotFile.Wildcards = new function() {
             "lastAuthor_lastInitial": authors[8],
             "lastAuthor_lastf": authors[9],
             "lastAuthor_initials": authors[10],
-            "collectionPaths": getCollectionPathsOfItem(item)
+            "collectionPaths": Zotero.ZotFile.Utils.getCollectionPathsOfItem(item)
         };
         // define transform functions
         var itemtypeWildcard = function(item, map) {
