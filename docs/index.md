@@ -242,6 +242,13 @@ You can report bugs on the [Zotfile thread](http://forums.zotero.org/discussion/
 
 ### CHANGELOG
 
+#### Changes in 5.0.3
+
+- Fix URLs in preference window
+- Fix problem with %c wildcard
+- Fix problem when attachments files on tablet are manually (re)moved
+- Fix problem with option "Create subfolders from Zotero collections"
+
 #### Changes in 5.0.2
 
 - Compatibility with Zotero 5.0 (involves rewrite of codebase)
