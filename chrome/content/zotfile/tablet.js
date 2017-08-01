@@ -655,22 +655,28 @@ Zotero.ZotFile.Tablet = new function() {
                     let path_copied = OS.Path.join(OS.Path.dirname(path_zotero), filename);
                     yield OS.File.move(path_tablet, path_copied);
                     var options = {file: path_copied, libraryID: item.libraryID, parentItemID: item.id, collections: undefined};
-                    att = yield Zotero.Attachments.linkFromFile(options);
+                    att_new = yield Zotero.Attachments.linkFromFile(options);
                     item_pulled = true;
+                    // extract annotations from attachment and add note
+                    if (this.getPref('pdfExtraction.Pull'))
+                        this.Tablet.extractPdfs.push(att_new.id);
                 }
                 //imports attachment
                 if (item.library.libraryType != 'user' || this.getPref('import')) {
                     // import file on reader
                     var options = {file: path_tablet, libraryID: item.libraryID, parentItemID: item.id, collections: undefined};
-                    att = yield Zotero.Attachments.importFromFile(options);
+                    att_new = yield Zotero.Attachments.importFromFile(options);
                     // rename file associated with attachment
-                    yield att.renameAttachmentFile(filename);
+                    yield att_new.renameAttachmentFile(filename);
                     // change title of attachment item
-                    att.setField('title', filename);
-                    yield att.saveTx();
+                    att_new.setField('title', filename);
+                    yield att_new.saveTx();
                     // remove file on reader
                     yield OS.File.remove(path_tablet);
                     item_pulled = true;
+                    // extract annotations from attachment and add note
+                    if (this.getPref('pdfExtraction.Pull'))
+                        this.Tablet.extractPdfs.push(att_new.id);
                 }
             }
             // Pull without replacement (i.e. remove file on tablet)
@@ -706,7 +712,7 @@ Zotero.ZotFile.Tablet = new function() {
             // clear attachment note
             this.Tablet.clearInfo(att);
             // extract annotations from attachment and add note
-            if (this.getPref('pdfExtraction.Pull') && tablet_status != 2)
+            if (this.getPref('pdfExtraction.Pull') && tablet_status != 2 && !this.getPref('tablet.storeCopyOfFile'))
                 this.Tablet.extractPdfs.push(att.id);
             // remove tag from parent item
             var tag_parent = this.getPref('tablet.tagParentPush_tag');

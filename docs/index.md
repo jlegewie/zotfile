@@ -242,6 +242,10 @@ You can report bugs on the [Zotfile thread](http://forums.zotero.org/discussion/
 
 ### CHANGELOG
 
+#### Changes in 5.0.4
+
+- Fix problem with tablet option to 'save copy of annotated file with suffix _____'
+
 #### Changes in 5.0.3
 
 - Fix URLs in preference window
