@@ -4,8 +4,8 @@
 <!ENTITY tablet-settings "Tablet Settings"> 
 <!ENTITY renaming-rules "Renaming Rules"> 
 <!ENTITY advanced-settings "Advanced Settings"> 
-<!ENTITY attachments-source-folder "Source Folder for Attaching new Files"> 
-<!ENTITY source-folder-desc "ZotFile can add the most recently modified file from the Firefox download or another folder as a new attachment to the currently selected Zotero item."> 
+<!ENTITY attachments-source-folder "Source Folder for Attaching New Files"> 
+<!ENTITY source-folder-desc "ZotFile can add the most recently modified file from a folder such as the downloads folder as a new attachment to the currently selected Zotero item."> 
 <!ENTITY use-firefox-download-folder "Use Firefox download folder"> 
 <!ENTITY custom-source-folder "Custom:"> 
 <!ENTITY choose "Choose..."> 

@@ -93,25 +93,18 @@
 
 				<tabpanels id="zotfile-tabpanels">
 					<tabpanel orient="vertical">
-		   				 <groupbox>
-					
-							   <description style="width: 420px">&source-folder-desc;</description>					
-							   <separator/>
-							
-							    <caption label="&attachments-source-folder;"/>                               								
-								<radiogroup id="id-zotfile-source_dir_ff" preference="pref-zotfile-source_dir_ff" oncommand="if(document.getElementById('pref-zotfile-source_dir_ff').value) if(document.getElementById('pref-zotfile-source_dir').value=='') {Zotero.ZotFile.setPref('source_dir', Zotero.ZotFile.chooseDirectory()); updateFolderIcon('source', true);}">
-									<radio id="id-zotfile-source_dir_ff-true" label="&use-firefox-download-folder;" value="true" oncommand="updatePreferenceWindow('source');"/>
-									<hbox  style="margin: 0"  align="center">									
-									 	<radio label="&custom-source-folder;" value="false"  oncommand="updatePreferenceWindow('source');" />										
-										<textbox id="id-zotfile-source_dir" preference="pref-zotfile-source_dir" flex="1" onchange="updateFolderIcon('source',false); "/>
-										<button id="id-zotfile-source_dir-button" label="&choose;" oncommand="var folder = Zotero.ZotFile.chooseDirectory(); if(folder != '') {Zotero.ZotFile.setPref('source_dir', folder); updateFolderIcon('source', false);}"/>
-										<image id="id-zotfile-source_dir-clear" width='16' height='16' hidden="false"/>										    
-									    <image id="id-zotfile-source_dir-ok" src="chrome://zotfile/skin/accept.png" hidden="true"/>	
-									    <image id="id-zotfile-source_dir-error" src="chrome://zotfile/skin/exclamation.png" hidden="true"/>
-									</hbox>
-								</radiogroup>	
-
-							</groupbox>
+		   				<groupbox>
+		   				 	<caption label="&attachments-source-folder;"/>
+							<description style="width: 420px">&source-folder-desc;</description>
+							<separator/>	
+							<hbox  style="margin: 0"  align="center">
+								<textbox id="id-zotfile-source_dir" preference="pref-zotfile-source_dir" flex="1" onchange="updateFolderIcon('source',false); "/>
+								<button id="id-zotfile-source_dir-button" label="&choose;" oncommand="var folder = Zotero.ZotFile.chooseDirectory(); if(folder != '') {Zotero.ZotFile.setPref('source_dir', folder); updateFolderIcon('source', false);}"/>
+								<image id="id-zotfile-source_dir-clear" width='16' height='16' hidden="false"/>
+							    <image id="id-zotfile-source_dir-ok" src="chrome://zotfile/skin/accept.png" hidden="true"/>
+							    <image id="id-zotfile-source_dir-error" src="chrome://zotfile/skin/exclamation.png" hidden="true"/>
+							</hbox>
+						</groupbox>
 			
 							<separator/> 
 							<groupbox>
