@@ -245,6 +245,7 @@ You can report bugs on the [Zotfile thread](http://forums.zotero.org/discussion/
 #### Changes in 5.0.4
 
 - Fix problem with tablet option to 'save copy of annotated file with suffix _____'
+- Remove option for Firefox download folder from preferences (obsolete in Zotero 5)
 
 #### Changes in 5.0.3
 
