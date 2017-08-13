@@ -227,11 +227,11 @@
 							</hbox>
 							<hbox style="margin: 0">
 								<checkbox id="id-zotfile-truncate_authors" label="&zotfile-truncate_authors;" preference="pref-zotfile-truncate_authors" oncommand="updatePreferenceWindow('truncate_authors')"/>
-								<textbox id="id-zotfile-max_authors" preference="pref-zotfile-max_authors" width="25"/>
+								<textbox id="id-zotfile-max_authors" preference="pref-zotfile-max_authors" width="40"/>
 							</hbox>
 							<hbox style="margin: 0">
 								<label value="&zotfile-number_truncate_authors;"/>
-								<textbox id="id-zotfile-number_truncate_authors" preference="pref-zotfile-number_truncate_authors" width="25"/>
+								<textbox id="id-zotfile-number_truncate_authors" preference="pref-zotfile-number_truncate_authors" width="40"/>
 							</hbox>
 							<hbox style="margin: 0">
 								<checkbox id="id-zotfile-add_etal" label="&zotfile-add_etal;" preference="pref-zotfile-add_etal" oncommand="updatePreferenceWindow('etal')"/>
@@ -290,7 +290,7 @@
 							<checkbox id="id-zotfile-confirmation" label="&ask-when-attaching-new-files;" preference="pref-zotfile-confirmation"/>
 							<hbox style="margin: 0"  align="center">
 								<checkbox id="id-zotfile-confirmation_batch_ask" label="&ask-to-batch-rename;" preference="pref-zotfile-confirmation_batch_ask" oncommand="updatePreferenceWindow('confirm')"/>
-								<textbox id="id-zotfile-confirmation_batch" preference="pref-zotfile-confirmation_batch" width="25"/>
+								<textbox id="id-zotfile-confirmation_batch" preference="pref-zotfile-confirmation_batch" width="40"/>
 								<label id="id-zotfile-confirmation_batch-end"  value="&or-more-attachments;"/>
 							</hbox>
 							<checkbox id="id-zotfile-removeDiacritics" label="&remove-special-characters;" preference="pref-zotfile-removeDiacritics"/>
