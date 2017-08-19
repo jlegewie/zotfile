@@ -235,7 +235,7 @@
 							</hbox>
 							<hbox style="margin: 0">
 								<checkbox id="id-zotfile-add_etal" label="&zotfile-add_etal;" preference="pref-zotfile-add_etal" oncommand="updatePreferenceWindow('etal')"/>
-								<textbox id="id-zotfile-etal" preference="pref-zotfile-etal" width="50"/>
+								<textbox id="id-zotfile-etal" preference="pref-zotfile-etal" width="80"/>
 							</hbox>
 						</groupbox>
 					</tabpanel>
