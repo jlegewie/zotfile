@@ -479,13 +479,13 @@ Zotero.ZotFile.Tablet = new function() {
             }
         }
         // confirm
-        var atts_tablet = Zotero.Promise.map(atts, att =>
-                this.Tablet.getTabletStatus(att) && this.Tablet.getTabletFilePath(att, false)).reduce((pv, cv) => pv + cv, 0),
+        var atts_tablet = yield Zotero.Promise.map(atts, att =>
+                this.Tablet.getTabletStatus(att) && this.Tablet.getTabletFilePath(att, false)),
             pref_repush = !this.getPref('tablet.confirmRepush');
         if (this.getPref('confirmation_batch_ask') && atts.length >= this.getPref('confirmation_batch'))
             if(!confirm(this.ZFgetString('tablet.sendAttachments', [atts.length]))) return;
-        if (!pref_repush && atts_tablet > 0)
-            pref_repush = confirm(this.ZFgetString('tablet.replaceAttachAlready', [atts_tablet]));
+        if (!pref_repush && (atts_tablet.length > 0))
+            pref_repush = confirm(this.ZFgetString('tablet.replaceAttachAlready', [atts_tablet.length]));
         // show infoWindow
         var progressWin = this.progressWindow(this.ZFgetString('tablet.AttsMoved')),
             description = atts.length == 0 || atts_tablet == atts.length;
