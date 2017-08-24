@@ -479,7 +479,7 @@ Zotero.ZotFile.Tablet = new function() {
             }
         }
         // confirm
-        var atts_tablet = yield Zotero.Promise.map(atts, att =>
+        var atts_tablet = yield Zotero.Promise.filter(atts, att =>
                 this.Tablet.getTabletStatus(att) && this.Tablet.getTabletFilePath(att, false)),
             pref_repush = !this.getPref('tablet.confirmRepush');
         if (this.getPref('confirmation_batch_ask') && atts.length >= this.getPref('confirmation_batch'))
