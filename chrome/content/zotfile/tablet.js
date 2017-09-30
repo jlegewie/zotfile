@@ -162,7 +162,8 @@ Zotero.ZotFile.Tablet = new function() {
     this.addInfo = function(att, data) {
         // get current content of note
         var win = this.wm.getMostRecentWindow('navigator:browser'),
-            parser = new DOMParser(),
+            parser = Components.classes["@mozilla.org/xmlextras/domparser;1"]
+                        .createInstance(Components.interfaces.nsIDOMParser),
             content = att.getNote().replace(/zotero:\/\//g, 'http://zotfile.com/'),
             doc = parser.parseFromString(content, 'text/html'),
             p = doc.querySelector('#zotfile-data');
