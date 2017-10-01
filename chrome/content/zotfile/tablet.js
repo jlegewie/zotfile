@@ -103,8 +103,9 @@ Zotero.ZotFile.Tablet = new function() {
 
     this.clearInfo = function (att) {
         try {
-            var parser = new DOMParser(),
-                content = att.getNote().replace(/zotero:\/\//g, 'http://zotfile.com/'),
+            var parser = Components.classes["@mozilla.org/xmlextras/domparser;1"]
+                    .createInstance(Components.interfaces.nsIDOMParser);
+            var content = att.getNote().replace(/zotero:\/\//g, 'http://zotfile.com/'),
                 doc = parser.parseFromString(content, 'text/html'),
                 p = doc.querySelector('#zotfile-data');
             if(p === null) p = doc.querySelector('[title*="lastmod"][title*="projectFolder"]');
@@ -124,8 +125,9 @@ Zotero.ZotFile.Tablet = new function() {
 
     this.getInfo = function(att, key) {
         try {
+            var parser = Components.classes["@mozilla.org/xmlextras/domparser;1"]
+                    .createInstance(Components.interfaces.nsIDOMParser);
             var value,
-                parser = new DOMParser(),
                 content = att.getNote(),
                 doc = parser.parseFromString(content, 'text/html'),
                 p = doc.querySelector('#zotfile-data');
