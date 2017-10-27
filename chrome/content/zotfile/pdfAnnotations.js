@@ -220,6 +220,8 @@ Zotero.ZotFile.pdfAnnotations = new function() {
             format_note = this.getPref("pdfExtraction.formatAnnotationNote"),
             format_highlight = this.getPref("pdfExtraction.formatAnnotationHighlight"),
             format_underline = this.getPref("pdfExtraction.formatAnnotationUnderline"),
+            note_html_start = this.getPref("pdfExtraction.NoteHtmlTagStart"),
+            note_html_end = this.getPref("pdfExtraction.NoteHtmlTagEnd"), 
             settings_colors = JSON.parse(this.getPref("pdfExtraction.colorCategories")),
             setting_color_notes = this.getPref("pdfExtraction.colorNotes"),
             cite = this.getPref("pdfExtraction.NoteFullCite") ? this.Wildcards.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ") : "p. ",
@@ -275,6 +277,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
             if(anno.content && anno.content != "" &&
               (!anno.markup || this.Utils.strDistance(anno.content,anno.markup)>0.15 )) {                    
                 var content = anno.content.replace(/(\r\n|\n|\r)/gm,"<br>");
+                content = note_html_start + content + note_html_end;
                 // '<p><i>%(content) (<a href="%(uri)">note on p.%(page)</a>)</i></p><br>'
                 var content_formated = this.Utils.str_format(format_note, {'content': content, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title,'color': color, 'color_category': color_category_hex});
                 if(!setting_color_notes)
