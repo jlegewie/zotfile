@@ -46,9 +46,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
             .filter(att => att.attachmentContentType == 'application/pdf');
         atts = yield Zotero.Promise.filter(atts, att => att.fileExists());
         // progress window
-        this.progressWin = new Zotero.ZotFile.ProgressWindow();
-        this.progressWin.changeHeadline('Zotfile: Extracting Annotations...');
-        this.progressWin.show();
+        this.progressWin = Zotero.ZotFile.progressWindow('Zotfile: Extracting Annotations...');
         if (atts.length == 0) {
             this.progressWin.addDescription(Zotero.ZotFile.ZFgetString('general.warning.skippedAtt.msg'));
             this.progressWin.startCloseTimer(Zotero.ZotFile.getPref('info_window_duration'));

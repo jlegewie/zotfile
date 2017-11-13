@@ -46,8 +46,6 @@ Zotero.ZotFile.notifierCallback = new function() {
      */
     var rename = Zotero.Promise.coroutine(function* (attachments) {
         var auto_rename = this.getPref('automatic_renaming');
-        this.notifierCallback.progress_win = new this.ProgressWindow();
-        this.notifierCallback.progress_win.changeHeadline(this.ZFgetString('general.newAttachmentRenamed'));
         // iterate through attachments
         for (var i = 0; i < attachments.length; i++) {
             // get id and key
@@ -85,15 +83,15 @@ Zotero.ZotFile.notifierCallback = new function() {
             // always rename
             if(auto_rename == 4) on_confirm(att);
         }
-        this.notifierCallback.progress_win.startCloseTimer();
     }.bind(Zotero.ZotFile));
 
     var on_confirm = Zotero.Promise.coroutine(function* (att) {
         // rename attachment
         att = yield this.renameAttachment(att);
         // user notification
-        this.notifierCallback.progress_win.show();
-        progress = new this.notifierCallback.progress_win.ItemProgress(att.getImageSrc(), att.getField('title'));
+        var progress_win = this.progressWindow(this.ZFgetString('general.newAttachmentRenamed'));
+        var progress = new progress_win.ItemProgress(att.getImageSrc(), att.getField('title'));
         progress.setProgress(100);
+        progress_win.startCloseTimer();
     }.bind(Zotero.ZotFile));
 }
