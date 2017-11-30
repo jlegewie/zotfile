@@ -70,8 +70,10 @@
 
           // Add tooltip in firefox
           var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-          if (isFirefox)
+          if (isFirefox) {
+            document.getElementById("download-link").title = "In Firefix, download file with<br> right-click 'Save Link As...'.";
             setTimeout(() => tippy('#download-link', {placement: 'bottom', arrow: true, theme: 'light bordered'}), 50);
+          }
           
       })();
     </script>
@@ -98,7 +100,7 @@
         <h4>Advanced PDF management for Zotero</h4>
 
         <p class="view">
-          <h3 style="margin:0 0 0px;"><a id="download-link" title="In Firefix, download file with<br> right-click 'Save Link As...'."'" style="font-weight:600;" href="https://github.com/jlegewie/zotfile/releases">Download</a></h3>
+          <h3 style="margin:0 0 0px;"><a id="download-link" style="font-weight:600;" href="https://github.com/jlegewie/zotfile/releases">Download</a></h3>
           <small><a href="https://github.com/jlegewie/zotfile">View the Project on GitHub</a></small>
         </p>
 
