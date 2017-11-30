@@ -71,8 +71,10 @@
           // Add tooltip in firefox
           var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
           if (isFirefox) {
-            document.getElementById("download-link").title = "In Firefix, download file with<br> right-click 'Save Link As...'.";
-            setTimeout(() => tippy('#download-link', {placement: 'bottom', arrow: true, theme: 'light bordered'}), 50);
+            setTimeout(function() {
+              document.getElementById("download-link").title = "In Firefix, download file with<br> right-click 'Save Link As...'.";
+              tippy('#download-link', {placement: 'bottom', arrow: true, theme: 'light bordered'});
+            }, 100);
           }
           
       })();
