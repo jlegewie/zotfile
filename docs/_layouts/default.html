@@ -10,6 +10,28 @@
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <!-- Tippy.js - JavaScript tooltip library  -->
+    <script src="https://unpkg.com/tippy.js@2.0.0-beta.2/dist/tippy.all.min.js"></script>
+    <!-- update download link with latest version from github -->
+    <script>
+      (function() {
+          var httpGetAsync = function (theUrl, callback) {
+              var xmlHttp = new XMLHttpRequest();
+              xmlHttp.onreadystatechange = function() { 
+                  if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                      callback(xmlHttp.responseText);
+              }
+              xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+              xmlHttp.send(null);
+          };
+          var getDownloadURL = function (text) {
+            return text.split("\n").filter(line => line.includes("browser_download_url"))[0].match(/\bhttps?:\/\/\S+.xpi/gi);
+          };
+          var url = "https://api.github.com/repos/jlegewie/zotfile/releases/latest";
+          httpGetAsync(url, response => document.getElementById("download-link").href = getDownloadURL(response));
+          
+      })();
+    </script>
     <!-- google analytics tracking code -->
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -33,7 +55,7 @@
         <h4>Advanced PDF management for Zotero</h4>
 
         <p class="view">
-          <h3 style="margin:0 0 0px;"><a style="font-weight:600;" href="https://github.com/jlegewie/zotfile/releases">Download</a></h3>
+          <h3 style="margin:0 0 0px;"><a id="download-link" title="In Firefix, download file with<br> right-click 'Save Link As...'."'" style="font-weight:600;" href="https://github.com/jlegewie/zotfile/releases">Download</a></h3>
           <small><a href="https://github.com/jlegewie/zotfile">View the Project on GitHub</a></small>
         </p>
 
