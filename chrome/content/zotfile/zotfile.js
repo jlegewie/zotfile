@@ -455,6 +455,7 @@ Zotero.ZotFile = new function() {
      */
     this.formatSubfolder = function(item, format) {
         if (format == '') return '';
+        if(format.slice(-1) == this.folderSep) format = format.slice(0, -1);
         var subfolder = this.Wildcards.replaceWildcard(item, format);
         if (subfolder[0] == this.folderSep) subfolder = subfolder.slice(1);
         // replace invalid characters        
