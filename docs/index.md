@@ -242,6 +242,10 @@ You can report bugs on the [Zotfile thread](http://forums.zotero.org/discussion/
 
 ### CHANGELOG
 
+#### Changes in 5.0.7
+
+- Fix problem with 'undefined' subfolders
+
 #### Changes in 5.0.6
 
 - Fix problem with notifications that don't disappear
