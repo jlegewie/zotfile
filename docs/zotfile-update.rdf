@@ -2,6 +2,23 @@
 <RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <RDF:Description RDF:about="rdf:#$p6wCU2"
+                   em:id="juris-m@juris-m.github.io"
+                   em:minVersion="3.0b1"
+                   em:maxVersion="4.*" />
+  <RDF:Description RDF:about="rdf:#$t6wCU2"
+                   em:version="5.0.8">
+    <em:targetApplication RDF:resource="rdf:#$w6wCU2"/>
+    <em:targetApplication RDF:resource="rdf:#$C6wCU2"/>
+  </RDF:Description>
+  <RDF:Description RDF:about="urn:mozilla:extension:zotfile@columbia.edu"
+                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAIL1Z9Ro5RVKamsO8a8BKA6ykaqm5s7icSan1sL+diweYkXpgqp1cAWGaWp0nwq9+2WSp9J6E/gXhYRttli0Uju9TJvVjZBXBqpBtHPmpnMQ0/x1Nwmx3Ijuck67xvlYHCc2bMSpYyBYXLTkJ/6E31RSXElhYdXxMnszSLdkLZgx">
+    <em:updates RDF:resource="rdf:#$b6wCU2"/>
+  </RDF:Description>
+  <RDF:Description RDF:about="rdf:#$f6wCU2"
+                   em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
+                   em:minVersion="31.0"
+                   em:maxVersion="52.*" />
   <RDF:Description RDF:about="rdf:#$c6wCU2"
                    em:version="4.2.8">
     <em:targetApplication RDF:resource="rdf:#$f6wCU2"/>
@@ -12,35 +29,18 @@
     <RDF:li RDF:resource="rdf:#$c6wCU2"/>
     <RDF:li RDF:resource="rdf:#$t6wCU2"/>
   </RDF:Seq>
-  <RDF:Description RDF:about="rdf:#$p6wCU2"
-                   em:id="juris-m@juris-m.github.io"
+  <RDF:Description RDF:about="rdf:#$k6wCU2"
+                   em:id="zotero@chnm.gmu.edu"
                    em:minVersion="3.0b1"
                    em:maxVersion="4.*" />
   <RDF:Description RDF:about="rdf:#$C6wCU2"
                    em:id="juris-m@juris-m.github.io"
                    em:minVersion="4.999"
                    em:maxVersion="5.*"
-                   em:updateLink="https://github.com/jlegewie/zotfile/releases/download/v5.0.7/zotfile-5.0.7-fx.xpi" />
-  <RDF:Description RDF:about="rdf:#$k6wCU2"
-                   em:id="zotero@chnm.gmu.edu"
-                   em:minVersion="3.0b1"
-                   em:maxVersion="4.*" />
+                   em:updateLink="https://github.com/jlegewie/zotfile/releases/download/v5.0.8/zotfile-5.0.8-fx.xpi" />
   <RDF:Description RDF:about="rdf:#$w6wCU2"
                    em:id="zotero@chnm.gmu.edu"
                    em:minVersion="5.0.0"
                    em:maxVersion="5.*"
-                   em:updateLink="https://github.com/jlegewie/zotfile/releases/download/v5.0.7/zotfile-5.0.7-fx.xpi" />
-  <RDF:Description RDF:about="urn:mozilla:extension:zotfile@columbia.edu"
-                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBADc9PXnXZ09A55f8ZpKH3Y2Hlm0kQ6x3AMRERrybdsHZ6eCAZTqBgsiZqYJHL5pxOMqUu0mdJGyZqiXbDYFDwi93LFViI1ILQ7nKaYDE7CyVQjlTXrfF2MaC+bcUsmAY8m3sLuFjaQuOhpeRl/j+zGJMi14p1CoQBqwsiMi4HSTA">
-    <em:updates RDF:resource="rdf:#$b6wCU2"/>
-  </RDF:Description>
-  <RDF:Description RDF:about="rdf:#$f6wCU2"
-                   em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
-                   em:minVersion="31.0"
-                   em:maxVersion="52.*" />
-  <RDF:Description RDF:about="rdf:#$t6wCU2"
-                   em:version="5.0.7">
-    <em:targetApplication RDF:resource="rdf:#$w6wCU2"/>
-    <em:targetApplication RDF:resource="rdf:#$C6wCU2"/>
-  </RDF:Description>
+                   em:updateLink="https://github.com/jlegewie/zotfile/releases/download/v5.0.8/zotfile-5.0.8-fx.xpi" />
 </RDF:RDF>
