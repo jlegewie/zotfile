@@ -4,7 +4,9 @@ var OpenPDFExtension = {
 
     doAction: Zotero.Promise.coroutine(function* (uri) {
         // get arguments from uri
-        // e.g. zotero://open-pdf/0_EFWJW9U7
+        // New format: zotero://open-pdf/library/items/[itemKey]?page=[page]
+        //             zotero://open-pdf/groups/[groupID]/items/[itemKey]?page=[page]
+        // Old format: zotero://open-pdf/0_EFWJW9U7
         Zotero.ZotFile.uri = uri;
         // parsing code copied from Zotero
         // https://github.com/zotero/zotero/blob/60e0d79e01bf83daf8682c0bc088fbeaba496198/components/zotero-protocol-handler.js#L1017-L1049
