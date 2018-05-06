@@ -6,22 +6,43 @@ var OpenPDFExtension = {
         // get arguments from uri
         // e.g. zotero://open-pdf/0_EFWJW9U7
         Zotero.ZotFile.uri = uri;
-        var [key, page] = uri.path.substr(1).split('/');
-        // exit if no key
-        if(!key) return;
-        // get zotero item from key
-        var params = {objectType: 'item'};
-        // Zotero.Items.parseLibraryKeyHash() is deprecated -- use .parseLibraryKey() instead
-        var lkh = Zotero.Items.parseLibraryKeyHash(key);
-        if (lkh) {
-            params.libraryID = lkh.libraryID || Zotero.Libraries.userLibraryID;
+        // parsing code copied from Zotero
+        // https://github.com/zotero/zotero/blob/60e0d79e01bf83daf8682c0bc088fbeaba496198/components/zotero-protocol-handler.js#L1017-L1049
+        var userLibraryID = Zotero.Libraries.userLibraryID;
+        var uriPath = uri.path;
+        if (!uriPath) {
+            return 'Invalid URL';
+        }
+        // Strip leading '/'
+        uriPath = uriPath.substr(1);
+        var mimeType, content = '';
+        
+        var params = {
+            objectType: 'item'
+        };
+        var router = new Zotero.Router(params);
+        
+        // All items
+        router.add('library/items/:objectKey', function () {
+            params.libraryID = userLibraryID;
+        });
+        router.add('groups/:groupID/items/:objectKey');
+        
+        // ZotFile URLs
+        router.add(':id/:pathPage', function () {
+            var lkh = Zotero.Items.parseLibraryKeyHash(params.id);
+            if (!lkh) {
+                Zotero.warn(`Invalid URL ${url}`);
+                return;
+            }
+            params.libraryID = lkh.libraryID || userLibraryID;
             params.objectKey = lkh.key;
-            if (params.libraryID == 0) params.libraryID = Zotero.Libraries.userLibraryID;
-        }
-        else {
-            params.objectID = params.id;
-        }
+            delete params.id;
+        });
+        router.run(uriPath);
+        
         Zotero.API.parseParams(params);
+        var page = params.pathPage || params.page;
         var results = yield Zotero.API.getResultsFromParams(params);
         if (results.length == 0) return;
         var item = results[0];

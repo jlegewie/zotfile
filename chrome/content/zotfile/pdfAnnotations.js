@@ -211,7 +211,9 @@ Zotero.ZotFile.pdfAnnotations = new function() {
 
     this.getNoteContent = function(annotations, item, att, method) {
         var lib = att.library.libraryType == 'user' ? 0 : att.libraryID,
-            format_uri = 'zotero://open-pdf/%(lib)_%(key)/%(page)',
+            groupID = lib != 0 ? Zotero.Groups.getGroupIDFromLibraryID(att.libraryID) : undefined,
+            format_uri = 'zotero://open-pdf/library/items/%(key)?page=%(page)',
+            format_uri_group = 'zotero://open-pdf/groups/%(groupID)/items/%(key)?page=%(page)',
             str_title = this.ZFgetString('extraction.noteTitle'),
             format_title = this.getPref("pdfExtraction.formatNoteTitle"),
             format_title_color = this.getPref("pdfExtraction.formatNoteTitleColor"),
@@ -238,7 +240,8 @@ Zotero.ZotFile.pdfAnnotations = new function() {
         // annotations.map(function(anno) {
             var anno = annotations[i],
                 page = anno.page,
-                uri = this.Utils.str_format(format_uri, {'lib': lib, 'key': att.key, 'page': anno.page});
+                uri = lib == 0 ? format_uri : format_uri_group;
+            uri = this.Utils.str_format(uri, {'groupID': groupID, 'key': att.key, 'page': anno.page});
             // get page
             if(this.getPref("pdfExtraction.NoteTruePage")) {
                 try {
