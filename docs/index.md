@@ -32,10 +32,23 @@ To start using zotfile, make sure that Zotero is installed and follow these simp
 
     ZotFile offers many other options that can be changed by the user. Most of them are located in the zotfile preference window under Tools -> ZotFile Preferences.
 
-#### Syncing pdf attachments with your ipad or android tablet
+#### Syncing PDF attachments with your iPad or Android tablet
 
-To read and annotate PDF attachments on your mobile device, zotfile can sync PDFs from your Zotero library to your (mobile) PDF reader (e.g. an iPad, Android tablet, etc.). For this purpose, Zotfile sends files to a location on your PC or Mac that syncs with your PDF reader App (PDF Expert, iAnnotate, GoodReader etc.), and gets them back when you have finished reading them. To get started, first set up a folder on your PC or Mac that syncs with your tablet reader application. Files that are copied to this folder should automatically appear in your PDF reader application. One possibility is Dropbox, which is free for up to 2GB of space and works with most PDF reader apps. More detailed instructions as well as alternative options should be available on the website of your PDF reader App. Second, open the 'Tablet Settings' tab in the zotfile preference window and enable the option 'Use ZotFile to send and get files from tablet'. Third, change the zotfile location for files on the tablet to the folder that syncs with your pdf reader app ('Base Folder' on the 'Tablet Settings' tab). Forth (optional), set up subfolders that make it easy to sort your files in the tablet folder so that you can easily find them on your tablet.
-You can now start sending pdfs (or other files) to your tablet. Simply right-click on a zotero item and select 'Send to Tablet' under 'Manage Attachments'. When you are done reading and annotating your pdf, just get the file back from the tablet by clicking on 'Get from Tablet' under 'Manage Attachments'. ZotFile will automatically remove the file from your tablet folder and extract the annotations from the pdf file to a zotero note. ZotFile adds a saved search for modified files on tablet which updates automatically and can be used to sync attachment files that have been changed.
+To read and annotate PDF attachments on your mobile device, zotfile can sync PDFs from your Zotero library to your (mobile) PDF reader (e.g. an iPad, Android tablet, etc.). For this purpose, Zotfile sends files to a location on your PC or Mac that syncs with your PDF reader App (PDF Expert, iAnnotate, GoodReader etc.), and gets them back when you have finished reading them. 
+
+1. Set up a folder on your PC or Mac that syncs with your tablet reader application. Files that are copied to this folder should automatically appear in your PDF reader application. One possibility is Dropbox, which is free for up to 2GB of space and works with most PDF reader apps. More detailed instructions as well as alternative options should be available on the website of your PDF reader App. 
+
+2. Open the 'Tablet Settings' tab in the zotfile preference window and enable the option 'Use ZotFile to send and get files from tablet'. 
+
+3. Change the zotfile location for files on the tablet to the folder that syncs with your pdf reader app ('Base Folder' on the 'Tablet Settings' tab). 
+
+4. (optional) Set up subfolders that make it easy to sort your files in the tablet folder so that you can easily find them on your tablet.
+
+You can now start sending pdfs (or other files) to your tablet. Simply right-click on a zotero item and select 'Send to Tablet' under 'Manage Attachments'. 
+
+When you are done reading and annotating your pdf, just get the file back from the tablet by clicking on 'Get from Tablet' under 'Manage Attachments'. ZotFile will automatically remove the file from your tablet folder and extract the annotations from the pdf file to a zotero note. 
+
+ZotFile adds a saved search for modified files on tablet which updates automatically and can be used to sync attachment files that have been changed.
 
 ### RENAMING RULES
 
