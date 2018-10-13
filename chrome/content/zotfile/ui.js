@@ -142,7 +142,7 @@ Zotero.ZotFile.UI = new function() {
                         var getCollectionPathsOfItem = function(item) {
                             var getCollectionPath = function(collectionID) {
                                 var collection = Zotero.Collections.get(collectionID);
-                                if (collection.parent == null)  return collection.name
+                                if (collection.parent === false)  return collection.name
 
                                 return OS.Path.normalize(getCollectionPath(collection.parentID) + Zotero.ZotFile.folderSep + collection.name);
                             };
