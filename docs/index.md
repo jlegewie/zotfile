@@ -255,6 +255,10 @@ You can report bugs on the [Zotfile thread](http://forums.zotero.org/discussion/
 
 ### CHANGELOG
 
+#### Changes in 5.0.9
+
+- Fix some(!) problems with 'undefined' subfolder
+
 #### Changes in 5.0.8
 
 - Update open pdf protocol handler for compatibility with Zotero
