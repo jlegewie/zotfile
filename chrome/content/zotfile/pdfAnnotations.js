@@ -260,13 +260,17 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                 color_category_hex = settings_colors[color_category];
 	    // produce hex version of the colour
 	    var color_hex = "#";
-	    anno.forEach(function(number) {
+	    if ('color' in anno) {
+		anno.color.forEach(function(number) {
 		    var hex = number.toString(16);
 		    if (hex.length % 2) {
 			hex = '0' + hex;
 		    }
 		    color_hex += hex.toUpperCase();
 		});
+	    } else {
+		color_hex += "FFFFFF";
+	    };
             // add markup to note (process colour/underline markups in PDF)
             if(anno.markup && anno.markup != "") {       
                 var format_markup = anno.subtype == "Highlight" ? format_highlight : format_underline;
@@ -274,7 +278,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                     anno.markup = anno.markup.replace(reg[k], repl[k].replacement);
                 var markup_formated = this.Utils.str_format(format_markup, 
 							    {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title, 
-							     'color': color, 'color_category': color_category_hex, 'color_hex': color_hex,
+							     'color': color, 'color_category': color_category_hex, 'color_hex': color_hex, 'color_category_name': color_category,
 							     'group': groupID, 'key': att.key});
                 if(!setting_color_notes)
                     note += markup_formated;
@@ -291,7 +295,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                 // '<p><i>%(content) (<a href="%(uri)">note on p.%(page)</a>)</i></p><br>'
                 var content_formated = this.Utils.str_format(format_note, 
 							     {'content': content, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title,
-							      'color': color, 'color_category': color_category_hex, 'color_hex': color_hex,
+							      'color': color, 'color_category': color_category_hex, 'color_hex': color_hex, 'color_category_name': color_category,
 							      'group': groupID, 'key': att.key});
                 if(!setting_color_notes)
                     note += content_formated;
