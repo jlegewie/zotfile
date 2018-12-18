@@ -258,14 +258,23 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                 color = ('color' in anno) ? ('rgb(' + anno.color.join(',') + ')') : 'rgb(255,255,255)',
                 color_category = this.pdfAnnotations.getColorCategory(anno.color[0], anno.color[1], anno.color[2]),
                 color_category_hex = settings_colors[color_category];
-            // add markup from the PDF to the Zotero note (process colour/underline markups in PDF)
+	    // produce hex version of the colour
+	    var color_hex = "#";
+	    anno.forEach(function(number) {
+		    var hex = number.toString(16);
+		    if (hex.length % 2) {
+			hex = '0' + hex;
+		    }
+		    color_hex += hex.toUpperCase();
+		});
+            // add markup to note (process colour/underline markups in PDF)
             if(anno.markup && anno.markup != "") {       
                 var format_markup = anno.subtype == "Highlight" ? format_highlight : format_underline;
                 for (var k = 0; k < repl.length; k++)
                     anno.markup = anno.markup.replace(reg[k], repl[k].replacement);
                 var markup_formated = this.Utils.str_format(format_markup, 
 							    {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title, 
-							     'color': color, 'color_category': color_category_hex,
+							     'color': color, 'color_category': color_category_hex, 'color_hex': color_hex,
 							     'group': groupID, 'key': att.key});
                 if(!setting_color_notes)
                     note += markup_formated;
@@ -275,14 +284,14 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                     note[color_category] += markup_formated;
                 }
             }
-            // add to PDF notes to Zotero notes (process notes added to PDF)
+            // add to note text (process notes added to PDF)
             if(anno.content && anno.content != "" &&
               (!anno.markup || this.Utils.strDistance(anno.content,anno.markup)>0.15 )) {                    
                 var content = anno.content.replace(/(\r\n|\n|\r)/gm,"<br>");
                 // '<p><i>%(content) (<a href="%(uri)">note on p.%(page)</a>)</i></p><br>'
                 var content_formated = this.Utils.str_format(format_note, 
 							     {'content': content, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title,
-							      'color': color, 'color_category': color_category_hex,
+							      'color': color, 'color_category': color_category_hex, 'color_hex': color_hex,
 							      'group': groupID, 'key': att.key});
                 if(!setting_color_notes)
                     note += content_formated;
