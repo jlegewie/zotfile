@@ -5,6 +5,9 @@
  */
 Zotero.ZotFile.Wildcards = new function() {
 
+    var _this = this;
+    this.emptyCollectionPlaceholder = "EMPTY_COLLECTION_NAME";
+
     /*
      * Performs a binary search that returns the index of the array before which the
      * search should be inserted into the array to maintain a sorted order.
@@ -376,7 +379,7 @@ Zotero.ZotFile.Wildcards = new function() {
                     };
 
                     var collectionPaths = lookup;
-                    if (collectionPaths.length === 0)  return "";
+                    if (collectionPaths.length === 0)  return _this.emptyCollectionPlaceholder;
                     if (collectionPaths.length === 1)  return collectionPaths[0];
 
                     var title = table['%t'];
