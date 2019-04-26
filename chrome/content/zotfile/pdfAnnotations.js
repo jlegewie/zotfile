@@ -305,7 +305,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
 							     {'content': content, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title,
 							      'color': color, 'color_category': color_category_hex, 'color_hex': color_hex, 'color_category_name': color_category,
 							      'group': groupID, 'key': att.key});
-                if(!setting_color_notes)
+                if(!setting_color_notes && !setting_separated_notes)
                     note += content_formated;
                 else if (!setting_separated_notes) {
                     if(!(color_category in note))
