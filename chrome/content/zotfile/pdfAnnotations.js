@@ -290,7 +290,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                     note[color_category] += markup_formated;
                 } else {
                     if(!(i in note)) {
-                        var first_words = anno.markup.replace(/(([^\s]+\s\s*){5})(.*)/,"$1…");
+                        var first_words = anno.markup.replace(/(([^\s]+\s\s*){5})(.*)/,"$1...");
                         note[i] = this.Utils.str_format(format_title_separated, {'title': str_title, 'date': date_str, 'annoTitle': anno.title, 'firstWords': first_words, 'content': anno.markup});
                     }
                     note[i] += markup_formated;
@@ -313,7 +313,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                     note[color_category] += content_formated;
                 } else {
                     if(!(i in note)) {
-                        var first_words = content.replace(/(([^\s]+\s\s*){5})(.*)/,"$1…");
+                        var first_words = content.replace(/(([^\s]+\s\s*){5})(.*)/,"$1...");
                         note[i] = note[i] = this.Utils.str_format(format_title_separated, {'title': str_title, 'date': date_str, 'annoTitle': anno.title, 'firstWords': first_words, 'content': content});
                     }
                     note[i] += content_formated;
