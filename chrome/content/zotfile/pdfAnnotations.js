@@ -150,10 +150,11 @@ Zotero.ZotFile.pdfAnnotations = new function() {
     });
 
     this.unifyNote = function (note) {
-        note = note.replace(/(\r\n|\n|\r)/gm, "").replace(/(\\")/gm, '"')
+        note = note.replace(/(\r\n|\n|\r)/gm, "")
         note = note.replace(/(<b>)/gm, "<strong>").replace(/(<\/b>)/gm, "</strong>")
         note = note.replace(/(<i>)/gm, "<em>").replace(/(<\/i>)/gm, "</em>")
         note = note.replace(/(<br>)/gm, "<p> </p>")
+        note = note.replace(/(\u00A0)/gm, " ")
         return note
     };
 
@@ -166,7 +167,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
 
         // save single note
         if(typeof note_content == 'string') {
-            if (!parent_notes.includes(note_content)) {
+            if (!parent_notes.includes(this.unifyNote(note_content))) {
                 let note = new Zotero.Item('note');
                 note.libraryID = item.libraryID;
                 note.setNote(note_content);
@@ -178,9 +179,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
         else {
             // remove duplicates
             for(let type in note_content) {
-                unified_note = this.unifyNote(note_content[type])
-                Zotero.debug(unified_note)
-                if(parent_notes.includes(unified_note))
+                if(parent_notes.includes(this.unifyNote(note_content[type])))
                     delete note_content[type];
             }
 
