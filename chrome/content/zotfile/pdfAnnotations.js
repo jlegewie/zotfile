@@ -150,11 +150,16 @@ Zotero.ZotFile.pdfAnnotations = new function() {
     });
 
     this.unifyNote = function (note) {
+        note = note.replace(/(\u00A0)/gm, " ")
+        note = note.replace(/([\x00-\x1F])/gm, "")
+
         note = note.replace(/(\r\n|\n|\r)/gm, "")
         note = note.replace(/(<b>)/gm, "<strong>").replace(/(<\/b>)/gm, "</strong>")
         note = note.replace(/(<i>)/gm, "<em>").replace(/(<\/i>)/gm, "</em>")
-        note = note.replace(/(<br>)/gm, "<p> </p>")
-        note = note.replace(/(\u00A0)/gm, " ")
+        note = note.replace(/(<br>)/gm, "<br />")
+        if(note.endsWith("<br />")) {
+            note = note.replace(/(<br \/>)$/gm, "<p> </p>")
+        }
         return note
     };
 
