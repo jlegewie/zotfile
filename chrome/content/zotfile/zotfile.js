@@ -521,7 +521,7 @@ Zotero.ZotFile = new function() {
             // TODO: use an integer counter instead of mod time for change detection
             // Update mod time first, because it may fail for read-only files on Windows
             yield OS.File.setDates(origPath, null, null);
-            var result = yield this.moveFile(origPath, destPath)
+            destPath = yield this.moveFile(origPath, destPath)
             
             yield att.relinkAttachmentFile(destPath);
             
