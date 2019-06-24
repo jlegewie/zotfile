@@ -359,6 +359,9 @@ Zotero.ZotFile.Wildcards = new function() {
         if (exclusive !== "") {
             str.push(exclusive);
         }
+
+        var wildcards_collection_high = JSON.parse(Zotero.ZotFile.prefs.getCharPref("wildcards.collection.high"));
+        var wildcards_collection_low = JSON.parse(Zotero.ZotFile.prefs.getCharPref("wildcards.collection.low"));
         for (var j = last + 1; j < wildcards.length; ++j) {
             // add rule content before wildcard
             str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
@@ -381,6 +384,32 @@ Zotero.ZotFile.Wildcards = new function() {
                     var collectionPaths = lookup;
                     if (collectionPaths.length === 0)  return _this.emptyCollectionPlaceholder;
                     if (collectionPaths.length === 1)  return collectionPaths[0];
+                    var priority = 0
+                    var index = collectionPaths.length
+                    collectionPaths.forEach(function (value) {
+                        // unescape for matching of unicode characters
+                        value = unescape(value)
+                        if (wildcards_collection_high.includes(value)) {
+                            if (priority < 2) {
+                                priority = 2
+                                index = wildcards_collection_high.indexOf(value)
+                                array_choice = []
+                            } else {
+                                index = Math.min(index, wildcards_collection_high.indexOf(value))
+                            }
+                        } else if (wildcards_collection_low.includes(value)) {
+                            if (priority == 0) {
+                                index = Math.min(index, wildcards_collection_low.indexOf(value))
+                            }
+                        } else if (priority == 0) {
+                            priority = 1
+                        }
+                    });
+                    if (priority == 2) {
+                        return wildcards_collection_high[index]
+                    } else if (priority == 0) {
+                        return wildcards_collection_low[index]
+                    }
 
                     var title = table['%t'];
                     var idx = selectFromList(collectionPaths, title);
