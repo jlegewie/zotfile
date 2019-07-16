@@ -100,7 +100,7 @@ Zotero.ZotFile = new function() {
                 }
                 // set to pdf.js if poppler is not supported
                 if(!this.pdfAnnotations.popplerExtractorSupported) this.setPref('pdfExtraction.UsePDFJS', true);
-                
+
             }.bind(this));
         }
         // Register callbacks in Zotero as item observers
@@ -110,7 +110,7 @@ Zotero.ZotFile = new function() {
         window.addEventListener('unload', function(e) {
             Zotero.Notifier.unregisterObserver(Zotero.ZotFile.notifierID);
             Zotero.ZotFile.notifierID = null;
-        }, false);        
+        }, false);
         // Load zotero.js first
         Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
             .getService(Components.interfaces.mozIJSSubScriptLoader)
@@ -169,7 +169,7 @@ Zotero.ZotFile = new function() {
      * @param {string}          pref  Name of preference in 'extensions.zotfile' branch
      * @param {string|int|bool} value Value of preference
      */
-    this.setPref = function(pref, value) {        
+    this.setPref = function(pref, value) {
         switch (this.prefs.getPrefType(pref)) {
             case this.prefs.PREF_BOOL:
                 return this.prefs.setBoolPref(pref, value);
@@ -303,7 +303,7 @@ Zotero.ZotFile = new function() {
             errors.lines.push(this.ZFgetString('error.unknown'));
             errors.txt = this.ZFgetString('error.clickToCopy');
             // prepare error message for clipboard
-            
+
             var errors_str = this.messages_fatalError.map(function(e) {
                 if (typeof e == 'object') Zotero.logError(e);
                 return typeof e == 'object' ? this.format_error(e) : e;
@@ -379,7 +379,7 @@ Zotero.ZotFile = new function() {
 
         return(button);
 
-    };    
+    };
 
     this.addUserInput = function(filename, original_filename){
         var default_str = this.getPref('userInput_Default');
@@ -501,13 +501,13 @@ Zotero.ZotFile = new function() {
             Zotero.debug("Attachment file not found in moveLinkedAttachmentFile()", 2);
             return false;
         }
-        
+
         try {
             var origName = OS.Path.basename(origPath);
             var origModDate = (yield OS.File.stat(origPath)).lastModificationDate;
-            
+
             filename = Zotero.File.getValidFileName(filename);
-            
+
             var destPath = OS.Path.join(location, filename);
             var destName = OS.Path.basename(destPath);
 
@@ -516,19 +516,19 @@ Zotero.ZotFile = new function() {
                 Zotero.debug("Filename has not changed");
                 return true;
             }
-            
+
             // Update mod time and clear hash so the file syncs
             // TODO: use an integer counter instead of mod time for change detection
             // Update mod time first, because it may fail for read-only files on Windows
             yield OS.File.setDates(origPath, null, null);
             destPath = yield this.moveFile(origPath, destPath);
-            
+
             yield att.relinkAttachmentFile(destPath);
-            
+
             att.attachmentSyncedHash = null;
             att.attachmentSyncState = "to_upload";
             yield att.saveTx({ skipAll: true });
-            
+
             return true;
         }
         catch (e) {
@@ -906,7 +906,7 @@ Zotero.ZotFile = new function() {
             att_note = att.getNote(),
             att_tags = att.getTags().map(tag => tag.tag),
             att_relations = att.getRelations();
-        if (!path) throw('Zotero.ZotFile.renameAttachment(): Attachment file does not exists.'); 
+        if (!path) throw('Zotero.ZotFile.renameAttachment(): Attachment file does not exists.');
         // only proceed if linked or imported attachment
         if(!att.isImportedAttachment() && !linkmode == Zotero.Attachments.LINK_MODE_LINKED_FILE)
             return att;
@@ -1014,10 +1014,10 @@ Zotero.ZotFile = new function() {
         var atts = Zotero.Items.get(this.getSelectedAttachments())
             .filter(this.checkFileType);
         // confirm renaming
-        if (this.getPref('confirmation_batch_ask') && atts.length >= this.getPref('confirmation_batch')) 
+        if (this.getPref('confirmation_batch_ask') && atts.length >= this.getPref('confirmation_batch'))
             if(!confirm(this.ZFgetString('renaming.moveRename', [atts.length])))
                 return;
-        // show infoWindow        
+        // show infoWindow
         var progressWin = this.progressWindow(this.ZFgetString('renaming.renamed')),
             description = atts.length == 0;
         // rename attachments
@@ -1025,23 +1025,39 @@ Zotero.ZotFile = new function() {
             // get attachment and add line to infoWindow
             var att = atts[i],
                 progress = new progressWin.ItemProgress(att.getImageSrc(), att.getField('title'));
+
             // check attachment
-            if(!(yield att.fileExists()) || att.isTopLevelItem() || this.Tablet.getTabletStatus(att)) {
+            if(!(yield att.fileExists())) {
                 description = true;
                 progress.setError();
+                progressWin.addDescription(this.ZFgetString('general.warning.noFile.msg'));
                 continue;
             }
+
+            if( att.isTopLevelItem() ) {
+                description = true;
+                progress.setError();
+                progressWin.addDescription(this.ZFgetString('general.warning.topLevel.msg'));
+                continue;
+            }
+
+            if(  this.Tablet.getTabletStatus(att) ) {
+                description = true;
+                progress.setError();
+                progressWin.addDescription(this.ZFgetString('general.warning.tabletStatus.msg'));
+                continue;
+            }
+
             // Rename and move attachment
             att = yield this.renameAttachment(att);
             if(!att) {
                 progress.setError();
+                progressWin.addDescription(this.ZFgetString('general.warning.renamingFailed.msg'));
                 continue;
             }
             // update progress window
             progress.complete(att.attachmentFilename, att.getImageSrc());
         }
-        // show messages and handle errors
-        if(description) progressWin.addDescription(this.ZFgetString('general.warning.skippedAtt.msg'));
-        progressWin.startCloseTimer(this.getPref("info_window_duration"));
+        //progressWin.startCloseTimer(this.getPref("info_window_duration"));
     });
 };
