@@ -942,7 +942,13 @@ Zotero.ZotFile = new function() {
             // erase old attachment, remove file and folder
             yield att.eraseTx();
             yield OS.File.remove(path);
-            yield this.removeEmptyFolders(OS.Path.dirname(path));
+            try {
+              yield this.removeEmptyFolders(OS.Path.dirname(path));
+        		}
+        		catch (e){
+              // instead of yielding the empty folder, push warning message
+              if(verbose) this.messages_report.push(this.ZFgetString('removing.warning.empty', [path]));
+        		}
             // notification
             if (verbose) this.messages_report.push(this.ZFgetString('renaming.imported', [filename]));
             return attNew;
