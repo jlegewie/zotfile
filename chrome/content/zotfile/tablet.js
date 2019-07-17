@@ -275,8 +275,9 @@ Zotero.ZotFile.Tablet = new function() {
         var atts = Zotero.Items.get(search_results)
             .filter(item => item.isAttachment() && !item.isTopLevelItem());
         // show warning if no information in note
-        atts.filter(att => this.Tablet.getInfo(att, 'mode') === '')
-            .forEach(att => this.infoWindow(this.ZFgetString('general.warning'), this.ZFgetString('tablet.attachmentNoteMissing') + ' (' + att.key + ')'));
+        if(this.getPref('tablet.showwarning'))
+            atts.filter(att => this.Tablet.getInfo(att, 'mode') === '')
+                .forEach(att => this.infoWindow(this.ZFgetString('general.warning'), this.ZFgetString('tablet.attachmentNoteMissing') + ' (' + att.key + ')'));
         // return attachments on tablet
         atts = atts.filter(att => this.Tablet.getInfo(att, 'mode') != '')
             .filter(att => subfolder === undefined || this.Tablet.getInfo(att, 'projectFolder').toLowerCase() == subfolder.toLowerCase());
