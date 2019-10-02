@@ -212,6 +212,26 @@ var updateFolderIcon = Zotero.Promise.coroutine(function* (which, revert) {
     }
 }.bind(Zotero.ZotFile));
 
+async function chooseDestinationDirectory() {
+	var folder = await Zotero.ZotFile.chooseDirectory();
+	if (folder != '') {
+		Zotero.ZotFile.setPref('dest_dir', folder);
+		updateFolderIcon('dest', false);
+		onImportPrefChange();
+	}
+}
+
+async function onImportPrefChange() {
+	if (!document.getElementById('pref-zotfile-import').value) return;
+	// If changing from default to custom, choose directory now
+	if (document.getElementById('pref-zotfile-dest_dir').value == '') {
+		let destDir = await Zotero.ZotFile.chooseDirectory();
+		// DEBUG: What if cancelled?
+		Zotero.ZotFile.setPref('dest_dir', destDir);
+		updateFolderIcon('dest', true);
+	}
+}
+
 var checkFolderLocation = Zotero.Promise.coroutine(function* (folder) {
     var path = this.getPref(folder);
     return path != '' && (yield OS.File.exists(path));
