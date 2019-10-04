@@ -24,7 +24,7 @@ Zotero.ZotFile.PdfExtractor = {
         // create Uint8Array from file data
         var int8View = new Uint8Array(array);
         // set options for extractions
-        var removeHyphens = Zotero.ZotFile.prefs.getBoolPref("pdfExtraction.NoteRemoveHyphens");
+        var removeHyphens = Zotero.ZotFile.getPref("pdfExtraction.NoteRemoveHyphens");
         args.itemProgress.setProgress(0);
         var progress = function(x, y) {
           args.itemProgress.setProgress(x*100/y);

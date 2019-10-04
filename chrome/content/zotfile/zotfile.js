@@ -19,9 +19,8 @@ Zotero JavaScript API
 http://www.zotero.org/support/dev/client_coding/javascript_api
 */
 
-Zotero.ZotFile = new function() {
 
-    this.prefs = null;
+Zotero.ZotFile = new function() {
     this.wm = null;
     this.folderSep = null;
     this.projectNr = new Array('01','02','03','04','05','06','07','08','09','10','11','12','13','14','15');
@@ -37,6 +36,8 @@ Zotero.ZotFile = new function() {
     this.excludeAutorenameKeys = [];
     this.notifierID = null;
     this.xhtml = 'http://www.w3.org/1999/xhtml';
+
+    var _initialized = false;
 
     /**
      * Zotfile version changed, open webpage, make adjustments
@@ -60,13 +61,13 @@ Zotero.ZotFile = new function() {
      * Initiate zotfile
      * @return {void}
      */
-    this.init = function() {
+    this.init = async function () {
+        await Zotero.Schema.schemaUpdatePromise;
+
         // only do this stuff for the first run
-        if(this.prefs === null) {
+        if (!_initialized) {
             // defined zotfile variables
-            this.wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
-            this.prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                .getService(Components.interfaces.nsIPrefService).getBranch("extensions.zotfile.");
+            this.wm = Services.wm;
             this.ffPrefs = Components.classes["@mozilla.org/preferences-service;1"]
                 .getService(Components.interfaces.nsIPrefService).getBranch("browser.download.");
             this.Tablet.tag = this.getPref("tablet.tag");
@@ -122,6 +123,8 @@ Zotero.ZotFile = new function() {
             tree.removeEventListener('select', Zotero.ZotFile.UI.attboxUpdateTabletStatus);
             tree.addEventListener('select', Zotero.ZotFile.UI.attboxUpdateTabletStatus);
         }
+
+        _initialized = true;
     };
 
 	// Localization (borrowed from Zotero sourcecode)
@@ -153,15 +156,7 @@ Zotero.ZotFile = new function() {
      * @return {string|int|bool} Value of preference.
      */
     this.getPref = function(pref) {
-        var type = this.prefs.getPrefType(pref);
-        if (type == 0)
-            throw("Zotero.ZotFile.getPref(): Invalid preference value for '" + pref + "'")
-        if (type == this.prefs.PREF_STRING)
-            return this.prefs.getComplexValue(pref, Components.interfaces.nsISupportsString).data;
-        if (type == this.prefs.PREF_INT)
-            return this.prefs.getIntPref(pref);
-        if (type == this.prefs.PREF_BOOL)
-            return this.prefs.getBoolPref(pref);
+        return Zotero.Prefs.get('extensions.zotfile.' + pref, true);
     };
 
     /**
@@ -170,18 +165,7 @@ Zotero.ZotFile = new function() {
      * @param {string|int|bool} value Value of preference
      */
     this.setPref = function(pref, value) {        
-        switch (this.prefs.getPrefType(pref)) {
-            case this.prefs.PREF_BOOL:
-                return this.prefs.setBoolPref(pref, value);
-            case this.prefs.PREF_STRING:
-                var str = Components.classes["@mozilla.org/supports-string;1"]
-                    .createInstance(Components.interfaces.nsISupportsString);
-                str.data = value;
-                return this.prefs.setComplexValue(pref, Components.interfaces.nsISupportsString, str);
-            case this.prefs.PREF_INT:
-                return this.prefs.setIntPref(pref, value);
-        }
-        throw('Zotero.ZotFile.setPref(): Unable to set preference.')
+        Zotero.Prefs.set('extensions.zotfile.' + pref, value, true);
     };
 
     /**
@@ -251,14 +235,24 @@ Zotero.ZotFile = new function() {
      * Choose directory from file picker
      * @return {string} Path to file
      */
-    this.chooseDirectory = function () {
-        var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-            .getService(Components.interfaces.nsIWindowMediator);
+    this.chooseDirectory = async function () {
+        if (Zotero.platformMajorVersion >= 60) {
+            var FilePicker = require('zotero/filePicker').default;
+        }
+        else {
+            var nsIFilePicker = Components.interfaces.nsIFilePicker;
+        }
+        var wm = Services.wm;
         var win = wm.getMostRecentWindow('navigator:browser');
-        var ps = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-            .getService(Components.interfaces.nsIPromptService);
-        var nsIFilePicker = Components.interfaces.nsIFilePicker;
-        while (true) {
+        var ps = Services.prompt;
+        if (Zotero.platformMajorVersion >= 60) {
+            var fp = new FilePicker();
+            fp.init(win, Zotero.getString('dataDir.selectDir'), fp.modeGetFolder);
+            fp.appendFilters(fp.filterAll);
+            if (await fp.show() != fp.returnOK) return '';
+            return fp.file;
+        }
+        else {
             var fp = Components.classes["@mozilla.org/filepicker;1"]
                 .createInstance(nsIFilePicker);
             fp.init(win, Zotero.getString('dataDir.selectDir'), nsIFilePicker.modeGetFolder);

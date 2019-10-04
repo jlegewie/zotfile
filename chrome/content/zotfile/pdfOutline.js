@@ -136,7 +136,7 @@ Zotero.ZotFile.pdfOutline = new function() {
         } else { // we're done
             Zotero.Browser.deleteHiddenBrowser(this.pdfHiddenBrowser);
             this.pdfHiddenBrowser = null;
-            this.progressWin.startCloseTimer(Zotero.ZotFile.prefs.getIntPref("info_window_duration"));
+            this.progressWin.startCloseTimer(Zotero.ZotFile.getPref("info_window_duration"));
         }
     };
 };

@@ -11,7 +11,7 @@ var OpenPDFExtension = {
         // parsing code copied from Zotero
         // https://github.com/zotero/zotero/blob/60e0d79e01bf83daf8682c0bc088fbeaba496198/components/zotero-protocol-handler.js#L1017-L1049
         var userLibraryID = Zotero.Libraries.userLibraryID;
-        var uriPath = uri.path;
+        var uriPath = uri.pathQueryRef;
         if (!uriPath) {
             return 'Invalid URL';
         }

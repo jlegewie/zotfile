@@ -34,7 +34,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
         this.popplerExtractorFileName += '-' + Zotero.platform;
         if (Zotero.isWin) this.popplerExtractorFileName += '.exe';
         // extractor path
-        this.popplerExtractorPath = OS.Path.join(Zotero.getZoteroDirectory().path, 'ExtractPDFAnnotations', this.popplerExtractorFileName);
+        this.popplerExtractorPath = OS.Path.join(Zotero.DataDirectory.dir, 'ExtractPDFAnnotations', this.popplerExtractorFileName);
     };
 
     this.getAnnotations = Zotero.Promise.coroutine(function* (attIDs) {

@@ -114,7 +114,7 @@ Zotero.ZotFile.ProgressWindow = function(_window){
 		var newDescription = _progressWindow.document.createElement("description");
 		
 		var parts = Zotero.Utilities.parseMarkup(text);
-		for each(var part in parts) {
+		for (let part of parts) {
 			if (part.type == 'text') {
 				var elem = _progressWindow.document.createTextNode(part.text);
 			}
