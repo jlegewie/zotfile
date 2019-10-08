@@ -21,7 +21,6 @@ http://www.zotero.org/support/dev/client_coding/javascript_api
 
 
 Zotero.ZotFile = new function() {
-    this.wm = null;
     this.folderSep = null;
     this.projectNr = new Array('01','02','03','04','05','06','07','08','09','10','11','12','13','14','15');
     this.projectPath = new Array('','','','','','','','','','','','','','','');
@@ -67,7 +66,6 @@ Zotero.ZotFile = new function() {
         // only do this stuff for the first run
         if (!_initialized) {
             // defined zotfile variables
-            this.wm = Services.wm;
             this.ffPrefs = Components.classes["@mozilla.org/preferences-service;1"]
                 .getService(Components.interfaces.nsIPrefService).getBranch("browser.download.");
             this.Tablet.tag = this.getPref("tablet.tag");
@@ -118,7 +116,7 @@ Zotero.ZotFile = new function() {
             .loadSubScript("chrome://zotfile/content/ProgressWindow.js", Zotero.ZotFile);
         // add event listener for selecting items in zotero tree
         if(this.getPref('tablet')) {
-            var pane = this.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
+            var pane = Services.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
                 tree = pane.document.getElementById('zotero-items-tree');
             tree.removeEventListener('select', Zotero.ZotFile.UI.attboxUpdateTabletStatus);
             tree.addEventListener('select', Zotero.ZotFile.UI.attboxUpdateTabletStatus);
@@ -185,7 +183,7 @@ Zotero.ZotFile = new function() {
     this.getSelectedAttachments = function (all) {
         all = typeof all !== 'undefined' ? all : false;
         // get selected items
-        var win = this.wm.getMostRecentWindow("navigator:browser");
+        var win = Services.wm.getMostRecentWindow("navigator:browser");
         var attachments = win.ZoteroPane.getSelectedItems()
             .map(item => item.isRegularItem() ? item.getAttachments() : item)
             .reduce((a, b) => a.concat(b), [])
@@ -831,7 +829,7 @@ Zotero.ZotFile = new function() {
      */
     this.attachFileFromSourceDirectory = Zotero.Promise.coroutine(function* () {
         // get selected items
-        var win = this.wm.getMostRecentWindow("navigator:browser"),
+        var win = Services.wm.getMostRecentWindow("navigator:browser"),
             item = win.ZoteroPane.getSelectedItems()[0];
         // if not top-level item, get parent
         item = !item.isTopLevelItem() ? Zotero.Items.get(item.parentItemID) : item;
@@ -891,7 +889,7 @@ Zotero.ZotFile = new function() {
         if (!att.isAttachment()) throw('Zotero.ZotFile.renameAttachment(): No attachment item.');
         if (att.isTopLevelItem()) throw('Zotero.ZotFile.renameAttachment(): Attachment is top-level item.');
         // set variables
-        var win = this.wm.getMostRecentWindow("navigator:browser"),
+        var win = Services.wm.getMostRecentWindow("navigator:browser"),
             selection = win.ZoteroPane.itemsView.saveSelection(),
             att_id = att.id,
             linkmode = att.attachmentLinkMode,
