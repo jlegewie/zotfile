@@ -66,7 +66,7 @@ Zotero.ZotFile.pdfOutline = new function() {
             return;
         }            
         // create toc from outline
-        var win = zz.wm.getMostRecentWindow("navigator:browser"),
+        var win = Services.wm.getMostRecentWindow("navigator:browser"),
             toc = win.document.createElementNS(zz.xhtml, 'ul'),
             key = att.key,
             lib = att.library.libraryType == 'user' ? 0 : att.libraryID,

@@ -163,7 +163,7 @@ Zotero.ZotFile.Tablet = new function() {
      */
     this.addInfo = function(att, data) {
         // get current content of note
-        var win = this.wm.getMostRecentWindow('navigator:browser'),
+        var win = Services.wm.getMostRecentWindow('navigator:browser'),
             parser = Components.classes["@mozilla.org/xmlextras/domparser;1"]
                         .createInstance(Components.interfaces.nsIDOMParser),
             content = att.getNote().replace(/zotero:\/\//g, 'http://zotfile.com/'),
@@ -218,7 +218,7 @@ Zotero.ZotFile.Tablet = new function() {
      * @yield {void}
      */
     this.showTabletFile = Zotero.Promise.coroutine(function* () {
-        var win = this.wm.getMostRecentWindow("navigator:browser"),
+        var win = Services.wm.getMostRecentWindow("navigator:browser"),
             att = win.ZoteroPane.getSelectedItems()[0],
             tablet = this.Tablet.getTabletStatus(att);
         if (!tablet) return;
@@ -231,7 +231,7 @@ Zotero.ZotFile.Tablet = new function() {
      * @yield {void}
      */
     this.openTabletFile = Zotero.Promise.coroutine(function* () {
-        var win = this.wm.getMostRecentWindow("navigator:browser"),
+        var win = Services.wm.getMostRecentWindow("navigator:browser"),
             att = win.ZoteroPane.getSelectedItems()[0],
             tablet = this.Tablet.getTabletStatus(att);
         if (!tablet) return;
@@ -338,7 +338,7 @@ Zotero.ZotFile.Tablet = new function() {
 
     this.checkSelectedSearch = function() {
         // get selected saved search
-        var win = this.wm.getMostRecentWindow('navigator:browser'),
+        var win = Services.wm.getMostRecentWindow('navigator:browser'),
             search = win.ZoteroPane.getSelectedSavedSearch();
         // returns false if no saved search is selected (e.g. collection)
         if (!search) return false;
@@ -367,7 +367,7 @@ Zotero.ZotFile.Tablet = new function() {
     }.bind(Zotero.ZotFile));
 
     this.restrictTabletSearch = Zotero.Promise.coroutine(function* (which) {
-        var win = this.wm.getMostRecentWindow("navigator:browser"),
+        var win = Services.wm.getMostRecentWindow("navigator:browser"),
             subfolders = JSON.parse(this.getPref("tablet.subfolders"));
         // get tablet searches
         var search_filter = s => s.getConditions()
@@ -385,7 +385,7 @@ Zotero.ZotFile.Tablet = new function() {
         for (let search of searches) {
             search.addCondition('note', 'contains', note_contains);
             yield search.saveTx();
-            var win = this.wm.getMostRecentWindow('navigator:browser');
+            var win = Services.wm.getMostRecentWindow('navigator:browser');
             win.ZoteroPane.onCollectionSelected();
         }
     }.bind(Zotero.ZotFile));

@@ -11,7 +11,7 @@ Zotero.ZotFile.UI = new function() {
      */
     this.showCollectionMenu = function() {
         // ZoteroPane object
-        var doc = this.wm.getMostRecentWindow("navigator:browser").ZoteroPane.document;
+        var doc = Services.wm.getMostRecentWindow("navigator:browser").ZoteroPane.document;
         // check regular item or attachment selected & custom subfolders
         var collection_menu = this.getPref("tablet") && this.Tablet.checkSelectedSearch() && this.getPref("tablet.projectFolders") == 2;
         // show or hide zotfile menu items
@@ -21,7 +21,7 @@ Zotero.ZotFile.UI = new function() {
     }.bind(Zotero.ZotFile);
 
     this.buildZotFileCollectionMenu = function() {
-        var win = this.wm.getMostRecentWindow('navigator:browser'),
+        var win = Services.wm.getMostRecentWindow('navigator:browser'),
             nodes = win.ZoteroPane.document.getElementById('id-zotfile-collection-menu').childNodes;
         // hide all items by default
         for (i = 0; i < nodes.length; i++) nodes[i].setAttribute('hidden', true);
@@ -43,7 +43,7 @@ Zotero.ZotFile.UI = new function() {
 
     this.showMenu = function() {
         // get selected items
-        var pane = this.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
+        var pane = Services.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
             items = pane.getSelectedItems();
         // check regular item or attachment selected
         var show_menu = items.some(item => item.isAttachment() || item.isRegularItem());
@@ -55,7 +55,7 @@ Zotero.ZotFile.UI = new function() {
 
     this.buildZotFileMenu = Zotero.Promise.coroutine(function* () {
         // get selected items
-        var win = this.wm.getMostRecentWindow("navigator:browser"),
+        var win = Services.wm.getMostRecentWindow("navigator:browser"),
             items = win.ZoteroPane.getSelectedItems();
         // get menu and recreate structure of child items
         var menu = win.ZoteroPane.document.getElementById('id-zotfile-menu');
@@ -200,7 +200,7 @@ Zotero.ZotFile.UI = new function() {
 
     this.buildTabletMenu = function() {
         // get selected items
-        var pane = this.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
+        var pane = Services.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
             att = pane.getSelectedItems()[0],
             tablet = this.Tablet.getTabletStatus(att);
         if (!att.isAttachment()) return;        
@@ -288,7 +288,7 @@ Zotero.ZotFile.UI = new function() {
 
     this.attboxAddTabletRow = function() {
         // add tablet row to attachment info
-        var pane = Zotero.ZotFile.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
+        var pane = Services.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
             row = pane.document.createElement("row");
         row.setAttribute('id', 'zotfile-tablet-row');
         var rows = pane.document.getElementById('indexStatusRow').parentNode,
@@ -314,7 +314,7 @@ Zotero.ZotFile.UI = new function() {
     }.bind(Zotero.ZotFile);
 
     this.attboxUpdateTabletStatus = function() {
-        var pane = this.wm.getMostRecentWindow('navigator:browser').ZoteroPane,
+        var pane = Services.wm.getMostRecentWindow('navigator:browser').ZoteroPane,
             items = pane.getSelectedItems(),
             row = pane.document.getElementById('zotfile-tablet-row');
         if (items.length != 1) return;
