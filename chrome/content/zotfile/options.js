@@ -7,7 +7,8 @@ var Zotero = Components.classes["@zotero.org/Zotero;1"]
     .getService(Components.interfaces.nsISupports)
     .wrappedJSObject;
 
-Components.utils.import("resource://gre/modules/osfile.jsm")
+Components.utils.import("resource://gre/modules/osfile.jsm");
+Components.utils.import("resource://gre/modules/Services.jsm");
 
 // function to disable prefernce in pref window
 // 'pref' can be passed as string or array
@@ -115,9 +116,7 @@ var updatePreferenceWindow = function (which) {
 var checkRenameFormat = function(which) {
     try {
         // get current item
-        var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                               .getService(Components.interfaces.nsIWindowMediator);
-        var win = wm.getMostRecentWindow("navigator:browser");
+        var win = Services.wm.getMostRecentWindow("navigator:browser");
         var items = win.ZoteroPane.getSelectedItems();
         var item = items.length > 0 ? items[0] : Zotero.Items.get(1);
         // get renaming rules
@@ -242,9 +241,7 @@ var checkFolderLocation = Zotero.Promise.coroutine(function* (folder) {
 var previewFilename = function() {
     try {
         // get current item
-        var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                               .getService(Components.interfaces.nsIWindowMediator);
-        var win = wm.getMostRecentWindow("navigator:browser");
+        var win = Services.wm.getMostRecentWindow("navigator:browser");
         var items = win.ZoteroPane.getSelectedItems();
         var item = items[0];
         // get renaming rules
