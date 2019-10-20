@@ -115,7 +115,9 @@ var updatePreferenceWindow = function (which) {
 var checkRenameFormat = function(which) {
     try {
         // get current item
-        var win = Services.wm.getMostRecentWindow("navigator:browser");
+        var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                               .getService(Components.interfaces.nsIWindowMediator);
+        var win = wm.getMostRecentWindow("navigator:browser");
         var items = win.ZoteroPane.getSelectedItems();
         var item = items.length > 0 ? items[0] : Zotero.Items.get(1);
         // get renaming rules
@@ -240,7 +242,9 @@ var checkFolderLocation = Zotero.Promise.coroutine(function* (folder) {
 var previewFilename = function() {
     try {
         // get current item
-        var win = Services.wm.getMostRecentWindow("navigator:browser");
+        var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                               .getService(Components.interfaces.nsIWindowMediator);
+        var win = wm.getMostRecentWindow("navigator:browser");
         var items = win.ZoteroPane.getSelectedItems();
         var item = items[0];
         // get renaming rules

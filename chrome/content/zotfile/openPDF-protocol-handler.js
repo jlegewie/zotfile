@@ -16,7 +16,7 @@ var OpenPDFExtension = {
             return 'Invalid URL';
         }
         // Strip leading '/'
-        uriPath = uriPath.substr(1);
+        uriPath = uriPath.substr('//open-pdf/'.length);
         var mimeType, content = '';
         
         var params = {
@@ -34,7 +34,7 @@ var OpenPDFExtension = {
         router.add(':id/:page', function () {
             var lkh = Zotero.Items.parseLibraryKeyHash(params.id);
             if (!lkh) {
-                Zotero.warn(`Invalid URL ${url}`);
+                Zotero.warn(`Invalid URL ${uriPath}`);
                 return;
             }
             params.libraryID = lkh.libraryID || userLibraryID;

@@ -91,7 +91,7 @@ Zotero.ZotFile.pdfOutline = new function() {
             if(entry.page!==undefined && entry.items.length>0)
                 lvl++;
             // add subitems
-            if(entry.items.length>0 && lvl <= zz.prefs.getIntPref('pdfOutline.tocDepth')) {
+            if(entry.items.length>0 && lvl <= zz.getPref('pdfOutline.tocDepth')) {
                 var ul = win.document.createElementNS(zz.xhtml, 'ul');
                 ul.setAttribute('style', zz.Utils.str_format(style, {'padding': 12*(lvl-1)}));        
                 entry.items.forEach(create_toc, ul);
