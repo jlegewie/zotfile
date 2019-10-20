@@ -408,7 +408,9 @@ Zotero.ZotFile = new function() {
         // rename format
         var filename = '',
             item_type =  item.itemTypeID,
-            format_default = item_type == 19 ? this.getPref("renameFormat_patent") : this.getPref("renameFormat");
+            format_default = item_type == Zotero.ItemTypes.getID('patent')
+            	? this.getPref("renameFormat_patent")
+            	: this.getPref("renameFormat");
         format = typeof format !== 'undefined' ? format : format_default;
         // create the new filename from the selected item
         if (!this.getPref('useZoteroToRename')) {
