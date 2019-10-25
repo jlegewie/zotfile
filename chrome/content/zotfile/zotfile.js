@@ -898,7 +898,7 @@ Zotero.ZotFile = new function() {
             item = Zotero.Items.get(att.parentItemID),
             path = yield att.getFilePathAsync(),
             att_note = att.getNote(),
-            att_tags = att.getTags().map(tag => tag.tag),
+            att_tags = att.getTags(),
             att_relations = att.getRelations();
         if (!path) throw('Zotero.ZotFile.renameAttachment(): Attachment file does not exists.'); 
         // only proceed if linked or imported attachment
@@ -919,7 +919,7 @@ Zotero.ZotFile = new function() {
             // restore attachment data
             attNew.setRelations(att_relations);
             if(att_note != '') attNew.setNote(att_note);
-            if(att_tags.length > 0) att_tags.forEach(tag => attNew.addTag(tag));
+            if (att_tags.length) attNew.setTags(att_tags);
             yield attNew.saveTx();
             // select new attachment
             if (selection.includes(att.id)) {
@@ -965,7 +965,7 @@ Zotero.ZotFile = new function() {
             // restore attachment data
             attNew.setRelations(att_relations);
             if(att_note != '') attNew.setNote(att_note);
-            if(att_tags.length > 0) attNew.addTags(att_tags);
+            if (att_tags.length) attNew.setTags(att_tags);
             yield attNew.saveTx();
             // select new attachment
             if (selection.includes(att.id)) {
