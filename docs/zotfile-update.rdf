@@ -10,37 +10,37 @@
                    em:id="zotero@chnm.gmu.edu"
                    em:minVersion="5.0.0"
                    em:maxVersion="5.*"
-                   em:updateLink="https://github.com/jlegewie/zotfile/releases/download/v5.0.12/zotfile-5.0.12-fx.xpi" />
+                   em:updateLink="https://github.com/jlegewie/zotfile/releases/download/v5.0.13/zotfile-5.0.13-fx.xpi" />
+  <RDF:Description RDF:about="rdf:#$t6wCU2"
+                   em:version="5.0.13">
+    <em:targetApplication RDF:resource="rdf:#$w6wCU2"/>
+    <em:targetApplication RDF:resource="rdf:#$C6wCU2"/>
+  </RDF:Description>
+  <RDF:Seq RDF:about="rdf:#$b6wCU2">
+    <RDF:li RDF:resource="rdf:#$c6wCU2"/>
+    <RDF:li RDF:resource="rdf:#$t6wCU2"/>
+  </RDF:Seq>
+  <RDF:Description RDF:about="rdf:#$p6wCU2"
+                   em:id="juris-m@juris-m.github.io"
+                   em:minVersion="3.0b1"
+                   em:maxVersion="4.*" />
+  <RDF:Description RDF:about="urn:mozilla:extension:zotfile@columbia.edu"
+                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAHigpd+gpW+8Si1QxmHoBxkTBqtWqLlostSx53HBR5VtpR4DP1aGEfSxc8nlfivZFZdjXMF/uUjpmJAO34VJ1/Sk3LdSuWLToMmV4zvkJxgrBXQ/8pGsXSiopQDlrs9wjreQSJOzOio/bYGoBHprHuJkIA11+B2+4UvyymnTJQQj">
+    <em:updates RDF:resource="rdf:#$b6wCU2"/>
+  </RDF:Description>
   <RDF:Description RDF:about="rdf:#$c6wCU2"
                    em:version="4.2.8">
     <em:targetApplication RDF:resource="rdf:#$f6wCU2"/>
     <em:targetApplication RDF:resource="rdf:#$k6wCU2"/>
     <em:targetApplication RDF:resource="rdf:#$p6wCU2"/>
   </RDF:Description>
-  <RDF:Description RDF:about="rdf:#$t6wCU2"
-                   em:version="5.0.12">
-    <em:targetApplication RDF:resource="rdf:#$w6wCU2"/>
-    <em:targetApplication RDF:resource="rdf:#$C6wCU2"/>
-  </RDF:Description>
   <RDF:Description RDF:about="rdf:#$C6wCU2"
                    em:id="juris-m@juris-m.github.io"
                    em:minVersion="4.999"
                    em:maxVersion="5.*"
-                   em:updateLink="https://github.com/jlegewie/zotfile/releases/download/v5.0.12/zotfile-5.0.12-fx.xpi" />
-  <RDF:Description RDF:about="rdf:#$p6wCU2"
-                   em:id="juris-m@juris-m.github.io"
-                   em:minVersion="3.0b1"
-                   em:maxVersion="4.*" />
+                   em:updateLink="https://github.com/jlegewie/zotfile/releases/download/v5.0.13/zotfile-5.0.13-fx.xpi" />
   <RDF:Description RDF:about="rdf:#$f6wCU2"
                    em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                    em:minVersion="31.0"
                    em:maxVersion="52.*" />
-  <RDF:Description RDF:about="urn:mozilla:extension:zotfile@columbia.edu"
-                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAJD8izOzMIdwvHL2Z9fURv1uLxRSPWWk1zdn24lTB5yHzuCYrMdVmIOaj4jocgEfYWPmSjv2+U/5VldNZR49QCvvSY19mBRkLDu6p/oYKE2RtXdCoflxL4ToBp6idx7Y3UXap8rYXGfzJBeGskeC+9fAyyr5S04ExwsAYED63XSj">
-    <em:updates RDF:resource="rdf:#$b6wCU2"/>
-  </RDF:Description>
-  <RDF:Seq RDF:about="rdf:#$b6wCU2">
-    <RDF:li RDF:resource="rdf:#$c6wCU2"/>
-    <RDF:li RDF:resource="rdf:#$t6wCU2"/>
-  </RDF:Seq>
 </RDF:RDF>
