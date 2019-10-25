@@ -113,10 +113,6 @@ pref("extensions.zotfile.pdfOutline.menuItem", true);
 
 pref("extensions.zotfile.pdfExtraction.UsePDFJS", true);
 pref("extensions.zotfile.pdfExtraction.debug", false);
-pref("extensions.zotfile.pdfExtraction.openPdfWin", "");
-pref("extensions.zotfile.pdfExtraction.openPdfLinux", "");
-pref("extensions.zotfile.pdfExtraction.openPdfMac_skim", false);
-pref("extensions.zotfile.pdfExtraction.openPdfMac", "Preview");
 pref("extensions.zotfile.pdfExtraction.UsePDFJSandPoppler", false);
 pref("extensions.zotfile.pdfExtraction.popplerDeleteTxtFile", true);
 pref("extensions.zotfile.pdfExtraction.Pull", true);
