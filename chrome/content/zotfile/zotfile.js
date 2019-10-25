@@ -511,29 +511,12 @@ Zotero.ZotFile = new function() {
                 return true;
             }
             
-            // Update mod time and clear hash so the file syncs
-            // TODO: use an integer counter instead of mod time for change detection
-            // Update mod time first, because it may fail for read-only files on Windows
-            yield OS.File.setDates(origPath, null, null);
             destPath = yield this.moveFile(origPath, destPath);
-            
             yield att.relinkAttachmentFile(destPath);
-            
-            att.attachmentSyncedHash = null;
-            att.attachmentSyncState = "to_upload";
-            yield att.saveTx({ skipAll: true });
-            
             return true;
         }
         catch (e) {
-            // Restore original modification date in case we managed to change it
-            try {
-                OS.File.setDates(origPath, null, origModDate);
-            } catch (e) {
-                Zotero.debug(e, 2);
-            }
-            Zotero.debug(e);
-            Components.utils.reportError(e);
+            Zotero.logError(e);
             return false;
         }
     });
