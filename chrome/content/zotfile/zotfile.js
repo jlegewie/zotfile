@@ -583,7 +583,7 @@ Zotero.ZotFile = new function() {
                 throw e;
             });
         // delete empty folders after moving file
-        this.removeEmptyFolders(sourceDir);
+        yield this.removeEmptyFolders(sourceDir);
         // return path to new location
         return destPath;
     });
@@ -668,7 +668,7 @@ Zotero.ZotFile = new function() {
             dest_dir = this.getPref('dest_dir');
         if (source_dir) folders_zotfile.push(source_dir);
         if (dest_dir != '') folders_zotfile.push(dest_dir);
-        folders_zotfile = folders_zotfile.map(OS.Path.normalize);
+        folders_zotfile = folders_zotfile.map(path => OS.Path.normalize(path));
         // Only delete folders if the file is located in any of the base folders
         if (!folders_zotfile.map(dir => folder.path.startsWith(dir)).some(x => x === true)) return;
         // remove the original dir recursively until a non empty folder is found
