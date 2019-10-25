@@ -511,29 +511,12 @@ Zotero.ZotFile = new function() {
                 return true;
             }
             
-            // Update mod time and clear hash so the file syncs
-            // TODO: use an integer counter instead of mod time for change detection
-            // Update mod time first, because it may fail for read-only files on Windows
-            yield OS.File.setDates(origPath, null, null);
             destPath = yield this.moveFile(origPath, destPath);
-            
             yield att.relinkAttachmentFile(destPath);
-            
-            att.attachmentSyncedHash = null;
-            att.attachmentSyncState = "to_upload";
-            yield att.saveTx({ skipAll: true });
-            
             return true;
         }
         catch (e) {
-            // Restore original modification date in case we managed to change it
-            try {
-                OS.File.setDates(origPath, null, origModDate);
-            } catch (e) {
-                Zotero.debug(e, 2);
-            }
-            Zotero.debug(e);
-            Components.utils.reportError(e);
+            Zotero.logError(e);
             return false;
         }
     });
@@ -583,7 +566,7 @@ Zotero.ZotFile = new function() {
                 throw e;
             });
         // delete empty folders after moving file
-        this.removeEmptyFolders(sourceDir);
+        yield this.removeEmptyFolders(sourceDir);
         // return path to new location
         return destPath;
     });
@@ -668,7 +651,7 @@ Zotero.ZotFile = new function() {
             dest_dir = this.getPref('dest_dir');
         if (source_dir) folders_zotfile.push(source_dir);
         if (dest_dir != '') folders_zotfile.push(dest_dir);
-        folders_zotfile = folders_zotfile.map(OS.Path.normalize);
+        folders_zotfile = folders_zotfile.map(path => OS.Path.normalize(path));
         // Only delete folders if the file is located in any of the base folders
         if (!folders_zotfile.map(dir => folder.path.startsWith(dir)).some(x => x === true)) return;
         // remove the original dir recursively until a non empty folder is found
@@ -898,7 +881,7 @@ Zotero.ZotFile = new function() {
             item = Zotero.Items.get(att.parentItemID),
             path = yield att.getFilePathAsync(),
             att_note = att.getNote(),
-            att_tags = att.getTags().map(tag => tag.tag),
+            att_tags = att.getTags(),
             att_relations = att.getRelations();
         if (!path) throw('Zotero.ZotFile.renameAttachment(): Attachment file does not exists.'); 
         // only proceed if linked or imported attachment
@@ -919,7 +902,7 @@ Zotero.ZotFile = new function() {
             // restore attachment data
             attNew.setRelations(att_relations);
             if(att_note != '') attNew.setNote(att_note);
-            if(att_tags.length > 0) att_tags.forEach(tag => attNew.addTag(tag));
+            if (att_tags.length) attNew.setTags(att_tags);
             yield attNew.saveTx();
             // select new attachment
             if (selection.includes(att.id)) {
@@ -965,7 +948,7 @@ Zotero.ZotFile = new function() {
             // restore attachment data
             attNew.setRelations(att_relations);
             if(att_note != '') attNew.setNote(att_note);
-            if(att_tags.length > 0) attNew.addTags(att_tags);
+            if (att_tags.length) attNew.setTags(att_tags);
             yield attNew.saveTx();
             // select new attachment
             if (selection.includes(att.id)) {
