@@ -222,6 +222,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
             format_underline = this.getPref("pdfExtraction.formatAnnotationUnderline"),
             settings_colors = JSON.parse(this.getPref("pdfExtraction.colorCategories")),
             setting_color_notes = this.getPref("pdfExtraction.colorNotes"),
+	    setting_aggregate_color_highlights = this.getPref("pdfExtraction.aggregateColorHighlights"),
             cite = this.getPref("pdfExtraction.NoteFullCite") ? this.Wildcards.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ") : "p. ",
             repl = JSON.parse(this.getPref("pdfExtraction.replacements")),
             reg = repl.map(function(obj) {
@@ -276,6 +277,8 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                 var format_markup = anno.subtype == "Highlight" ? format_highlight : format_underline;
                 for (var k = 0; k < repl.length; k++)
                     anno.markup = anno.markup.replace(reg[k], repl[k].replacement);
+	    	if (anno.subtype == "Highlight" && !setting_color_notes && setting_aggregate_color_highlights)
+		    anno.markup = "<span style='background-color:rgba(" + anno.color.join(',') + ",.25)'><strong>(" + color_category + ")</strong> - " + anno.markup + "</span>";
                 var markup_formated = this.Utils.str_format(format_markup, 
 							    {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title, 
 							     'color': color, 'color_category': color_category_hex, 'color_hex': color_hex, 'color_category_name': color_category,
