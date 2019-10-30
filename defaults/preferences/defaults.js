@@ -128,6 +128,6 @@ pref("extensions.zotfile.pdfExtraction.formatAnnotationUnderline", '<p>"<u>%(con
 pref("extensions.zotfile.pdfExtraction.replacements", '[]');
 pref("extensions.zotfile.pdfExtraction.localeDateInNote", true);
 pref("extensions.zotfile.pdfExtraction.colorNotes", false);
-pref("extensions.zotfile.pdfExtraction.aggregateColorHighlights", false);
+pref("extensions.zotfile.pdfExtraction.colorAnnotations", false);
 pref("extensions.zotfile.pdfExtraction.colorCategories", '{"Black": "#000000", "White": "#FFFFFF", "Gray": "#808080", "Red": "#FF0000", "Orange": "#FFA500", "Yellow": "#FFFF00", "Green": "#00FF00", "Cyan": "#00FFFF", "Blue": "#0000FF", "Magenta": "#FF00FF"}');
 //pref("extensions.zotfile.pdfExtraction.format", '"<p>%(markup)s" %(cite)s</p><br><p>%(note)s</p><br>');
