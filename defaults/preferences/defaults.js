@@ -58,6 +58,7 @@ pref("extensions.zotfile.tablet.storeCopyOfFile", false);
 pref("extensions.zotfile.tablet.storeCopyOfFile_suffix", "_annotated");
 pref("extensions.zotfile.tablet.subfolders", '[]');
 pref("extensions.zotfile.tablet.projectFolders", 0);
+pref("extensions.zotfile.tablet.showwarning", true);
 pref("extensions.zotfile.tablet.projectFolders01", false);
 pref("extensions.zotfile.tablet.projectFolders01_folder", "");
 pref("extensions.zotfile.tablet.projectFolders01_label", "Project 01");
