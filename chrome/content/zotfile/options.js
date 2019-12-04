@@ -7,7 +7,8 @@ var Zotero = Components.classes["@zotero.org/Zotero;1"]
     .getService(Components.interfaces.nsISupports)
     .wrappedJSObject;
 
-Components.utils.import("resource://gre/modules/osfile.jsm")
+Components.utils.import("resource://gre/modules/osfile.jsm");
+Components.utils.import("resource://gre/modules/Services.jsm");
 
 // function to disable prefernce in pref window
 // 'pref' can be passed as string or array
@@ -115,7 +116,7 @@ var updatePreferenceWindow = function (which) {
 var checkRenameFormat = function(which) {
     try {
         // get current item
-        var win = this.wm.getMostRecentWindow("navigator:browser");
+        var win = Services.wm.getMostRecentWindow("navigator:browser");
         var items = win.ZoteroPane.getSelectedItems();
         var item = items.length > 0 ? items[0] : Zotero.Items.get(1);
         // get renaming rules
@@ -212,6 +213,26 @@ var updateFolderIcon = Zotero.Promise.coroutine(function* (which, revert) {
     }
 }.bind(Zotero.ZotFile));
 
+async function chooseDestinationDirectory() {
+	var folder = await Zotero.ZotFile.chooseDirectory();
+	if (folder != '') {
+		Zotero.ZotFile.setPref('dest_dir', folder);
+		updateFolderIcon('dest', false);
+		onImportPrefChange();
+	}
+}
+
+async function onImportPrefChange() {
+	if (!document.getElementById('pref-zotfile-import').value) return;
+	// If changing from default to custom, choose directory now
+	if (document.getElementById('pref-zotfile-dest_dir').value == '') {
+		let destDir = await Zotero.ZotFile.chooseDirectory();
+		// DEBUG: What if cancelled?
+		Zotero.ZotFile.setPref('dest_dir', destDir);
+		updateFolderIcon('dest', true);
+	}
+}
+
 var checkFolderLocation = Zotero.Promise.coroutine(function* (folder) {
     var path = this.getPref(folder);
     return path != '' && (yield OS.File.exists(path));
@@ -220,7 +241,7 @@ var checkFolderLocation = Zotero.Promise.coroutine(function* (folder) {
 var previewFilename = function() {
     try {
         // get current item
-        var win = this.wm.getMostRecentWindow("navigator:browser");
+        var win = Services.wm.getMostRecentWindow("navigator:browser");
         var items = win.ZoteroPane.getSelectedItems();
         var item = items[0];
         // get renaming rules

@@ -5,17 +5,13 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>zotfile@columbia.edu</em:id>
     <em:name>ZotFile</em:name>
-    <em:version>5.0.10</em:version>
+    <em:version>5.0.14</em:version>
     <em:type>2</em:type>
     <em:multiprocessCompatible>true</em:multiprocessCompatible>
     <em:creator>Joscha Legewie</em:creator>
     <em:homepageURL>http://www.zotfile.com</em:homepageURL>
     <em:optionsURL>chrome://zotfile/content/options.xul</em:optionsURL>
-    <em:updateURL>http://www.zotfile.com/zotfile-update.rdf</em:updateURL>
-    <em:updateKey>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCpXXp3Hx4rLiTLt3CBukiq+
-                  Co4T1OvGYWCkKAm8b2Mas8Si8+aqwO2ELyaJR2kwkhrf1ol0jNaiWPRmbrfD8
-                  g1uXBmMUhkg3/kHuhQMyj8nwcKBKGAilwH7wvWdaX4gb7kMg3ouJh+/E9jkgD
-                  /TogLttZCp/2UxU2vYUBtFQgszQIDAQAB</em:updateKey>
+    <em:updateURL>https://raw.githubusercontent.com/jlegewie/zotfile/master/zotfile-update.rdf</em:updateURL>
 
     <em:targetApplication>
       <Description>

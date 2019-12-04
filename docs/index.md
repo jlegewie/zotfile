@@ -255,6 +255,11 @@ You can report bugs on the [Zotfile thread](http://forums.zotero.org/discussion/
 
 ### CHANGELOG
 
+#### Changes in v5.0.11 - v5.0.14
+
+- Compatibility with Zotero update to Firefox 60 ESR platform (thanks to [dstillman](https://github.com/dstillman))
+- Option to extract colored annotations in one Zotero note (hidden preference `pdfExtraction.colorAnnotations`, thanks to [melat0nin](https://github.com/melat0nin))
+
 #### Changes in 5.0.10
 
 - Fix numbering issue when multiple files have same name

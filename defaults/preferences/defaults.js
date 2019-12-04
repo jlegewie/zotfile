@@ -61,6 +61,7 @@ pref("extensions.zotfile.tablet.storeCopyOfFile", false);
 pref("extensions.zotfile.tablet.storeCopyOfFile_suffix", "_annotated");
 pref("extensions.zotfile.tablet.subfolders", '[]');
 pref("extensions.zotfile.tablet.projectFolders", 0);
+pref("extensions.zotfile.tablet.showwarning", true);
 pref("extensions.zotfile.tablet.projectFolders01", false);
 pref("extensions.zotfile.tablet.projectFolders01_folder", "");
 pref("extensions.zotfile.tablet.projectFolders01_label", "Project 01");
@@ -116,10 +117,6 @@ pref("extensions.zotfile.pdfOutline.menuItem", true);
 
 pref("extensions.zotfile.pdfExtraction.UsePDFJS", true);
 pref("extensions.zotfile.pdfExtraction.debug", false);
-pref("extensions.zotfile.pdfExtraction.openPdfWin", "");
-pref("extensions.zotfile.pdfExtraction.openPdfLinux", "");
-pref("extensions.zotfile.pdfExtraction.openPdfMac_skim", false);
-pref("extensions.zotfile.pdfExtraction.openPdfMac", "Preview");
 pref("extensions.zotfile.pdfExtraction.UsePDFJSandPoppler", false);
 pref("extensions.zotfile.pdfExtraction.popplerDeleteTxtFile", true);
 pref("extensions.zotfile.pdfExtraction.Pull", true);
@@ -135,5 +132,6 @@ pref("extensions.zotfile.pdfExtraction.formatAnnotationUnderline", '<p>"<u>%(con
 pref("extensions.zotfile.pdfExtraction.replacements", '[]');
 pref("extensions.zotfile.pdfExtraction.localeDateInNote", true);
 pref("extensions.zotfile.pdfExtraction.colorNotes", false);
+pref("extensions.zotfile.pdfExtraction.colorAnnotations", false);
 pref("extensions.zotfile.pdfExtraction.colorCategories", '{"Black": "#000000", "White": "#FFFFFF", "Gray": "#808080", "Red": "#FF0000", "Orange": "#FFA500", "Yellow": "#FFFF00", "Green": "#00FF00", "Cyan": "#00FFFF", "Blue": "#0000FF", "Magenta": "#FF00FF"}');
 //pref("extensions.zotfile.pdfExtraction.format", '"<p>%(markup)s" %(cite)s</p><br><p>%(note)s</p><br>');
