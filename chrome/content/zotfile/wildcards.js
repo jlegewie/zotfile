@@ -6,7 +6,8 @@
 Zotero.ZotFile.Wildcards = new function() {
 
     var _this = this;
-    this.emptyCollectionPlaceholder = "EMPTY_COLLECTION_NAME";
+    // this.emptyCollectionPlaceholder = "EMPTY_COLLECTION_NAME";
+    this.emptyCollectionPlaceholder = "";
 
     /*
      * Performs a binary search that returns the index of the array before which the
@@ -306,6 +307,11 @@ Zotero.ZotFile.Wildcards = new function() {
         var pos = 0;
         var last = -1;
         var lookup = "";
+        // for wildcards of collection
+        var wildcards_collection_high = JSON.parse(decodeURIComponent(escape(Zotero.ZotFile.prefs.getCharPref("wildcards.collection.high"))));
+        var wildcards_collection_low = JSON.parse(decodeURIComponent(escape(Zotero.ZotFile.prefs.getCharPref("wildcards.collection.low"))));
+        var wildcards_collection_ignore = JSON.parse(decodeURIComponent(escape(Zotero.ZotFile.prefs.getCharPref("wildcards.collection.ignore"))));
+
         for (var i = 0; i < bars.length; ++i) {
             // position of current | in wildcards
             pos = binaryArrayIndex(wildcards,bars[i]);
@@ -334,7 +340,93 @@ Zotero.ZotFile.Wildcards = new function() {
                     // substring(NaN, x) is from the beginning of the string ;-]
                     str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
                     // add content of wildcard
-                    lookup = table[rule.substr(wildcards[j], 2)];
+                    var wildcard = rule.substr(wildcards[j], 2);
+                    lookup = table[wildcard];
+                    // copy
+                    // if it is a collectionPath field. we need to select one element from the array.
+                    if (lookup && Array.isArray(lookup)) {
+                        var getCollectionPathFromTable = function () {
+                            var selectFromList = function(items, message, title) {
+                                var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                                    .getService(Components.interfaces.nsIPromptService);
+                                var selected = {};
+                                var result = prompts.select(null, title, message, items.length, items, selected);
+                                if (!result)  return -1;
+
+                                return selected.value;
+                            };
+
+                            var collectionPaths = lookup;
+                            for (var k = 0; k < collectionPaths.length; ++k) {
+                                // var value_raw = collectionPaths[k];
+                                // var value = unescape(encodeURIComponent(value_raw));
+                                var value = collectionPaths[k];
+                                if (wildcards_collection_ignore.includes(value)){
+                                    collectionPaths.splice(k, 1);
+                                    k = k - 1;
+                                }
+                            };
+                            if (collectionPaths.length === 0)  return _this.emptyCollectionPlaceholder;
+                            if (collectionPaths.length === 1)  return collectionPaths[0];
+                            var priority = 0;
+                            var index = collectionPaths.length;
+                            var cand = '';
+                            collectionPaths.forEach(function (value_raw) {
+
+                                // unescape for matching of unicode characters
+                                // var value = unescape(encodeURIComponent(value_raw));
+                                var value_array = value_raw.split('/');
+                                var value = '';
+                                value_array.forEach(function (value2) {
+                                    if (value == '') {
+                                        value = value2;
+                                    } else {
+                                        value = value + '/' + value2;
+                                    }
+                                    if (wildcards_collection_high.includes(value)) {
+                                        if (priority < 2) {
+                                            priority = 2;
+                                            index = wildcards_collection_high.indexOf(value);
+                                            cand = value_raw
+                                            array_choice = [];
+                                        } else {
+                                            var old_index = index
+                                            index = Math.min(index, wildcards_collection_high.indexOf(value));
+                                            if (index != old_index){
+                                                cand = value_raw;
+                                            }
+                                        }
+                                    } else if (wildcards_collection_low.includes(value)) {
+                                        if (priority == 0) {
+                                            var old_index = index
+                                            index = Math.min(index, wildcards_collection_low.indexOf(value));
+                                            if (index != old_index){
+                                                cand = value_raw;
+                                            }
+                                        }
+                                    } else if (priority == 0) {
+                                        priority = 1;
+                                    }
+                                })
+                            });
+                            if (priority == 2) {
+                                return cand;
+                            } else if (priority == 0) {
+                                return cand;
+                            }
+
+                            var title = table['%t'];
+                            var idx = selectFromList(collectionPaths, title);
+                            if (idx >= 0)  return collectionPaths[idx];
+
+                            throw {
+                                name: 'UserAbortion',
+                                message: 'this batch rename operation is canceled by user.'
+                            };
+                        };
+                        lookup = getCollectionPathFromTable();
+                    }
+                    // copy
                     if (lookup === "" || typeof(lookup) === "undefined") complete = false;
                     else str.push(lookup);
                 }
@@ -342,12 +434,182 @@ Zotero.ZotFile.Wildcards = new function() {
                 str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
             }
             lookup = table[rule.substr(wildcards[pos - 1], 2)];
+            // copy
+            // if it is a collectionPath field. we need to select one element from the array.
+            if (lookup && Array.isArray(lookup)) {
+                var getCollectionPathFromTable = function () {
+                    var selectFromList = function(items, message, title) {
+                        var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                            .getService(Components.interfaces.nsIPromptService);
+                        var selected = {};
+                        var result = prompts.select(null, title, message, items.length, items, selected);
+                        if (!result)  return -1;
+
+                        return selected.value;
+                    };
+
+                    var collectionPaths = lookup;
+                    for (var k = 0; k < collectionPaths.length; ++k) {
+                        // var value_raw = collectionPaths[k];
+                        // var value = unescape(encodeURIComponent(value_raw));
+                        var value = collectionPaths[k];
+                        if (wildcards_collection_ignore.includes(value)){
+                            collectionPaths.splice(k, 1);
+                            k = k - 1;
+                        }
+                    };
+                    if (collectionPaths.length === 0)  return _this.emptyCollectionPlaceholder;
+                    if (collectionPaths.length === 1)  return collectionPaths[0];
+                    var priority = 0;
+                    var index = collectionPaths.length;
+                    var cand = '';
+                    collectionPaths.forEach(function (value_raw) {
+
+                        // unescape for matching of unicode characters
+                        // var value = unescape(encodeURIComponent(value_raw));
+                        var value_array = value_raw.split('/');
+                        var value = '';
+                        value_array.forEach(function (value2) {
+                            if (value == '') {
+                                value = value2;
+                            } else {
+                                value = value + '/' + value2;
+                            }
+                            if (wildcards_collection_high.includes(value)) {
+                                if (priority < 2) {
+                                    priority = 2;
+                                    index = wildcards_collection_high.indexOf(value);
+                                    cand = value_raw
+                                    array_choice = [];
+                                } else {
+                                    var old_index = index
+                                    index = Math.min(index, wildcards_collection_high.indexOf(value));
+                                    if (index != old_index){
+                                        cand = value_raw;
+                                    }
+                                }
+                            } else if (wildcards_collection_low.includes(value)) {
+                                if (priority == 0) {
+                                    var old_index = index
+                                    index = Math.min(index, wildcards_collection_low.indexOf(value));
+                                    if (index != old_index){
+                                        cand = value_raw;
+                                    }
+                                }
+                            } else if (priority == 0) {
+                                priority = 1;
+                            }
+                        })
+                    });
+                    if (priority == 2) {
+                        return cand;
+                    } else if (priority == 0) {
+                        return cand;
+                    }
+
+                    var title = table['%t'];
+                    var idx = selectFromList(collectionPaths, title);
+                    if (idx >= 0)  return collectionPaths[idx];
+
+                    throw {
+                        name: 'UserAbortion',
+                        message: 'this batch rename operation is canceled by user.'
+                    };
+                };
+                lookup = getCollectionPathFromTable();
+            }
+            // copy
             if (lookup === "" || typeof(lookup) === "undefined") excl_complete |= false;
             else {
                 exclusive = exclusive || lookup;
                 excl_complete |= true;
             }
             lookup = table[rule.substr(wildcards[pos], 2)];
+            // copy
+            // if it is a collectionPath field. we need to select one element from the array.
+            if (lookup && Array.isArray(lookup)) {
+                var getCollectionPathFromTable = function () {
+                    var selectFromList = function(items, message, title) {
+                        var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                            .getService(Components.interfaces.nsIPromptService);
+                        var selected = {};
+                        var result = prompts.select(null, title, message, items.length, items, selected);
+                        if (!result)  return -1;
+
+                        return selected.value;
+                    };
+
+                    var collectionPaths = lookup;
+                    for (var k = 0; k < collectionPaths.length; ++k) {
+                        // var value_raw = collectionPaths[k];
+                        // var value = unescape(encodeURIComponent(value_raw));
+                        var value = collectionPaths[k];
+                        if (wildcards_collection_ignore.includes(value)){
+                            collectionPaths.splice(k, 1);
+                            k = k - 1;
+                        }
+                    };
+                    if (collectionPaths.length === 0)  return _this.emptyCollectionPlaceholder;
+                    if (collectionPaths.length === 1)  return collectionPaths[0];
+                    var priority = 0;
+                    var index = collectionPaths.length;
+                    var cand = '';
+                    collectionPaths.forEach(function (value_raw) {
+
+                        // unescape for matching of unicode characters
+                        // var value = unescape(encodeURIComponent(value_raw));
+                        var value_array = value_raw.split('/');
+                        var value = '';
+                        value_array.forEach(function (value2) {
+                            if (value == '') {
+                                value = value2;
+                            } else {
+                                value = value + '/' + value2;
+                            }
+                            if (wildcards_collection_high.includes(value)) {
+                                if (priority < 2) {
+                                    priority = 2;
+                                    index = wildcards_collection_high.indexOf(value);
+                                    cand = value_raw
+                                    array_choice = [];
+                                } else {
+                                    var old_index = index
+                                    index = Math.min(index, wildcards_collection_high.indexOf(value));
+                                    if (index != old_index){
+                                        cand = value_raw;
+                                    }
+                                }
+                            } else if (wildcards_collection_low.includes(value)) {
+                                if (priority == 0) {
+                                    var old_index = index
+                                    index = Math.min(index, wildcards_collection_low.indexOf(value));
+                                    if (index != old_index){
+                                        cand = value_raw;
+                                    }
+                                }
+                            } else if (priority == 0) {
+                                priority = 1;
+                            }
+                        })
+                    });
+                    if (priority == 2) {
+                        return cand;
+                    } else if (priority == 0) {
+                        return cand;
+                    }
+
+                    var title = table['%t'];
+                    var idx = selectFromList(collectionPaths, title);
+                    if (idx >= 0)  return collectionPaths[idx];
+
+                    throw {
+                        name: 'UserAbortion',
+                        message: 'this batch rename operation is canceled by user.'
+                    };
+                };
+                lookup = getCollectionPathFromTable();
+            }
+            // copy
             if (lookup === "" || typeof(lookup) === "undefined") excl_complete |= false;
             else {
                 exclusive = exclusive || lookup;
@@ -360,8 +622,6 @@ Zotero.ZotFile.Wildcards = new function() {
             str.push(exclusive);
         }
 
-        var wildcards_collection_high = JSON.parse(Zotero.ZotFile.prefs.getCharPref("wildcards.collection.high"));
-        var wildcards_collection_low = JSON.parse(Zotero.ZotFile.prefs.getCharPref("wildcards.collection.low"));
         for (var j = last + 1; j < wildcards.length; ++j) {
             // add rule content before wildcard
             str.push(rule.substring(wildcards[j - 1] + 2, wildcards[j]));
@@ -382,33 +642,62 @@ Zotero.ZotFile.Wildcards = new function() {
                     };
 
                     var collectionPaths = lookup;
+                    for (var k = 0; k < collectionPaths.length; ++k) {
+                        // var value_raw = collectionPaths[k];
+                        // var value = unescape(encodeURIComponent(value_raw));
+                        var value = collectionPaths[k];
+                        if (wildcards_collection_ignore.includes(value)){
+                            collectionPaths.splice(k, 1);
+                            k = k - 1;
+                        }
+                    };
                     if (collectionPaths.length === 0)  return _this.emptyCollectionPlaceholder;
                     if (collectionPaths.length === 1)  return collectionPaths[0];
-                    var priority = 0
-                    var index = collectionPaths.length
-                    collectionPaths.forEach(function (value) {
+                    var priority = 0;
+                    var index = collectionPaths.length;
+                    var cand = '';
+                    collectionPaths.forEach(function (value_raw) {
+
                         // unescape for matching of unicode characters
-                        value = unescape(value)
-                        if (wildcards_collection_high.includes(value)) {
-                            if (priority < 2) {
-                                priority = 2
-                                index = wildcards_collection_high.indexOf(value)
-                                array_choice = []
+                        // var value = unescape(encodeURIComponent(value_raw));
+                        var value_array = value_raw.split('/');
+                        var value = '';
+                        value_array.forEach(function (value2) {
+                            if (value == '') {
+                                value = value2;
                             } else {
-                                index = Math.min(index, wildcards_collection_high.indexOf(value))
+                                value = value + '/' + value2;
                             }
-                        } else if (wildcards_collection_low.includes(value)) {
-                            if (priority == 0) {
-                                index = Math.min(index, wildcards_collection_low.indexOf(value))
+                            if (wildcards_collection_high.includes(value)) {
+                                if (priority < 2) {
+                                    priority = 2;
+                                    index = wildcards_collection_high.indexOf(value);
+                                    cand = value_raw
+                                    array_choice = [];
+                                } else {
+                                    var old_index = index
+                                    index = Math.min(index, wildcards_collection_high.indexOf(value));
+                                    if (index != old_index){
+                                        cand = value_raw;
+                                    }
+                                }
+                            } else if (wildcards_collection_low.includes(value)) {
+                                if (priority == 0) {
+                                    var old_index = index
+                                    index = Math.min(index, wildcards_collection_low.indexOf(value));
+                                    if (index != old_index){
+                                        cand = value_raw;
+                                    }
+                                }
+                            } else if (priority == 0) {
+                                priority = 1;
                             }
-                        } else if (priority == 0) {
-                            priority = 1
-                        }
+                        })
                     });
                     if (priority == 2) {
-                        return wildcards_collection_high[index]
+                        return cand;
                     } else if (priority == 0) {
-                        return wildcards_collection_low[index]
+                        return cand;
                     }
 
                     var title = table['%t'];

@@ -42,6 +42,7 @@ pref("extensions.zotfile.wildcards.default",'{"a": "author", "A": {"field": "aut
 pref("extensions.zotfile.wildcards.user",'{}');
 pref("extensions.zotfile.wildcards.collection.high",'[]');
 pref("extensions.zotfile.wildcards.collection.low",'[]');
+pref("extensions.zotfile.wildcards.collection.ignore",'[]');
 
 pref("extensions.zotfile.tablet", false);
 pref("extensions.zotfile.tablet.dest_dir", "");
