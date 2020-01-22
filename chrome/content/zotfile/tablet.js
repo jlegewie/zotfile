@@ -144,9 +144,9 @@ Zotero.ZotFile.Tablet = new function() {
             }
             // for location tag: replace [BaseFolder] with destination folder
             if(key == 'location') value = value.replace('[BaseFolder]', this.getPref('tablet.dest_dir'));
-            // for location tag: correct window/mac file system
-            if(key == 'location' && Zotero.isWin) value = value.replace(/\//g, '\\');
-            if(key == 'location' && !Zotero.isWin) value = value.replace(/\\/g, '/');
+            // for location and projectFolder tag: correct window/mac file system
+            if(['location', 'projectFolder'].includes(key) && Zotero.isWin) value = value.replace(/\//g, '\\');
+            if(['location', 'projectFolder'].includes(key) && !Zotero.isWin) value = value.replace(/\\/g, '/');
             // return
             return value;
         }
