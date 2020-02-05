@@ -255,6 +255,12 @@ You can report bugs on the [Zotfile thread](http://forums.zotero.org/discussion/
 
 ### CHANGELOG
 
+#### Changes in v5.0.16
+
+- Wildcard for BetterBibTeX citekey (%b)
+- Fix cross-platform handling of subfolder paths
+- Fix "Change subfolders" window in Fx60
+
 #### Changes in v5.0.11 - v5.0.14
 
 - Compatibility with Zotero update to Firefox 60 ESR platform (thanks to [dstillman](https://github.com/dstillman))
