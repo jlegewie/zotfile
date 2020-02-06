@@ -1,0 +1,3 @@
+<!ENTITY label "Label">
+<!ENTITY subfolder "Subfolder">
+<!ENTITY leave-empty "Leave this field empty to automatically generate the folder from the label.">

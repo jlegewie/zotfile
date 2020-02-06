@@ -1,0 +1,84 @@
+<!ENTITY zotfile-preferences "ZotFile Einstellungen"> 
+<!ENTITY zotfile-prefpane "ZotFile Einstellungen"> 
+<!ENTITY general-settings "Allgemein"> 
+<!ENTITY tablet-settings "Tablet Einstellungen"> 
+<!ENTITY renaming-rules "Umbenennungs-Regeln"> 
+<!ENTITY advanced-settings "Erweitert"> 
+<!ENTITY attachments-source-folder "Quellordner für das Anhängen neuer Dateien">
+<!ENTITY source-folder-desc "ZotFile kann die als letztes hinzugefügte Datei aus einem anderen Ordner als neuen Anhang zum aktuell ausgewählten Zotero Objekt hinzufügen."> 
+<!ENTITY use-firefox-download-folder "Firefox Download Folder verwenden"> 
+<!ENTITY custom-source-folder "Benutzerdefiniert:"> 
+<!ENTITY choose "Auswählen..."> 
+<!ENTITY location-of-files "Speicherort für die Dateien"> 
+<!ENTITY target-location-desc "ZotFile kann neue oder bereits vorhandene Anhänge an verschiedene Orte verschieben. Es kann entweder eine Kopie der angehängten Datei in Zotero gespeichert werden, was das Synchronisieren der Dateien mit dem Zotero Server ermöglicht, oder die Datei in einen benutzerdefinierten Ordner verschoben oder dieser Ort von Zotero verlinkt werden."> 
+<!ENTITY attach-stored-copy "In Zotero gespeicherte Kopie von Datei(en) anhängen"> 
+<!ENTITY custom-location "Benutzerdefinierter Ort:"> 
+<!ENTITY use-subfolder "Durch folgendes Muster definierten Unterordner verwenden"> 
+<!ENTITY subfolder-information "Unterordner basieren auf Metadaten von Zotero Objekten. Verwenden Sie &#37;a für den Namen des Authors, &#37;y für das Jahr, &#37;w für die Zeitschrift bzw. den Verlag oder &#37;T für die Art des Objekts (siehe die zotfile Internetseite für eine vollständige Liste). Stellen Sie die Verwendung des richtigen Trennungszeichens (&quot;/&quot; unter Mac OS und anderen Unix Systemen und &quot;\&quot; unter Windows).">
+<!ENTITY for-more-information "Für weitere Informationen siehe "> 
+<!ENTITY zotfile-website "ZotFile Webseite"> 
+<!ENTITY consider-donation "Falls Sie dieses Plug-in hilfreich finden, überlegen Sie sich bitte etwas zu ">
+<!ENTITY donation "spenden">
+<!ENTITY tablet-desc "ZotFile kann den Ablauf des Lesens und Annotierens Ihrer Zotero Anhänge auf einem iPad oder Android Tablet PC vereinfachen, indem es eine PDF Annotierungs-App verwendet. Es sendet PDFs an und holt sie vom Tablet PC zurück, benennt Sie um und sortiert sie in Unterordner ein, sodass Sie sie finden können. Außerdem kopiert es Annotationen und hervorgehobenen Text in eine neue Zotero Notiz.">
+<!ENTITY send-get-from-tablet "ZotFile zum Senden und Empfangen von Dateien von Tablet zu verwenden">
+<!ENTITY location-on-tablet "Ort der Dateien auf dem Tablet PC">
+<!ENTITY base-folder "Basisordner">
+<!ENTITY show-folder "Ordner anzeigen">
+<!ENTITY dropbox "(DropBox oder anderer Ordner, der mit der Lese-Anwendung auf Ihrem Tablet synchronisieren werden kann)">
+<!ENTITY subfolders "Unterordner">
+<!ENTITY no-subfolders "Keine Unterordner">
+<!ENTITY create-subfolders "Unterordner mit dem gleichen Namen wie Zotero Sammlungen erstellen">
+<!ENTITY custom-subfolders "Benutzerdefinierte Unterordner">
+<!ENTITY change-subfolders "Unterordner ändern">
+<!ENTITY use-additional-subfolders "Zusätzliche Unterordner mit folgendem Schema verwenden: ">
+<!ENTITY additional-subfolders "Zusätzliche Unterordner basieren auf den Metadaten von Objekten in Zotero. Verwenden Sie &#37;a für den Namen des Autors, &#37;y für das Jahr, &#37;w für die Zeitschrift bzw. den Herausgeber oder &#37;T für die Art des Eintrags (siehe Zotero Internetseite für eine vollständige Liste). Stellen Sie sicher, dass Sie die richtigen Separatoren verwenden (/ für Mac OS X und andere Unix-Systeme oder \ für Windows).">
+<!ENTITY additional-options "Weitere Optionen">
+<!ENTITY rename-when-sent-to-tablet "Dateien umbennen, wenn sie auf den Tablet PC übertragen umbennen">
+<!ENTITY save-annotated-file "Kopie von annotierten Dateien mit folgendem Suffix speichern:  ">
+<!ENTITY tablet-copy-information "Als Voreinstellung wird beim Holen einer Datei vom Tablet die in Zotero gespeicherte Datei ersetzt. Falls diese Option aktiviert ist, erzeugt zotfile stattdessen eine Kopie der Datei mit dem angegebenen Suffix und fügt diese Datei als zusätzlichen Anhang zu Zotero hinzu.">
+<!ENTITY automatically-extract-annotations "Annotationen automatisch herauskopieren wenn PDF-Dateien vom Tablet PC zurück übertragen werden">
+<!ENTITY preview-renaming-rules "Vorschau der aktuellen Umbennenungs-Regeln">
+<!ENTITY update "Aktualisieren">
+<!ENTITY renaming-format "Umbennenungs-Format">
+<!ENTITY zotero-to-rename "Zotero zum Umbennen verwenden">
+<!ENTITY format-for-all-types "Format für alle Eintragsarten außer Patenten">
+<!ENTITY format-for-patents "Format für Patente">
+<!ENTITY list-of-wildcards "&#37;a = Autor Nachname; &#37;y = Jahr; &#37;t = Title; &#37;j = Zeitschrift; verwende {...} für optionale Gruppen und | für exklusive Matches">
+<!ENTITY for-a-full-list "Für eine komplette Liste siehe die ">
+<!ENTITY additional-settings "Weitere Einstellungen">
+<!ENTITY delimiter-multiple-authors "Trennzeichen zwischen mehreren Autoren">
+<!ENTITY add-user-input-to-filename "Benutzereingabe an Dateiname anhängen. Anfnagsvorgabe ist ">
+<!ENTITY lower-case "Kleinbuchstaben verwenden">
+<!ENTITY replace-blanks "Leerzeichen ersetzen">
+<!ENTITY truncate-title "Titel nach . oder : oder ? abschneiden">
+<!ENTITY zotfile-truncate_title_max "Maximale Länge des Titels">
+<!ENTITY zotfile-truncate_authors "Maximale Anzahl an Autoren">
+<!ENTITY zotfile-number_truncate_authors "Anzahl der Autoren angezeigt wird, wenn Autoren weggelassen werden">
+<!ENTITY zotfile-add_etal "Suffix anfügen falls Autoren ausgelassen werden">
+<!ENTITY extract-annotations "Annotationen und hervorgehobenen Text aus PDF Datei herauskopieren">
+<!ENTITY extract-annotations-and-highlighted-text "ZotFile kann Annotationen und hervorgehobenen Text aus Ihren PDF Anhängen herauskopieren.">
+<!ENTITY extraction-method "Methode zur Erstellung der Textauszüge">
+<!ENTITY use-pdf-js "pdf.js zum Herauskopieren von Annotationen verwenden"> 
+<!ENTITY methods-to-extract-annotations "ZotFile bietet zwei Methoden, um Annotationen aus PDF Dateien herauszukopieren. Das auf pdf.js basierende Werkzeug funktioniert auf allen Betriebssystemen und wird direkt von zotero heraus ausgeführt. Das auf poppler basierende Werkzeug funktioniert nur unter Mac OS und erfordert einen zusätzlichen Download. Derzeit ist pdf.js zuverlässiger und sollte als Grundeinstellung verwendet werden. Das auf poppler basierende Werkzeuge ist jedoch schneller und kann unter Umständen mit bestimmten PDF Standards, die von pdf.js noch nicht unterstützt werden, besser umgehen.">
+<!ENTITY use-poppler "poppler zum Herauskopieren von Annotationen verwenden"> 
+<!ENTITY add-full-citation "Den hervorgehobenen Text als wörtliches Zitat in einer Notiz hinzufügen">
+<!ENTITY use-article-book-chapter-page "Zugehörige Artikel/Buch Kapitel-Seite für Textteile verwenden">
+<!ENTITY page-number-determination "Die Seitenzahl im Artikel wird durch Addition der Seitenzahl innerhalb des PDF Dokuments und der ersten Seite aus dem &quot;Seiten&quot; Feld in den zotero Metadaten berechnet. Dieser Ansatz scheitert, falls die erste Seite des PDF Dokuments nicht die erste Seite innerhalb des Artikels/Buchkapitels ist.">
+<!ENTITY other-advanced-settings "Erweiterte Einstellungen">
+
+<!ENTITY watch_folder "Scanne Quellordner nach neuen Dateien">
+
+<!ENTITY automatic_renaming_label "Automatisches umbennen von neuen Anhängen">
+<!ENTITY automatic_renaming_no "Nie">
+<!ENTITY automatic_renaming_ask "Immer nachfragen (non-disruptive)">
+<!ENTITY automatic_renaming_ask_mult "Nur nachfragen wenn weitere Anh. vorhanden">
+<!ENTITY automatic_renaming_always "Immer umbennen">
+
+<!ENTITY ask-when-attaching-new-files "Nachfragen beim Anhängen neuer Dateien">
+<!ENTITY ask-to-batch-rename "Nachfragen beim stapelweisen Umbenennen oder Verschieben von ">
+<!ENTITY or-more-attachments " oder mehr Anhängen">
+<!ENTITY remove-special-characters "Sonderzeichen (Umlaute) aus dem Dateinamen entfernen">
+<!ENTITY work-with-following-filetypes "Nur mit folgenden Dateiformaten arbeiten ">
+<!ENTITY add-saved-searches "Gespeicherte Suchen hinzufügen">
+<!ENTITY attachments-on-tablet "Anhänge auf Tablet PC">
+<!ENTITY modified-attachments-on-tablet "Veränderte Anhänge auf Tablet PC">

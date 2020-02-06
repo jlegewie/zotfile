@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://zotfile/locale/optionsFolderEditor.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	title="" buttons="cancel,accept"
+	id="id-zotfile-tablet-optionsFolderEditor"
+	ondialogaccept="ZotFile_optionsFolderEditor.onAccept();">
+<!--	onload="sizeToContent();" -->
+	
+	<script src="chrome://zotero/content/include.js"/>
+	<script src="chrome://zotfile/content/include.js"/>
+	<script src="options.js"/> 		
+
+	
+	<script>
+	<![CDATA[
+		var ZotFile_optionsFolderEditor = new function () {
+			this.onAccept = onAccept;
+			
+			function onAccept() {
+				var io = window.arguments[0];
+				io.label = document.getElementById('id-zotfile-projectFolder-label').value;
+				io.folder = document.getElementById('id-zotfile-projectFolder-folder').value;
+				io.ok = true;
+			}
+		}
+	]]>
+	</script>
+	
+	<vbox id="id-zotfile-options-FolderEditor">
+		<label value="&label;" control="id-zotfile-projectFolder-label"/>
+		<textbox id="id-zotfile-projectFolder-label"/>
+		<separator class="thin"/>
+		<label value="&subfolder;" control="id-zotfile-projectFolder-folder"/>
+		<textbox id="id-zotfile-projectFolder-folder"/>
+		<label style="font-size: 9px" value="&leave-empty;"/>
+		
+		<separator class="thin"/>
+	</vbox>
+	
+	<script>
+	<![CDATA[
+		var io = window.arguments[0];
+		document.getElementById('id-zotfile-projectFolder-label').value = io.label ? io.label : '';
+		document.getElementById('id-zotfile-projectFolder-folder').value = io.folder ? io.folder : '';
+	]]>
+	</script>
+</dialog>

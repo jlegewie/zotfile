@@ -1,0 +1,3 @@
+<!ENTITY label "标签">
+<!ENTITY subfolder "次级文件夹">
+<!ENTITY leave-empty "将此处留空以从标签自动生成文件夹。">

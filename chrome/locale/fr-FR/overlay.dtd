@@ -1,0 +1,24 @@
+﻿<!ENTITY zotfile-attach-file.label "Joindre un nouveau fichier">
+<!ENTITY zotfile-attach-file.tooltiptext "Déplace et joint au document sélectionné le dernier fichier du dossier défini par l'utilisateur">
+<!ENTITY zotfile-manage-attachments.label "Gérer les pièces jointes">
+<!ENTITY warning.label "Avertissement">
+<!ENTITY renameSelectedAttachments.label "Renommer les pièces jointes">
+<!ENTITY renameSelectedAttachments.tooltiptext "Déplace et renomme les pièces jointes existantes du document sélectionné">
+<!ENTITY extract-annotations.label "Extraire les annotations">
+<!ENTITY extract-annotations.tooltiptext "Extrait du fichier PDF les annotations et le texte surligné.">
+<!ENTITY pdf-outline.label "Get Table of Contents">
+<!ENTITY pdf-outline.tooltiptext "Get Table of Contents from pdf file.">
+<!ENTITY send-to-tablet "Envoyer vers la tablette">
+<!ENTITY send-attachment-file-to-tablet "Envoyer la pièce jointe vers la tablette.">
+<!ENTITY update-file-modification-time "Mettre à jout la date de modification du fichier">
+<!ENTITY sync-attachment-file "Synchroniser le fichier joint de la tablette avec le fichier dans Zotero.">
+<!ENTITY get-from-tablet "Récupérer de la tablette">
+<!ENTITY get-attachment-file-from-tablet "Récupérer la pièce jointe de la tablette">
+<!ENTITY send-to-subfolder-on-tablet "Envoyer au sous-dossier sur la tablette">
+<!ENTITY change-subfolders "Modifier les sous-dossiers...">
+<!ENTITY add-and-delete-subfolders "Ajouter et supprimer les sous-dossiers au menu.">
+<!ENTITY zotfile-options.label "Préférences de ZotFile...">
+<!ENTITY saved-search-all "Montrer les pièces jointes de tous les sous-dossiers">
+<!ENTITY saved-search-restrict "Restreindre la recherche enregistrée au sous-dossier">
+<!ENTITY restrict-subfolder "Restreindre au sous-dossier...">
+<!ENTITY restrict-basefolder "Pièces jointes non classées">

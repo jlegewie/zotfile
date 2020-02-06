@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="{{ site.lang | default: "en-US" }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>ZotFile - Advanced PDF management for Zotero</title>
+
+    <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+    <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+    <style>
+      .tippy-tooltip.light-theme{
+        color:#26323d;
+        box-shadow:0 0 20px 4px rgba(154,161,177,.15),0 4px 80px -8px rgba(36,40,47,.25),0 4px 4px -2px rgba(91,94,105,.15);
+        background-color:#fff;
+        font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+        text-align: left;
+      }
+      .tippy-tooltip.light-theme .tippy-arrow{
+        border-top:7px solid #fff;
+        border-right:7px solid transparent;
+        border-left:7px solid transparent
+      }
+      .tippy-tooltip.bordered-theme {
+        border: 1px solid #bfc9dc;
+        box-shadow: none !important;
+      }
+      .tippy-tooltip.light-theme .tippy-arrow{
+        border-bottom:7px solid #fff;
+        border-right:7px solid transparent;
+        border-left:7px solid transparent
+      }
+      .tippy-tooltip.light-theme .tippy-roundarrow{
+        width:24px;
+        height:24px;
+        fill:#fff
+      }
+
+      .tippy-popper .tippy-tooltip.light-theme .tippy-backdrop{
+        background-color:#fff
+      }
+      .tippy-popper .tippy-tooltip.light-theme[data-animatefill]{
+        background-color:transparent
+      }
+
+
+    </style>
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!-- Tippy.js - JavaScript tooltip library  -->
+    <script src="https://unpkg.com/tippy.js@2.0.0-beta.2/dist/tippy.all.min.js"></script>
+    <!-- update download link with latest version from github -->
+    <script>
+      (function() {
+          var httpGetAsync = function (theUrl, callback) {
+              var xmlHttp = new XMLHttpRequest();
+              xmlHttp.onreadystatechange = function() { 
+                  if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                      callback(xmlHttp.responseText);
+              }
+              xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+              xmlHttp.send(null);
+          };
+          var getDownloadURL = function (text) {
+            return text.split("\n").filter(line => line.includes("browser_download_url"))[0].match(/\bhttps?:\/\/\S+.xpi/gi);
+          };
+          var url = "https://api.github.com/repos/jlegewie/zotfile/releases/latest";
+          httpGetAsync(url, response => document.getElementById("download-link").href = getDownloadURL(response));
+
+          // Add tooltip in firefox
+          var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+          if (isFirefox) {
+            setTimeout(function() {
+              document.getElementById("download-link").title = "In Firefox, download file with<br> right-click 'Save Link As...'.";
+              tippy('#download-link', {placement: 'bottom', arrow: true, theme: 'light bordered'});
+            }, 100);
+          }
+          
+      })();
+    </script>
+    <!-- google analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-22825629-1', 'zotfile.com');
+      ga('send', 'pageview');
+
+    </script>
+
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+    </script>
+    <script type="text/javascript" charset="utf-8" async="" src="https://platform.twitter.com/js/button.2ef3f9ec66d99ca2876b5333fb68c892.js"></script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>ZotFile</h1>
+        <h4>Advanced PDF management for Zotero</h4>
+
+        <p class="view">
+          <h3 style="margin:0 0 0px;"><a id="download-link" style="font-weight:600;" href="https://github.com/jlegewie/zotfile/releases">Download</a></h3>
+          <small><a href="https://github.com/jlegewie/zotfile">View the Project on GitHub</a></small><br>
+          <small><a href="#how-to-install--set-up-zotfile">Instructions to Install ZotFile</a></small><br>
+        </p>
+        <br>
+        <form action="https://www.paypal.com/cgi-bin/webscr" onClick="_gaq.push(['_trackEvent', 'external-links', 'donation']);" method="post">
+          <input type="hidden" name="cmd" value="_s-xclick">
+          <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
+          ">
+          &nbsp;&nbsp;&nbsp;&nbsp;<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+          <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+
+          <!-- <br><br>
+          <h3 style="margin:0 0 5px;">Install for Zotero 5</h3>
+          <ol>
+            <li>Download .xpi file for 'Latest release' from <a href="https://github.com/jlegewie/zotfile/releases">here</a>.</li>
+            <li>Start Zotero 5 and go to "Tool -> Add-ons"</li>
+            <li>Click on "<img alt="⚙" border="0" src="http://www.columbia.edu/~jpl2136/zotfile_files/gear.png" width="16" height="16"> -> Install Add-on From File" and select .xpi file.</li>
+            <li>For more details see instructions <a href="http://zotfile.com/#how-to-install--set-up-zotfile">here</a></li>
+          </ul>  -->
+
+          <br><br>
+          <h3 style="margin:0 0 5px;">Content</h3>
+          <p class="view">
+            <a class="navi" href="#features">Features <span class="navi-seperator">&#8226; </span></a>
+            <a class="navi" href="#how-to-install--set-up-zotfile">Install Zotfile <span class="navi-seperator">&#8226; </span></a>
+            <a class="navi" href="#renaming-rules">Renaming Rules <span class="navi-seperator">&#8226; </span></a>
+            <a class="navi" href="#user-defined-wildcards">User-Defined Wildcards <span class="navi-seperator">&#8226; </span></a>
+            <a class="navi" href="#extract-pdf-annotations">Extract PDF Annotations <span class="navi-seperator">&#8226; </span></a>
+            <a class="navi" href="#hidden-options">Hidden Options <span class="navi-seperator">&#8226; </span></a>
+            <a class="navi" href="#reporting-a-bug">Reporting a Bug <span class="navi-seperator">&#8226; </span></a>
+            <a class="navi" href="#changelog">Changelog</a>
+          </p>
+
+          <br>
+          <iframe id="twitter-widget-0" scrolling="no" allowtransparency="true" class="twitter-share-button twitter-share-button-rendered twitter-tweet-button" style="position: static; visibility: visible; width: 61px; height: 20px;" title="Twitter Tweet Button" src="http://platform.twitter.com/widgets/tweet_button.bac917c749f65aefd5f37c272c7c3538.en.html#dnt=false&amp;id=twitter-widget-0&amp;lang=en&amp;original_referer=http%3A%2F%2Fzotfile.com%2F%23changelog&amp;size=m&amp;text=ZotFile%3A%20Advanced%20PDF%20management%20for%20Zotero&amp;time=1499865948955&amp;type=share&amp;url=http%3A%2F%2Fzotfile.com" data-url="http://zotfile.com" frameborder="0"></iframe>
+
+      </header>
+      <section>
+
+      {{ content }}
+
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a><br>
+        <small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="{{ '/assets/js/scale.fix.js' | relative_url }}"></script>
+
+  </body>
+</html>

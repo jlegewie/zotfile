@@ -1,0 +1,1 @@
+This is the zotfile webpage hosted on GitHub Pages and based on a slightly modified version of the Theme by [orderedlist](https://github.com/orderedlist). Additions and corrections are welcome. Please change the markdown file `index.md` and not the html file `index.html`.

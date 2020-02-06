@@ -1,0 +1,84 @@
+<!ENTITY zotfile-preferences "ZotFile Preferences"> 
+<!ENTITY zotfile-prefpane "ZotFile Preferences"> 
+<!ENTITY general-settings "General Settings"> 
+<!ENTITY tablet-settings "Tablet Settings"> 
+<!ENTITY renaming-rules "Renaming Rules"> 
+<!ENTITY advanced-settings "Advanced Settings"> 
+<!ENTITY attachments-source-folder "Source Folder for Attaching New Files"> 
+<!ENTITY source-folder-desc "ZotFile can add the most recently modified file from a folder such as the downloads folder as a new attachment to the currently selected Zotero item."> 
+<!ENTITY use-firefox-download-folder "Use Firefox download folder"> 
+<!ENTITY custom-source-folder "Custom:"> 
+<!ENTITY choose "Choose..."> 
+<!ENTITY location-of-files "Location of Files"> 
+<!ENTITY target-location-desc "ZotFile can move new and existing attachments to different locations. You can either store a copy of your attachment files in Zotero, which allows you to sync files to the Zotero server, or move the file to a custom folder and link to that location from Zotero">
+<!ENTITY attach-stored-copy "Attach stored copy of file(s)"> 
+<!ENTITY custom-location "Custom Location:"> 
+<!ENTITY use-subfolder "Use subfolder defined by"> 
+<!ENTITY subfolder-information "Subfolders are based on metadata from Zotero items. Use &#37;a for author name, &#37;y for year, &#37;w for journal/publisher, or &#37;T for item type (see the zotfile website for a full list). Make sure to insert the appropriate separators (/ for Mac OS and other Unix systems and \ for windows).">
+<!ENTITY for-more-information "For more information see the "> 
+<!ENTITY zotfile-website "ZotFile website"> 
+<!ENTITY consider-donation "If you find this plugin helpful, please consider a ">
+<!ENTITY donation "donation">
+<!ENTITY tablet-desc "ZotFile can streamline the process of reading and annotating your Zotero attachments on a iPad or Android tablet using a pdf annotation app. It sends pdfs to and gets them back from the tablet, renames and sorts them into subfolders so that you can find them, and extracts the annotations and highlighted text to a Zotero note.">
+<!ENTITY send-get-from-tablet "Use ZotFile to send and get files from tablet">
+<!ENTITY location-on-tablet "Location of Files on Tablet">
+<!ENTITY base-folder "Base Folder">
+<!ENTITY show-folder "Show Folder">
+<!ENTITY dropbox "(DropBox or alternative folder that syncs with the reading application on your tablet)">
+<!ENTITY subfolders "Subfolders">
+<!ENTITY no-subfolders "No subfolders">
+<!ENTITY create-subfolders "Create subfolders from zotero collections">
+<!ENTITY custom-subfolders "Custom subfolders">
+<!ENTITY change-subfolders "Change subfolders">
+<!ENTITY use-additional-subfolders "Use additional subfolders defined by ">
+<!ENTITY additional-subfolders "Additional subfolders are based on metadata from Zotero items. Use &#37;a for author name, &#37;y for year, &#37;w for journal/publisher, or &#37;T for item type (see the zotfile website for a full list). Make sure to insert the appropriate separators (/ for Mac OS and other Unix systems and \ for windows).">
+<!ENTITY additional-options "Additional options">
+<!ENTITY rename-when-sent-to-tablet "Rename files when they are sent to the tablet">
+<!ENTITY save-annotated-file "Save copy of annotated file with suffix ">
+<!ENTITY tablet-copy-information "By default, getting an attachment back from the tablet replaces the file saved in Zotero. When this option is enabled, zotfile instead creates a copy of the file with a specified suffix and adds this file as an additional attachment to Zotero.">
+<!ENTITY automatically-extract-annotations "Automatically extract annotations when getting PDFs back from tablet">
+<!ENTITY preview-renaming-rules "Preview of Current Renaming Rules">
+<!ENTITY update "Update">
+<!ENTITY renaming-format "Renaming Format">
+<!ENTITY zotero-to-rename "Use Zotero to Rename">
+<!ENTITY format-for-all-types "Format for all Item Types except Patents">
+<!ENTITY format-for-patents "Format for Patents">
+<!ENTITY list-of-wildcards "&#37;a = author last name; &#37;y = year; &#37;t = title; &#37;j = journal; use {...} for an optional group and | for exclusive matches">
+<!ENTITY for-a-full-list "For a full list of place holder see the ">
+<!ENTITY additional-settings "Additional Settings">
+<!ENTITY delimiter-multiple-authors "Delimiter between multiple authors">
+<!ENTITY add-user-input-to-filename "Add user input to filename. Default is ">
+<!ENTITY lower-case "Change to lower case">
+<!ENTITY replace-blanks "Replace blanks">
+<!ENTITY truncate-title "Truncate title after . or : or ?">
+<!ENTITY zotfile-truncate_title_max "Maximum length of title">
+<!ENTITY zotfile-truncate_authors "Maximum number of authors">
+<!ENTITY zotfile-number_truncate_authors "Number of authors to display when authors are omitted">
+<!ENTITY zotfile-add_etal "Add suffix when authors are omitted">
+<!ENTITY extract-annotations "Extract Annotations and Highlighted Text from PDF Files">
+<!ENTITY extract-annotations-and-highlighted-text "ZotFile can extract annotations and highlighted text from your pdf attachments.">
+<!ENTITY extraction-method "Extraction Method">
+<!ENTITY use-pdf-js "Use pdf.js to extract annotations">
+<!ENTITY methods-to-extract-annotations "ZotFile supports two methods to extract annotations from pdf files. The pdf.js-based tool works across all platforms and runs directly from zotero. The poppler-based extraction tool only works for Mac OS and requires a separate download. Currently, pdf.js is more reliable and should be the default in most cases. The poppler-based tool, however, is faster and might handle certain pdf standards that are not yet supported by pdf.js.">
+<!ENTITY use-poppler "Use poppler to extract annotations">
+<!ENTITY add-full-citation "Add full in-text citation to highlighted text snippets in note">
+<!ENTITY use-article-book-chapter-page "Use actual article/book chapter page for highlighted text snippets">
+<!ENTITY page-number-determination "The article page number is determined by adding the page in the pdf document and the starting page from the 'pages' field in the zotero metadata. This approach fails if the first page in the pdf document is not the first page in the article/book chapter">
+<!ENTITY other-advanced-settings "Other Advanced Settings">
+
+<!ENTITY watch_folder "Watch for new files in source folder">
+
+<!ENTITY automatic_renaming_label "Automatically rename new attachments">
+<!ENTITY automatic_renaming_no "Never">
+<!ENTITY automatic_renaming_ask "Always ask (non-disruptive)">
+<!ENTITY automatic_renaming_ask_mult "Only ask if item has other atts">
+<!ENTITY automatic_renaming_always "Always rename">
+
+<!ENTITY ask-when-attaching-new-files "Ask user when attaching new files">
+<!ENTITY ask-to-batch-rename "Ask user to (batch) rename or move ">
+<!ENTITY or-more-attachments " or more attachments.">
+<!ENTITY remove-special-characters "Remove special characters (diacritics) from filename">
+<!ENTITY work-with-following-filetypes "Only work with the following filetypes ">
+<!ENTITY add-saved-searches "Add Saved Searches">
+<!ENTITY attachments-on-tablet "Attachments on Tablet">
+<!ENTITY modified-attachments-on-tablet "Modified Attachments on Tablet">

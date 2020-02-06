@@ -1,0 +1,317 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-platform/content/preferences.css"?>
+
+<!DOCTYPE window SYSTEM "chrome://zotfile/locale/options.dtd">
+
+<prefwindow id="zotfile-perf" title="&zotfile-preferences;" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" onload="updatePreferenceWindow('all');">
+	<stringbundleset id="stringbundleset">
+		<stringbundle id="zotfile-options" src="chrome://zotfile/locale/options.properties"/>
+	</stringbundleset>
+
+		<prefpane label="&zotfile-prefpane;" id="zotfile-perfpane">
+			<preferences>
+				<preference id="pref-zotfile-source_dir_ff" name="extensions.zotfile.source_dir_ff" type="bool"/>
+				<preference id="pref-zotfile-source_dir" name="extensions.zotfile.source_dir" type="string"/>
+				<preference id="pref-zotfile-allFiles" name="extensions.zotfile.allFiles" type="bool"/>
+				<preference id="pref-zotfile-filetypes" name="extensions.zotfile.filetypes" type="string"/>
+				<preference id="pref-zotfile-useFileTypes" name="extensions.zotfile.useFileTypes" type="bool"/>
+				<preference id="pref-zotfile-import" name="extensions.zotfile.import" type="bool"/>
+				<preference id="pref-zotfile-automatic_renaming" name="extensions.zotfile.automatic_renaming" type="int"/>
+				<preference id="pref-zotfile-dest_dir" name="extensions.zotfile.dest_dir" type="string"/>
+				<preference id="pref-zotfile-useZoteroToRename" name="extensions.zotfile.useZoteroToRename" type="bool"/>
+				<preference id="pref-zotfile-renameFormat" name="extensions.zotfile.renameFormat" type="string"/>
+				<preference id="pref-zotfile-renameFormat_patent" name="extensions.zotfile.renameFormat_patent" type="string"/>
+				<preference id="pref-zotfile-truncate_title" name="extensions.zotfile.truncate_title" type="bool"/>
+				<preference id="pref-zotfile-truncate_smart" name="extensions.zotfile.truncate_smart" type="bool"/>
+				<preference id="pref-zotfile-truncate_title_max" name="extensions.zotfile.truncate_title_max" type="bool"/>
+				<preference id="pref-zotfile-max_titlelength" name="extensions.zotfile.max_titlelength" type="int"/>
+				<preference id="pref-zotfile-max_authors" name="extensions.zotfile.max_authors" type="int"/>
+				<preference id="pref-zotfile-truncate_authors" name="extensions.zotfile.truncate_authors" type="bool"/>
+				<preference id="pref-zotfile-number_truncate_authors" name="extensions.zotfile.number_truncate_authors" type="int"/>
+				<preference id="pref-zotfile-add_etal" name="extensions.zotfile.add_etal" type="bool"/>
+				<preference id="pref-zotfile-removeDiacritics" name="extensions.zotfile.removeDiacritics" type="bool"/>
+				<preference id="pref-zotfile-etal" name="extensions.zotfile.etal" type="string"/>
+				<preference id="pref-zotfile-authors_delimiter" name="extensions.zotfile.authors_delimiter" type="string"/>
+				<preference id="pref-zotfile-subfolder" name="extensions.zotfile.subfolder" type="bool"/>
+				<preference id="pref-zotfile-subfolderFormat" name="extensions.zotfile.subfolderFormat" type="string"/>
+				<preference id="pref-zotfile-userInput" name="extensions.zotfile.userInput" type="bool"/>
+				<preference id="pref-zotfile-userInput_Default" name="extensions.zotfile.userInput_Default" type="string"/>
+				<preference id="pref-zotfile-replace_blanks" name="extensions.zotfile.replace_blanks" type="bool"/>
+				<preference id="pref-zotfile-lower_case" name="extensions.zotfile.lower_case" type="bool"/>
+				<preference id="pref-zotfile-confirmation" name="extensions.zotfile.confirmation" type="bool"/>
+				<preference id="pref-zotfile-confirmation_batch_ask" name="extensions.zotfile.confirmation_batch_ask" type="bool"/>
+				<preference id="pref-zotfile-confirmation_batch" name="extensions.zotfile.confirmation_batch" type="int"/>
+				<preference id="pref-zotfile-tablet" name="extensions.zotfile.tablet" type="bool"/>
+				<preference id="pref-zotfile-tablet-rename" name="extensions.zotfile.tablet.rename" type="bool"/>
+				<preference id="pref-zotfile-tablet-dest_dir" name="extensions.zotfile.tablet.dest_dir" type="string"/>
+				<preference id="pref-zotfile-tablet-storeCopyOfFile" name="extensions.zotfile.tablet.storeCopyOfFile" type="bool"/>
+				<preference id="pref-zotfile-tablet-storeCopyOfFile_suffix" name="extensions.zotfile.tablet.storeCopyOfFile_suffix" type="string"/>
+				<preference id="pref-zotfile-tablet-projectFolders" name="extensions.zotfile.tablet.projectFolders" type="int"/>
+				<preference id="pref-zotfile-tablet-subfolder" name="extensions.zotfile.tablet.subfolder" type="bool"/>
+				<preference id="pref-zotfile-tablet-subfolderFormat" name="extensions.zotfile.tablet.subfolderFormat" type="string"/>
+				<preference id="pref-zotfile-tablet-tag" name="extensions.zotfile.tablet.tag" type="string"/>
+				<preference id="pref-zotfile-tablet-tagParentPush" name="extensions.zotfile.tablet.tagParentPush" type="bool"/>
+				<preference id="pref-zotfile-tablet-tagParentPush_tag" name="extensions.zotfile.tablet.tagParentPush_tag" type="string"/>
+				<preference id="pref-zotfile-tablet-tagParentPull" name="extensions.zotfile.tablet.tagParentPull" type="bool"/>
+				<preference id="pref-zotfile-tablet-tagParentPull_tag" name="extensions.zotfile.tablet.tagParentPull_tag" type="string"/>
+				<preference id="pref-zotfile-tablet-mode" name="extensions.zotfile.tablet.mode" type="int"/>
+				<preference id="pref-zotfile-tablet-confirmRepush" name="extensions.zotfile.tablet.confirmRepush" type="bool"/>
+				<preference id="pref-zotfile-pdfExtraction-UsePDFJS" name="extensions.zotfile.pdfExtraction.UsePDFJS" type="bool"/>
+				<preference id="pref-zotfile-pdfExtraction-Pull" name="extensions.zotfile.pdfExtraction.Pull" type="bool"/>
+				<preference id="pref-zotfile-pdfExtraction-NoteTruePage" name="extensions.zotfile.pdfExtraction.NoteTruePage" type="bool"/>
+				<preference id="pref-zotfile-pdfExtraction-NoteFullCite" name="extensions.zotfile.pdfExtraction.NoteFullCite" type="bool"/>
+			</preferences>
+
+			<tabbox id="zotfile-tabbox">
+				<tabs id="zotfile-tabs">
+					<tab label="&general-settings;"/>
+					<tab label="&tablet-settings;"/>
+					<tab label="&renaming-rules;"/>
+					<tab label="&advanced-settings;"/>
+				</tabs>
+
+				<!-- GENERAL SETTINGS -->
+				<tabpanels id="zotfile-tabpanels">
+					<tabpanel orient="vertical">
+						<groupbox>
+							<caption label="&attachments-source-folder;"/>
+							<description style="width: 420px">&source-folder-desc;</description>
+							<separator/>
+							<hbox  style="margin: 0"  align="center">
+								<textbox id="id-zotfile-source_dir" preference="pref-zotfile-source_dir" flex="1" onchange="updateFolderIcon('source',false); "/>
+								<button id="id-zotfile-source_dir-button" label="&choose;" oncommand="Zotero.ZotFile.chooseDirectory().then((folder) => { if(folder != '') {Zotero.ZotFile.setPref('source_dir', folder); updateFolderIcon('source', false);} });"/>
+								<image id="id-zotfile-source_dir-clear" width='16' height='16' hidden="false"/>
+								<image id="id-zotfile-source_dir-ok" src="chrome://zotfile/skin/accept.png" hidden="true"/>
+								<image id="id-zotfile-source_dir-error" src="chrome://zotfile/skin/exclamation.png" hidden="true"/>
+							</hbox>
+						</groupbox>
+						<separator/>
+
+						<groupbox>
+							<caption label="&location-of-files;"/>
+							<description style="width: 420px">&target-location-desc;</description>
+							<separator/>
+
+							<radiogroup id="id-zotfile-import" preference="pref-zotfile-import">
+								<radio label="&attach-stored-copy;" value="true" oncommand="updatePreferenceWindow('dest'); onImportPrefChange();"/>
+								<hbox  style="margin: 0"  align="center">
+									<radio label="&custom-location;" value="false" oncommand="updatePreferenceWindow('dest'); onImportPrefChange();"/>
+									<textbox id="id-zotfile-dest_dir" preference="pref-zotfile-dest_dir" flex="1" onchange="updateFolderIcon('dest',false);"/>
+									<button id="id-zotfile-dest_dir-button" label="&choose;" oncommand="chooseDestinationDirectory()"/>
+									<image id="id-zotfile-dest_dir-clear" width='16' height='16' hidden="false"/>
+									<image id="id-zotfile-dest_dir-ok" src="chrome://zotfile/skin/accept.png" hidden="true"/>
+									<image id="id-zotfile-dest_dir-error" src="chrome://zotfile/skin/exclamation.png" hidden="true"/>
+								</hbox>
+							</radiogroup>
+							<hbox style="margin: 0"  align="center">
+								<checkbox id="id-zotfile-subfolder" label="&use-subfolder;" preference="pref-zotfile-subfolder"  oncommand="updatePreferenceWindow('subfolder')"/>
+								<textbox id="id-zotfile-subfolderFormat" preference="pref-zotfile-subfolderFormat" width="100"/>
+								<image src="chrome://zotfile/skin/information.png" tooltiptext="&subfolder-information;"/>
+							</hbox>
+						</groupbox>
+
+						<hbox style="margin: 0">
+							<label style="margin-right:0px" value="&for-more-information;"/>
+							<label style="margin-left:0px; margin-right:0px" class="text-link" onclick="Zotero.ZotFile.Utils.loadURI('http://www.zotfile.com');" value="&zotfile-website;"/>
+							<label style="margin-left:0px; margin-right:0px" value="."/>
+						</hbox>
+						<hbox style="margin: 0">
+							<label style="margin-right:0px" value="&consider-donation;"/>
+							<label style="margin-left:0px; margin-right:0px" class="text-link" onclick="Zotero.ZotFile.Utils.loadURI('http://www.zotfile.com');" value="&donation;"/>
+							<label style="margin-left:0px; margin-right:0px" value="."/>
+						</hbox>
+
+					</tabpanel>
+
+					<!-- TABLET SETTINGS -->
+					<tabpanel orient="vertical">
+
+						<description width="420px">&tablet-desc;</description>
+						<separator class="thin"/>
+						<checkbox id="id-zotfile-tablet" label="&send-get-from-tablet;" preference="pref-zotfile-tablet" oncommand="updatePreferenceWindow('zotfile-tablet');"/>
+						<separator/>
+
+						<groupbox>
+							<caption label="&location-on-tablet;"/>
+							<label id="id-zotfile-tablet-baseFolder" value="&base-folder;" control="id-zotfile-tablet-dest_dir"/>
+							<hbox style="margin: 0" align="center">
+								<textbox id="id-zotfile-tablet-dest_dir" preference="pref-zotfile-tablet-dest_dir" flex="1" onchange="updateFolderIcon('tablet');"/>
+								<button id="id-zotfile-tablet-dest_dir-button" label="&choose;" oncommand="Zotero.ZotFile.chooseDirectory().then((folder) => { if(folder!='') {Zotero.ZotFile.setPref('tablet.dest_dir', folder); updateFolderIcon('tablet',false);} });"/>
+								<button id="id-zotfile-tablet-dest_dir-show" label="&show-folder;" oncommand="Zotero.ZotFile.showFolder(Zotero.ZotFile.Tablet.getTabletLocationFile());"/>
+								<image id="id-zotfile-tablet-ok" src="chrome://zotfile/skin/accept.png" hidden="true"/>
+								<image id="id-zotfile-tablet-error" src="chrome://zotfile/skin/exclamation.png" hidden="true"/>
+							</hbox>
+							<label id="id-zotfile-tablet-dest_dir-des"  style="font-size: 9px; margin-right:0px" value="&dropbox;"/>
+							<separator/>
+
+							<label id="id-zotfile-tablet-label-subfolders" value="&subfolders;" control="id-zotfile-tablet-dest_dir"/>
+							<radiogroup id="id-zotfile-tablet-projectFolders" preference="pref-zotfile-tablet-projectFolders">
+								<radio label="&no-subfolders;" value="0"/>
+								<radio label="&create-subfolders;" value="1"/>
+								<hbox style="margin: 0">
+									<radio label="&custom-subfolders;" value="2"/>
+									<button id="id-zotfile-tablet-projectFolders-button" label="&change-subfolders;" oncommand="Zotero.ZotFile.openSubfolderWindow();"/>
+								</hbox>
+							</radiogroup>
+							<separator class="thin"/>
+
+							<hbox style="margin: 0"  align="center">
+								<checkbox id="id-zotfile-tablet-subfolder" label="&use-additional-subfolders;" preference="pref-zotfile-tablet-subfolder"  oncommand="updatePreferenceWindow('subfolder-tablet')"/>
+								<textbox id="id-zotfile-tablet-subfolderFormat" preference="pref-zotfile-tablet-subfolderFormat" width="100"/>
+								<image src="chrome://zotfile/skin/information.png" tooltiptext="&additional-subfolders;"/>
+							</hbox>
+						</groupbox>
+
+						<groupbox>
+							<caption label="&additional-options;"/>
+							<checkbox id="id-zotfile-tablet-rename" label="&rename-when-sent-to-tablet;" preference="pref-zotfile-tablet-rename"/>
+							<hbox style="margin: 0"  align="center">
+								<checkbox id="id-zotfile-tablet-storeCopyOfFile" label="&save-annotated-file;" preference="pref-zotfile-tablet-storeCopyOfFile"  oncommand="updatePreferenceWindow('storeCopyOfFile')"/>
+								<textbox id="id-zotfile-tablet-storeCopyOfFile_suffix" preference="pref-zotfile-tablet-storeCopyOfFile_suffix" width="130"/>
+								<image src="chrome://zotfile/skin/information.png" tooltiptext="&tablet-copy-information;"/>
+							</hbox>
+							<checkbox id="id-zotfile-pdfExtraction-Pull" label="&automatically-extract-annotations;" preference="pref-zotfile-pdfExtraction-Pull"/>
+						</groupbox>
+					</tabpanel>
+
+
+					<!-- RENAMING SETTINGS -->
+					<tabpanel orient="vertical">
+						<label value="&preview-renaming-rules;"/>
+						<hbox style="margin: 0">
+							<textbox id="id-zotfile-preview" readonly="true" flex="1"/>	<!--									<label id="id-zotfile-preview" value=""/>					   								   -->
+							<button  id="id-zotfile-preview-button" label="&update;" oncommand="document.getElementById('id-zotfile-preview').value=previewFilename();"/>
+						</hbox>
+						<separator/>
+
+						<groupbox>
+							<caption label="&renaming-format;"/>
+							<hbox style="margin: 0">
+								<checkbox label="&zotero-to-rename;" preference="pref-zotfile-useZoteroToRename" oncommand="updatePreferenceWindow('zotrename')"/>
+							</hbox>
+							<separator/>
+
+							<label id="id-zotfile-renameFormat-label" value="&format-for-all-types;"/>
+							<textbox id="id-zotfile-renameFormat" preference="pref-zotfile-renameFormat" onchange="checkRenameFormat('renameFormat');"/>
+							<label id="id-zotfile-renameFormat_patent-label" value="&format-for-patents;"/>
+							<textbox id="id-zotfile-renameFormat_patent" preference="pref-zotfile-renameFormat_patent" onchange="checkRenameFormat('renameFormat_patent');"/>
+							<label id="id-zotfile-renameFormat-des1" style="font-size: 9px" value="&list-of-wildcards;"/>
+							<hbox style="margin: 0">
+								<label id="id-zotfile-renameFormat-des2" style="font-size: 9px; margin-right:0px" value="&for-a-full-list;"/>
+								<label id="id-zotfile-renameFormat-des3" style="font-size: 9px; margin-left:0px; margin-right:0px" class="text-link" value="&zotfile-website;" onclick="Zotero.ZotFile.Utils.loadURI('http://www.zotfile.com/index.html&#35;renaming-rules');"/>
+								<label id="id-zotfile-renameFormat-des4" style="font-size: 9px; margin-left:0px; margin-right:0px" value="."/>
+							</hbox>
+						</groupbox>
+
+
+						<groupbox>
+							<caption label="&additional-settings;"/>
+							<hbox style="margin: 0">
+								<label control="id-zotfile-label-authors_delimiter" value="&delimiter-multiple-authors;"/>
+								<textbox style="margin: -2px 0px 0px 0px" id="id-zotfile-authors_delimiter" preference="pref-zotfile-authors_delimiter" width="50"/>
+							</hbox>
+							<hbox style="margin: 0">
+								<checkbox id="id-zotfile-userInput" label="&add-user-input-to-filename;" preference="pref-zotfile-userInput"  oncommand="updatePreferenceWindow('userinput')"/>
+								<textbox id="id-zotfile-userInput_Default" preference="pref-zotfile-userInput_Default" width="100"/>
+							</hbox>
+							<hbox style="margin: 0">
+				 				<checkbox id="id-zotfile-lower_case" label="&lower-case;" preference="pref-zotfile-lower_case"/>
+							</hbox>
+							<hbox style="margin: 0">
+								<checkbox id="id-zotfile-replace_blanks" label="&replace-blanks;" preference="pref-zotfile-replace_blanks"/>
+							</hbox>
+							<checkbox id="id-zotfile-truncate_title" label="&truncate-title;" preference="pref-zotfile-truncate_title"/>
+							<hbox style="margin: 0">
+								<checkbox id="id-zotfile-truncate_title_max" label="&zotfile-truncate_title_max;" preference="pref-zotfile-truncate_title_max" oncommand="updatePreferenceWindow('truncate_title_max')"/>
+								<textbox id="id-zotfile-max_titlelength" preference="pref-zotfile-max_titlelength" width="40"/>
+							</hbox>
+							<hbox style="margin: 0">
+								<checkbox id="id-zotfile-truncate_authors" label="&zotfile-truncate_authors;" preference="pref-zotfile-truncate_authors" oncommand="updatePreferenceWindow('truncate_authors')"/>
+								<textbox id="id-zotfile-max_authors" preference="pref-zotfile-max_authors" width="40"/>
+							</hbox>
+							<hbox style="margin: 0">
+								<label value="&zotfile-number_truncate_authors;"/>
+								<textbox id="id-zotfile-number_truncate_authors" preference="pref-zotfile-number_truncate_authors" width="40"/>
+							</hbox>
+							<hbox style="margin: 0">
+								<checkbox id="id-zotfile-add_etal" label="&zotfile-add_etal;" preference="pref-zotfile-add_etal" oncommand="updatePreferenceWindow('etal')"/>
+								<textbox id="id-zotfile-etal" preference="pref-zotfile-etal" width="80"/>
+							</hbox>
+						</groupbox>
+					</tabpanel>
+
+					<!-- ADVANCED SETTINGS -->
+					<tabpanel orient="vertical">
+						<groupbox>
+							<caption label="&extract-annotations;"/>
+							<label value="&extract-annotations-and-highlighted-text;"/>
+							<separator/>
+
+							<label value="&extraction-method;"/>
+							<radiogroup id="id-zotfile-pdfExtraction-UsePDFJS" preference="pref-zotfile-pdfExtraction-UsePDFJS">
+								<hbox style="margin: 0" align="center">
+									<radio id="id-zotfile-pdfExtraction-UsePDFJS-true" label="&use-pdf-js;" value="true"/>
+									<image src="chrome://zotfile/skin/information.png" tooltiptext="&methods-to-extract-annotations;"/>
+								</hbox>
+								<hbox style="margin: 0" align="center">
+									<radio id="id-zotfile-pdfExtraction-UsePDFJS-false" label="&use-poppler;" value="false"/>
+									<button id="pdf-annotations-extractor-update-button" oncommand="downloadPDFTool()" flex="1"/>
+									<label style="font-size: 9px" id="pdf-annotations-extractor-version" value="" hidden="true"/>
+								</hbox>
+							</radiogroup>
+							<separator/>
+
+							<label value="&additional-options;"/>
+							<checkbox id="id-zotfile-pdfExtraction-NoteFullCite" label="&add-full-citation;" preference="pref-zotfile-pdfExtraction-NoteFullCite"/>
+							<hbox style="margin: 0"  align="center">
+								<checkbox id="id-zotfile-pdfExtraction-NoteTruePage" label="&use-article-book-chapter-page;" preference="pref-zotfile-pdfExtraction-NoteTruePage"/>
+								<image src="chrome://zotfile/skin/information.png" tooltiptext="&page-number-determination;"/>
+							</hbox>
+						</groupbox>
+						<separator/>
+
+						<groupbox>
+							<caption label="&other-advanced-settings;"/>
+							<row>
+								<hbox align="center">
+									<label value="&automatic_renaming_label;" control="id-zotfile-automatic_renaming"/>
+								</hbox>
+								<hbox>
+									<menulist id="id-zotfile-automatic_renaming" preference="pref-zotfile-automatic_renaming">
+										<menupopup>
+											<menuitem label="&automatic_renaming_no;" value="1"/>
+											<menuitem label="&automatic_renaming_ask;" value="2"/>
+											<menuitem label="&automatic_renaming_ask_mult;" value="3"/>
+											<menuitem label="&automatic_renaming_always;" value="4"/>
+										</menupopup>
+									</menulist>
+								</hbox>
+							</row>
+							<checkbox id="id-zotfile-confirmation" label="&ask-when-attaching-new-files;" preference="pref-zotfile-confirmation"/>
+							<hbox style="margin: 0"  align="center">
+								<checkbox id="id-zotfile-confirmation_batch_ask" label="&ask-to-batch-rename;" preference="pref-zotfile-confirmation_batch_ask" oncommand="updatePreferenceWindow('confirm')"/>
+								<textbox id="id-zotfile-confirmation_batch" preference="pref-zotfile-confirmation_batch" width="40"/>
+								<label id="id-zotfile-confirmation_batch-end"  value="&or-more-attachments;"/>
+							</hbox>
+							<checkbox id="id-zotfile-removeDiacritics" label="&remove-special-characters;" preference="pref-zotfile-removeDiacritics"/>
+							<hbox style="margin: 0">
+								<checkbox id="id-zotfile-useFileTypes" label="&work-with-following-filetypes;" preference="pref-zotfile-useFileTypes" oncommand="updatePreferenceWindow('filetypes')"/>
+								<textbox id="id-zotfile-filetypes" preference="pref-zotfile-filetypes" flex="1"/>
+							</hbox>
+							<label value="&add-saved-searches;"/>
+							<hbox>
+								<button id="id-zotfile-add-search" label="&attachments-on-tablet;" oncommand="Zotero.ZotFile.Tablet.createSavedSearch('tablet');"/>
+								<button id="id-zotfile-add-search2" label="&modified-attachments-on-tablet;" oncommand="Zotero.ZotFile.Tablet.createSavedSearch('tablet_modified');"/>
+							</hbox>
+						</groupbox>
+					</tabpanel>
+				</tabpanels>
+			</tabbox>
+		</prefpane>
+
+		<script src="options.js"/>
+		<script src="chrome://zotero/content/include.js"/>
+		<script src="chrome://zotfile/content/include.js"/>
+
+</prefwindow>

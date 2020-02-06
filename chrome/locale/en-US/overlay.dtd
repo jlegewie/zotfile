@@ -1,0 +1,24 @@
+<!ENTITY zotfile-attach-file.label "Attach New File">
+<!ENTITY zotfile-attach-file.tooltiptext "Move and attach last file in user defined folder to selected Zotero item">
+<!ENTITY zotfile-manage-attachments.label "Manage Attachments">
+<!ENTITY warning.label "Warning">
+<!ENTITY renameSelectedAttachments.label "Rename Attachments">
+<!ENTITY renameSelectedAttachments.tooltiptext "Move and rename existing Attachments from selected Zotero item">
+<!ENTITY extract-annotations.label "Extract Annotations">
+<!ENTITY extract-annotations.tooltiptext "Extract Annotations and Highlighted Text from pdf file.">
+<!ENTITY pdf-outline.label "Get Table of Contents">
+<!ENTITY pdf-outline.tooltiptext "Get Table of Contents from pdf file.">
+<!ENTITY send-to-tablet "Send to Tablet">
+<!ENTITY send-attachment-file-to-tablet "Send Attachment File to Tablet.">
+<!ENTITY update-file-modification-time "Update File Modification Time">
+<!ENTITY sync-attachment-file "Sync attachment file on tablet with file in Zotero.">
+<!ENTITY get-from-tablet "Get from Tablet">
+<!ENTITY get-attachment-file-from-tablet "Get Attachment File from Tablet">
+<!ENTITY send-to-subfolder-on-tablet "Send to Subfolder on Tablet">
+<!ENTITY change-subfolders "Change subfolders...">
+<!ENTITY add-and-delete-subfolders "Add and delete subfolders to Menu.">
+<!ENTITY zotfile-options.label "ZotFile Preferences...">
+<!ENTITY saved-search-all "Show Attachments from all Subfolders">
+<!ENTITY saved-search-restrict "Restrict Saved Search to Subfolder">
+<!ENTITY restrict-subfolder "Restrict to subfolder...">
+<!ENTITY restrict-basefolder "Unfiled Attachments">
