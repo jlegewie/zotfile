@@ -264,6 +264,8 @@ Zotero.ZotFile.Wildcards = new function() {
                         output = output.toUpperCase();
                     if(obj.function=="trim")
                         output = output.trim();
+                    if(obj.function=="truncateTitle")
+                        output = truncateTitle(output);
                 }
             }
             // return
