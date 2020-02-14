@@ -9,6 +9,16 @@ Zotero.ZotFile.Wildcards = new function() {
     this.emptyCollectionPlaceholder = "EMPTY_COLLECTION_NAME";
 
     /*
+     * Abbreviation field using Zotero's getAbbreviation function
+     */
+    function abbreviateField(field) {
+	abbrv_obj = new Object();
+	Zotero.Cite.getAbbreviation("N/A", abbrv_obj, "default", "container-title", field);
+
+	return abbrv_obj["default"]["container-title"][field]
+    }
+
+    /*
      * Performs a binary search that returns the index of the array before which the
      * search should be inserted into the array to maintain a sorted order.
      */
@@ -257,6 +267,9 @@ Zotero.ZotFile.Wildcards = new function() {
                         var match = re.exec(output);
                         output = (match===null) ? output : match[group];
                     }
+		    if(obj.function=="abbreviate") {
+			output = abbreviateField(output);
+		    }
                     // simple functions
                     if(obj.function=="toLowerCase")
                         output = output.toLowerCase();
