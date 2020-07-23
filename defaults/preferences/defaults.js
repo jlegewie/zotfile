@@ -38,7 +38,7 @@ pref("extensions.zotfile.version","");
 pref("extensions.zotfile.zotfile3update",false);
 pref("extensions.zotfile.info_window_duration_clickable",8000);
 pref("extensions.zotfile.info_window_duration",6000);
-pref("extensions.zotfile.wildcards.default",'{"a": "author", "A": {"field": "author", "operations":[{"function":"exec","regex": "\\\\w{1}"},{"function":"toUpperCase"}]}, "F": "authorLastF", "I": "authorInitials", "d": "editor", "D": {"field": "editor", "operations":[{"function":"exec","regex": "\\\\w{1}"},{"function":"toUpperCase"}]}, "L": "editorLastF", "l": "editorInitials", "t": "titleFormated", "h": "shortTitle", "j": "publicationTitle", "s": "journalAbbreviation", "p": "publisher", "w": {"default": "publisher", "audioRecording": "label", "bill": "legislativeBody", "case": "court", "computerProgram": "company", "film": "distributor", "journalArticle": "publicationTitle", "magazineArticle": "publicationTitle", "newspaperArticle": "publicationTitle", "patent": "issuingAuthority", "presentation": "meetingName", "radioBroadcast": "network", "report": "institution", "thesis": "university", "tvBroadcast": "network"}, "n": "patentNumber", "i": "assignee", "y": {"field": {"default": "date", "patent": "issueDate"}, "operations":[{"function":"exec","regex": "\\\\d{4}"}]}, "v": "volume", "e": "issue", "T": "itemType", "f": "pages", "x": "extra", "c": "collectionPaths", "g": "authorLastG", "q":"lastAuthor", "Q":"lastAuthor_lastInitial", "u":"lastAuthor_lastf", "U":"lastAuthor_initials"}');
+pref("extensions.zotfile.wildcards.default",'{"a": "author", "A": {"field": "author", "operations":[{"function":"exec","regex": "\\\\w{1}"},{"function":"toUpperCase"}]}, "F": "authorLastF", "I": "authorInitials", "d": "editor", "D": {"field": "editor", "operations":[{"function":"exec","regex": "\\\\w{1}"},{"function":"toUpperCase"}]}, "L": "editorLastF", "l": "editorInitials", "t": "titleFormated", "h": "shortTitle", "j": "publicationTitle", "s": "journalAbbreviation", "p": "publisher", "w": {"default": "publisher", "audioRecording": "label", "bill": "legislativeBody", "case": "court", "computerProgram": "company", "film": "distributor", "journalArticle": "publicationTitle", "magazineArticle": "publicationTitle", "newspaperArticle": "publicationTitle", "patent": "issuingAuthority", "presentation": "meetingName", "radioBroadcast": "network", "report": "institution", "thesis": "university", "tvBroadcast": "network"}, "n": "patentNumber", "i": "assignee", "y": {"field": {"default": "date", "patent": "issueDate"}, "operations":[{"function":"exec","regex": "\\\\d{4}"}]}, "v": "volume", "e": "issue", "T": "itemType", "f": "pages", "x": "extra", "c": "collectionPaths", "g": "authorLastG", "q":"lastAuthor", "Q":"lastAuthor_lastInitial", "u":"lastAuthor_lastf", "U":"lastAuthor_initials", "b":"citekey"}');
 pref("extensions.zotfile.wildcards.user",'{}');
 
 pref("extensions.zotfile.tablet", false);
@@ -58,6 +58,7 @@ pref("extensions.zotfile.tablet.storeCopyOfFile", false);
 pref("extensions.zotfile.tablet.storeCopyOfFile_suffix", "_annotated");
 pref("extensions.zotfile.tablet.subfolders", '[]');
 pref("extensions.zotfile.tablet.projectFolders", 0);
+pref("extensions.zotfile.tablet.showwarning", true);
 pref("extensions.zotfile.tablet.projectFolders01", false);
 pref("extensions.zotfile.tablet.projectFolders01_folder", "");
 pref("extensions.zotfile.tablet.projectFolders01_label", "Project 01");
@@ -113,10 +114,6 @@ pref("extensions.zotfile.pdfOutline.menuItem", true);
 
 pref("extensions.zotfile.pdfExtraction.UsePDFJS", true);
 pref("extensions.zotfile.pdfExtraction.debug", false);
-pref("extensions.zotfile.pdfExtraction.openPdfWin", "");
-pref("extensions.zotfile.pdfExtraction.openPdfLinux", "");
-pref("extensions.zotfile.pdfExtraction.openPdfMac_skim", false);
-pref("extensions.zotfile.pdfExtraction.openPdfMac", "Preview");
 pref("extensions.zotfile.pdfExtraction.UsePDFJSandPoppler", false);
 pref("extensions.zotfile.pdfExtraction.popplerDeleteTxtFile", true);
 pref("extensions.zotfile.pdfExtraction.Pull", true);
@@ -132,5 +129,6 @@ pref("extensions.zotfile.pdfExtraction.formatAnnotationUnderline", '<p>"<u>%(con
 pref("extensions.zotfile.pdfExtraction.replacements", '[]');
 pref("extensions.zotfile.pdfExtraction.localeDateInNote", true);
 pref("extensions.zotfile.pdfExtraction.colorNotes", false);
+pref("extensions.zotfile.pdfExtraction.colorAnnotations", false);
 pref("extensions.zotfile.pdfExtraction.colorCategories", '{"Black": "#000000", "White": "#FFFFFF", "Gray": "#808080", "Red": "#FF0000", "Orange": "#FFA500", "Yellow": "#FFFF00", "Green": "#00FF00", "Cyan": "#00FFFF", "Blue": "#0000FF", "Magenta": "#FF00FF"}');
 //pref("extensions.zotfile.pdfExtraction.format", '"<p>%(markup)s" %(cite)s</p><br><p>%(note)s</p><br>');

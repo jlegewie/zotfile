@@ -66,7 +66,7 @@ Zotero.ZotFile.pdfOutline = new function() {
             return;
         }            
         // create toc from outline
-        var win = zz.wm.getMostRecentWindow("navigator:browser"),
+        var win = Services.wm.getMostRecentWindow("navigator:browser"),
             toc = win.document.createElementNS(zz.xhtml, 'ul'),
             key = att.key,
             lib = att.library.libraryType == 'user' ? 0 : att.libraryID,
@@ -91,7 +91,7 @@ Zotero.ZotFile.pdfOutline = new function() {
             if(entry.page!==undefined && entry.items.length>0)
                 lvl++;
             // add subitems
-            if(entry.items.length>0 && lvl <= zz.prefs.getIntPref('pdfOutline.tocDepth')) {
+            if(entry.items.length>0 && lvl <= zz.getPref('pdfOutline.tocDepth')) {
                 var ul = win.document.createElementNS(zz.xhtml, 'ul');
                 ul.setAttribute('style', zz.Utils.str_format(style, {'padding': 12*(lvl-1)}));        
                 entry.items.forEach(create_toc, ul);
@@ -136,7 +136,7 @@ Zotero.ZotFile.pdfOutline = new function() {
         } else { // we're done
             Zotero.Browser.deleteHiddenBrowser(this.pdfHiddenBrowser);
             this.pdfHiddenBrowser = null;
-            this.progressWin.startCloseTimer(Zotero.ZotFile.prefs.getIntPref("info_window_duration"));
+            this.progressWin.startCloseTimer(Zotero.ZotFile.getPref("info_window_duration"));
         }
     };
 };

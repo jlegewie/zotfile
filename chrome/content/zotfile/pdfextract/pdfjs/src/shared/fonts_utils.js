@@ -418,7 +418,7 @@ function writeToFile(aBytes, aFilePath) {
   netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
   var Cc = Components.classes,
       Ci = Components.interfaces;
-  var file = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsILocalFile);
+  var file = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsIFile);
   file.initWithPath(aFilePath);
 
   var stream = Cc['@mozilla.org/network/file-output-stream;1']

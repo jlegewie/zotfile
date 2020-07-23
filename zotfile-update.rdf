@@ -1,64 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-         xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+    <rdf:Description about="urn:mozilla:extension:zotfile@columbia.edu">
+        <em:updates>
+            <rdf:Seq>
+                <rdf:li>
+                    <rdf:Description>
+                        <em:version>5.0.16</em:version>
+                        <em:targetApplication>
+                            <rdf:Description>
+                                <em:id>zotero@chnm.gmu.edu</em:id>
+                                <em:minVersion>5.0.0</em:minVersion>
+                                <em:maxVersion>5.*</em:maxVersion>
+                                <em:updateLink>https://github.com/jlegewie/zotfile/releases/download/v5.0.16/zotfile-5.0.16-fx.xpi</em:updateLink>
+                            </rdf:Description>
+                        </em:targetApplication> 
 
-  <RDF:Description about="urn:mozilla:extension:zotfile@columbia.edu">
-    <em:updates>
-      <RDF:Seq>
+                        <em:targetApplication>
+                            <rdf:Description>
+                                <em:id>juris-m@juris-m.github.io</em:id>
+                                <em:minVersion>4.999</em:minVersion>
+                                <em:maxVersion>5.*</em:maxVersion>
+                                <em:updateLink>https://github.com/jlegewie/zotfile/releases/download/v5.0.16/zotfile-5.0.16-fx.xpi</em:updateLink>
+                            </rdf:Description>
+                        </em:targetApplication>
 
-        <!-- ZotFile 4.x for Zotero 4.x -->
-        <RDF:li>
-          <RDF:Description>
-            <em:version>4.2.8</em:version>
-            <em:targetApplication>
-              <RDF:Description>
-                <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
-                <em:minVersion>31.0</em:minVersion>
-                <em:maxVersion>52.*</em:maxVersion>
-              </RDF:Description>
-            </em:targetApplication>
-            <em:targetApplication>
-              <RDF:Description>
-                <em:id>zotero@chnm.gmu.edu</em:id>
-                <em:minVersion>3.0b1</em:minVersion>
-                <em:maxVersion>4.*</em:maxVersion>
-              </RDF:Description>
-            </em:targetApplication>
-            <em:targetApplication>
-              <RDF:Description>
-                <em:id>juris-m@juris-m.github.io</em:id>
-                <em:minVersion>3.0b1</em:minVersion>
-                <em:maxVersion>4.*</em:maxVersion>
-              </RDF:Description>
-            </em:targetApplication>
-          </RDF:Description>
-        </RDF:li>
-
-        <!-- ZotFile 5.x for Zotero 5.x -->
-        <RDF:li>
-          <RDF:Description>
-            <em:version>5.0.2</em:version>
-            <em:targetApplication>
-              <RDF:Description>
-                <em:id>zotero@chnm.gmu.edu</em:id>
-                <em:minVersion>5.0.0</em:minVersion>
-                <em:maxVersion>5.*</em:maxVersion>
-                <em:updateLink>https://github.com/jlegewie/zotfile/releases/download/v5.0.2/zotfile-5.0.2-fx.xpi</em:updateLink>
-              </RDF:Description>
-            </em:targetApplication>
-            <em:targetApplication>
-              <RDF:Description>
-                <em:id>juris-m@juris-m.github.io</em:id>
-                <em:minVersion>4.999</em:minVersion>
-                <em:maxVersion>5.*</em:maxVersion>
-                <em:updateLink>https://github.com/jlegewie/zotfile/releases/download/v5.0.2/zotfile-5.0.2-fx.xpi</em:updateLink>
-              </RDF:Description>
-            </em:targetApplication>
-          </RDF:Description>
-        </RDF:li>
-
-      </RDF:Seq>
-    </em:updates>
-
-  </RDF:Description>
-</RDF:RDF>
+                    </rdf:Description>
+                </rdf:li>
+            </rdf:Seq>
+        </em:updates>
+    </rdf:Description>
+</rdf:RDF>

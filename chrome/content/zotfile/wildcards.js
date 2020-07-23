@@ -5,6 +5,19 @@
  */
 Zotero.ZotFile.Wildcards = new function() {
 
+    var _this = this;
+    this.emptyCollectionPlaceholder = "EMPTY_COLLECTION_NAME";
+
+    /*
+     * Abbreviation field using Zotero's getAbbreviation function
+     */
+    function abbreviateField(field) {
+	abbrv_obj = new Object();
+	Zotero.Cite.getAbbreviation("N/A", abbrv_obj, "default", "container-title", field);
+
+	return abbrv_obj["default"]["container-title"][field]
+    }
+
     /*
      * Performs a binary search that returns the index of the array before which the
      * search should be inserted into the array to maintain a sorted order.
@@ -44,21 +57,21 @@ Zotero.ZotFile.Wildcards = new function() {
         title = '' + title
 
         // truncate title after : . and ?
-        if(Zotero.ZotFile.prefs.getBoolPref("truncate_title")) {
+        if(Zotero.ZotFile.getPref("truncate_title")) {
             var truncate = title.search(/:|\.|\?|\!/);
             if(truncate!=-1) title = title.substr(0,truncate);
         }
 
         // truncate if to long
-        if (title.length > Zotero.ZotFile.prefs.getIntPref("max_titlelength")) {
-            var max_titlelength=Zotero.ZotFile.prefs.getIntPref("max_titlelength");
+        if (title.length > Zotero.ZotFile.getPref("max_titlelength")) {
+            var max_titlelength=Zotero.ZotFile.getPref("max_titlelength");
             var before_trunc_char = title.substr(max_titlelength,1);
 
             // truncate title at max length
             title = title.substr(0,max_titlelength);
 
             // remove the last word until a space is found
-            if(Zotero.ZotFile.prefs.getBoolPref("truncate_smart") && title.search(" ")!=-1 && before_trunc_char.search(/[a-zA-Z0-9]/!=-1)) {
+            if(Zotero.ZotFile.getPref("truncate_smart") && title.search(" ")!=-1 && before_trunc_char.search(/[a-zA-Z0-9]/!=-1)) {
                 while (title.substring(title.length-1, title.length) != ' ') title = title.substring(0, title.length-1);
                 title = title.substring(0, title.length-1);
             }
@@ -112,29 +125,32 @@ Zotero.ZotFile.Wildcards = new function() {
     }
 
     function formatAuthors(item) {
-        var item_type = item.itemTypeID;
         // get creator and create authors string
-        // creator types: author/editor(1,3) for book(2), inventor(14) for patent(19),programmer(24) for computer prog.(27),presenter(21) for presentation(32)
-        var creatorType = [1];
-        if (item_type === 2)  creatorType = [1, 3];
-        else if (item_type === 19) creatorType = [14];
-        else if (item_type === 32) creatorType = [21];
-        else if (item_type === 27) creatorType = [24];
-        else if (item_type === 16) creatorType = [12];
-        var add_etal = Zotero.ZotFile.prefs.getBoolPref("add_etal");
+        var itemType = Zotero.ItemTypes.getName(item.itemTypeID);
+        var creatorTypeIDs;
+        if (itemType == 'book') {
+        	creatorTypeIDs = [
+				Zotero.CreatorTypes.getID('author'),
+				Zotero.CreatorTypes.getID('editor')
+			];
+		}
+        else {
+        	creatorTypeIDs = [Zotero.CreatorTypes.getPrimaryIDForType(item.itemTypeID)];
+        }
+        var add_etal = Zotero.ZotFile.getPref("add_etal");
         var author = "", author_lastf="", author_initials="", author_lastg = "";
         var creators = item.getCreators();
         var numauthors = creators.length;
         for (var i = 0; i < creators.length; ++i) {
-            if (creatorType.indexOf(creators[i].creatorTypeID) === -1) numauthors=numauthors-1;
+            if (creatorTypeIDs.indexOf(creators[i].creatorTypeID) === -1) numauthors=numauthors-1;
         }
-        var max_authors = (Zotero.ZotFile.prefs.getBoolPref("truncate_authors")) ? Zotero.ZotFile.prefs.getIntPref("max_authors") : 500;
+        var max_authors = (Zotero.ZotFile.getPref("truncate_authors")) ? Zotero.ZotFile.getPref("max_authors") : 500;
         if (numauthors <= max_authors) add_etal = false;
-        else numauthors = Zotero.ZotFile.prefs.getIntPref("number_truncate_authors");
-        var delimiter = Zotero.ZotFile.prefs.getCharPref("authors_delimiter");
+        else numauthors = Zotero.ZotFile.getPref("number_truncate_authors");
+        var delimiter = Zotero.ZotFile.getPref("authors_delimiter");
         var j = 0;
         for (i = 0; i < creators.length; ++i) {
-            if (j < numauthors && creatorType.indexOf(creators[i].creatorTypeID) != -1) {
+            if (j < numauthors && creatorTypeIDs.indexOf(creators[i].creatorTypeID) != -1) {
                 if (author !== "") author += delimiter + creators[i].lastName;
                 if (author === "") author = creators[i].lastName;
                 var lastf =  creators[i].lastName + creators[i].firstName.substr(0, 1).toUpperCase();
@@ -150,10 +166,10 @@ Zotero.ZotFile.Wildcards = new function() {
             }
         }
         if (add_etal) {
-            author = author + Zotero.ZotFile.prefs.getCharPref("etal");
-            author_lastf = author_lastf + Zotero.ZotFile.prefs.getCharPref("etal");
-            author_initials = author_initials + Zotero.ZotFile.prefs.getCharPref("etal");
-            author_lastg = author_lastg + Zotero.ZotFile.prefs.getCharPref("etal");
+            author = author + Zotero.ZotFile.getPref("etal");
+            author_lastf = author_lastf + Zotero.ZotFile.getPref("etal");
+            author_initials = author_initials + Zotero.ZotFile.getPref("etal");
+            author_lastg = author_lastg + Zotero.ZotFile.getPref("etal");
         }
         //create last (senior) author string
         var lastAuthor = "", lastAuthor_lastf= "", lastAuthor_initials= "", lastAuthor_lastInitial = "";
@@ -171,7 +187,7 @@ Zotero.ZotFile.Wildcards = new function() {
             if (editorType.indexOf(creators[i].creatorTypeID) === -1) numeditors=numeditors-1;
         }
         if (numeditors <= max_authors) add_etal = false;
-        else numeditors = Zotero.ZotFile.prefs.getIntPref("number_truncate_authors");
+        else numeditors = Zotero.ZotFile.getPref("number_truncate_authors");
         var j = 0;
         for (i = 0; i < creators.length; ++i) {
             if (j < numeditors && editorType.indexOf(creators[i].creatorTypeID) != -1) {
@@ -210,7 +226,8 @@ Zotero.ZotFile.Wildcards = new function() {
             "lastAuthor_lastInitial": authors[8],
             "lastAuthor_lastf": authors[9],
             "lastAuthor_initials": authors[10],
-            "collectionPaths": Zotero.ZotFile.Utils.getCollectionPathsOfItem(item)
+            "collectionPaths": Zotero.ZotFile.Utils.getCollectionPathsOfItem(item),
+            "citekey": Zotero.BetterBibTeX ? item.getField('citekey') : undefined
         };
         // define transform functions
         var itemtypeWildcard = function(item, map) {
@@ -250,6 +267,9 @@ Zotero.ZotFile.Wildcards = new function() {
                         var match = re.exec(output);
                         output = (match===null) ? output : match[group];
                     }
+		    if(obj.function=="abbreviate") {
+			output = abbreviateField(output);
+		    }
                     // simple functions
                     if(obj.function=="toLowerCase")
                         output = output.toLowerCase();
@@ -257,14 +277,16 @@ Zotero.ZotFile.Wildcards = new function() {
                         output = output.toUpperCase();
                     if(obj.function=="trim")
                         output = output.trim();
+                    if(obj.function=="truncateTitle")
+                        output = truncateTitle(output);
                 }
             }
             // return
             return output;
         };
         // get wildcards object from preferences
-        var wildcards = JSON.parse(Zotero.ZotFile.prefs.getCharPref("wildcards.default"));
-        var wildcards_user = JSON.parse(Zotero.ZotFile.prefs.getCharPref("wildcards.user"));
+        var wildcards = JSON.parse(Zotero.ZotFile.getPref("wildcards.default"));
+        var wildcards_user = JSON.parse(Zotero.ZotFile.getPref("wildcards.user"));
         for (var key in wildcards_user) { wildcards[key] = wildcards_user[key]; }
         // define wildcard table for item by iterating through wildcards
         var table = {};
@@ -376,7 +398,7 @@ Zotero.ZotFile.Wildcards = new function() {
                     };
 
                     var collectionPaths = lookup;
-                    if (collectionPaths.length === 0)  return "";
+                    if (collectionPaths.length === 0)  return _this.emptyCollectionPlaceholder;
                     if (collectionPaths.length === 1)  return collectionPaths[0];
 
                     var title = table['%t'];
