@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
         xmlns:em="http://www.mozilla.org/2004/em-rdf#">
-    <RDF:Description about="urn:mozilla:extension:zotfile@columbia.edu">
+    <rdf:Description about="urn:mozilla:extension:zotfile@columbia.edu">
         <em:updates>
             <rdf:Seq>
                 <rdf:li>
                     <rdf:Description>
-                        <em:version>5.0.14</em:version>
+                        <em:version>5.0.16</em:version>
                         <em:targetApplication>
                             <rdf:Description>
                                 <em:id>zotero@chnm.gmu.edu</em:id>
                                 <em:minVersion>5.0.0</em:minVersion>
                                 <em:maxVersion>5.*</em:maxVersion>
-                                <em:updateLink>https://github.com/jlegewie/zotfile/releases/download/v5.0.14/zotfile-5.0.14-fx.xpi</em:updateLink>
+                                <em:updateLink>https://github.com/jlegewie/zotfile/releases/download/v5.0.16/zotfile-5.0.16-fx.xpi</em:updateLink>
                             </rdf:Description>
                         </em:targetApplication> 
 
@@ -21,7 +21,7 @@
                                 <em:id>juris-m@juris-m.github.io</em:id>
                                 <em:minVersion>4.999</em:minVersion>
                                 <em:maxVersion>5.*</em:maxVersion>
-                                <em:updateLink>https://github.com/jlegewie/zotfile/releases/download/v5.0.14/zotfile-5.0.14-fx.xpi</em:updateLink>
+                                <em:updateLink>https://github.com/jlegewie/zotfile/releases/download/v5.0.16/zotfile-5.0.16-fx.xpi</em:updateLink>
                             </rdf:Description>
                         </em:targetApplication>
 
