@@ -311,9 +311,9 @@ Zotero.ZotFile.Wildcards = new function() {
         var last = -1;
         var lookup = "";
         // for wildcards of collection
-        var wildcards_collection_high = JSON.parse(decodeURIComponent(escape(Zotero.ZotFile.prefs.getCharPref("wildcards.collection.high"))));
-        var wildcards_collection_low = JSON.parse(decodeURIComponent(escape(Zotero.ZotFile.prefs.getCharPref("wildcards.collection.low"))));
-        var wildcards_collection_ignore = JSON.parse(decodeURIComponent(escape(Zotero.ZotFile.prefs.getCharPref("wildcards.collection.ignore"))));
+        var wildcards_collection_high = JSON.parse(Zotero.ZotFile.getPref("wildcards.collection.high"));
+        var wildcards_collection_low = JSON.parse(Zotero.ZotFile.getPref("wildcards.collection.low"));
+        var wildcards_collection_ignore = JSON.parse(Zotero.ZotFile.getPref("wildcards.collection.ignore"));
 
         for (var i = 0; i < bars.length; ++i) {
             // position of current | in wildcards
