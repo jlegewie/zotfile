@@ -44,6 +44,7 @@
 				<preference id="pref-zotfile-confirmation_batch" name="extensions.zotfile.confirmation_batch" type="int"/>
 				<preference id="pref-zotfile-tablet" name="extensions.zotfile.tablet" type="bool"/>
 				<preference id="pref-zotfile-tablet-rename" name="extensions.zotfile.tablet.rename" type="bool"/>
+				<preference id="pref-zotfile-tablet-keep-one-annotated" name="extensions.zotfile.tablet.keepOneAnnotated" type="bool"/>
 				<preference id="pref-zotfile-tablet-dest_dir" name="extensions.zotfile.tablet.dest_dir" type="string"/>
 				<preference id="pref-zotfile-tablet-storeCopyOfFile" name="extensions.zotfile.tablet.storeCopyOfFile" type="bool"/>
 				<preference id="pref-zotfile-tablet-storeCopyOfFile_suffix" name="extensions.zotfile.tablet.storeCopyOfFile_suffix" type="string"/>
@@ -166,6 +167,7 @@
 						<groupbox>
 							<caption label="&additional-options;"/>
 							<checkbox id="id-zotfile-tablet-rename" label="&rename-when-sent-to-tablet;" preference="pref-zotfile-tablet-rename"/>
+							<checkbox id="id-zotfile-tablet-keep-one-annotated" label="&keep-one-annotated;" preference="pref-zotfile-tablet-keep-one-annotated"/>
 							<hbox style="margin: 0"  align="center">
 								<checkbox id="id-zotfile-tablet-storeCopyOfFile" label="&save-annotated-file;" preference="pref-zotfile-tablet-storeCopyOfFile"  oncommand="updatePreferenceWindow('storeCopyOfFile')"/>
 								<textbox id="id-zotfile-tablet-storeCopyOfFile_suffix" preference="pref-zotfile-tablet-storeCopyOfFile_suffix" width="130"/>
