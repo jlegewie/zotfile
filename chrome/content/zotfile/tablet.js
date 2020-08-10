@@ -465,10 +465,11 @@ Zotero.ZotFile.Tablet = new function() {
 
     /**
      * Send selected Zotero attachments to tablet
+     * @param {bool} annotation_only whether only select the annotation file.
      * @param {int} idx_subfolder  Index of subfolder
      * @yield {void}
      */
-    this.sendSelectedAttachmentsToTablet = Zotero.Promise.coroutine(function* (idx_subfolder) {
+    this.sendSelectedAttachmentsToTablet = Zotero.Promise.coroutine(function* (annotation_only, idx_subfolder) {
         // get selected attachments
         var atts = Zotero.Items.get(this.getSelectedAttachments())
             .filter(this.checkFileType);
@@ -481,6 +482,42 @@ Zotero.ZotFile.Tablet = new function() {
                 var subfolders = JSON.parse(this.getPref('tablet.subfolders'));
                 project_folder = subfolders[idx_subfolder].path;
             }
+        }
+        var annotation_only = typeof annotation_only !== 'undefined' ? annotation_only : false;
+        // only choose the longest `suffix` (A_suffix_suffix > A_suffix > A)
+        if (annotation_only) {
+            var set = new Set();
+            this.infoWindow("before " + atts.length);
+            for (let i = 0; i < atts.length; i++) {
+                var att = atts[i];
+                // parentid.filename
+                var filename = att.attachmentFilename;
+                var filetype = this.Utils.getFiletype(filename);
+                var re = new RegExp("\." + filetype + "$", 'i');
+                if(filetype != '') filename = filename.replace(re, "");
+                var suffix_re = new RegExp(this.getPref('tablet.storeCopyOfFile_suffix'), 'i');
+                var rmsuffix = filename.replace(suffix_re, "");
+                while(rmsuffix != filename) {
+                    set.add(att.parentItemID + "." + rmsuffix);
+                    filename = rmsuffix;
+                    rmsuffix = filename.replace(suffix_re, "");
+                }
+            }
+            var i = 0;
+            while(i < atts.length) {
+                var att = atts[i];
+                var filename = att.attachmentFilename;
+                var filetype = this.Utils.getFiletype(filename);
+                var re = new RegExp("\." + filetype + "$", 'i');
+                if(filetype != '') filename = filename.replace(re, "");
+                var key = att.parentItemID + "." + filename;
+                if (set.has(key)) {
+                    atts.splice(i, 1);
+                } else {
+                    i++;
+                }
+            }
+            this.infoWindow("after " + atts.length);
         }
         // confirm
         var atts_tablet = yield Zotero.Promise.filter(atts, att =>

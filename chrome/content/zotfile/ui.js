@@ -67,15 +67,16 @@ Zotero.ZotFile.UI = new function() {
             sep1: 4,
             warning2: 5,
             push2reader: 6,
-            updatefile: 7,
-            pullreader: 8,
-            sep2: 9,
-            tablet: 10,
-            warning3: 11,
-            subfolders: new Array(12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
-            sep3: 27,
-            menuConfigure: 28,
-            length:29
+            pushannotation2reader: 7,
+            updatefile: 8,
+            pullreader: 9,
+            sep2: 10,
+            tablet: 11,
+            warning3: 12,
+            subfolders: new Array(13,14,15,16,17,18,19,20,21,22,23,24,25,26,27),
+            sep3: 28,
+            menuConfigure: 29,
+            length:30
         };
         // list of disabled and show menu-items
         var disable = [m.tablet, m.warning1, m.warning2, m.warning3], show = [];
@@ -122,7 +123,7 @@ Zotero.ZotFile.UI = new function() {
                     menu.childNodes[m.warning2].setAttribute('label',this.ZFgetString('menu.itemIsInGroupLibrary'));
                 }
                 if(valid_destination && !group_library) {
-                    show.push(m.push2reader, m.pullreader);
+                    show.push(m.push2reader, m.pushannotation2reader, m.pullreader);
                     // set tooltip for base folder
                     menu.childNodes[m.push2reader].setAttribute('tooltiptext', this.ZFgetString('menu.sendAttToBaseFolder', [this.getPref('tablet.dest_dir')]));
                     if(!menu_tablet) disable.push(m.pullreader);
@@ -234,6 +235,15 @@ Zotero.ZotFile.UI = new function() {
                 'disabled': tablet ? 'true' : 'false'
             },
             {
+                'label': 'Send Annotation to Tablet',
+                'tooltiptext': '',
+                'command': function(e) {
+                    Zotero.ZotFile.Tablet.sendSelectedAttachmentsToTablet(true);
+                    Zotero.ZotFile.UI.buildTabletMenu();
+                },
+                'disabled': tablet ? 'true' : 'false'
+            },
+            {
                 'label': 'Get from Tablet',
                 'tooltiptext': '',
                 'command': function(e) {
@@ -271,7 +281,7 @@ Zotero.ZotFile.UI = new function() {
                 var menuitem = pane.document.createElement('menuitem');
                 menuitem.setAttribute('label', folder.label);
                 menuitem.addEventListener('command', function(event) {
-                    this.Tablet.sendSelectedAttachmentsToTablet(i);
+                    this.Tablet.sendSelectedAttachmentsToTablet(false, i);
                     this.UI.buildTabletMenu();
                 });
                 menupopup.appendChild(menuitem);
