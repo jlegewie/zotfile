@@ -230,8 +230,24 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                 return new RegExp(obj.regex, flags);
             });
         // add note title
-        var date_str = this.getPref("pdfExtraction.localeDateInNote") ? new Date().toLocaleString() : new Date().toUTCString(),
-            title = this.Utils.str_format(format_title, {'title': str_title, 'date': date_str}),
+        var date_str;
+        if (this.getPref("pdfExtraction.localeDateInNote")){
+            date_str = new Date().toLocaleString();
+            Zotero.debug("locale");
+            Zotero.debug(date_str);
+        }
+        else if (this.getPref("pdfExtraction.isoDate")){
+            date_str = new Date().toISOString().substring(0, 10);
+            Zotero.debug("ISO");
+            Zotero.debug(date_str);
+        }
+        else {
+            date_str = new Date().toUTCString();
+            Zotero.debug("else");
+            Zotero.debug(date_str);
+        }
+
+        var title = this.Utils.str_format(format_title, {'title': str_title, 'date': date_str}),
             note = title;
         if (this.getPref("pdfExtraction.UsePDFJSandPoppler"))
             note += ' ' + method;
