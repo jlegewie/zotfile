@@ -127,6 +127,7 @@ pref("extensions.zotfile.pdfExtraction.formatAnnotationNote", '<p><i>%(content) 
 pref("extensions.zotfile.pdfExtraction.formatAnnotationHighlight", '<p>"%(content)" (%(cite))</p>');
 pref("extensions.zotfile.pdfExtraction.formatAnnotationUnderline", '<p>"<u>%(content)</u>" (%(cite))</p>');
 pref("extensions.zotfile.pdfExtraction.replacements", '[]');
+pref("extensions.zotfile.pdfExtraction.isoDate", false);
 pref("extensions.zotfile.pdfExtraction.localeDateInNote", true);
 pref("extensions.zotfile.pdfExtraction.colorNotes", false);
 pref("extensions.zotfile.pdfExtraction.colorAnnotations", false);
