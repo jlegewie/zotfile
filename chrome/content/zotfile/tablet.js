@@ -487,7 +487,6 @@ Zotero.ZotFile.Tablet = new function() {
         // only choose the longest `suffix` (A_suffix_suffix > A_suffix > A)
         if (annotation_only) {
             var set = new Set();
-            this.infoWindow("before " + atts.length);
             for (let i = 0; i < atts.length; i++) {
                 var att = atts[i];
                 // parentid.filename
@@ -517,7 +516,6 @@ Zotero.ZotFile.Tablet = new function() {
                     i++;
                 }
             }
-            this.infoWindow("after " + atts.length);
         }
         // confirm
         var atts_tablet = yield Zotero.Promise.filter(atts, att =>

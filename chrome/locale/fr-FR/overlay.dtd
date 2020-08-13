@@ -9,8 +9,9 @@
 <!ENTITY pdf-outline.label "Get Table of Contents">
 <!ENTITY pdf-outline.tooltiptext "Get Table of Contents from pdf file.">
 <!ENTITY send-to-tablet "Envoyer vers la tablette">
-<!ENTITY send-annotation-to-tablet "Send Annotation to Tablet">
 <!ENTITY send-attachment-file-to-tablet "Envoyer la pièce jointe vers la tablette.">
+<!ENTITY send-annotation-to-tablet "Envoyer l'annotation à la tablette.">
+<!ENTITY send-annotation-file-to-tablet "Envoyer le fichier d'annotation à la tablette.">
 <!ENTITY update-file-modification-time "Mettre à jout la date de modification du fichier">
 <!ENTITY sync-attachment-file "Synchroniser le fichier joint de la tablette avec le fichier dans Zotero.">
 <!ENTITY get-from-tablet "Récupérer de la tablette">
