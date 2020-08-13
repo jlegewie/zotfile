@@ -166,13 +166,13 @@
 
 						<groupbox>
 							<caption label="&additional-options;"/>
-							<checkbox id="id-zotfile-tablet-rename" label="&rename-when-sent-to-tablet;" preference="pref-zotfile-tablet-rename"/>
-							<checkbox id="id-zotfile-tablet-keep-one-annotated" label="&keep-one-annotated;" preference="pref-zotfile-tablet-keep-one-annotated"/>
+							<checkbox id="id-zotfile-tablet-rename" label="&rename-when-sent-to-tablet;" preference="pref-zotfile-tablet-rename" oncommand="updatePreferenceWindow('tablet-rename')"/>
 							<hbox style="margin: 0"  align="center">
 								<checkbox id="id-zotfile-tablet-storeCopyOfFile" label="&save-annotated-file;" preference="pref-zotfile-tablet-storeCopyOfFile"  oncommand="updatePreferenceWindow('storeCopyOfFile')"/>
 								<textbox id="id-zotfile-tablet-storeCopyOfFile_suffix" preference="pref-zotfile-tablet-storeCopyOfFile_suffix" width="130"/>
 								<image src="chrome://zotfile/skin/information.png" tooltiptext="&tablet-copy-information;"/>
 							</hbox>
+							<checkbox id="id-zotfile-tablet-keep-one-annotated" label="&keep-one-annotated;" preference="pref-zotfile-tablet-keep-one-annotated"/>
 							<checkbox id="id-zotfile-pdfExtraction-Pull" label="&automatically-extract-annotations;" preference="pref-zotfile-pdfExtraction-Pull"/>
 						</groupbox>
 					</tabpanel>
