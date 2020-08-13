@@ -126,6 +126,7 @@ Zotero.ZotFile.UI = new function() {
                     show.push(m.push2reader, m.pushannotation2reader, m.pullreader);
                     // set tooltip for base folder
                     menu.childNodes[m.push2reader].setAttribute('tooltiptext', this.ZFgetString('menu.sendAttToBaseFolder', [this.getPref('tablet.dest_dir')]));
+                    menu.childNodes[m.pushannotation2reader].setAttribute('tooltiptext', this.ZFgetString('menu.sendAnnToBaseFolder', [this.getPref('tablet.dest_dir')]));
                     if(!menu_tablet) disable.push(m.pullreader);
                     // add update menu item
                     if(this.Tablet.checkSelectedSearch() || this.getPref('tablet.updateAlwaysShow')) {
