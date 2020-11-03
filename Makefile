@@ -2,7 +2,8 @@ all: Makefile.in
 
 -include Makefile.in
 
-RELEASE:=$(shell grep em:version install.rdf | head -n 1 | sed -e 's/ *<em:version>//' -e 's/<\/em:version>//')
+# RELEASE:=$(shell grep em:version install.rdf | head -n 1 | sed -e 's/ *<em:version>//' -e 's/<\/em:version>//')
+RELEASE:=5.1.1.kai
 
 zotfile.xpi: FORCE
 	rm -rf $@

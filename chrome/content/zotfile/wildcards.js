@@ -151,8 +151,8 @@ Zotero.ZotFile.Wildcards = new function() {
         var j = 0;
         for (i = 0; i < creators.length; ++i) {
             if (j < numauthors && creatorTypeIDs.indexOf(creators[i].creatorTypeID) != -1) {
-                if (author !== "") author += delimiter + creators[i].lastName;
-                if (author === "") author = creators[i].lastName;
+                if (author !== "") author += delimiter + creators[i].lastName + creators[i].firstName;
+                if (author === "") author = creators[i].lastName + creators[i].firstName;
                 var lastf =  creators[i].lastName + creators[i].firstName.substr(0, 1).toUpperCase();
                 if (author_lastf !== "") author_lastf += delimiter + lastf;
                 if (author_lastf === "") author_lastf = lastf;
