@@ -7,3 +7,4 @@ locale zotfile de-DE chrome/locale/de-DE/
 locale zotfile en-US chrome/locale/en-US/
 locale zotfile fr-FR chrome/locale/fr-FR/
 locale zotfile it-IT chrome/locale/it-IT/
+locale zotfile zh-CN chrome/locale/zh-CN/

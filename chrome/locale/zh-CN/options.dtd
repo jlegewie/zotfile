@@ -1,0 +1,84 @@
+<!ENTITY zotfile-preferences "ZotFile首选项"> 
+<!ENTITY zotfile-prefpane "ZotFile首选项"> 
+<!ENTITY general-settings "常规设置"> 
+<!ENTITY tablet-settings "平板设置"> 
+<!ENTITY renaming-rules "重命名规则"> 
+<!ENTITY advanced-settings "高级设置"> 
+<!ENTITY attachments-source-folder "附加新文件的源文件夹"> 
+<!ENTITY source-folder-desc "ZotFile可以从一个文件夹，例如“下载”文件夹，添加最近更改过的文件为当前选中的Zotero条目的附件。"> 
+<!ENTITY use-firefox-download-folder "使用Firefox下载文件夹"> 
+<!ENTITY custom-source-folder "自定义："> 
+<!ENTITY choose "选择..."> 
+<!ENTITY location-of-files "文件位置"> 
+<!ENTITY target-location-desc "ZotFile可以将新的和已有的附件移动到不同位置。您可以存储您的附件的副本到Zotero以使其与Zotero服务器同步，或者移动文件到一个自定义文件夹并从Zotero链接到那个位置。">
+<!ENTITY attach-stored-copy "附加已存储的文件副本"> 
+<!ENTITY custom-location "自定义位置："> 
+<!ENTITY use-subfolder "使用按下列定义的子文件夹"> 
+<!ENTITY subfolder-information "子文件夹基于Zotero条目的元数据。使用&#37;a代表作者姓名，&#37;y代表年份，&#37;w代表期刊/出版商，或&#37;T代表项目类型（参阅Zotfile网站以获取完整列表）。请确保插入了合适的分隔符（对于Mac OS和其他Unix系统是 / ，对于Windows是 \ ）。">
+<!ENTITY for-more-information "了解更多，参见"> 
+<!ENTITY zotfile-website "ZotFile网站"> 
+<!ENTITY consider-donation "如果您认为此扩展有用，请考虑">
+<!ENTITY donation "捐助">
+<!ENTITY tablet-desc "ZotFile可以使用一个PDF注释App来流式传输您的Zotero附件的阅读和注释进度到iPad或Android平板。 它向平板发送并从其接收PDF，重命名它们并分类到子文件夹因此您可以找到它们，并提取注释和高亮文本到一个Zotero笔记。">
+<!ENTITY send-get-from-tablet "使用ZotFile来向平板发送并从其接收文件">
+<!ENTITY location-on-tablet "平板上的文件位置">
+<!ENTITY base-folder "根文件夹">
+<!ENTITY show-folder "显示文件夹">
+<!ENTITY dropbox "（DropBox或其他与您平板上的阅读应用同步的文件夹）">
+<!ENTITY subfolders "子文件夹">
+<!ENTITY no-subfolders "无子文件夹">
+<!ENTITY create-subfolders "从Zotero文库中创建子文件夹">
+<!ENTITY custom-subfolders "自定义子文件夹">
+<!ENTITY change-subfolders "更改子文件夹">
+<!ENTITY use-additional-subfolders "使用额外的由下面定义的子文件夹">
+<!ENTITY additional-subfolders "额外的子文件夹基于Zotero条目的元数据。使用&#37;a代表作者姓名，&#37;y代表年份，&#37;w代表杂志/出版商，或&#37;T代表项目类型（参阅Zotfile网站以获取完整列表）。请确保插入了合适的分隔符（（对于Mac OS和其他Unix系统是 / ，对于Windows是 \ ）。">
+<!ENTITY additional-options "附加选项">
+<!ENTITY rename-when-sent-to-tablet "在文件被发送到平板时重命名">
+<!ENTITY save-annotated-file "保存带注释的文件时加后缀">
+<!ENTITY tablet-copy-information "默认情况下，从平板取回附件将替换Zotero中已保存的附件。当这一选项启用时，作为替代，zotfile会创建一个带特殊后缀的文件副本并将次文件作为额外附件添加到Zotero。">
+<!ENTITY automatically-extract-annotations "从平板取回附件时自动提取注释">
+<!ENTITY preview-renaming-rules "预览当前的重命名规则">
+<!ENTITY update "更新">
+<!ENTITY renaming-format "重命名格式">
+<!ENTITY zotero-to-rename "使用Zotero来重命名">
+<!ENTITY format-for-all-types "除专利外的所有条目类型的格式">
+<!ENTITY format-for-patents "专利格式">
+<!ENTITY list-of-wildcards "&#37;a = 作者的姓；&#37;y = 年份；&#37;t = 标题；&#37;j = 期刊；使用{...} 代表一个可选组，|代表排除项">
+<!ENTITY for-a-full-list "要查看占位符的完整列表，请查看">
+<!ENTITY additional-settings "附加设置">
+<!ENTITY delimiter-multiple-authors "多个作者间的分隔符">
+<!ENTITY add-user-input-to-filename "添加用户输入到文件名。默认为">
+<!ENTITY lower-case "更改为小写">
+<!ENTITY replace-blanks "替换空格">
+<!ENTITY truncate-title "在. 或:或?后截断标题">
+<!ENTITY zotfile-truncate_title_max "最大标题长度">
+<!ENTITY zotfile-truncate_authors "最大作者数目">
+<!ENTITY zotfile-number_truncate_authors "作者被省略时显示的最大作者数目">
+<!ENTITY zotfile-add_etal "在作者被省略时添加后缀">
+<!ENTITY extract-annotations "从PDF文件中提取注释和高亮文本">
+<!ENTITY extract-annotations-and-highlighted-text "ZotFile可以从您的PDF附件中提取注释和高亮文本。">
+<!ENTITY extraction-method "提取模式">
+<!ENTITY use-pdf-js "使用pdf.js来提取注释">
+<!ENTITY methods-to-extract-annotations "ZotFile支持两种从PDF文件中提取注释的方式。基于pdf.js的工具可跨平台并直接从zotero调用。基于poppler的提取工具仅在Mac OS上生效并需要独立下载。当前，pdf.js更加可靠并应在大多情况设为默认。然而，基于poppler的工具速度更快并可能能处理pdf.js不支持的特定PDF标准。">
+<!ENTITY use-poppler "使用poppler来提取注释">
+<!ENTITY add-full-citation "在笔记中添加完整的到高亮文本片段的文内引用">
+<!ENTITY use-article-book-chapter-page "对高亮文本片段使用真实的文章/书的章节页">
+<!ENTITY page-number-determination "文章的页数由pdf文档的页数和Zotero元数据的‘页码’项中首页的数字相加而来。如果PDF文档的首页不是文章/书的章节的首页，这一方法会失败">
+<!ENTITY other-advanced-settings "其他高级设置">
+
+<!ENTITY watch_folder "监视源文件夹的新文件">
+
+<!ENTITY automatic_renaming_label "自动重命名新附件">
+<!ENTITY automatic_renaming_no "从不">
+<!ENTITY automatic_renaming_ask "总是询问（非破坏性）">
+<!ENTITY automatic_renaming_ask_mult "仅在条目有其他附件时询问">
+<!ENTITY automatic_renaming_always "总是重命名">
+
+<!ENTITY ask-when-attaching-new-files "在附加新文件时询问用户">
+<!ENTITY ask-to-batch-rename "（批量）重命名或移动时询问用户">
+<!ENTITY or-more-attachments " 或更多附件。">
+<!ENTITY remove-special-characters "从文件名中移除特殊字符（变音符号）">
+<!ENTITY work-with-following-filetypes "仅对下列文件类型生效：">
+<!ENTITY add-saved-searches "添加保存的搜索">
+<!ENTITY attachments-on-tablet "平板上的附件">
+<!ENTITY modified-attachments-on-tablet "平板上修改过的附件">
