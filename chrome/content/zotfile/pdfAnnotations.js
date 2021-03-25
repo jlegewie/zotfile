@@ -249,8 +249,10 @@ Zotero.ZotFile.pdfAnnotations = new function() {
 
         var title = this.Utils.str_format(format_title, {'title': str_title, 'date': date_str}),
             note = title;
-        if (this.getPref("pdfExtraction.UsePDFJSandPoppler"))
+        if (this.getPref("pdfExtraction.UsePDFJSandPoppler")) {
             note += ' ' + method;
+        }
+        note += '\n';
         if(setting_color_notes) note = {};
         // iterature through annotations
         for (var i=0; i < annotations.length; i++) {
@@ -293,8 +295,9 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                 var format_markup = anno.subtype == "Highlight" ? format_highlight : format_underline;
                 for (var k = 0; k < repl.length; k++)
                     anno.markup = anno.markup.replace(reg[k], repl[k].replacement);
-	    	if (!setting_color_notes && setting_aggregate_color_highlights)
-		    anno.markup = "<span style='background-color:rgba(" + anno.color.join(',') + ",.25)'><strong>(" + color_category + ")</strong> - " + anno.markup + "</span>";
+                if (!setting_color_notes && setting_aggregate_color_highlights) {
+                    anno.markup = "<span style='background-color:rgba(" + anno.color.join(',') + ",.25)'><strong>(" + color_category + ")</strong> - " + anno.markup + "</span>";
+                }
                 var markup_formated = this.Utils.str_format(format_markup, 
 							    {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title, 
 							     'color': color, 'color_category': color_category_hex, 'color_hex': color_hex, 'color_category_name': color_category,
@@ -302,8 +305,10 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                 if(!setting_color_notes)
                     note += markup_formated;
                 else {
-                    if(!(color_category in note))
+                    if(!(color_category in note)) {
                         note[color_category] = this.Utils.str_format(format_title_color, {'title': str_title, 'date': date_str, 'color': color_category});
+                        note[color_category] += '\n';
+                    }
                     note[color_category] += markup_formated;
                 }
             }
@@ -319,8 +324,10 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                 if(!setting_color_notes)
                     note += content_formated;
                 else {
-                    if(!(color_category in note))
+                    if(!(color_category in note)) {
                         note[color_category] = this.Utils.str_format(format_title_color, {'title': str_title, 'date': date_str, 'label': anno.title, 'color': color_category});
+                        note[color_category] += '\n';
+                    }
                     note[color_category] += content_formated;
                 }
             }
