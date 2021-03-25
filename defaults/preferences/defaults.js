@@ -44,6 +44,7 @@ pref("extensions.zotfile.wildcards.user",'{}');
 pref("extensions.zotfile.tablet", false);
 pref("extensions.zotfile.tablet.dest_dir", "");
 pref("extensions.zotfile.tablet.rename", true);
+pref("extensions.zotfile.tablet.keepOneAnnotated", false);
 pref("extensions.zotfile.tablet.updateAlwaysShow", false);
 pref("extensions.zotfile.tablet.updateExtractAnnotations", false);
 pref("extensions.zotfile.tablet.dest_dir_relativePath", true);

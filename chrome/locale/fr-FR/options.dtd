@@ -34,6 +34,8 @@
 <!ENTITY additional-subfolders "Les sous-dossiers supplémentaires sont basés sur les métadonnées des documents Zotero. Utilisez &#37;a pour le nom de l'auteur, &#37;y pour l'année, &#37;w pour la revue/l'éditeur, ou &#37;T pour le type de document (consultez le site web de zotfile pour une liste complète). Assurez-vous d'insérer le séparateur approprié (/ pour Mac OS et autres systèmes Unix et \ pour Windows). Assurez-vous d'insérer les séparateurs appropriés (/ pour Mac OS et autres systèmes Unix et \ pour Windows).">
 <!ENTITY additional-options "Options supplémentaires">
 <!ENTITY rename-when-sent-to-tablet "Renommer les fichiers quand ils sont envoyés vers la tablette">
+<!ENTITY keep-one-annotated "
+Ne conserver qu'un seul fichier annoté (détecté par suffixe)">
 <!ENTITY save-annotated-file "Enregistrer une copie du fichier annoté avec le suffixe suivant: ">
 <!ENTITY tablet-copy-information "Par défaut, récupérer une pièce jointe de la tablette remplace le fichier sauvegardé dans Zotero. Quand cette option est activée, zotfile crée plutôt une copie du fichier avec un suffixe personnalisé et ajoute ce fichier comme une pièce jointe supplémentaire dans Zotero.">
 <!ENTITY automatically-extract-annotations "Extraire automatiquement les annotations quand les PDF sont récupérés de la tablette">

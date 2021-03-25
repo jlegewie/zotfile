@@ -465,10 +465,11 @@ Zotero.ZotFile.Tablet = new function() {
 
     /**
      * Send selected Zotero attachments to tablet
+     * @param {bool} annotation_only whether only select the annotation file.
      * @param {int} idx_subfolder  Index of subfolder
      * @yield {void}
      */
-    this.sendSelectedAttachmentsToTablet = Zotero.Promise.coroutine(function* (idx_subfolder) {
+    this.sendSelectedAttachmentsToTablet = Zotero.Promise.coroutine(function* (annotation_only, idx_subfolder) {
         // get selected attachments
         var atts = Zotero.Items.get(this.getSelectedAttachments())
             .filter(this.checkFileType);
@@ -480,6 +481,40 @@ Zotero.ZotFile.Tablet = new function() {
             if(this.getPref('tablet.projectFolders') == 2) {
                 var subfolders = JSON.parse(this.getPref('tablet.subfolders'));
                 project_folder = subfolders[idx_subfolder].path;
+            }
+        }
+        var annotation_only = typeof annotation_only !== 'undefined' ? annotation_only : false;
+        // only choose the longest `suffix` (A_suffix_suffix > A_suffix > A)
+        if (annotation_only) {
+            var set = new Set();
+            for (let i = 0; i < atts.length; i++) {
+                var att = atts[i];
+                // parentid.filename
+                var filename = att.attachmentFilename;
+                var filetype = this.Utils.getFiletype(filename);
+                var re = new RegExp("\." + filetype + "$", 'i');
+                if(filetype != '') filename = filename.replace(re, "");
+                var suffix_re = new RegExp(this.getPref('tablet.storeCopyOfFile_suffix'), 'i');
+                var rmsuffix = filename.replace(suffix_re, "");
+                while(rmsuffix != filename) {
+                    set.add(att.parentItemID + "." + rmsuffix);
+                    filename = rmsuffix;
+                    rmsuffix = filename.replace(suffix_re, "");
+                }
+            }
+            var i = 0;
+            while(i < atts.length) {
+                var att = atts[i];
+                var filename = att.attachmentFilename;
+                var filetype = this.Utils.getFiletype(filename);
+                var re = new RegExp("\." + filetype + "$", 'i');
+                if(filetype != '') filename = filename.replace(re, "");
+                var key = att.parentItemID + "." + filename;
+                if (set.has(key)) {
+                    atts.splice(i, 1);
+                } else {
+                    i++;
+                }
             }
         }
         // confirm
@@ -606,6 +641,7 @@ Zotero.ZotFile.Tablet = new function() {
         var item = Zotero.Items.get(att.parentItemID),
             tablet_status = 1, 
             item_pulled = false,
+            annotated_pulled = false,
             att_deleted = false,
             att_mode = this.Tablet.getInfo(att, 'mode'),
             attSubfolder = this.Tablet.getInfo(att, 'projectFolder').trim();
@@ -651,36 +687,61 @@ Zotero.ZotFile.Tablet = new function() {
                     item_pulled = true;
                 }
             }
-            // if saving a copy of the file as a new attachment with suffix and reader file was modified
-            if (this.getPref('tablet.storeCopyOfFile') && tablet_status != 2)  {
-                var filename = this.Utils.addSuffix(OS.Path.basename(path_zotero), this.getPref('tablet.storeCopyOfFile_suffix'));
-                //add linked attachment
-                if (item.library.libraryType == 'user' && !this.getPref('import')) {
-                    let path_copied = OS.Path.join(OS.Path.dirname(path_zotero), filename);
-                    yield OS.File.move(path_tablet, path_copied);
-                    var options = {file: path_copied, libraryID: item.libraryID, parentItemID: item.id, collections: undefined};
-                    att_new = yield Zotero.Attachments.linkFromFile(options);
-                    item_pulled = true;
-                    // extract annotations from attachment and add note
-                    if (this.getPref('pdfExtraction.Pull'))
-                        this.Tablet.extractPdfs.push(att_new.id);
-                }
-                //imports attachment
-                if (item.library.libraryType != 'user' || this.getPref('import')) {
-                    // import file on reader
-                    var options = {file: path_tablet, libraryID: item.libraryID, parentItemID: item.id, collections: undefined};
-                    att_new = yield Zotero.Attachments.importFromFile(options);
-                    // rename file associated with attachment
-                    yield att_new.renameAttachmentFile(filename);
-                    // change title of attachment item
-                    att_new.setField('title', filename);
-                    yield att_new.saveTx();
-                    // remove file on reader
-                    yield OS.File.remove(path_tablet);
-                    item_pulled = true;
-                    // extract annotations from attachment and add note
-                    if (this.getPref('pdfExtraction.Pull'))
-                        this.Tablet.extractPdfs.push(att_new.id);
+            
+            // add filetype to suffix
+            var suffix = this.getPref('tablet.storeCopyOfFile_suffix');
+            var filetype = this.Utils.getFiletype(path_zotero);
+            if(filetype != '') suffix = suffix + '.' + filetype;
+            if (this.getPref('tablet.storeCopyOfFile') && tablet_status != 2) {
+                // move the file when keepOneAnnotated and storeCopyOfFile are true and the filename is end with storeCopyOfFile_suffix.
+                // otherwise, import the file as new attachment with given suffix.
+                // except for setting annotated_pulled, the behavior is same as previous replacement.
+                if (this.getPref('tablet.keepOneAnnotated') && path_zotero.endsWith(suffix)) {
+                    // prompt if both file have been modified
+                    if (tablet_status == 1) {
+                        tablet_status = this.promptUser(this.ZFgetString('tablet.fileConflict', [att.attachmentFilename]),
+                            this.ZFgetString('tablet.fileConflict.replaceZ'),
+                            this.ZFgetString('general.cancel'),
+                            this.ZFgetString('tablet.fileConflict.removeT'));
+                        //att_deleted is true to display a special message when the attachments have been deleted from tablet without being sent back to Zotero
+                        if (tablet_status == 2) att_deleted = true;
+                    }
+                    // replace zotero file
+                    if(tablet_status == 0) {
+                        yield OS.File.move(path_tablet, path_zotero);
+                        item_pulled = true;
+                        annotated_pulled = true;
+                    }
+                } else {
+                    var filename = this.Utils.addSuffix(OS.Path.basename(path_zotero), this.getPref('tablet.storeCopyOfFile_suffix'));
+                    //add linked attachment
+                    if (item.library.libraryType == 'user' && !this.getPref('import')) {
+                        let path_copied = OS.Path.join(OS.Path.dirname(path_zotero), filename);
+                        yield OS.File.move(path_tablet, path_copied);
+                        var options = {file: path_copied, libraryID: item.libraryID, parentItemID: item.id, collections: undefined};
+                        att_new = yield Zotero.Attachments.linkFromFile(options);
+                        item_pulled = true;
+                        // extract annotations from attachment and add note
+                        if (this.getPref('pdfExtraction.Pull'))
+                            this.Tablet.extractPdfs.push(att_new.id);
+                    }
+                    //imports attachment
+                    if (item.library.libraryType != 'user' || this.getPref('import')) {
+                        // import file on reader
+                        var options = {file: path_tablet, libraryID: item.libraryID, parentItemID: item.id, collections: undefined};
+                        att_new = yield Zotero.Attachments.importFromFile(options);
+                        // rename file associated with attachment
+                        yield att_new.renameAttachmentFile(filename);
+                        // change title of attachment item
+                        att_new.setField('title', filename);
+                        yield att_new.saveTx();
+                        // remove file on reader
+                        yield OS.File.remove(path_tablet);
+                        item_pulled = true;
+                        // extract annotations from attachment and add note
+                        if (this.getPref('pdfExtraction.Pull'))
+                            this.Tablet.extractPdfs.push(att_new.id);
+                    }
                 }
             }
             // Pull without replacement (i.e. remove file on tablet)
@@ -716,7 +777,7 @@ Zotero.ZotFile.Tablet = new function() {
             // clear attachment note
             this.Tablet.clearInfo(att);
             // extract annotations from attachment and add note
-            if (this.getPref('pdfExtraction.Pull') && tablet_status != 2 && !this.getPref('tablet.storeCopyOfFile'))
+            if (this.getPref('pdfExtraction.Pull') && tablet_status != 2 && (!this.getPref('tablet.storeCopyOfFile') || annotated_pulled))
                 this.Tablet.extractPdfs.push(att.id);
             // remove tag from parent item
             var tag_parent = this.getPref('tablet.tagParentPush_tag');
