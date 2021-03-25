@@ -1,5 +1,0 @@
-language: node_js
-script: make
-after_success:
-  - mv *.xpi zotfile-build-$TRAVIS_BUILD_NUMBER.xpi
-  - curl -F "file=@zotfile-build-$TRAVIS_BUILD_NUMBER.xpi" https://api.anonfile.com/upload

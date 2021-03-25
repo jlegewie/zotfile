@@ -6,13 +6,13 @@
             <rdf:Seq>
                 <rdf:li>
                     <rdf:Description>
-                        <em:version>5.0.16.1</em:version>
+                        <em:version>5.0.16.2</em:version>
                         <em:targetApplication>
                             <rdf:Description>
                                 <em:id>zotero@chnm.gmu.edu</em:id>
                                 <em:minVersion>5.0.0</em:minVersion>
                                 <em:maxVersion>5.*</em:maxVersion>
-                                <em:updateLink>https://github.com/lychichem/zotfile/releases/download/v5.0.16.1/zotfile-v5.0.16.1-fx.xpi</em:updateLink>
+                                <em:updateLink>https://github.com/lychichem/zotfile/releases/download/v5.0.16.2/zotfile-v5.0.16.2-fx.xpi</em:updateLink>
                             </rdf:Description>
                         </em:targetApplication> 
 
@@ -21,7 +21,7 @@
                                 <em:id>juris-m@juris-m.github.io</em:id>
                                 <em:minVersion>4.999</em:minVersion>
                                 <em:maxVersion>5.*</em:maxVersion>
-                                <em:updateLink>https://github.com/lychichem/zotfile/releases/download/v5.0.16.1/zotfile-v5.0.16.1-fx.xpi</em:updateLink>
+                                <em:updateLink>https://github.com/lychichem/zotfile/releases/download/v5.0.16.2/zotfile-v5.0.16.2-fx.xpi</em:updateLink>
                             </rdf:Description>
                         </em:targetApplication>
 

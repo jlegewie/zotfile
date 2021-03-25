@@ -2,7 +2,7 @@
 <!ENTITY zotfile-attach-file.tooltiptext "移动并附加用户定义文件夹中最新的文件到选定的Zotero条目">
 <!ENTITY zotfile-manage-attachments.label "管理附件">
 <!ENTITY warning.label "警告">
-<!ENTITY renameSelectedAttachments.label "重命名附件">
+<!ENTITY renameSelectedAttachments.label "重命名并移动附件">
 <!ENTITY renameSelectedAttachments.tooltiptext "移动并重命名来自选中的Zotero条目的已有附件">
 <!ENTITY extract-annotations.label "提取注释">
 <!ENTITY extract-annotations.tooltiptext "从PDF文件中提取注释和高亮文字。">
