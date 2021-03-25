@@ -2,7 +2,7 @@
 <!ENTITY zotfile-attach-file.tooltiptext "Move and attach last file in user defined folder to selected Zotero item">
 <!ENTITY zotfile-manage-attachments.label "Manage Attachments">
 <!ENTITY warning.label "Warning">
-<!ENTITY renameSelectedAttachments.label "Rename Attachments">
+<!ENTITY renameSelectedAttachments.label "Rename and Move">
 <!ENTITY renameSelectedAttachments.tooltiptext "Move and rename existing Attachments from selected Zotero item">
 <!ENTITY extract-annotations.label "Extract Annotations">
 <!ENTITY extract-annotations.tooltiptext "Extract Annotations and Highlighted Text from pdf file.">
