@@ -95,7 +95,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                 att = this.pdfAttachmentsForExtraction[i].attachment,
                 path = this.pdfAttachmentsForExtraction[i].path,
                 progress = this.pdfAttachmentsForExtraction[i].itemProgress,
-                outputFile = path.replace('.pdf', '.txt');            
+                outputFile = path.replace('.pdf', '.txt');
             // extract annotations with poppler
             yield Zotero.Utilities.Internal.exec(this.popplerExtractorPath, [path, outputFile]);
             // get annotations from file and create note
@@ -114,7 +114,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
             }
         }
         if (setProgress)
-            this.progressWin.startCloseTimer(Zotero.ZotFile.getPref('info_window_duration'));        
+            this.progressWin.startCloseTimer(Zotero.ZotFile.getPref('info_window_duration'));
     });
 
     this.popplerExtractorGetAnnotationsFromFile = Zotero.Promise.coroutine(function* (path) {
@@ -175,7 +175,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
     });
 
     this.getColorCategory = function (r,g,b) {
-        // convert RGB to HSL   
+        // convert RGB to HSL
         r /= 255; g /= 255; b /= 255;
         var max = Math.max(r, g, b), min = Math.min(r, g, b);
         var h, s, l = (max + min) / 2;
@@ -195,7 +195,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                 h +=360;
             }
         }
-        // define color category based on HSL    
+        // define color category based on HSL
         if (l < 0.12) return "Black";
         if (l > 0.98) return "White";
         if (s < 0.2) return "Gray";
@@ -208,8 +208,9 @@ Zotero.ZotFile.pdfAnnotations = new function() {
         if (h < 335) return "Magenta";
         return "Red";
     };
-
     this.getNoteContent = function(annotations, item, att, method) {
+        //array for getting footnotes every unique page
+        var footnote = [];
         var lib = att.library.libraryType == 'user' ? 0 : att.libraryID,
             groupID = lib != 0 ? Zotero.Groups.getGroupIDFromLibraryID(att.libraryID) : undefined,
             format_uri = 'zotero://open-pdf/library/items/%(key)?page=%(page)',
@@ -222,7 +223,12 @@ Zotero.ZotFile.pdfAnnotations = new function() {
             format_underline = this.getPref("pdfExtraction.formatAnnotationUnderline"),
             settings_colors = JSON.parse(this.getPref("pdfExtraction.colorCategories")),
             setting_color_notes = this.getPref("pdfExtraction.colorNotes"),
-	    setting_aggregate_color_highlights = this.getPref("pdfExtraction.colorAnnotations"),
+            //some new settings added manually
+            format_endofpage = this.getPref("pdfExtraction.formatEndOfPage"),
+            format_footnote_link = this.getPref("pdfExtraction.formatFootNoteAddIfChanged"),
+            setting_footnote = this.getPref("pdfExtraction.createFootnote"),
+            // end of manually added settings
+        setting_aggregate_color_highlights = this.getPref("pdfExtraction.colorAnnotations"),
             cite = this.getPref("pdfExtraction.NoteFullCite") ? this.Wildcards.replaceWildcard(item, "%a %y:").replace(/_(?!.*_)/," and ").replace(/_/g,", ") : "p. ",
             repl = JSON.parse(this.getPref("pdfExtraction.replacements")),
             reg = repl.map(function(obj) {
@@ -261,12 +267,17 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                 page = anno.page,
                 uri = lib == 0 ? format_uri : format_uri_group;
             uri = this.Utils.str_format(uri, {'groupID': groupID, 'key': att.key, 'page': anno.page});
+            //Check if this is last annotation of page or last annotation
+            var lastofpage = false;
+            try{
+                if (page!== annotations[i+1].page) {lastofpage = true;}
+            } catch(err)  {lastofpage = true;}
             // get page
             if(this.getPref("pdfExtraction.NoteTruePage")) {
                 try {
                     var itemPages = item.getField('pages');
                     if(itemPages) {
-                        var page_parsed = typeof itemPages == "string" ? parseInt(itemPages.split('-')[0], 10) : itemPages;                            
+                        var page_parsed = typeof itemPages == "string" ? parseInt(itemPages.split('-')[0], 10) : itemPages;
                         page = isNaN(page_parsed) ? page : page_parsed + page - 1;
                     }
                 }
@@ -291,15 +302,15 @@ Zotero.ZotFile.pdfAnnotations = new function() {
 		color_hex += "FFFFFF";
 	    };
             // add markup to note (process colour/underline markups in PDF)
-            if(anno.markup && anno.markup != "") {       
+            if(anno.markup && anno.markup != "") {
                 var format_markup = anno.subtype == "Highlight" ? format_highlight : format_underline;
                 for (var k = 0; k < repl.length; k++)
                     anno.markup = anno.markup.replace(reg[k], repl[k].replacement);
                 if (!setting_color_notes && setting_aggregate_color_highlights) {
                     anno.markup = "<span style='background-color:rgba(" + anno.color.join(',') + ",.25)'><strong>(" + color_category + ")</strong> - " + anno.markup + "</span>";
                 }
-                var markup_formated = this.Utils.str_format(format_markup, 
-							    {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title, 
+                var markup_formated = this.Utils.str_format(format_markup,
+							    {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title,
 							     'color': color, 'color_category': color_category_hex, 'color_hex': color_hex, 'color_category_name': color_category,
 							     'group': groupID, 'key': att.key});
                 if(!setting_color_notes)
@@ -314,10 +325,10 @@ Zotero.ZotFile.pdfAnnotations = new function() {
             }
             // add to note text (process notes added to PDF)
             if(anno.content && anno.content != "" &&
-              (!anno.markup || this.Utils.strDistance(anno.content,anno.markup)>0.15 )) {                    
+              (!anno.markup || this.Utils.strDistance(anno.content,anno.markup)>0.15 )) {
                 var content = anno.content.replace(/(\r\n|\n|\r)/gm,"<br>");
                 // '<p><i>%(content) (<a href="%(uri)">note on p.%(page)</a>)</i></p><br>'
-                var content_formated = this.Utils.str_format(format_note, 
+                var content_formated = this.Utils.str_format(format_note,
 							     {'content': content, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title,
 							      'color': color, 'color_category': color_category_hex, 'color_hex': color_hex, 'color_category_name': color_category,
 							      'group': groupID, 'key': att.key});
@@ -331,7 +342,24 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                     note[color_category] += content_formated;
                 }
             }
-        }
+            //add End of page note
+            if (lastofpage){
+            var endofpage_formatted = this.Utils.str_format(format_endofpage,
+                            {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title,
+                             'color': color, 'color_category': color_category_hex, 'color_hex': color_hex, 'color_category_name': color_category,
+                             'group': groupID, 'key': att.key});
+                             note += endofpage_formatted
+                         }
+            // populate footnote
+            if (setting_footnote){
+                var footnote_link_formated = this.Utils.str_format(format_footnote_link,
+							    {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title,
+							     'color': color, 'color_category': color_category_hex, 'color_hex': color_hex, 'color_category_name': color_category,
+							     'group': groupID, 'key': att.key});
+                                 if (footnote.indexOf(footnote_link_formated)=== -1){footnote.push(footnote_link_formated);}
+            }
+        }// add footnote ad last
+        if (setting_footnote){note += "<hr><p>"+ footnote.join("<br>")+"/<p>";}
         return note;
     }.bind(Zotero.ZotFile);
 
@@ -352,7 +380,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
         args.callbackObj = this;
         args.callback = this.extractionComplete;
         Zotero.ZotFile.PdfExtractor.extractAnnotations(args);
-    };            
+    };
 
     /** Keypress listener that cancels the extraction if the user presses escape. */
     this.cancellationListener = function(keyEvent) {
