@@ -149,19 +149,45 @@ Zotero.ZotFile.pdfAnnotations = new function() {
         return annotations;
     });
 
+    this.unifyNote = function (note) {
+        note = note.replace(/(\u00A0)/gm, " ")
+        note = note.replace(/([\x00-\x1F])/gm, "")
+
+        note = note.replace(/(\r\n|\n|\r)/gm, "")
+        note = note.replace(/(<b>)/gm, "<strong>").replace(/(<\/b>)/gm, "</strong>")
+        note = note.replace(/(<i>)/gm, "<em>").replace(/(<\/i>)/gm, "</em>")
+        note = note.replace(/(<br>)/gm, "<br />")
+        if(note.endsWith("<br />")) {
+            note = note.replace(/(<br \/>)$/gm, "<p> </p>")
+        }
+        return note
+    };
+
     this.createNote = Zotero.Promise.coroutine(function* (annotations, item, att, method) {
         // get note content
         var note_content = this.getNoteContent(annotations, item, att, method);
+
+        // get all other notes from the parent
+        parent_notes = item.getNotes().map(id => this.unifyNote(Zotero.Items.get(id).getNote()))
+
         // save single note
         if(typeof note_content == 'string') {
-            let note = new Zotero.Item('note');
-            note.libraryID = item.libraryID;
-            note.setNote(note_content);
-            note.parentKey = item.key;
-            yield note.saveTx();
+            if (!parent_notes.includes(this.unifyNote(note_content))) {
+                let note = new Zotero.Item('note');
+                note.libraryID = item.libraryID;
+                note.setNote(note_content);
+                note.parentKey = item.key;
+                yield note.saveTx();
+            }
         }
         // save multiple notes
         else {
+            // remove duplicates
+            for(let type in note_content) {
+                if(parent_notes.includes(this.unifyNote(note_content[type])))
+                    delete note_content[type];
+            }
+
             yield Zotero.DB.executeTransaction(function* () {
                 for(let type in note_content) {
                     let note = new Zotero.Item('note');
@@ -277,19 +303,19 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                 color = ('color' in anno) ? ('rgb(' + anno.color.join(',') + ')') : 'rgb(255,255,255)',
                 color_category = this.pdfAnnotations.getColorCategory(anno.color[0], anno.color[1], anno.color[2]),
                 color_category_hex = settings_colors[color_category];
-	    // produce hex version of the colour
-	    var color_hex = "#";
-	    if ('color' in anno) {
-		anno.color.forEach(function(number) {
-		    var hex = number.toString(16);
-		    if (hex.length % 2) {
-			hex = '0' + hex;
-		    }
-		    color_hex += hex.toUpperCase();
-		});
-	    } else {
-		color_hex += "FFFFFF";
-	    };
+            // produce hex version of the colour
+            var color_hex = "#";
+            if ('color' in anno) {
+            anno.color.forEach(function(number) {
+                var hex = number.toString(16);
+                if (hex.length % 2) {
+                hex = '0' + hex;
+                }
+                color_hex += hex.toUpperCase();
+            });
+            } else {
+            color_hex += "FFFFFF";
+            };
             // add markup to note (process colour/underline markups in PDF)
             if(anno.markup && anno.markup != "") {       
                 var format_markup = anno.subtype == "Highlight" ? format_highlight : format_underline;
