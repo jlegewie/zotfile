@@ -1,0 +1,24 @@
+<!ENTITY zotfile-attach-file.label "附加新文件">
+<!ENTITY zotfile-attach-file.tooltiptext "移动并附加用户定义文件夹中最新文件到选定的 Zotero 条目">
+<!ENTITY zotfile-manage-attachments.label "管理附件">
+<!ENTITY warning.label "警告">
+<!ENTITY renameSelectedAttachments.label "移动并重命名">
+<!ENTITY renameSelectedAttachments.tooltiptext "从选定的 Zotero 条目移动并重命名已有的附件">
+<!ENTITY extract-annotations.label "提取标注">
+<!ENTITY extract-annotations.tooltiptext "从 pdf 文件提取标注和高亮文本">
+<!ENTITY pdf-outline.label "获取目录">
+<!ENTITY pdf-outline.tooltiptext "从 pdf 文件获取目录">
+<!ENTITY send-to-tablet "发送到平板电脑">
+<!ENTITY send-attachment-file-to-tablet "发送附件到平板电脑">
+<!ENTITY update-file-modification-time "更新文件修改时间">
+<!ENTITY sync-attachment-file "将平板电脑上的附件文件与 Zotero 中的文件同步">
+<!ENTITY get-from-tablet "从平板电脑获取">
+<!ENTITY get-attachment-file-from-tablet "从平板电脑获取附件文件">
+<!ENTITY send-to-subfolder-on-tablet "发送到平板电脑子文件夹">
+<!ENTITY change-subfolders "更改子文件夹...">
+<!ENTITY add-and-delete-subfolders "Add and delete subfolders to Menu.">
+<!ENTITY zotfile-options.label "ZotFile 首选项...">
+<!ENTITY saved-search-all "显示所有子文件夹下的附件">
+<!ENTITY saved-search-restrict "将保存的搜索限于子文件夹">
+<!ENTITY restrict-subfolder "限于子文件夹...">
+<!ENTITY restrict-basefolder "未归类附件">
