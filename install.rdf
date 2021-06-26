@@ -58,7 +58,7 @@
     <em:localized>
       <Description>
         <em:locale>zh-CN</em:locale>
-        <em:name>ZotFile CN</em:name>
+        <em:name>ZotFile</em:name>
         <em:description>Zotero 附件管理增强</em:description>
       </Description>
     </em:localized>
