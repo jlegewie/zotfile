@@ -270,12 +270,16 @@ Zotero.ZotFile.Wildcards = new function() {
                 var obj = operations[i],
                     regex = obj.regex,
                     replacement = ('replacement' in obj) ? obj.replacement : "",
+                    replacementFunction = ('replacementFunction' in obj) ? obj.replacementFunction : "",
                     flags = ('flags' in obj) ? obj.flags : "g",
                     group = ('group' in obj) ? obj.group : 0,
                     re = new RegExp(regex, flags);
                 // replace string
                 /*https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace*/
                 if (obj.function == "replace") {
+                    if ('replacementFunction' in obj) {
+                        replacement = new Function(...replacementFunction.arguments, replacementFunction.body);
+                    }
                     transformed_value = transformed_value.replace(re, replacement);
                 }
                 // search for matches
