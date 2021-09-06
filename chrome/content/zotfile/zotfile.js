@@ -875,7 +875,7 @@ Zotero.ZotFile = new function() {
         if (att.isTopLevelItem()) throw('Zotero.ZotFile.renameAttachment(): Attachment is top-level item.');
         // set variables
         var win = Services.wm.getMostRecentWindow("navigator:browser"),
-            selection = win.ZoteroPane.itemsView.saveSelection(),
+            selection = win.ZoteroPane.itemsView.getSelectedItems(true),
             att_id = att.id,
             linkmode = att.attachmentLinkMode,
             item = Zotero.Items.get(att.parentItemID),
