@@ -213,6 +213,7 @@ Zotero.ZotFile.Wildcards = new function() {
         var authors = formatAuthors(item);
         // define additional fields
         var addFields = {
+            'itemTypeEN': Zotero.ItemTypes.getName(item_type),
             'itemType': Zotero.ItemTypes.getLocalizedString(item_type),
             'titleFormated': truncateTitle(item.getField("title", false, true)),
             'author': authors[0],
