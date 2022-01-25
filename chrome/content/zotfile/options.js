@@ -27,6 +27,9 @@ var updatePreferenceWindow = function (which) {
         updatePDFToolsStatus();
         updateFolderIcon("all", false);
         this.temp = this.getPref('tablet.dest_dir');
+        if (Zotero.ZotFile.isZotero6OrLater) {
+            document.getElementById('extract-annotations-box').hidden = true;
+        }
         /*if(document.getElementById('pref-zotfile-tablet-mode').value==2) {
             document.getElementById('id-zotfile-tablet-storeCopyOfFile').disabled = true;
             document.getElementById('id-zotfile-tablet-storeCopyOfFile_suffix').disabled = true;
