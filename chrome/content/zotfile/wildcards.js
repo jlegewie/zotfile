@@ -85,7 +85,8 @@ Zotero.ZotFile.Wildcards = new function() {
 
         // replace forbidden characters with meaningful alternatives (they can only apear in the middle of the text at this point)
         title = title.replace(/[\/\\]/g, '-');
-        title = title.replace(/[\*|"<>]/g, '');
+        title = title.replace(/<[\w\s"<=\/]+>|[\*|"<>]/g, '');
+        //title = title.replace(/[\*|"<>]/g, '');
         title = title.replace(/[\?:]/g, ' -');
         return(title);
     }
