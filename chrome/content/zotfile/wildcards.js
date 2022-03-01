@@ -87,7 +87,7 @@ Zotero.ZotFile.Wildcards = new function() {
         title = title.replace(/<[\w\s"<=\/]+>/g, ''); // Removing rich text formatting
         title = title.replace(/[\/\\]/g, '-');
         title = title.replace(/[\*|"<>,]/g, '');
-        title = title.replace(/[\?:]/g, ' -');
+        title = title.replace(/[\?:;]/g, ' -');
         return(title);
     }
 
