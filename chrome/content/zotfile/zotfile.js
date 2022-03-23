@@ -213,9 +213,11 @@ Zotero.ZotFile = new function() {
      */
     this.openPreferenceWindow = function(paneID, action) {
         var io = {pane: paneID, action: action};
-        window.openDialog('chrome://zotfile/content/options.xul',
+        // get the main window to adapt MacOS redraw the ZoteroPane
+        var existingWin = Services.wm.getMostRecentWindow("navigator:browser");
+        existingWin.openDialog('chrome://zotfile/content/options.xul',
             'zotfile-options',
-            'chrome,titlebar,toolbar,centerscreen' + Zotero.Prefs.get('browser.preferences.instantApply', true) ? 'dialog=no' : 'modal', io
+            'chrome,titlebar,toolbar,centerscreen,' + Zotero.Prefs.get('browser.preferences.instantApply', true) ? 'dialog=no' : 'modal', io
         );
     };
 
@@ -224,9 +226,11 @@ Zotero.ZotFile = new function() {
      */
     this.openSubfolderWindow = function(paneID, action) {
         var io = {pane: paneID, action: action};
-        var prefWindow = window.openDialog('chrome://zotfile/content/options-projects.xul',
+        // get the main window to adapt MacOS redraw the ZoteroPane
+        var existingWin = Services.wm.getMostRecentWindow("navigator:browser");
+        var prefWindow = existingWin.openDialog('chrome://zotfile/content/options-projects.xul',
             'zotfile-tablet-subfolders',
-            'chrome,titlebar,toolbar,centerscreen' + Zotero.Prefs.get('browser.preferences.instantApply', true) ? 'dialog=no' : 'modal', io
+            'chrome,titlebar,toolbar,centerscreen,' + Zotero.Prefs.get('browser.preferences.instantApply', true) ? 'dialog=no' : 'modal', io
         );
     };
 
@@ -684,7 +688,9 @@ Zotero.ZotFile = new function() {
             // file path, so the user can open it, Control-c, Control-w, Alt-Tab, and
             // Control-v the path into another app
             var io = {alertText: folderFile.path};
-            window.openDialog('chrome://zotero/content/selectableAlert.xul', "zotero-reveal-window", "chrome", io);
+            // get the main window to adapt MacOS redraw the ZoteroPane
+            var existingWin = Services.wm.getMostRecentWindow("navigator:browser");
+            existingWin.openDialog('chrome://zotero/content/selectableAlert.xul', "zotero-reveal-window", "chrome", io);
         }
     };
 
