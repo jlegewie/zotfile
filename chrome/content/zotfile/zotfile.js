@@ -79,6 +79,7 @@ Zotero.ZotFile = new function() {
                 var version = addon.version;
                 if(version != previous_version) Zotero.ZotFile.versionChanges(version);
             });
+            this.isZotero6OrLater = Services.vc.compare(Zotero.version, '5.0.96.999') >= 0;
             // run in future to not burden start-up
             this.futureRun(function() {
                 // determine folder seperator depending on OS
@@ -910,12 +911,33 @@ Zotero.ZotFile = new function() {
                 win.ZoteroPane.itemsView.selectItems(selection);
             }
             // update links to attachment file in notes
-            Zotero.Items.get(item.getNotes()).forEach(note => {
+            var notes = Zotero.Items.get(item.getNotes());
+            for (let note of notes) {
                 var content = note.getNote();
                 content = content.replace(new RegExp('open-pdf/([\\w\\W\\d]{1,10})_' + att.key, 'g'), 'open-pdf/$1_' + attNew.key);
                 note.setNote(content);
-                note.saveTx();
-            });
+                yield note.saveTx();
+            }
+            // transfer various attachment data
+            //
+            // should stay in sync with Zotero.Attachments.convertLinkedFileToStoredFile()
+            if (this.isZotero6OrLater) {
+                // move child annotations and embedded-image attachments
+                yield Zotero.DB.executeTransaction(async function () {
+                    await Zotero.Items.moveChildItems(att, attNew);
+                });
+                // copy relations pointing to the old item
+                yield Zotero.Relations.copyObjectSubjectRelations(att, attNew);
+                // transfer full-text item index
+                try {
+                    yield Zotero.DB.executeTransaction(async function () {
+                        await Zotero.Fulltext.transferItemIndex(att, attNew);
+                    });
+                }
+                catch (e) {
+                    Zotero.logError(e);
+                }
+            }
             // erase old attachment, remove file and folder
             yield att.eraseTx();
             yield OS.File.remove(path);
@@ -956,12 +978,33 @@ Zotero.ZotFile = new function() {
                 win.ZoteroPane.itemsView.selectItems(selection);
             }
             // update links to attachment file in notes
-            Zotero.Items.get(item.getNotes()).forEach(note => {
+            var notes = Zotero.Items.get(item.getNotes());
+            for (let note of notes) {
                 var content = note.getNote();
                 content = content.replace(new RegExp('open-pdf/([\\w\\W\\d]{1,10})_' + att.key, 'g'), 'open-pdf/$1_' + attNew.key);
                 note.setNote(content);
-                note.saveTx();
-            });
+                yield note.saveTx();
+            }
+            // transfer various attachment data
+            //
+            // should stay in sync with Zotero.Attachments.convertLinkedFileToStoredFile()
+            if (this.isZotero6OrLater) {
+                // move child annotations and embedded-image attachments
+                yield Zotero.DB.executeTransaction(async function () {
+                    await Zotero.Items.moveChildItems(att, attNew);
+                });
+                // copy relations pointing to the old item
+                yield Zotero.Relations.copyObjectSubjectRelations(att, attNew);
+                // transfer full-text item index
+                try {
+                    yield Zotero.DB.executeTransaction(async function () {
+                        await Zotero.Fulltext.transferItemIndex(att, attNew);
+                    });
+                }
+                catch (e) {
+                    Zotero.logError(e);
+                }
+            }
             // erase old attachment, remove file and folder
             yield att.eraseTx();
             // notification and return
