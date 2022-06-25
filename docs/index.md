@@ -58,17 +58,16 @@ ZotFile renames files based on bibliographic information from the currently sele
 
 
 ##### Wildcards
-- `%a` last names of authors (not editors etc) or inventors. The maximum number of authors are changed under 'Additional Settings'.
+- `%a` last names of authors (or editors etc) or inventors. The maximum number of authors are changed under 'Additional Settings'.
 - `%I` author initials.
 - `%F` author's last name with first letter of first name (e.g. EinsteinA).
 - `%A` first letter of author (useful for subfolders)
-- `%d`, `%D`, `%L`, `%l` wildcards for editors, same as for authors.
 - `%y` year (extracted from Date field)
 - `%t` title. Usually truncated after : . ? The maximal length of the remaining part of the title can be changed.
 - `%T` item type (localized)
 - `%j` name of the journal
 - `%p` name of the publisher
-- `%w` name of the journal or publisher (same as "%j|%p")
+- `%w` name of the journal or publisher (same as "%j\|%p")
 - `%s` journal abbreviation
 - `%v` journal volume
 - `%e` journal issue
@@ -76,6 +75,7 @@ ZotFile renames files based on bibliographic information from the currently sele
 - `%c` collection path (only for sub-folders, not file names). When item is in multiple collections, user can choose between the different collections.
 - `%n` patent number (patent items only)
 - `%i` assignee (patent items only)
+- `%b` BetterBibTeX citekey
 
 #### Examples
 
