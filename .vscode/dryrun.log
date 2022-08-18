@@ -1,0 +1,12 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory `/Users/work/Development/Plugins/zotfile'
+echo "all: zotfile-5.1.1.9000-fx.xpi" > Makefile.in
+ 
+make: Leaving directory `/Users/work/Development/Plugins/zotfile'
+ 
+make: Entering directory `/Users/work/Development/Plugins/zotfile'
+rm -rf zotfile.xpi
+zip -r zotfile.xpi chrome chrome.manifest defaults install.rdf -x \*.DS_Store
+mv zotfile.xpi zotfile-5.1.1.9000-fx.xpi
+make: Leaving directory `/Users/work/Development/Plugins/zotfile'
+ 
