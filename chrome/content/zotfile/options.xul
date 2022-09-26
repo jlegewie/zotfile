@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://zotero-platform/content/preferences.css"?>
+<?xml-stylesheet href="chrome://zotero-platform-version/content/style.css"?>
 
 <!DOCTYPE window SYSTEM "chrome://zotfile/locale/options.dtd">
 
@@ -243,7 +244,7 @@
 
 					<!-- ADVANCED SETTINGS -->
 					<tabpanel orient="vertical">
-						<groupbox>
+						<groupbox id="extract-annotations-box">
 							<caption label="&extract-annotations;"/>
 							<label value="&extract-annotations-and-highlighted-text;"/>
 							<separator/>
