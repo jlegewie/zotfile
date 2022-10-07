@@ -11,11 +11,17 @@ Zotero.ZotFile.Wildcards = new function() {
     /*
      * Abbreviation field using Zotero's getAbbreviation function
      */
-    function abbreviateField(field) {
-	abbrv_obj = new Object();
-	Zotero.Cite.getAbbreviation("N/A", abbrv_obj, "default", "container-title", field);
+    function abbreviateField(value) {
+        if (value != "") {
+            abbrv_obj = new Object();
+	        Zotero.Cite.getAbbreviation("N/A", abbrv_obj, "default", "container-title", value);
+            abbrv = abbrv_obj["default"]["container-title"][value];
+        }
+        else {
+            abbrv = "";
+        }
 
-	return abbrv_obj["default"]["container-title"][field]
+	    return abbrv;
     }
 
     /*
