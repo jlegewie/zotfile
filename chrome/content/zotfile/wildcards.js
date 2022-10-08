@@ -11,11 +11,17 @@ Zotero.ZotFile.Wildcards = new function() {
     /*
      * Abbreviation field using Zotero's getAbbreviation function
      */
-    function abbreviateField(field) {
-	abbrv_obj = new Object();
-	Zotero.Cite.getAbbreviation("N/A", abbrv_obj, "default", "container-title", field);
+    function abbreviateField(value) {
+        if (value != "") {
+            abbrv_obj = new Object();
+	        Zotero.Cite.getAbbreviation("N/A", abbrv_obj, "default", "container-title", value);
+            abbrv = abbrv_obj["default"]["container-title"][value];
+        }
+        else {
+            abbrv = "";
+        }
 
-	return abbrv_obj["default"]["container-title"][field]
+	    return abbrv;
     }
 
     /*
@@ -213,6 +219,7 @@ Zotero.ZotFile.Wildcards = new function() {
         var authors = formatAuthors(item);
         // define additional fields
         var addFields = {
+            'itemTypeEN': Zotero.ItemTypes.getName(item_type),
             'itemType': Zotero.ItemTypes.getLocalizedString(item_type),
             'titleFormated': truncateTitle(item.getField("title", false, true)),
             'author': authors[0],
