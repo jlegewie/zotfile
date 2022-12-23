@@ -11,11 +11,17 @@ Zotero.ZotFile.Wildcards = new function() {
     /*
      * Abbreviation field using Zotero's getAbbreviation function
      */
-    function abbreviateField(field) {
-	abbrv_obj = new Object();
-	Zotero.Cite.getAbbreviation("N/A", abbrv_obj, "default", "container-title", field);
+    function abbreviateField(value) {
+        if (value != "") {
+            abbrv_obj = new Object();
+	        Zotero.Cite.getAbbreviation("N/A", abbrv_obj, "default", "container-title", value);
+            abbrv = abbrv_obj["default"]["container-title"][value];
+        }
+        else {
+            abbrv = "";
+        }
 
-	return abbrv_obj["default"]["container-title"][field]
+	    return abbrv;
     }
 
     /*
@@ -128,16 +134,7 @@ Zotero.ZotFile.Wildcards = new function() {
     function formatAuthors(item) {
         // get creator and create authors string
         var itemType = Zotero.ItemTypes.getName(item.itemTypeID);
-        var creatorTypeIDs;
-        if (itemType == 'book') {
-        	creatorTypeIDs = [
-				Zotero.CreatorTypes.getID('author'),
-				Zotero.CreatorTypes.getID('editor')
-			];
-		}
-        else {
-        	creatorTypeIDs = [Zotero.CreatorTypes.getPrimaryIDForType(item.itemTypeID)];
-        }
+        var creatorTypeIDs  = [Zotero.CreatorTypes.getPrimaryIDForType(item.itemTypeID)];
         var add_etal = Zotero.ZotFile.getPref("add_etal");
         var author = "", author_lastf="", author_initials="", author_lastg = "";
         var creators = item.getCreators();
@@ -181,7 +178,7 @@ Zotero.ZotFile.Wildcards = new function() {
             lastAuthor_lastInitial = creators[creators.length - 1].lastName.substr(0, 1).toUpperCase();
         }
         // get creator and create editors string
-        var editorType = [3,4,5,27,29];
+        var editorType = [Zotero.CreatorTypes.getID('editor')];
         var editor = "", editor_lastf="", editor_initials="";
         var numeditors = creators.length;
         for (var i = 0; i < creators.length; ++i) {
@@ -194,7 +191,7 @@ Zotero.ZotFile.Wildcards = new function() {
             if (j < numeditors && editorType.indexOf(creators[i].creatorTypeID) != -1) {
                 if (editor !== "") editor += delimiter + creators[i].lastName;
                 if (editor === "") editor = creators[i].lastName;
-                var lastfe =  creators[i].lastName + creators[i].firstName.substr(0, 1).toUpperCase();
+                var lastf =  creators[i].lastName + creators[i].firstName.substr(0, 1).toUpperCase();
                 if (editor_lastf !== "") editor_lastf += delimiter + lastf;
                 if (editor_lastf === "") editor_lastf = lastf;
                 var initials = creators[i].firstName.substr(0, 1).toUpperCase() + creators[i].lastName.substr(0, 1).toUpperCase()
@@ -214,6 +211,7 @@ Zotero.ZotFile.Wildcards = new function() {
         var authors = formatAuthors(item);
         // define additional fields
         var addFields = {
+            'itemTypeEN': Zotero.ItemTypes.getName(item_type),
             'itemType': Zotero.ItemTypes.getLocalizedString(item_type),
             'titleFormated': truncateTitle(item.getField("title", false, true)),
             'author': authors[0],

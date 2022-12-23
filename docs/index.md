@@ -59,6 +59,7 @@ ZotFile renames files based on bibliographic information from the currently sele
 
 ##### Wildcards
 - `%a` last names of authors (not editors etc) or inventors. The maximum number of authors are changed under 'Additional Settings'.
+- `%b` citation key
 - `%I` author initials.
 - `%F` author's last name with first letter of first name (e.g. EinsteinA).
 - `%A` first letter of author (useful for subfolders)
