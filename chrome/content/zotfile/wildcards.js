@@ -68,6 +68,9 @@ Zotero.ZotFile.Wildcards = new function() {
             if(truncate!=-1) title = title.substr(0,truncate);
         }
 
+        // removing rich text formatting
+        title = title.replace(/<[\w\s"=\/]+>/g, '');
+
         // truncate if to long
         if (title.length > Zotero.ZotFile.getPref("max_titlelength")) {
             var max_titlelength=Zotero.ZotFile.getPref("max_titlelength");
@@ -90,7 +93,6 @@ Zotero.ZotFile.Wildcards = new function() {
         }
 
         // replace forbidden characters with meaningful alternatives (they can only apear in the middle of the text at this point)
-        title = title.replace(/<[\w\s"=\/]+>/g, ''); // Removing rich text formatting
         title = title.replace(/[\/\\]/g, '-');
         title = title.replace(/[\*|"<>,]/g, '');
         title = title.replace(/[\?:;]/g, ' -');
