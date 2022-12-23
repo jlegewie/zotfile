@@ -8,7 +8,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This program built for i386-apple-darwin11.3.0
  
 
-# Make data base, printed on Thu Aug 18 09:02:19 2022
+# Make data base, printed on Mon Sep  5 09:18:36 2022
 
 # Variables
 
@@ -39,7 +39,7 @@ P9K_SSH = 0
 # environment
 VSCODE_CWD = /
 # makefile (from `Makefile', line 5)
-RELEASE := 5.1.1.9000
+RELEASE := 5.1.1.9001
 # environment
 PATH = /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin:/Applications/Little Snitch.app/Contents/Components:/Users/work/.local/bin:/Users/work/.local/bin
 # environment
@@ -47,7 +47,7 @@ ELECTRON_RUN_AS_NODE = 1
 # default
 .FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
 # environment
-SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.jsVTSXOOFz/Listeners
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.GDtDVJ4pXJ/Listeners
 # automatic
 %F = $(notdir $%)
 # environment
@@ -61,7 +61,7 @@ HOME = /Users/work
 # default
 MAKEFILEPATH = $(shell /usr/bin/xcode-select -print-path 2>/dev/null || echo /Developer)/Makefiles
 # environment
-VSCODE_CODE_CACHE_PATH = /Users/work/Library/Application Support/Code/CachedData/da76f93349a72022ca4670c1b84860304616aaa2
+VSCODE_CODE_CACHE_PATH = /Users/work/Library/Application Support/Code/CachedData/e4503b30fc78200f846c62cf8091b76ff5547662
 # environment
 LOGNAME = work
 # environment
@@ -95,7 +95,7 @@ TMPDIR = /var/folders/bj/qdt6t6n17771fk3qb401wngr0000gp/T/
 # automatic
 *F = $(notdir $*)
 # environment
-VSCODE_IPC_HOOK = /Users/work/Library/Application Support/Code/1.70.0-main.sock
+VSCODE_IPC_HOOK = /Users/work/Library/Application Support/Code/1.70.2-main.sock
 # environment
 MallocNanoZone = 0
 # makefile
@@ -105,7 +105,7 @@ MFLAGS = -Rrqp
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
-XPC_SERVICE_NAME = application.com.microsoft.VSCode.22364316.22364322
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.23274738.23274744
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
 # automatic
@@ -131,9 +131,8 @@ MAKELEVEL := 0
 # environment
 LANG = C
 # environment
-VSCODE_PID = 17821
+VSCODE_PID = 21560
 # variable set hash-table stats:
- 
 # Load=60/1024=6%, Rehash=0, Collisions=1/90=1%
 
 # Pattern-specific Variable Values
@@ -142,9 +141,9 @@ VSCODE_PID = 17821
 
 # Directories
 
-# . (device 16777220, inode 8167592): 17 files, no impossibilities.
+# . (device 16777220, inode 8167592): 18 files, no impossibilities.
 
-# 17 files, no impossibilities in 1 directories.
+# 18 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -186,7 +185,7 @@ zotfile.xpi: FORCE
 	zip -r $@ chrome chrome.manifest defaults install.rdf -x \*.DS_Store
 	
 
-all: Makefile.in zotfile-5.1.1.9000-fx.xpi
+all: Makefile.in zotfile-5.1.1.9001-fx.xpi
 #  Command-line target.
 #  Implicit rule search has been done.
 #  File does not exist.
@@ -203,10 +202,10 @@ FORCE:
 # variable set hash-table stats:
 # Load=0/32=0%, Rehash=0, Collisions=0/0=0%
 
-zotfile-5.1.1.9000-fx.xpi: zotfile.xpi
+zotfile-5.1.1.9001-fx.xpi: zotfile.xpi
 #  Implicit rule search has been done.
-#  Implicit/static pattern stem: `5.1.1.9000'
-#  Last modified 2022-03-30 10:24:17
+#  Implicit/static pattern stem: `5.1.1.9001'
+#  Last modified 2022-08-18 09:43:03
 #  File has been updated.
 #  Needs to be updated (-q is set).
 # variable set hash-table stats:
@@ -218,7 +217,7 @@ zotfile-5.1.1.9000-fx.xpi: zotfile.xpi
 # Not a target:
 install.rdf:
 #  Implicit rule search has been done.
-#  Last modified 2022-03-30 10:20:22
+#  Last modified 2022-08-18 09:39:54
 #  File has been updated.
 #  Successfully updated.
 # variable set hash-table stats:
@@ -242,7 +241,7 @@ Makefile:
 Makefile.in: install.rdf
 #  A default, MAKEFILES, or -include/sinclude makefile.
 #  Implicit rule search has not been done.
-#  Last modified 2022-08-18 09:02:19
+#  Last modified 2022-09-05 09:18:35
 #  File has been updated.
 #  Successfully updated.
 # variable set hash-table stats:
@@ -270,6 +269,6 @@ Makefile.in: install.rdf
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4075 / max = 4075 / min = 4075 / avg = 4075
 
-# Finished Make data base on Thu Aug 18 09:02:19 2022
+# Finished Make data base on Mon Sep  5 09:18:36 2022
 
  
