@@ -148,15 +148,42 @@ All wildcards are now defined in the hidden preference `zotfile.wildcards.defaul
     },
     "3": {
         "field": "title",
-        "regex": "([\\w ,-]{1,50})[:\\.?!]?",
-        "group": 1
+        "operations": [{
+            "function":"exec",
+            "regex": "([\\w ,-]{1,50})[:\\.?!]?",
+            "group": 1
+        }]
     },
     "4": {
+        "field":"dateAdded",
+        "operations": [{
+            "function": "replace",
+            "regex": "(\\d{4})-(\\d{2})-(\\d{2})(.*)",
+            "replacement": "$1$2$3",
+            "flags":"g"
+        }]
+    },
+    "5": {
         "default": {
             "field": "title",
-            "regex": "([\\w ,-]{1,10})[:\\.?!]?",
-            "group": 1,
-            "transform": "upperCase"
+            "operations": [
+                {
+                    "function":"replace",
+                    "regex": "\\d",
+                    "replacement": ""
+                },
+                {
+                    "function": "exec",
+                    "regex": "([\\w ,-]{1,10})[:\\.?!]?",
+                    "group": 1
+                },
+                {
+                    "function": "toUpperCase"
+                },
+                {
+                    "function": "trim"
+                }
+            ]
         },
         "journalArticle": "publicationTitle"
     }
