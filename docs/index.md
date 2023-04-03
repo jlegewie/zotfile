@@ -1,4 +1,8 @@
 
+#### Development status
+
+Zotfile is currently not actively developed and maintained! Updates are extremely rare.
+
 ### FEATURES
 Zotfile is a Zotero plugin to manage your attachments: automatically rename, move, and attach PDFs (or other files) to Zotero items, sync PDFs from your Zotero library to your (mobile) PDF reader (e.g. an iPad, Android tablet, etc.) and extract annotations from PDF files.
 
