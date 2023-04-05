@@ -34,6 +34,7 @@
 <!ENTITY additional-subfolders "Zusätzliche Unterordner basieren auf den Metadaten von Objekten in Zotero. Verwenden Sie &#37;a für den Namen des Autors, &#37;y für das Jahr, &#37;w für die Zeitschrift bzw. den Herausgeber oder &#37;T für die Art des Eintrags (siehe Zotero Internetseite für eine vollständige Liste). Stellen Sie sicher, dass Sie die richtigen Separatoren verwenden (/ für Mac OS X und andere Unix-Systeme oder \ für Windows).">
 <!ENTITY additional-options "Weitere Optionen">
 <!ENTITY rename-when-sent-to-tablet "Dateien umbennen, wenn sie auf den Tablet PC übertragen umbennen">
+<!ENTITY keep-one-annotated "Behalten Sie nur eine kommentierte Datei (erkannt durch Suffix)">
 <!ENTITY save-annotated-file "Kopie von annotierten Dateien mit folgendem Suffix speichern:  ">
 <!ENTITY tablet-copy-information "Als Voreinstellung wird beim Holen einer Datei vom Tablet die in Zotero gespeicherte Datei ersetzt. Falls diese Option aktiviert ist, erzeugt zotfile stattdessen eine Kopie der Datei mit dem angegebenen Suffix und fügt diese Datei als zusätzlichen Anhang zu Zotero hinzu.">
 <!ENTITY automatically-extract-annotations "Annotationen automatisch herauskopieren wenn PDF-Dateien vom Tablet PC zurück übertragen werden">

@@ -10,6 +10,8 @@
 <!ENTITY pdf-outline.tooltiptext "Inhaltsverzeichnis aus PDF Datei herauskopieren">
 <!ENTITY send-to-tablet "An Tablet PC schicken">
 <!ENTITY send-attachment-file-to-tablet "Angehängte Datei an Tablet PC schicken.">
+<!ENTITY send-annotation-to-tablet "Anmerkung an Tablet senden.">
+<!ENTITY send-annotation-file-to-tablet "Anmerkungsdatei an Tablet senden.">
 <!ENTITY update-file-modification-time "Datei Zeit der letzten Änderung aktualisieren">
 <!ENTITY sync-attachment-file "Angehängte Datei auf dem Tablet mit jener in Zotero synchronisieren.">
 <!ENTITY get-from-tablet "Vom Tablet holen">

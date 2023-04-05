@@ -34,6 +34,8 @@
 <!ENTITY additional-subfolders "Le sottocartelle aggiuntive sono definite in base ai metadati degli oggetti di Zotero. Utilizzare &#37;a per nome autore, &#37;y per anno, &#37;w per pubblicazione/editore, oppure &#37;T per il tipo di oggetto (vedere il sito di zotfile per una lista completa). assicurarsi di inserire i separatori appropriati (/ per OS Mac e altri sistemi Unix e \ per windows).">
 <!ENTITY additional-options "Opzioni aggiuntive">
 <!ENTITY rename-when-sent-to-tablet "Rinomina i file quando sono inviati al tablet">
+<!ENTITY keep-one-annotated "
+Conserva un solo file annotato (rilevato dal suffisso)">
 <!ENTITY save-annotated-file "Salva con un suffisso la copia del file annotato ">
 <!ENTITY tablet-copy-information "Per impostazione predefinita, l'allegato scaricato dal tablet sostituisce il file salvato in Zotero. Quando questa opzione è abilitata, zotfile invece crea una copia del file con un suffisso specificato e aggiunge questo file come allegato aggiuntivo a Zotero.">
 <!ENTITY automatically-extract-annotations "Estrai automaticamente le annotazioni quando scarichi i PDF dal tablet">

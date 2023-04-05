@@ -63,7 +63,21 @@ var updatePreferenceWindow = function (which) {
     if(which=="subfolder-tablet" || which=="all") disablePreference("tablet-subfolder", "tablet-subfolderFormat", revert);
     
     // storeCopyOfFile-tablet
-    if(which=="storeCopyOfFile" || which=="all") disablePreference("tablet-storeCopyOfFile", "tablet-storeCopyOfFile_suffix", revert);
+    if(which=="storeCopyOfFile" || which=="all"){
+        disablePreference("tablet-storeCopyOfFile",  "tablet-storeCopyOfFile_suffix", revert);
+    }
+
+    // storeCopyOfFile or tablet-rename 
+    if(which=="storeCopyOfFile" || which=="tablet-rename" || which=="all"){
+        var storecopy = document.getElementById('pref-zotfile-tablet-storeCopyOfFile').value;
+        var rename = document.getElementById('pref-zotfile-tablet-rename').value
+        // the value is the status before clicking
+        if (which == "storeCopyOfFile") storecopy = !storecopy;
+        if (which == "tablet-rename") rename = !rename;
+        // enable keep-one-annotated option when storeCopyOfFile is on but tablet-rename is off
+        var enable_keep_one_annotated = storecopy && !rename;
+        document.getElementById('id-zotfile-tablet-keep-one-annotated').disabled = !enable_keep_one_annotated;
+    }
     
     // batch renaming
     if(which=="confirm" || which=="all") disablePreference("confirmation_batch_ask", "confirmation_batch", revert);
