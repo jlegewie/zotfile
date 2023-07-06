@@ -1,3 +1,4 @@
 /Makefile.in
 .DS_Store
 *.xpi
+*.icloud
