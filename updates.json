@@ -1,0 +1,18 @@
+{
+  "addons": {
+    "zotfile@columbia.edu": {
+      "updates": [
+        {
+          "version": "5.1.2",
+          "update_link": "https://github.com/jlegewie/zotfile/releases/download/v5.1.2/zotfile-5.1.2-fx.xpi",
+          "applications": {
+            "gecko": {
+              "strict_min_version": "60.9",
+              "strict_max_version": "60.9"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
