@@ -126,6 +126,10 @@ Zotero.ZotFile = new function() {
         _initialized = true;
     };
 
+    this.zotero7transition = Zotero.Promise.coroutine(function* () {
+        return false;
+    });
+
 	// Localization (borrowed from Zotero sourcecode)
 	this.ZFgetString = function (name, params){
         var l10n = '';

@@ -19,6 +19,7 @@
 				<menuitem label="&pdf-outline.label;" tooltiptext="&pdf-outline.tooltiptext;" oncommand="Zotero.ZotFile.pdfOutline.getOutline();"/>
 				<menuseparator/>
 				<menuitem label="&warning.label;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>								
+				<menuitem id="id-zotero7-transition" label="Remove all tablet files" tooltiptext="" oncommand="Zotero.ZotFile.zotero7transition();"/>
 				<menuitem id="id-push2reader-00" label="&send-to-tablet;" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.Tablet.sendSelectedAttachmentsToTablet();"/>
 				<menuitem label="&update-file-modification-time;" tooltiptext="&sync-attachment-file;" oncommand="Zotero.ZotFile.Tablet.updateSelectedTabletAttachments();"/>	
 				<menuitem label="&get-from-tablet;" tooltiptext="&get-attachment-file-from-tablet;" oncommand="Zotero.ZotFile.Tablet.getSelectedAttachmentsFromTablet();"/>				
