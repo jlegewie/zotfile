@@ -18,8 +18,9 @@
 				<menuitem label="&extract-annotations.label;" tooltiptext="&extract-annotations.tooltiptext;" oncommand="Zotero.ZotFile.pdfAnnotations.getAnnotations();"/>
 				<menuitem label="&pdf-outline.label;" tooltiptext="&pdf-outline.tooltiptext;" oncommand="Zotero.ZotFile.pdfOutline.getOutline();"/>
 				<menuseparator/>
+				<menuitem label="Zotero 7 Transition Assistant" tooltiptext="" oncommand="Zotero.ZotFile.zotero7transition();"/>
+				<menuseparator/>
 				<menuitem label="&warning.label;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>								
-				<menuitem id="id-zotero7-transition" label="Remove all tablet files" tooltiptext="" oncommand="Zotero.ZotFile.zotero7transition();"/>
 				<menuitem id="id-push2reader-00" label="&send-to-tablet;" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.Tablet.sendSelectedAttachmentsToTablet();"/>
 				<menuitem label="&update-file-modification-time;" tooltiptext="&sync-attachment-file;" oncommand="Zotero.ZotFile.Tablet.updateSelectedTabletAttachments();"/>	
 				<menuitem label="&get-from-tablet;" tooltiptext="&get-attachment-file-from-tablet;" oncommand="Zotero.ZotFile.Tablet.getSelectedAttachmentsFromTablet();"/>				
@@ -41,7 +42,6 @@
 				<menuitem id="id-push2reader-13" hidden="true" label="menu13" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.Tablet.sendSelectedAttachmentsToTablet(12);"/>
 				<menuitem id="id-push2reader-14" hidden="true" label="menu14" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.Tablet.sendSelectedAttachmentsToTablet(13);"/>
 				<menuitem id="id-push2reader-15" hidden="true" label="menu15" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.Tablet.sendSelectedAttachmentsToTablet(14);"/>
-
 				<menuseparator/>								
 				<menuitem id="id-push2reader-configure" label="&change-subfolders;" tooltiptext="&add-and-delete-subfolders;" oncommand="Zotero.ZotFile.openSubfolderWindow();"/>
 			</menupopup>

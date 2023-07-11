@@ -64,10 +64,10 @@ Zotero.ZotFile.UI = new function() {
             rename: 1,
             extractanno: 2,
             getoutline: 3,
-            sep1: 4,
-            warning2: 5,
-            zotero7transition: 6,
-            sep1b: 7,
+            sep0: 4,
+            zotero7transition: 5,
+            sep1: 6,
+            warning2: 7,
             push2reader: 8,
             updatefile: 9,
             pullreader: 10,
@@ -110,6 +110,8 @@ Zotero.ZotFile.UI = new function() {
             // add 'Extract annotations'
             if(!Zotero.ZotFile.isZotero6OrLater && this.getPref('pdfExtraction.MenuItem')) show.push(m.extractanno);
             if(this.getPref('pdfOutline.menuItem')) show.push(m.getoutline);
+
+            show.push(m.sep0, m.zotero7transition);
             // tablet menu part
             if(this.getPref('tablet') && menu_att) {
                 // add sep
@@ -123,7 +125,6 @@ Zotero.ZotFile.UI = new function() {
                     show.push(m.warning2);
                     menu.childNodes[m.warning2].setAttribute('label',this.ZFgetString('menu.itemIsInGroupLibrary'));
                 }
-                show.push(m.zotero7transition, m.sep1b);
                 if(valid_destination && !group_library) {
                     show.push(m.push2reader, m.pullreader);
                     // set tooltip for base folder
