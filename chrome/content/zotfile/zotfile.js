@@ -357,7 +357,8 @@ Zotero.ZotFile = new function() {
         return progressWin;
     };
 
-    this.promptUser = function(message,but_0,but_1_cancel,but_2) {
+    this.promptUser = function(message,but_0,but_1_cancel,but_2, title) {
+        var title = typeof title !== 'ZotFile Dialog' ? title : true;
         var prompts = Components.classes['@mozilla.org/embedcomp/prompt-service;1']
                     .getService(Components.interfaces.nsIPromptService);
 
@@ -367,12 +368,12 @@ Zotero.ZotFile = new function() {
                 prompts.BUTTON_POS_1 * prompts.BUTTON_TITLE_IS_STRING  +
                 prompts.BUTTON_POS_2 * prompts.BUTTON_TITLE_IS_STRING;
 
-        var button = prompts.confirmEx(null, 'ZotFile Dialog', message,
+        var button = prompts.confirmEx(null, title, message,
                     flags,  but_0,but_1_cancel,but_2, null, check);
 
         return(button);
 
-    };    
+    };
 
     this.addUserInput = function(filename, original_filename){
         var default_str = this.getPref('userInput_Default');
