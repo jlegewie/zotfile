@@ -82,6 +82,11 @@ Zotero.ZotFile = new function() {
             this.isZotero6OrLater = Services.vc.compare(Zotero.version, '5.0.96.999') >= 0;
             // run in future to not burden start-up
             this.futureRun(function() {
+                // Transition to Zotero 7
+                if(this.getPref('zotero7transition')) {
+                    this.zotero7transition(true);
+                    this.getPref('zotero7transition', false)
+                }
                 // determine folder seperator depending on OS
                 this.folderSep = Zotero.isWin ? '\\' : '/';
                 // check whether extraction of annotations is supported
@@ -126,8 +131,180 @@ Zotero.ZotFile = new function() {
         _initialized = true;
     };
 
-    this.zotero7transition = Zotero.Promise.coroutine(function* () {
-        return false;
+    this.zotero7transition = Zotero.Promise.coroutine(function* (startup) {
+        startup = typeof startup !== 'undefined' ? startup : false;
+        
+        // Attachments on tablet in background mode
+        // var atts = Zotero.Items.get(this.getSelectedAttachments())
+        var search = new Zotero.Search();
+        search.addCondition('itemType', 'is', 'attachment');
+        search.addCondition('tag', 'contains', this.Tablet.tag);
+        var search_results = yield search.search();
+        var atts = Zotero.Items.get(search_results)
+            .filter(item => item.isAttachment() && !item.isTopLevelItem())
+            .filter(att => this.Tablet.getInfo(att, 'mode') == 1)
+            .filter(att => att.library.libraryType == 'user');
+
+        // NO TABLET ATTACHMENTS
+        if(atts.length == 0) {
+            // return if function is called during startup
+            if(startup) return;
+
+            // Tablet setting is disabled
+            if (!this.getPref('tablet')) {
+                let message = 'You are ready to upgrade to Zotero 7!\n\n' +
+                    'ZotFile is not compatible with Zotero 7 and will stop working. ' +
+                    'Please do not enable and use the option "Use ZotFile to send and ' +
+                    'get files from the tablet" before installing Zotero 7.'
+                alert(message);
+                return;
+            }
+                
+            // Tablet setting is enabled
+            var message = 'ZotFile is not compatible with Zotero 7, which will be released later this year. ' +
+                'You currently have no attachments on the tablet that will be impacted by the change. ' +
+                'Should ZotFile disable the option "Use ZotFile to send and get files from the tablet"? ' +
+                'Using this feature might lead to file loss when upgrading to Zotero 7.'
+            if(confirm(message))
+                this.setPref('tablet', false);
+
+            return;
+        }
+
+        // User selection
+        var prompt = this.promptUser(
+            'ZotFile is not compatible with Zotero 7, which will be released later this year. ' +
+            'You currently have ' + atts.length + ' attachments on the tablet. After updating to Zotero 7, ' +
+            'these files will be inaccessible from Zotero. I strongly suggest that you ' +
+            'remove the attachments from the tablet. This assistant can help you in the process:\n\n' +
+            '1) "Get attachments from tablet" will replace the Zotero attachment with the file on the tablet and remove all files from your tablet folder.\n\n' +
+            '2) "Create linked attachment in Zotero" will create linked attachments in Zotero for all tablet files. Your files will remain in the tablet folder and you can access them from Zotero BUT you will end up with many duplicate attachments.\n\n' +
+            'You can access this assistant anytime under "Tools -> ZotFile Transition to Zotero 7"',
+            'Cancel', // 0
+            'Create linked attachment in Zotero',  // 1
+            'Get attachments from tablet', // 2
+            'ZotFile WARNING');
+
+        // Cancel
+        if(prompt == 0)
+            return
+        
+        // missing tablet file
+        var atts_valid = yield Zotero.Promise.filter(atts, att => OS.File.exists(this.Tablet.getInfo(att, 'location')));
+        var atts_missing = yield Zotero.Promise.filter(atts, this.Tablet.tabletFileMissing);
+        var tag_parent = this.getPref('tablet.tagParentPush_tag');
+        var pw = this.progressWindow('Zotfile');
+
+        // missing information on tablet files
+        for (var i = 0; i < atts_missing.length; i++) {
+            let att = atts_missing[i],
+                item = Zotero.Items.get(att.parentItemID);
+            this.Tablet.removeTabletTag(att, this.Tablet.tag);
+            this.Tablet.removeTabletTag(att, this.Tablet.tagMod);
+            this.Tablet.clearInfo(att);
+            if(item.hasTag(tag_parent)) item.removeTag(tag_parent);
+            yield att.saveTx();
+            yield item.saveTx()
+        }
+
+        // Get attachments from tablet
+        if(prompt == 2) {
+            var both_modified = 0;
+            var line = new  pw.ItemProgress(null, 'Removing files from tablet...');
+            line.setProgress(0);
+            for (var i = 0; i < atts_valid.length; i++) {
+                let att = atts_valid[i],
+                    item = Zotero.Items.get(att.parentItemID),
+                    path_zotero = yield att.getFilePathAsync(),
+                    path_tablet = yield this.Tablet.getTabletFilePath(att, false),
+                    tablet_status = 1;
+                // get modification times for files
+                let time_tablet = path_tablet ? Date.parse((yield OS.File.stat(path_tablet)).lastModificationDate) : 0,
+                    time_saved  = parseInt(this.Tablet.getInfo(att, 'lastmod'), 10),
+                    time_zotero = path_zotero ? Date.parse((yield OS.File.stat(path_zotero)).lastModificationDate) : 0;
+                // status of tablet file
+                if (time_tablet > time_saved  && time_zotero <= time_saved) tablet_status = 0;
+                if (time_tablet <= time_saved && time_zotero <= time_saved) tablet_status = 2;
+                if (time_tablet <= time_saved && time_zotero > time_saved) tablet_status = 2;
+                if (time_tablet > time_saved  && time_zotero > time_saved) tablet_status = 1;
+                
+                // tablet file modified
+                if (tablet_status == 0)
+                    yield OS.File.move(path_tablet, path_zotero);
+                
+                // tablet file not modified
+                if (tablet_status == 2)
+                    yield OS.File.remove(path_tablet);
+                
+                // both files modified
+                if (tablet_status == 1) {
+                    both_modified = both_modified + 1;
+                    let options = {file: path_tablet, libraryID: att.libraryID, parentItemID: att.parentItemID, collections: undefined};
+                    let att_linked = yield Zotero.Attachments.linkFromFile(options);
+                    att_linked.addTag('zotfile_linked_tablet_attachment');
+                }
+                
+                // remove tablet info from att
+                this.Tablet.removeTabletTag(att, this.Tablet.tag);
+                this.Tablet.removeTabletTag(att, this.Tablet.tagMod);
+                this.Tablet.clearInfo(att);
+                if(item.hasTag(tag_parent)) item.removeTag(tag_parent);
+                yield att.saveTx();
+                yield item.saveTx();
+                
+                // update progress bar
+                line.setProgress(100 * i/atts_valid.length);
+            }
+            line.setProgress(100);
+            pw.startCloseTimer(8000);
+            // Message for user
+            let message = 
+                'ZotFile removed ' + atts_valid.length + ' attachments from the tablet ' +
+                'and will disable the option "Use ZotFile to send and get files from the tablet". ' +
+                'Using this feature again might lead to file loss when upgrading to Zotero 7.';
+            if (both_modified > 0)
+                message = message + "\n\nFor " + both_modified + " attachments, both the file in Zotero and on the tablet were modified. In these cases, ZotFile created a linked attachment for the tablet file. The linked attachments have the tag 'zotfile_linked_tablet_attachment'."
+            alert(message);
+            // Disable tablet preference
+            this.setPref('tablet', false);
+        }
+
+        // Create linked attachment in Zotero
+        if(prompt == 1) {
+            var line = new  pw.ItemProgress(null, 'Creating linked attachments for tablet files...');
+            line.setProgress(0);
+            for (var i = 0; i < atts_valid.length; i++) {
+                let att = atts_valid[i],
+                    item = Zotero.Items.get(att.parentItemID),
+                    path = this.Tablet.getInfo(att, 'location');
+
+                // create zotero link to file
+                let options = {file: path, libraryID: att.libraryID, parentItemID: att.parentItemID, collections: undefined};
+                let att_linked = yield Zotero.Attachments.linkFromFile(options);
+                att_linked.addTag('zotfile_linked_tablet_attachment');
+
+                // remove tablet info from att
+                this.Tablet.removeTabletTag(att, this.Tablet.tag);
+                this.Tablet.clearInfo(att);
+                if(item.hasTag(tag_parent)) item.removeTag(tag_parent);
+                yield att.saveTx();
+                yield item.saveTx();
+                
+                // update progress bar
+                line.setProgress(100 * i/atts_valid.length);
+            }
+            line.setProgress(100);
+            pw.startCloseTimer(8000);
+            
+            let message = 'ZotFile created ' + atts_valid.length + ' linked attachments ' +
+                'with the tag "zotfile_linked_tablet_attachment" and will disable ' +
+                'the option "Use ZotFile to send and get files from the tablet". ' +
+                'Using this feature again might lead to file loss when upgrading to Zotero 7.';
+            alert(message);
+            // Disable tablet preference
+            this.setPref('tablet', false);
+            
+        }
     });
 
 	// Localization (borrowed from Zotero sourcecode)

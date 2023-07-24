@@ -18,8 +18,6 @@
 				<menuitem label="&extract-annotations.label;" tooltiptext="&extract-annotations.tooltiptext;" oncommand="Zotero.ZotFile.pdfAnnotations.getAnnotations();"/>
 				<menuitem label="&pdf-outline.label;" tooltiptext="&pdf-outline.tooltiptext;" oncommand="Zotero.ZotFile.pdfOutline.getOutline();"/>
 				<menuseparator/>
-				<menuitem label="Zotero 7 Transition Assistant" tooltiptext="" oncommand="Zotero.ZotFile.zotero7transition();"/>
-				<menuseparator/>
 				<menuitem label="&warning.label;" disabled="true" style="font-size: 100%; background: none; -moz-appearance: none;"/>								
 				<menuitem id="id-push2reader-00" label="&send-to-tablet;" tooltiptext="&send-attachment-file-to-tablet;" oncommand="Zotero.ZotFile.Tablet.sendSelectedAttachmentsToTablet();"/>
 				<menuitem label="&update-file-modification-time;" tooltiptext="&sync-attachment-file;" oncommand="Zotero.ZotFile.Tablet.updateSelectedTabletAttachments();"/>	
@@ -82,7 +80,8 @@
 	</menupopup>
 	
 	<menupopup id="menu_ToolsPopup">
-	<menuitem id="zotfile-options" insertafter="menu_preferences" label="&zotfile-options.label;" oncommand="Zotero.ZotFile.openPreferenceWindow();"/>
+    <menuitem id="zotfile-zotero7transition" insertafter="menu_preferences" label="ZotFile Transition to Zotero 7" oncommand="Zotero.ZotFile.zotero7transition();"/>
+	<menuitem id="zotfile-options" insertafter="zotfile-zotero7transition" label="&zotfile-options.label;" oncommand="Zotero.ZotFile.openPreferenceWindow();"/>
 	</menupopup>
 	
 	<!-- Include the main extension logic -->

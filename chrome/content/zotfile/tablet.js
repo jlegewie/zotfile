@@ -265,6 +265,21 @@ Zotero.ZotFile.Tablet = new function() {
         return this.Utils.joinPath(this.getPref('tablet.dest_dir'), subfolder)
     }.bind(Zotero.ZotFile);
 
+    this.tabletFileMissing = Zotero.Promise.coroutine(function* (att) {
+        // foreground mode
+        if(this.Tablet.getInfo(att, 'mode') == 2) {
+            var path = yield att.getFilePathAsync();
+            var exist = yield OS.File.exists(path);
+            return !exist;
+        }
+        if(this.Tablet.getInfo(att, 'mode') == 1) {
+            var path = this.Tablet.getInfo(att, 'location');
+            var exist = yield OS.File.exists(path);
+            return !exist;
+        }
+        return false;
+    }.bind(Zotero.ZotFile));
+
     this.getAttachmentsOnTablet = Zotero.Promise.coroutine(function* (subfolder) {
         // search for attachments with tag
         var search = new Zotero.Search();

@@ -64,20 +64,18 @@ Zotero.ZotFile.UI = new function() {
             rename: 1,
             extractanno: 2,
             getoutline: 3,
-            sep0: 4,
-            zotero7transition: 5,
-            sep1: 6,
-            warning2: 7,
-            push2reader: 8,
-            updatefile: 9,
-            pullreader: 10,
-            sep2: 11,
-            tablet: 12,
-            warning3: 13,
-            subfolders: new Array(14,15,16,17,18,19,20,21,22,23,24,25,26,27,28),
-            sep3: 29,
-            menuConfigure: 30,
-            length:31
+            sep1: 4,
+            warning2: 5,
+            push2reader: 6,
+            updatefile: 7,
+            pullreader: 8,
+            sep2: 9,
+            tablet: 10,
+            warning3: 11,
+            subfolders: new Array(12,13,14,15,16,17,18,19,20,21,22,23,24,25,26),
+            sep3: 27,
+            menuConfigure: 28,
+            length:29
         };
         // list of disabled and show menu-items
         var disable = [m.tablet, m.warning1, m.warning2, m.warning3], show = [];
@@ -111,7 +109,7 @@ Zotero.ZotFile.UI = new function() {
             if(!Zotero.ZotFile.isZotero6OrLater && this.getPref('pdfExtraction.MenuItem')) show.push(m.extractanno);
             if(this.getPref('pdfOutline.menuItem')) show.push(m.getoutline);
 
-            show.push(m.sep0, m.zotero7transition);
+            // show.push(m.sep0, m.zotero7transition);
             // tablet menu part
             if(this.getPref('tablet') && menu_att) {
                 // add sep
