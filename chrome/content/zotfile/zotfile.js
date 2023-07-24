@@ -85,7 +85,7 @@ Zotero.ZotFile = new function() {
                 // Transition to Zotero 7
                 if(this.getPref('zotero7transition')) {
                     this.zotero7transition(true);
-                    this.getPref('zotero7transition', false)
+                    this.setPref('zotero7transition', false);
                 }
                 // determine folder seperator depending on OS
                 this.folderSep = Zotero.isWin ? '\\' : '/';
