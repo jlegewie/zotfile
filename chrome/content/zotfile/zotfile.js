@@ -83,10 +83,10 @@ Zotero.ZotFile = new function() {
             // run in future to not burden start-up
             this.futureRun(function() {
                 // Transition to Zotero 7
-                if(this.getPref('zotero7transition')) {
-                    this.zotero7transition(true);
-                    this.setPref('zotero7transition', false);
-                }
+                // if(this.getPref('zotero7transition')) {
+                //     this.zotero7transition(true);
+                //     this.setPref('zotero7transition', false);
+                // }
                 // determine folder seperator depending on OS
                 this.folderSep = Zotero.isWin ? '\\' : '/';
                 // check whether extraction of annotations is supported
