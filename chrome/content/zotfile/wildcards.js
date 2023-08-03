@@ -225,7 +225,7 @@ Zotero.ZotFile.Wildcards = new function() {
             "lastAuthor_lastf": authors[9],
             "lastAuthor_initials": authors[10],
             "collectionPaths": Zotero.ZotFile.Utils.getCollectionPathsOfItem(item),
-            "citekey": Zotero.BetterBibTeX ? item.getField('citekey') : undefined
+            "citekey": Zotero.BetterBibTeX ? item.getField('citationKey') : undefined
         };
         // define transform functions
         var itemtypeWildcard = function(item, map) {
