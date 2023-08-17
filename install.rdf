@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
@@ -53,6 +53,13 @@
         <em:locale>it-IT</em:locale>
         <em:name>ZotFile</em:name>
         <em:description> Un plugin di Zotero per gestire i tuoi allegati</em:description>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>zh-CN</em:locale>
+        <em:name>ZotFile</em:name>
+        <em:description>Zotero 附件管理增强</em:description>
       </Description>
     </em:localized>
   </Description>

@@ -1,0 +1,3 @@
+<!ENTITY label "标签">
+<!ENTITY subfolder "子文件夹">
+<!ENTITY leave-empty "本字段留空时将根据标签自动创建文件夹。">
