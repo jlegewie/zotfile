@@ -1,4 +1,4 @@
-﻿<!ENTITY zotfile-preferences "Préférences de ZotFile">
+<!ENTITY zotfile-preferences "Préférences de ZotFile">
 <!ENTITY zotfile-prefpane "Préférences de ZotFile">
 <!ENTITY general-settings "Paramètres généraux">
 <!ENTITY tablet-settings "Paramètres des tablettes">
@@ -19,12 +19,12 @@
 <!ENTITY zotfile-website "site web de ZotFile">
 <!ENTITY consider-donation "Si vous trouvez ZotFile utile, envisagez s'il vous plaît un ">
 <!ENTITY donation "don">
-<!ENTITY tablet-desc "ZotFile peut simplifier la lecture et l'annotation de vos pièces jointes Zotero sur un iPad ou une tablette Android utilisant une application d'annotation des PDF. Il envoie les PDF et les récupère à partir de la tablette, les renomme et les classe dans des sous-dossiers afin que vous les trouviez, et extrait les annotations et le texte surligné dans une note Zotero.">
+<!ENTITY tablet-desc "ZotFile peut simplifier la lecture et l'annotation de vos pièces jointes Zotero sur un iPad ou une tablette Android utilisant une application d'annotation de PDF. Il envoie les PDF et les récupère à partir de la tablette, les renomme et les classe dans des sous-dossiers afin que vous les trouviez, et extrait les annotations et le texte surligné dans une note Zotero.">
 <!ENTITY send-get-from-tablet "Utiliser ZotFile pour envoyer et recevoir les fichiers de la tablette">
 <!ENTITY location-on-tablet "Emplacement des fichiers de la tablette">
 <!ENTITY base-folder "Dossier de base">
 <!ENTITY show-folder "Localiser le dossier">
-<!ENTITY dropbox "(DropBox ou un dossier autre qui synchronise avec l'application de lecture sur votre tablette)">
+<!ENTITY dropbox "(Dropbox ou un dossier autre qui synchronise avec l'application de lecture sur votre tablette)">
 <!ENTITY subfolders "Sous-dossiers">
 <!ENTITY no-subfolders "Pas de sous-dossiers">
 <!ENTITY create-subfolders "Créer des sous-dossiers portant le même nom que les collections Zotero">
@@ -53,13 +53,13 @@
 <!ENTITY truncate-title "Tronquer le titre après . ou : ou ?">
 <!ENTITY zotfile-truncate_title_max "Longueur maximale du titre">
 <!ENTITY zotfile-truncate_authors "Nombre maximum d'auteurs">
-<!ENTITY zotfile-number_truncate_authors "Combien d'auteurs afficher lorsque les auteurs sont omises">
+<!ENTITY zotfile-number_truncate_authors "Combien d'auteurs afficher lorsque les auteurs sont omis">
 <!ENTITY zotfile-add_etal "Ajouter un suffixe quand les auteurs sont omis">
 <!ENTITY extract-annotations "Extraire les annotations et le texte surligné des fichiers PDF">
 <!ENTITY extract-annotations-and-highlighted-text "ZotFile peut extraire les annotations et le texte surligné/souligné de vos fichiers PDF dans des notes Zotero.">
 <!ENTITY extraction-method "Méthode d'extraction">
 <!ENTITY use-pdf-js "Utiliser pdf.js pour extraire les annotations">
-<!ENTITY methods-to-extract-annotations "ZotFile prend en charge deux méthodes pour extraire des annotations à partir des fichiers PDF. L'outil basé sur pdf.js fonctionne sur toutes les plateformes et s'exécute directement à partir de zotero. L'outil d'extraction basé sur poppler ne fonctionne que pour Mac OS et nécessite un téléchargement séparé. Actuellement, pdf.js est plus fiable et devrait être choisi dans la plupart des cas. L'outil basé sur poppler, cependant, est plus rapide et peut traiter certaines standards pdf qui ne sont pas encore pris en charge par pdf.js.">
+<!ENTITY methods-to-extract-annotations "ZotFile prend en charge deux méthodes pour extraire des annotations à partir des fichiers PDF. L'outil basé sur pdf.js fonctionne sur toutes les plateformes et s'exécute directement à partir de zotero. L'outil d'extraction basé sur poppler ne fonctionne que pour Mac OS et nécessite un téléchargement séparé. Actuellement, pdf.js est plus fiable et devrait être choisi dans la plupart des cas. L'outil basé sur poppler, cependant, est plus rapide et peut traiter certains standards pdf qui ne sont pas encore pris en charge par pdf.js.">
 <!ENTITY use-poppler "Utiliser poppler pour extraire les annotations">
 <!ENTITY add-full-citation "Ajouter, dans la note, après chaque extrait de texte surligné sa référence complète (auteur-date)">
 <!ENTITY use-article-book-chapter-page "Utiliser la pagination originale de l'article/chapitre de livre pour les extraits de textes surlignés">
