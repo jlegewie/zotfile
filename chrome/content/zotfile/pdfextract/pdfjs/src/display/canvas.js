@@ -1304,7 +1304,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       for (var i = 0; i < annot.quadPoints.length; i++) {
         var qdims = annot.quadPoints[i].dims;
         // only grab characters where 50% of the character's
-        // width lies within the annotation        
+        // width lies within the annotation
         if (cdims.xPlusHalfWidth >= qdims.minX && cdims.xPlusHalfWidth <= qdims.maxX &&
             cdims.y >=qdims.minY && cdims.y <= qdims.maxY) {
           return i;
@@ -1675,7 +1675,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       sw = Util.applyTransformX([spaceWidth,0], font2dev);
       // TODO: why 2.0? I changed it to 3
       // dims.spaceWidth = (sw[0] - font2dev[4]) / 2.0;
-      spaceWidthProj = (sw - font2dev[4]) / 3.0;      
+      spaceWidthProj = (sw - font2dev[4]) / 3.0;
 
       ctx.scale(textHScale, fontDirection);
 
@@ -1719,7 +1719,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         current.x += width * textHScale;
 
         if (this.annotations) {
-          // check if glyph is within an annotation            
+          // check if glyph is within an annotation
           var chDims = this.makeCharDims(transformed * fontSize, width, spaceWidthProj, font2dev);
           for (var j = 0; j < this.annotations.length; j++) {
             var annot = this.annotations[j];
@@ -1835,7 +1835,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
 
       this.baseTransform = this.ctx.mozCurrentTransform;
       // project coordinates of quadPoints to device space
-      this.makeAnnoDims(this.annotations, this.baseTransform);
+      // this.makeAnnoDims(this.annotations, this.baseTransform);
 
       if (isArray(bbox) && 4 === bbox.length) {
         var width = bbox[2] - bbox[0];
@@ -1850,7 +1850,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       this.restore();
       this.baseTransform = this.baseTransformStack.pop();
       // project coordinates of quadPoints to device space
-      this.makeAnnoDims(this.annotations, this.baseTransform);
+      // this.makeAnnoDims(this.annotations, this.baseTransform);
     },
 
     beginGroup: function CanvasGraphics_beginGroup(group) {
