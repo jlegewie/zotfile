@@ -243,44 +243,65 @@ Zotero.ZotFile.Wildcards = new function() {
                 output = '';
             // get field
             if (typeof(field)=='string')
-                output = (field in addFields) ? addFields[field] : item.getField(field, false, true);
+                if (field in addFields)
+                    output = (Array.isArray(addFields[field])) ? Object.assign([], addFields[field]) : addFields[field];
+                else
+                    output = item.getField(field, false, true);
             if (typeof(field)=='object')
                 output = itemtypeWildcard(item, field);
             // operations
-            if(operations!==undefined) {
-                for (var i = 0; i < operations.length; ++i) {
-                    var obj = operations[i],
-                        regex = obj.regex,
-                        replacement = ('replacement' in obj) ? obj.replacement : "",
-                        flags = ('flags' in obj) ? obj.flags : "g",
-                        group = ('group' in obj) ? obj.group : 0,
-                        re = new RegExp(regex, flags);
-                    // replace string
-                    /*https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace*/
-                    if(obj.function=="replace")
-                        output = output.replace(re, replacement);
-                    // search for matches
-                    /*https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec*/
-                    if(obj.function=="exec") {
-                        var match = re.exec(output);
-                        output = (match===null) ? output : match[group];
+            if (operations !== undefined) {
+                if (Array.isArray(output)) {
+                    for (var i = 0; i < output.length; ++i) {
+                        output[i] = applyRegexOperations(output[i], operations)
                     }
-		    if(obj.function=="abbreviate") {
-			output = abbreviateField(output);
-		    }
-                    // simple functions
-                    if(obj.function=="toLowerCase")
-                        output = output.toLowerCase();
-                    if(obj.function=="toUpperCase")
-                        output = output.toUpperCase();
-                    if(obj.function=="trim")
-                        output = output.trim();
-                    if(obj.function=="truncateTitle")
-                        output = truncateTitle(output);
+                } else {
+                    output = applyRegexOperations(output, operations)
                 }
             }
             // return
             return output;
+        };
+        var applyRegexOperations = function (value, operations) {
+            let transformed_value = value;
+            for (var i = 0; i < operations.length; ++i) {
+                var obj = operations[i],
+                    regex = obj.regex,
+                    replacement = ('replacement' in obj) ? obj.replacement : "",
+                    replacementFunction = ('replacementFunction' in obj) ? obj.replacementFunction : "",
+                    flags = ('flags' in obj) ? obj.flags : "g",
+                    group = ('group' in obj) ? obj.group : 0,
+                    re = new RegExp(regex, flags);
+                // replace string
+                /*https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace*/
+                if (obj.function == "replace") {
+                    if ('replacementFunction' in obj) {
+                        replacement = new Function(...replacementFunction.arguments, replacementFunction.body);
+                    }
+                    transformed_value = transformed_value.replace(re, replacement);
+                }
+                // search for matches
+                /*https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec*/
+                if (obj.function == "exec") {
+                    var match = re.exec(transformed_value);
+                    transformed_value = (match === null) ? transformed_value : match[group];
+                }
+                if (obj.function == "abbreviate") {
+                    transformed_value = abbreviateField(transformed_value);
+                }
+                // simple functions
+                if (obj.function == "toLowerCase")
+                    transformed_value = transformed_value.toLowerCase();
+                if (obj.function == "toUpperCase")
+                    transformed_value = transformed_value.toUpperCase();
+                if (obj.function == "trim")
+                    transformed_value = transformed_value.trim();
+                if (obj.function == "truncateTitle")
+                    transformed_value = truncateTitle(transformed_value);
+            }
+
+            // return
+            return transformed_value;
         };
         // get wildcards object from preferences
         var wildcards = JSON.parse(Zotero.ZotFile.getPref("wildcards.default"));
