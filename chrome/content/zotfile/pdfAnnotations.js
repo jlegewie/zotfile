@@ -264,7 +264,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
             // get page
             if(this.getPref("pdfExtraction.NoteTruePage")) {
                 try {
-                    var itemPages = item.getField('pages');
+                    var itemPages = item.getField('pages', 1, 1);
                     if(itemPages) {
                         var page_parsed = typeof itemPages == "string" ? parseInt(itemPages.split('-')[0], 10) : itemPages;                            
                         page = isNaN(page_parsed) ? page : page_parsed + page - 1;
