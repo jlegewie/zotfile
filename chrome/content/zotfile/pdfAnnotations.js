@@ -301,7 +301,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                 var markup_formated = this.Utils.str_format(format_markup, 
 							    {'content': anno.markup, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title, 
 							     'color': color, 'color_category': color_category_hex, 'color_hex': color_hex, 'color_category_name': color_category,
-							     'group': groupID, 'key': att.key});
+							     'group': groupID, 'key': att.key, 'itemkey': item.key});
                 if(!setting_color_notes)
                     note += markup_formated;
                 else {
@@ -320,7 +320,7 @@ Zotero.ZotFile.pdfAnnotations = new function() {
                 var content_formated = this.Utils.str_format(format_note, 
 							     {'content': content, 'cite': link, 'page': page, 'uri': uri, 'label': anno.title,
 							      'color': color, 'color_category': color_category_hex, 'color_hex': color_hex, 'color_category_name': color_category,
-							      'group': groupID, 'key': att.key});
+							      'group': groupID, 'key': att.key, 'itemkey': item.key});
                 if(!setting_color_notes)
                     note += content_formated;
                 else {
