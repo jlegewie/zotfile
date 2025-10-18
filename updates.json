@@ -1,0 +1,19 @@
+{
+  "addons": {
+    "zotfile@columbia.edu": {
+      "updates": [
+        {
+          "version": "5.1.3",
+          "update_link": "https://github.com/jlegewie/zotfile/releases/download/v5.1.3/zotfile-5.1.3.xpi",
+          "update_hash": "sha256:PLACEHOLDER_HASH_HERE",
+          "applications": {
+            "zotero": {
+              "strict_min_version": "6.999",
+              "strict_max_version": "7.0.*"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

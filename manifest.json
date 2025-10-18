@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "ZotFile",
+  "version": "5.1.3",
+  "description": "Advanced PDF management for Zotero",
+  "author": "Joscha Legewie",
+  "homepage_url": "http://www.zotfile.com",
+  "icons": {
+    "48": "chrome/skin/default/zotfile/information.png",
+    "96": "chrome/skin/default/zotfile/information.png"
+  },
+  "applications": {
+    "zotero": {
+      "id": "zotfile@columbia.edu",
+      "strict_min_version": "6.999",
+      "strict_max_version": "7.0.*",
+      "update_url": "https://raw.githubusercontent.com/jlegewie/zotfile/master/updates.json"
+    }
+  }
+}
