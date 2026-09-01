@@ -232,7 +232,11 @@ Zotero.ZotFile.Utils = new function() {
      * @return {void}
      */
     this.loadURI = function(uri) {
-        ZoteroPane_Local.loadURI(uri);
+        if (typeof Zotero !== 'undefined' && Zotero.launchURL) {
+            Zotero.launchURL(uri);
+        } else if (typeof ZoteroPane_Local !== 'undefined') {
+            ZoteroPane_Local.loadURI(uri);
+        }
     };
 
     /**

@@ -3,12 +3,73 @@
  * Functions for zotfile's preference window
  */
 
-var Zotero = Components.classes["@zotero.org/Zotero;1"]
-    .getService(Components.interfaces.nsISupports)
-    .wrappedJSObject;
+var Zotero = window.Zotero;
+if (!Zotero && typeof Services !== 'undefined' && Services.wm) {
+    try { Zotero = Services.wm.getMostRecentWindow('navigator:browser').Zotero; } catch(e) {}
+}
+if (!Zotero && typeof Components !== 'undefined') {
+    try {
+        Zotero = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("navigator:browser").Zotero;
+    } catch(e) {}
+}
 
-Components.utils.import("resource://gre/modules/osfile.jsm");
-Components.utils.import("resource://gre/modules/Services.jsm");
+var Services;
+if (typeof Services === 'undefined') {
+    if (typeof ChromeUtils !== 'undefined') {
+        try { Services = globalThis.Services || ChromeUtils.import("resource://gre/modules/Services.jsm").Services; } catch(e) {
+            try { Services = ChromeUtils.importESModule("resource://gre/modules/Services.sys.mjs").Services; } catch(e2) {}
+        }
+    } else if (typeof Components !== 'undefined') {
+        try { Services = Components.utils.import("resource://gre/modules/Services.jsm", {}).Services; } catch(e) {}
+    }
+}
+
+var OS;
+if (typeof ChromeUtils !== 'undefined') {
+    try {
+        let osModule = ChromeUtils.importESModule("chrome://zotero/content/osfile.mjs");
+        OS = osModule.OS;
+    } catch(e) {
+        try {
+            OS = Components.utils.import("resource://gre/modules/osfile.jsm", {}).OS;
+        } catch(e2) {}
+    }
+} else if (typeof Components !== 'undefined') {
+    try {
+        OS = Components.utils.import("resource://gre/modules/osfile.jsm", {}).OS;
+    } catch(e) {}
+}
+if (OS && !OS.Path) {
+    OS.Path = {
+        join(...args) {
+            let parts = args.map(arg => (arg && typeof arg === 'object' && arg.path) ? arg.path : String(arg));
+            let sep = Zotero.isWin ? '\\' : '/';
+            return parts.join(sep).replace(/[\\\/]+/g, sep);
+        },
+        basename(path) {
+            if (!path) return '';
+            let sep = path.includes('\\') ? '\\' : '/';
+            let idx = path.lastIndexOf(sep);
+            return idx === -1 ? path : path.substring(idx + 1);
+        },
+        dirname(path) {
+            if (!path) return '';
+            let sep = path.includes('\\') ? '\\' : '/';
+            let idx = path.lastIndexOf(sep);
+            return idx === -1 ? '' : path.substring(0, idx);
+        },
+        normalize(path) {
+            if (!path) return '';
+            let sep = Zotero.isWin ? '\\' : '/';
+            return path.replace(/[\\\/]+/g, sep);
+        },
+        split(path) {
+            if (!path) return { components: [] };
+            let sep = path.includes('\\') ? '\\' : '/';
+            return { components: path.split(sep).filter(Boolean) };
+        }
+    };
+}
 
 // function to disable prefernce in pref window
 // 'pref' can be passed as string or array
@@ -318,7 +379,7 @@ var editSubfolderSetting = function(index) {
 
         // open dialog
         var io = {label: label, folder: folder, ok: false};
-        window.openDialog('chrome://zotfile/content/optionsFolderEditor.xul', "id-zotfile-options-FolderEditor", "chrome, modal", io);
+        window.openDialog('chrome://zotfile/content/optionsFolderEditor.xhtml', "id-zotfile-options-FolderEditor", "chrome, modal", io);
     
         if (!io.ok) return;
                                                          

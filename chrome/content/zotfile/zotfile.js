@@ -47,8 +47,20 @@ Zotero.ZotFile = new function() {
         // open webpage
         var show_changelog = ['4.3', '4.1.1', '4.1', '4.0', '3.3', '3.2', '3.1', '2.0', '2.3'];
         if(this.getPref('version') === '' || show_changelog.includes(version)) {
-            if(!Zotero.isStandalone) this.futureRun(() => gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL));
-            if( Zotero.isStandalone) this.futureRun(() => ZoteroPane_Local.loadURI(Zotero.ZotFile.changelogURL));
+            if(!Zotero.isStandalone) this.futureRun(() => {
+                try {
+                    if (typeof gBrowser !== 'undefined' && gBrowser && typeof gBrowser.addTab === 'function') {
+                        gBrowser.selectedTab = gBrowser.addTab(Zotero.ZotFile.changelogURL);
+                    } else if (typeof Zotero !== 'undefined' && Zotero.launchURL) {
+                        Zotero.launchURL(Zotero.ZotFile.changelogURL);
+                    } else if (typeof Services !== 'undefined' && Services.wm) {
+                        let win = Services.wm.getMostRecentWindow('navigator:browser');
+                        if (win && win.Zotero_Tabs) win.Zotero_Tabs.jumpToTab(win.Zotero_Tabs.add({url: Zotero.ZotFile.changelogURL}));
+                        else if (win) win.open(Zotero.ZotFile.changelogURL, '_blank');
+                    }
+                } catch(e) { try { Zotero.launchURL(Zotero.ZotFile.changelogURL); } catch(e2) {} }
+            });
+            if( Zotero.isStandalone) this.futureRun(() => { try { ZoteroPane_Local.loadURI(Zotero.ZotFile.changelogURL); } catch(e) { try { Zotero.launchURL(Zotero.ZotFile.changelogURL); } catch(e2) {} } });
         }
         if (version == '4.2' && this.getPref('pdfExtraction.openPdfMac_skim'))
             this.setPref('pdfExtraction.openPdfMac', 'Skim');
@@ -68,18 +80,20 @@ Zotero.ZotFile = new function() {
             // defined zotfile variables
             this.ffPrefs = Components.classes["@mozilla.org/preferences-service;1"]
                 .getService(Components.interfaces.nsIPrefService).getBranch("browser.download.");
-            this.Tablet.tag = this.getPref("tablet.tag");
-            this.Tablet.tagMod = this.getPref("tablet.tagModified");
+            if (this.Tablet) {
+                this.Tablet.tag = this.getPref("tablet.tag");
+                this.Tablet.tagMod = this.getPref("tablet.tagModified");
+            }
             // set source dir to custom folder if zotero standalone
             if(Zotero.isStandalone && this.getPref('source_dir_ff')) this.setPref('source_dir_ff', false);
             // version handeling
             var previous_version = this.getPref('version');
-            Components.utils.import('resource://gre/modules/AddonManager.jsm');
-            AddonManager.getAddonByID('zotfile@columbia.edu', function(addon) {
+            try { Components.utils.import('resource://gre/modules/AddonManager.jsm'); } catch(e) { try { ChromeUtils.importESModule("resource://gre/modules/AddonManager.sys.mjs"); } catch(e2) { try { ChromeUtils.import("resource://gre/modules/AddonManager.jsm"); } catch(e3) {} } }
+            try { AddonManager.getAddonByID('zotfile@columbia.edu', function(addon) {
                 var version = addon.version;
                 if(version != previous_version) Zotero.ZotFile.versionChanges(version);
-            });
-            this.isZotero6OrLater = Services.vc.compare(Zotero.version, '5.0.96.999') >= 0;
+            }); } catch(e) {}
+            try { this.isZotero6OrLater = Services.vc.compare(Zotero.version, '5.0.96.999') >= 0; } catch(e) { this.isZotero6OrLater = true; }
             // run in future to not burden start-up
             this.futureRun(function() {
                 // Transition to Zotero 7
@@ -89,44 +103,76 @@ Zotero.ZotFile = new function() {
                 // }
                 // determine folder seperator depending on OS
                 this.folderSep = Zotero.isWin ? '\\' : '/';
-                // check whether extraction of annotations is supported
-                this.pdfAnnotations.popplerExtractorSupported = this.pdfAnnotations.popplerSupportedPlatforms.includes(Zotero.platform);
-                // set path and check whether installed
-                if (this.pdfAnnotations.popplerExtractorSupported) {
-                    // set Extractor Path
-                    this.pdfAnnotations.popplerExtractorSetPath();
-                    // check whether tool is installed
-                    OS.File.exists(this.pdfAnnotations.popplerExtractorPath)
-                        .then(poppler => {
-                            this.pdfAnnotations.popplerExtractorTool = poppler;
-                            // set to pdf.js if poppler is not installed
-                            if(!poppler) this.setPref('pdfExtraction.UsePDFJS', true);
-                        })
+                // check whether extraction of annotations is supported (may be missing if module not loaded)
+                if (this.pdfAnnotations && this.pdfAnnotations.popplerSupportedPlatforms) {
+                    this.pdfAnnotations.popplerExtractorSupported = this.pdfAnnotations.popplerSupportedPlatforms.includes(Zotero.platform);
+                    // set path and check whether installed
+                    if (this.pdfAnnotations.popplerExtractorSupported) {
+                        // set Extractor Path
+                        try { this.pdfAnnotations.popplerExtractorSetPath(); } catch(e) {}
+                        // check whether tool is installed
+                        try {
+                            OS.File.exists(this.pdfAnnotations.popplerExtractorPath)
+                                .then(poppler => {
+                                    this.pdfAnnotations.popplerExtractorTool = poppler;
+                                    // set to pdf.js if poppler is not installed
+                                    if(!poppler) this.setPref('pdfExtraction.UsePDFJS', true);
+                                })
+                        } catch(e) {}
+                    }
+                    // set to pdf.js if poppler is not supported
+                    if(!this.pdfAnnotations.popplerExtractorSupported) this.setPref('pdfExtraction.UsePDFJS', true);
                 }
-                // set to pdf.js if poppler is not supported
-                if(!this.pdfAnnotations.popplerExtractorSupported) this.setPref('pdfExtraction.UsePDFJS', true);
                 
             }.bind(this));
         }
         // Register callbacks in Zotero as item observers
-        if(this.notifierID === null)
+        if(this.notifierID === null && this.notifierCallback)
             this.notifierID = Zotero.Notifier.registerObserver(this.notifierCallback, ['item']);
         // Unregister callback when the window closes (important to avoid a memory leak)
-        window.addEventListener('unload', function(e) {
-            Zotero.Notifier.unregisterObserver(Zotero.ZotFile.notifierID);
-            Zotero.ZotFile.notifierID = null;
-        }, false);        
-        // Load zotero.js first
-        Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-            .getService(Components.interfaces.mozIJSSubScriptLoader)
-            .loadSubScript("chrome://zotfile/content/ProgressWindow.js", Zotero.ZotFile);
-        // add event listener for selecting items in zotero tree
-        if(this.getPref('tablet')) {
-            var pane = Services.wm.getMostRecentWindow("navigator:browser").ZoteroPane,
-                tree = pane.document.getElementById('zotero-items-tree');
-            tree.removeEventListener('select', Zotero.ZotFile.UI.attboxUpdateTabletStatus);
-            tree.addEventListener('select', Zotero.ZotFile.UI.attboxUpdateTabletStatus);
+        try {
+            let _win = null;
+            try { _win = window; } catch(e) {}
+            if (!_win || !_win.addEventListener) {
+                try { if (typeof Services !== 'undefined' && Services.wm) _win = Services.wm.getMostRecentWindow("navigator:browser"); } catch(e) {}
+            }
+            if (!_win || !_win.addEventListener) {
+                try { _win = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("navigator:browser"); } catch(e) {}
+            }
+            if (_win && _win.addEventListener) _win.addEventListener('unload', function(e) {
+                try { Zotero.Notifier.unregisterObserver(Zotero.ZotFile.notifierID); Zotero.ZotFile.notifierID = null; } catch(e2) {}
+            }, false);
+        } catch(e) {}
+        // Load ProgressWindow if not already loaded
+        try {
+            if (!Zotero.ZotFile.ProgressWindow) {
+                Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                    .getService(Components.interfaces.mozIJSSubScriptLoader)
+                    .loadSubScript("chrome://zotfile/content/ProgressWindow.js", Zotero.ZotFile);
+            }
+        } catch(e) {
+            try {
+                let base = (typeof gRootURI !== 'undefined' && gRootURI && gRootURI.spec) ? gRootURI.spec : (Zotero.ZotFileBootstrapRootURI && Zotero.ZotFileBootstrapRootURI.spec);
+                if (base) {
+                    if (!base.endsWith("/")) base += "/";
+                    Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader).loadSubScript(base + "chrome/content/zotfile/ProgressWindow.js", Zotero.ZotFile);
+                }
+            } catch(e2) {}
         }
+        // add event listener for selecting items in zotero tree
+        try {
+            if(this.getPref('tablet') && this.UI) {
+                let pane = null;
+                try { pane = Services.wm.getMostRecentWindow("navigator:browser").ZoteroPane; } catch(e) { try { pane = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("navigator:browser").ZoteroPane; } catch(e2) {} }
+                if (pane) {
+                    let tree = pane.document.getElementById('zotero-items-tree');
+                    if (tree) {
+                        tree.removeEventListener('select', Zotero.ZotFile.UI.attboxUpdateTabletStatus);
+                        tree.addEventListener('select', Zotero.ZotFile.UI.attboxUpdateTabletStatus);
+                    }
+                }
+            }
+        } catch(e) {}
 
         _initialized = true;
     };
@@ -394,10 +440,45 @@ Zotero.ZotFile = new function() {
      */
     this.openPreferenceWindow = function(paneID, action) {
         var io = {pane: paneID, action: action};
-        window.openDialog('chrome://zotfile/content/options.xul',
-            'zotfile-options',
-            'chrome,titlebar,toolbar,centerscreen' + Zotero.Prefs.get('browser.preferences.instantApply', true) ? 'dialog=no' : 'modal', io
-        );
+        function getWin() {
+            let w = null;
+            try { w = window; if (w && w.openDialog) return w; } catch(e) {}
+            try { if (typeof Services !== 'undefined' && Services.wm) { let ww = Services.wm.getMostRecentWindow("navigator:browser"); if (ww) return ww; } } catch(e) {}
+            try { return Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("navigator:browser"); } catch(e) {}
+            return null;
+        }
+        var win = getWin();
+        if (!win) return;
+        // Try chrome:// first (loaded under chrome privilege to resolve DTDs), then resource://
+        let uris = ['chrome://zotfile/content/options.xhtml', 'resource://zotfile/chrome/content/zotfile/options.xhtml'];
+        for (let uri of uris) {
+            try {
+                win.openDialog(uri, 'zotfile-options', 'chrome,modal,centerscreen', io);
+                return; // Successfully opened, so exit immediately!
+            } catch(e) {
+                // If centerscreen fails, try basic chrome,modal
+                try {
+                    win.openDialog(uri, 'zotfile-options', 'chrome,modal', io);
+                    return;
+                } catch(e2) {
+                    try {
+                        win.openDialog(uri, 'zotfile-options', 'chrome', io);
+                        return;
+                    } catch(e3) {}
+                }
+            }
+        }
+        // Last resort: try jar: URI directly (should not trigger file picker if resource:// failed)
+        try {
+            let base = null;
+            try { if (Zotero.ZotFileBootstrapRootURI && Zotero.ZotFileBootstrapRootURI.spec) base = Zotero.ZotFileBootstrapRootURI.spec; } catch(e2) {}
+            if (!base) try { if (typeof gRootURI !== 'undefined' && gRootURI && gRootURI.spec) base = gRootURI.spec; } catch(e2) {}
+            if (base) {
+                if (!base.endsWith("/")) base += "/";
+                let uri2 = base + "chrome/content/zotfile/options.xhtml";
+                win.openDialog(uri2, "zotfile-options", "chrome,titlebar,toolbar,centerscreen,modal", io); return;
+            }
+        } catch(e2) {}
     };
 
     /**
@@ -405,10 +486,18 @@ Zotero.ZotFile = new function() {
      */
     this.openSubfolderWindow = function(paneID, action) {
         var io = {pane: paneID, action: action};
-        var prefWindow = window.openDialog('chrome://zotfile/content/options-projects.xul',
-            'zotfile-tablet-subfolders',
-            'chrome,titlebar,toolbar,centerscreen' + Zotero.Prefs.get('browser.preferences.instantApply', true) ? 'dialog=no' : 'modal', io
-        );
+        function getWin() {
+            let w = null;
+            try { w = window; if (w && w.openDialog) return w; } catch(e) {}
+            try { if (typeof Services !== 'undefined' && Services.wm) { let ww = Services.wm.getMostRecentWindow("navigator:browser"); if (ww) return ww; } } catch(e) {}
+            try { return Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("navigator:browser"); } catch(e) {}
+            return null;
+        }
+        var win = getWin();
+        if (!win) return;
+        let uri = 'chrome://zotfile/content/options-projects.xhtml';
+        try { win.openDialog(uri, 'zotfile-tablet-subfolders', 'chrome,titlebar,toolbar,centerscreen,' + (Zotero.Prefs.get('browser.preferences.instantApply', true) ? 'dialog=no' : 'modal'), io); return; } catch(e) {}
+        win.openDialog('chrome://zotfile/content/options-projects.xhtml', 'zotfile-tablet-subfolders', 'chrome,titlebar,toolbar,centerscreen,modal', io);
     };
 
     /**
@@ -416,23 +505,29 @@ Zotero.ZotFile = new function() {
      * @return {string} Path to file
      */
     this.chooseDirectory = async function () {
+        var FilePicker = null;
         if (Zotero.platformMajorVersion >= 60) {
-            var FilePicker = require('zotero/filePicker').default;
-        }
-        else {
-            var nsIFilePicker = Components.interfaces.nsIFilePicker;
+            try {
+                let module = ChromeUtils.importESModule('chrome://zotero/content/modules/filePicker.mjs');
+                FilePicker = module.FilePicker;
+            } catch(e) {
+                try {
+                    FilePicker = require('zotero/filePicker').default;
+                } catch(e2) {}
+            }
         }
         var wm = Services.wm;
         var win = wm.getMostRecentWindow('navigator:browser');
-        var ps = Services.prompt;
-        if (Zotero.platformMajorVersion >= 60) {
+        if (FilePicker) {
             var fp = new FilePicker();
             fp.init(win, Zotero.getString('dataDir.selectDir'), fp.modeGetFolder);
             fp.appendFilters(fp.filterAll);
             if (await fp.show() != fp.returnOK) return '';
-            return fp.file;
+            let file = fp.file;
+            return file ? (typeof file === 'string' ? file : file.path) : '';
         }
         else {
+            var nsIFilePicker = Components.interfaces.nsIFilePicker;
             var fp = Components.classes["@mozilla.org/filepicker;1"]
                 .createInstance(nsIFilePicker);
             fp.init(win, Zotero.getString('dataDir.selectDir'), nsIFilePicker.modeGetFolder);
